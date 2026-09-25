@@ -168,4 +168,6 @@ sounds/               generated banks + banks.json
 - Gabber banks and starter kit: synthesised by GabberKey's own code.
 - APC Key 25 mk2 MIDI protocol: Akai Professional documentation.
 
-© 2026 Guillaume Monet
+## License
+
+Code released under the [MIT License](LICENSE) © 2026 Guillaume Monet. The Sonic Pi samples in banks 2-6 remain public domain (CC0).

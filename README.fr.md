@@ -168,4 +168,6 @@ sounds/               banques générées + banks.json
 - Banques gabber et kit de départ : synthétisés par le code de GabberKey.
 - Protocole MIDI de l'APC Key 25 mk2 : documentation Akai Professional.
 
-© 2026 Guillaume Monet
+## Licence
+
+Code publié sous [licence MIT](LICENSE) © 2026 Guillaume Monet. Les échantillons Sonic Pi des banques 2 à 6 restent dans le domaine public (CC0).
