@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Guillaume Monet">
+  <title>GabberKey</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="start" class="overlay">
+    <div class="overlay-box">
+      <h1>Gabber<span>Key</span></h1>
+      <p data-i18n="start.subtitle"></p>
+      <button id="start-btn" class="primary" data-i18n="start.button"></button>
+      <p class="hint" id="start-msg" data-i18n="start.hint"></p>
+      <p class="hint credit">by Guillaume Monet</p>
+    </div>
+  </div>
+
+  <header>
+    <div class="brand">Gabber<span>Key</span></div>
+    <div id="status" class="status off"><span class="dot"></span><span id="status-text" data-i18n="status.none"></span></div>
+    <canvas id="meter" width="160" height="10" data-i18n-aria="meter.aria"></canvas>
+    <div class="spacer"></div>
+    <label class="tempo" data-i18n-title="tempo.title">
+      <input id="bpm" type="number" min="40" max="240" step="1" value="120"> BPM
+    </label>
+    <button id="tap" data-i18n-title="tap.title">Tap</button>
+    <button id="rec" data-i18n-title="rec.title">● REC</button>
+    <button id="panic" data-i18n="panic.label" data-i18n-title="panic.title"></button>
+    <button id="reset" data-i18n="reset.label" data-i18n-title="reset.title"></button>
+  </header>
+
+  <main>
+    <section class="grid-area">
+      <div class="section-title">
+        <h2 data-i18n="pads.title"></h2>
+        <span class="hint" data-i18n="pads.hint"></span>
+        <div class="spacer"></div>
+        <div class="row">
+          <button id="kit-export-bank" data-i18n="kit.exportBank" data-i18n-title="kit.exportBank.title"></button>
+          <button id="kit-export-all" data-i18n="kit.exportAll" data-i18n-title="kit.exportAll.title"></button>
+          <button id="kit-import" data-i18n="kit.import" data-i18n-title="kit.import.title"></button>
+          <input id="kit-file" type="file" accept=".apckit,.json" hidden>
+        </div>
+      </div>
+      <div class="grid-wrap">
+        <div id="pads" class="pads"></div>
+        <div id="banks" class="banks" data-i18n-aria="banks.aria"></div>
+      </div>
+    </section>
+
+    <aside class="editor" id="editor">
+      <div class="section-title"><h2 id="ed-title">Pad</h2></div>
+      <label class="field"><span data-i18n="editor.name"></span>
+        <input id="ed-name" type="text" maxlength="24" spellcheck="false">
+      </label>
+      <canvas id="ed-wave" width="560" height="120"></canvas>
+      <div class="row">
+        <button id="ed-load" class="primary" data-i18n="editor.load"></button>
+        <button id="ed-play" data-i18n="editor.play"></button>
+        <button id="ed-clear" data-i18n="editor.clear"></button>
+        <input id="ed-file" type="file" accept="audio/*" hidden>
+      </div>
+      <div class="field"><span data-i18n="editor.color"></span>
+        <div id="ed-colors" class="swatches"></div>
+      </div>
+      <div class="field"><span data-i18n="editor.mode"></span>
+        <div id="ed-modes" class="segmented"></div>
+      </div>
+      <div class="field"><span data-i18n="editor.bpm"></span>
+        <div class="row">
+          <input id="ed-bpm" type="number" min="40" max="240" step="0.01" placeholder="—">
+          <button id="ed-bpm-auto" data-i18n-title="editor.bpmAuto.title">Auto</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="knobs-area">
+      <div class="section-title">
+        <h2 data-i18n="knobs.title"></h2>
+        <div id="pages" class="segmented" data-i18n-aria="pages.aria"></div>
+        <span class="hint" data-i18n="knobs.hint"></span>
+      </div>
+      <div id="knobs" class="knobs"></div>
+    </section>
+
+    <section class="perf-area">
+      <div class="section-title">
+        <h2 data-i18n="perf.title"></h2>
+        <span class="hint" data-i18n="perf.hint"></span>
+      </div>
+      <div id="perf" class="perf"></div>
+    </section>
+
+    <section class="piano-area">
+      <div class="section-title">
+        <h2 data-i18n="piano.title"></h2>
+        <div id="presets" class="segmented" data-i18n-aria="presets.aria"></div>
+        <span class="hint" data-i18n="piano.hint"></span>
+      </div>
+      <div id="piano" class="piano"></div>
+    </section>
+
+    <details class="monitor">
+      <summary><span data-i18n="monitor.title"></span> <span id="ports" class="hint"></span></summary>
+      <div class="row"><button id="swap-roles" hidden data-i18n="monitor.swap"></button></div>
+      <pre id="log"></pre>
+    </details>
+  </main>
+
+  <footer>GabberKey · © 2026 Guillaume Monet</footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

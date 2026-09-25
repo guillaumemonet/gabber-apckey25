@@ -1,0 +1,14 @@
+# Python tooling (recreated with: python -m venv tools/.venv)
+tools/.venv/
+tools/cache/
+__pycache__/
+
+# Files produced by the app
+*.apckit
+*.wav
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
