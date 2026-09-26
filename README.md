@@ -10,6 +10,7 @@ GabberKey turns the Akai APC Key 25 (mk1 or mk2) into a standalone instrument. I
 - **358 ready-to-play sounds**:
   - four **synthesised hardcore / gabber banks**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
+- **TR-909 emulation**: the 11 instruments synthesised live, with a per-instrument **distortion (drive + 5 shapes)** on the knobs and a 16-step sequencer (8 patterns) synced with the loops.
 - **Polyphonic synth** on the keyboard with 8 gabber presets: Hoover, Acid 303, Screech, Rave stab, Distorted bass, Horn, Tuned kick…
 - **Tempo-synced loops**: every loop starts on the next bar and follows the global tempo (with a Tap button).
 - **Performance effects**: beat-repeat rolls (1/4 to 1/32), filter sweeps, tape stop, pump.
@@ -60,6 +61,8 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 | **SUSTAIN** | Opens / closes the EQ page (held: EQ while pressed) |
 | **Shift + piano key** | Synth preset: C Hoover, D Acid 303, E Screech, F Rave stab, G Dist. bass, A Horn, B Tuned kick, C# Init |
 | **Keyboard** | Plays the synth |
+| **PLAY** | Start / stop the TR-909 sequencer |
+| **Shift + PLAY** | Turn the pad grid into the TR-909 (and back) |
 | **REC** | Start / stop recording (downloads a WAV) |
 | **STOP ALL CLIPS** | Stops everything |
 
@@ -83,6 +86,31 @@ Everything can also be done with the mouse. On the computer keyboard, the middle
 | 10 | **Oldschool** (early 90s rave / hardcore): 909 and 808 kicks, breakbeat kit, M1-style rave pianos (Fm, Db, Eb, Cm, Bbm, Ab), Mentasm and Belgian stabs, "ahh" choir, vox stab, whistle, air-raid siren, Amen-style and chopped breaks, piano riff, rave arp, 4-bar oldschool track, all at 190 BPM |
 
 To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. In the editor you can also set the name, the LED colour and the playback mode (**One-shot**, **Hold** or **Loop**).
+
+## TR-909
+
+A Roland TR-909 emulation with its 11 instruments (bass drum, snare, 3 toms, rim shot, clap, closed / open hi-hat, crash, ride). Each one is synthesised live, like the analogue circuits of the original.
+
+**Knobs** (TR-909 page, opened by Shift + PLAY or the "TR-909" tab):
+
+| K1-K4 | K5 | K6 | K7 | K8 |
+|---|---|---|---|---|
+| Parameters of the selected instrument (e.g. BD: Tune, Attack, Decay, Level) | **Drive**: distortion amount | **Shape**: Soft, Hard, Tube, Fold (wavefolder), Crush (bitcrusher) | Shuffle | 909 volume |
+
+Every instrument has its own distortion. The bass drum starts with a "Tube" drive for the gabber sound. The accent amount is set with the slider on screen.
+
+**Sequencer**: 16 steps, 8 patterns, 4 of them preset (gabber, rave, breakbeat, kick roll). It runs on the same tempo and bar grid as the loops, so it stays in sync with them. A pattern change waits for the next bar. On screen, click a step to cycle note → accent → off, and click an instrument name to play and select it.
+
+**APC grid in 909 mode** (Shift + PLAY):
+
+| Row | Pads |
+|---|---|
+| 1-2 | The 16 steps of the selected instrument (red = playhead, green = note, yellow = accent) |
+| 3 | BD, SD, LT, MT, HT, RS, HC, CH: play and select |
+| 4 | OH, CR, RD, then **Accent** (new steps are accented), **Clear** (erases the instrument), **Mute** |
+| 5 | Patterns 1-8 |
+
+Pressing a SCENE LAUNCH button brings the grid back to the sampler pads.
 
 ## Tempo and loops
 
@@ -151,6 +179,7 @@ css/style.css         styles
 js/main.js            UI and wiring
 js/apc.js             APC Key 25 detection, MIDI input, LEDs (mk1 + mk2)
 js/audio.js           audio engine: synth, sampler, effects, EQ, tempo
+js/tr909.js           TR-909 emulation and sequencer
 js/presets.js         synth presets
 js/params.js          knob parameters
 js/i18n.js            English / French translations

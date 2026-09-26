@@ -57,6 +57,7 @@ export class Engine {
     this.onPadState = () => {};
     this.bpm = 120;
     this.origin = null;           // instant (ctx) du temps 1 de la mesure de référence
+    this.seqRunning = false;      // séquenceur TR-909 en marche (voir js/tr909.js)
 
     const gain = (v = 1) => { const g = ctx.createGain(); g.gain.value = v; return g; };
     const band = (type, freq, q = 1) => {
@@ -343,7 +344,8 @@ export class Engine {
   // Début de la prochaine mesure ; sans boucle en cours, on démarre tout de suite.
   nextBar() {
     const t = this.ctx.currentTime + 0.01;
-    const looping = [...this.padVoices.values()].some(v => v.mode === 'loop');
+    // La grille est « occupée » si une boucle tourne ou si le séquenceur 909 joue.
+    const looping = this.seqRunning || [...this.padVoices.values()].some(v => v.mode === 'loop');
     if (!looping || this.origin === null) { this.origin = t; return t; }
     const bar = 240 / this.bpm;
     return this.origin + Math.ceil((t - this.origin) / bar - 1e-6) * bar;

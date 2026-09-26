@@ -6,15 +6,17 @@ import { PRESETS, PRESET_KEYS } from './presets.js';
 import { Recorder, download, stamp } from './recorder.js';
 import { packBanks, unpack } from './kits.js';
 import * as store from './storage.js';
+import { TR909, TR_INSTR, PATTERNS, trKnobDefs, defaultTrState, mergeTrState } from './tr909.js';
 import { t, soundName, translatePage } from './i18n.js';
 
 translatePage();
 
 const BANKS = 10;   // SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = banques 6-10
 const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (EQ aussi via SUSTAIN)
+const UI_PAGES = [...PAGE_ORDER, 'tr'];              // + page TR-909 (Maj + PLAY sur l'APC)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder;
+let engine, apc, kit, recorder, drum;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -26,6 +28,7 @@ const state = {
   model: null,      // dernier modèle d'APC vu ('mk1' | 'mk2')
   globals: { ...defaultPositions('synth'), ...defaultPositions('fx'), ...defaultPositions('eq') },
   banks: [],        // banks[b][i] = { name, color, sampleId, p, buffer } | null
+  tr: defaultTrState(),   // TR-909 : réglages, patterns, instrument choisi
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -56,6 +59,10 @@ async function start() {
   engine.setVoice(PRESETS[state.preset]?.voice ?? {});
   engine.onPadState = onPadState;
   recorder = new Recorder(engine.ctx, engine.output);
+  drum = new TR909(engine, () => state.tr);
+  drum.setVolume(state.tr.globals.volume);
+  drum.onStep = onTrStep;
+  drum.onPattern = () => { renderTr(); renderLeds(); save(); };
   bindTempo();
 
   buildPads();
@@ -66,6 +73,7 @@ async function start() {
   buildPiano();
   buildPresets();
   buildPerf();
+  buildTr();
   bindKits();
   bindComputerKeyboard();
   drawMeter();
@@ -104,6 +112,7 @@ async function restore() {
     // Anciennes sauvegardes : les 5 premières banques de la bibliothèque étaient déjà importées.
     state.libBanks = saved.libBanks ?? (saved.libImported ? ['Batterie', 'Électro', 'Boucles', 'Textures', 'Tabla & divers'] : []);
     state.model = saved.model ?? null;
+    state.tr = mergeTrState(saved.tr);
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
         const s = saved.banks?.[b]?.[i];
@@ -176,6 +185,7 @@ function save() {
       libBanks: state.libBanks,
       model: state.model,
       globals: state.globals,
+      tr: state.tr,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
   }, 400);
@@ -216,12 +226,14 @@ function setPage(page) {
 }
 
 function panic() {
+  drum.stop();
   engine.stopAllPads();
   engine.allNotesOff();
   for (const i of [...perfActive]) { perfActive.delete(i); PERF[i].off?.(); }
   heldRolls.length = 0;
   engine.rollOff();
   renderPerf();
+  renderTr();
   renderLeds();
 }
 
@@ -232,11 +244,20 @@ function onPadState(key, isPlaying, mode) {
   renderLeds();
 }
 
+// Potards de la page active : définitions et objet qui stocke leurs positions.
+function knobDefs() { return state.page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[state.page].params; }
+function knobTarget(def) {
+  if (!def) return null;
+  if (state.page === 'pad') return currentPad()?.p;
+  if (state.page === 'tr') return def.group === 'global' ? state.tr.globals : state.tr.params[state.tr.sel];
+  return state.globals;
+}
+
 // Tourne un potard : delta relatif (mk2, souris) ou position absolue (mk1).
 function turnKnob(index, { delta, value }) {
-  const def = PAGES[state.page].params[index];
+  const def = knobDefs()[index];
   const pad = currentPad();
-  const target = state.page === 'pad' ? pad?.p : state.globals;
+  const target = knobTarget(def);
   if (!def || !target) return;
 
   if (value !== undefined) {
@@ -249,6 +270,8 @@ function turnKnob(index, { delta, value }) {
   if (state.page === 'pad') {
     engine.updatePadVoice(padKey(state.bank, state.selected), pad);
     if (def.id === 'mode') { renderPad(state.selected); renderEditor(); }
+  } else if (state.page === 'tr') {
+    if (def.id === 'volume') drum.setVolume(target.volume);
   } else {
     engine.set(def.id, toValue(def, target[def.id]));
   }
@@ -322,6 +345,7 @@ function bindController() {
   apc.addEventListener('roles', renderPorts);
 
   apc.addEventListener('pad', ({ detail: { index, pressed } }) => {
+    if (trMode) { if (pressed) trPad(index); return; }
     if (!pressed) return releasePad(index);
     if (shiftHeld) selectPad(index); else triggerPad(index);
   });
@@ -342,7 +366,11 @@ function bindController() {
       return;
     }
     if (!pressed) return;
-    if (name.startsWith('scene')) setBank(+name.slice(5) - 1 + (shiftHeld ? 5 : 0));
+    if (name === 'play') { if (shiftHeld) toggleTrMode(); else toggleSeq(); return; }
+    if (name.startsWith('scene')) {
+      if (trMode) toggleTrMode(false);   // choisir une banque ramène la grille aux pads
+      setBank(+name.slice(5) - 1 + (shiftHeld ? 5 : 0));
+    }
     else if (name.startsWith('track')) setPage(PAGE_ORDER[+name.slice(5) - 1]);
     else if (name === 'stopAll') panic();
     else if (name === 'record') toggleRecording();
@@ -396,7 +424,7 @@ $('#swap-roles').addEventListener('click', () => apc.swapRoles());
 function renderLeds() {
   if (!apc?.connected) return;
   const bank = state.banks[state.bank];
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 40 && !trMode; i++) {
     const pad = bank[i];
     const mode = playing.get(padKey(state.bank, i));
     let led = 'off';
@@ -412,6 +440,8 @@ function renderLeds() {
     ? (PAGE_ORDER[t] === state.page ? 1 : 0)
     : (perfActive.has(t - 4) || perfActive.has(t) ? 1 : 0)));
   apc.setButton(BTN.record, recorder?.recording ? 2 : 0);
+  apc.setButton(BTN.play, drum?.running ? 1 : 0);
+  if (trMode) renderTrLeds();
 }
 
 // ---------- Interface : pads ----------
@@ -586,17 +616,17 @@ $('#editor').addEventListener('drop', e => {
 
 function buildPages() {
   const wrap = $('#pages');
-  PAGE_ORDER.forEach((page, k) => {
+  UI_PAGES.forEach((page, k) => {
     const btn = document.createElement('button');
-    btn.textContent = PAGES[page].label;
-    btn.title = t('page.title', { n: k + 1 });
+    btn.textContent = page === 'tr' ? t('page.tr') : PAGES[page].label;
+    btn.title = page === 'tr' ? t('tr.pageTitle') : t('page.title', { n: k + 1 });
     btn.addEventListener('click', () => setPage(page));
     wrap.appendChild(btn);
   });
 }
 
 function renderPages() {
-  [...$('#pages').children].forEach((btn, t) => btn.classList.toggle('active', PAGE_ORDER[t] === state.page));
+  [...$('#pages').children].forEach((btn, k) => btn.classList.toggle('active', UI_PAGES[k] === state.page));
 }
 
 const ARC = 270;
@@ -635,10 +665,9 @@ function buildKnobs() {
     el.addEventListener('pointerup', () => { lastY = null; shiftHeld = false; });
     el.addEventListener('wheel', e => { e.preventDefault(); turnKnob(k, { delta: e.deltaY < 0 ? 2 : -2 }); }, { passive: false });
     el.addEventListener('dblclick', () => {
-      const def = PAGES[state.page].params[k];
-      const target = state.page === 'pad' ? currentPad()?.p : state.globals;
-      if (!target) return;
-      turnKnob(k, { value: defaultPositions(state.page)[def.id] });
+      const def = knobDefs()[k];
+      if (!knobTarget(def)) return;
+      turnKnob(k, { value: toPos(def, def.def) });
     });
     knobEls[k] = el;
     wrap.appendChild(el);
@@ -647,9 +676,16 @@ function buildKnobs() {
 
 const flashTimers = [];
 function renderKnob(k, flash = false) {
-  const def = PAGES[state.page].params[k];
+  const def = knobDefs()[k];
   const el = knobEls[k];
-  const target = state.page === 'pad' ? currentPad()?.p : state.globals;
+  if (!def) {   // potard inutilisé sur cette page
+    el.querySelector('.arc').setAttribute('d', '');
+    el.querySelector('.label').textContent = '';
+    el.querySelector('.value').textContent = '';
+    el.style.opacity = 0.25;
+    return;
+  }
+  const target = knobTarget(def);
   const p = target ? target[def.id] : 0;
   el.querySelector('.arc').setAttribute('d', p > 0.001 ? arcPath(p) : '');
   el.querySelector('.label').textContent = def.label;
@@ -796,6 +832,168 @@ function bindTempo() {
     renderEditor();
     save();
   });
+}
+
+// ---------- TR-909 ----------
+
+let trMode = false;          // grille de l'APC transformée en 909
+let pageBeforeTr = 'synth';
+let trAccentMode = false;    // les pas posés depuis l'APC sont accentués
+let trHead = -1;             // pas en cours de lecture
+const trPattern = () => state.tr.patterns[state.tr.pattern];
+
+function toggleSeq() {
+  drum.toggle();
+  renderTr();
+  renderLeds();
+}
+
+function toggleTrMode(on = !trMode) {
+  trMode = on;
+  if (on) {
+    if (state.page !== 'tr') pageBeforeTr = state.page;
+    setPage('tr');
+    toast(t('tr.modeOn'), 5000);
+  } else if (state.page === 'tr') {
+    setPage(pageBeforeTr);
+  }
+  renderTr();
+  renderLeds();
+}
+
+function selectTrInstr(id) {
+  state.tr.sel = id;
+  renderTr();
+  if (state.page === 'tr') renderKnobs();
+  renderLeds();
+  save();
+}
+
+function cycleTrStep(id, step) {
+  const row = trPattern()[id];
+  row[step] = (row[step] + 1) % 3;   // silence -> note -> accent -> silence
+  renderTr();
+  renderLeds();
+  save();
+}
+
+// Grille de l'APC en mode 909 : rangées 1-2 = 16 pas de l'instrument choisi, rangées 3-4 = instruments
+// puis Accent / Effacer / Muet, rangée 5 = patterns.
+function trPad(i) {
+  const sel = state.tr.sel;
+  const row = trPattern()[sel];
+  if (i < 16) {
+    row[i] = row[i] ? 0 : (trAccentMode ? 2 : 1);
+  } else if (i < 16 + TR_INSTR.length) {
+    const { id } = TR_INSTR[i - 16];
+    drum.trigger(id);
+    selectTrInstr(id);
+    return;
+  } else if (i === 27) {
+    trAccentMode = !trAccentMode;
+  } else if (i === 28) {
+    row.fill(0);
+  } else if (i === 29) {
+    state.tr.mutes[sel] = !state.tr.mutes[sel];
+  } else if (i >= 32) {
+    drum.selectPattern(i - 32);
+    return;
+  }
+  renderTr();
+  renderLeds();
+  save();
+}
+
+function onTrStep(step) {
+  trHead = step;
+  renderTrHead();
+  if (trMode) renderTrLeds();
+}
+
+function renderTrLeds() {
+  const GREEN = 21, RED = 5, YELLOW = 13;
+  const sel = state.tr.sel;
+  const pat = trPattern();
+  for (let i = 0; i < 16; i++) {
+    const v = pat[sel][i];
+    if (i === trHead) apc.setPad(i, RED, 'on');
+    else apc.setPad(i, v === 2 ? YELLOW : v ? GREEN : 0, v ? 'dim' : 'off');
+  }
+  TR_INSTR.forEach(({ id }, k) => {
+    if (id === sel) apc.setPad(16 + k, YELLOW, 'on');
+    else apc.setPad(16 + k, state.tr.mutes[id] ? RED : GREEN, 'dim');
+  });
+  apc.setPad(27, YELLOW, trAccentMode ? 'on' : 'dim');
+  apc.setPad(28, RED, 'dim');
+  apc.setPad(29, RED, state.tr.mutes[sel] ? 'on' : 'dim');
+  apc.setPad(30, 0, 'off');
+  apc.setPad(31, 0, 'off');
+  for (let k = 0; k < PATTERNS; k++) {
+    const used = TR_INSTR.some(({ id }) => state.tr.patterns[k][id].some(Boolean));
+    if (k === state.tr.pattern) apc.setPad(32 + k, RED, 'on');
+    else if (k === drum.queued) apc.setPad(32 + k, YELLOW, 'blink');
+    else apc.setPad(32 + k, GREEN, used ? 'dim' : 'off');
+  }
+}
+
+const trCells = [];   // trCells[instrument][pas]
+function buildTr() {
+  $('#tr-play').addEventListener('click', toggleSeq);
+  $('#tr-apc').addEventListener('click', () => toggleTrMode());
+  $('#tr-accent').addEventListener('input', e => { state.tr.globals.accent = e.target.value / 100; save(); });
+  for (let k = 0; k < PATTERNS; k++) {
+    const btn = document.createElement('button');
+    btn.textContent = k + 1;
+    btn.title = t('tr.pattern', { n: k + 1 });
+    btn.addEventListener('click', () => drum.selectPattern(k));
+    $('#tr-patterns').appendChild(btn);
+  }
+  const grid = $('#tr-grid');
+  TR_INSTR.forEach(({ id }, r) => {
+    const name = document.createElement('button');
+    name.className = 'tr-name';
+    name.textContent = id.toUpperCase();
+    name.title = t(`tr.n.${id}`);
+    name.addEventListener('click', () => { drum.trigger(id); selectTrInstr(id); });
+    grid.appendChild(name);
+    trCells[r] = [];
+    for (let s = 0; s < 16; s++) {
+      const cell = document.createElement('button');
+      cell.className = 'tr-cell' + (s % 4 === 0 ? ' beat' : '');
+      cell.addEventListener('click', () => cycleTrStep(id, s));
+      grid.appendChild(cell);
+      trCells[r][s] = cell;
+    }
+  });
+  renderTr();
+}
+
+function renderTr() {
+  const play = $('#tr-play');
+  play.textContent = drum.running ? t('tr.stop') : t('tr.play');
+  play.classList.toggle('active', drum.running);
+  $('#tr-apc').classList.toggle('active', trMode);
+  $('#tr-accent').value = Math.round(state.tr.globals.accent * 100);
+  [...$('#tr-patterns').children].forEach((btn, k) => {
+    btn.classList.toggle('active', k === state.tr.pattern);
+    btn.classList.toggle('queued', k === drum.queued);
+    btn.classList.toggle('used', TR_INSTR.some(({ id }) => state.tr.patterns[k][id].some(Boolean)));
+  });
+  const pat = trPattern();
+  const names = $('#tr-grid').querySelectorAll('.tr-name');
+  TR_INSTR.forEach(({ id }, r) => {
+    names[r].classList.toggle('selected', id === state.tr.sel);
+    names[r].classList.toggle('muted', !!state.tr.mutes[id]);
+    trCells[r].forEach((cell, s) => {
+      cell.classList.toggle('on', pat[id][s] === 1);
+      cell.classList.toggle('accent', pat[id][s] === 2);
+    });
+  });
+  renderTrHead();
+}
+
+function renderTrHead() {
+  trCells.forEach(row => row.forEach((cell, s) => cell.classList.toggle('head', s === trHead)));
 }
 
 // ---------- Presets du synthé ----------
@@ -951,7 +1149,7 @@ function bindKits() {
   });
   $('#kit-export-all').addEventListener('click', async () => {
     toast(t('kit.exportingAll'));
-    const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset });
+    const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr });
     download(blob, `gabberkey-session-${stamp()}.apckit`);
     toast(t('kit.exportedAll'));
   });
@@ -971,6 +1169,7 @@ function bindKits() {
         state.preset = kitData.preset ?? 0;
         engine.setVoice(PRESETS[state.preset]?.voice ?? {});
         if (kitData.bpm) setBpm(kitData.bpm);
+        if (kitData.tr) { drum.stop(); state.tr = mergeTrState(kitData.tr); drum.setVolume(state.tr.globals.volume); renderTr(); }
       } else {
         if (state.banks[state.bank].some(Boolean) && !confirm(t('kit.confirmBank', { n: state.bank + 1 }))) return;
         replaceBank(state.bank, await Promise.all(kitData.banks[0].map(unpackPad)));

@@ -10,6 +10,7 @@ GabberKey transforme l'Akai APC Key 25 (mk1 ou mk2) en instrument autonome. Il n
 - **358 sons prêts à jouer** :
   - quatre **banques hardcore / gabber synthétisées** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, effets et boucles à 190 BPM ;
   - cinq banques d'échantillons **libres de droits (CC0)**.
+- **Émulation TR-909** : les 11 instruments synthétisés en direct, avec une **distorsion par instrument (drive + 5 formes)** sur les potentiomètres et un séquenceur 16 pas (8 patterns) calé sur les boucles.
 - **Synthé polyphonique** au clavier, avec 8 presets gabber : Hoover, Acid 303, Screech, Stab rave, Basse distordue, Horn, Kick accordé…
 - **Boucles synchronisées** : chaque boucle démarre sur la mesure suivante et suit le tempo global (avec un bouton Tap).
 - **Effets de performance** : rolls (répétitions de 1/4 à 1/32), balayages de filtre, tape-stop, pump.
@@ -60,6 +61,8 @@ L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert
 | **SUSTAIN** | Ouvre / ferme la page EQ (maintenu : EQ le temps de l'appui) |
 | **Maj + touche du piano** | Preset du synthé : do Hoover, ré Acid 303, mi Screech, fa Stab rave, sol Basse dist., la Horn, si Kick accordé, do# Init |
 | **Clavier** | Joue le synthé |
+| **PLAY** | Lancer / arrêter le séquenceur TR-909 |
+| **Maj + PLAY** | Transformer la grille de pads en TR-909 (et revenir) |
 | **REC** | Démarrer / arrêter l'enregistrement (télécharge un WAV) |
 | **STOP ALL CLIPS** | Coupe tout |
 
@@ -83,6 +86,31 @@ Tout se fait aussi à la souris. Sur le clavier de l'ordinateur, la rangée du m
 | 10 | **Oldschool** (rave / hardcore début 90) : kicks 909 et 808, kit de breakbeat, pianos rave façon M1 (Fm, Db, Eb, Cm, Bbm, Ab), stabs Mentasm et belge, chœur « ahh », vox stab, sifflet, sirène d'alerte, break façon Amen et break découpé, riff de piano, arpège rave, morceau oldschool de 4 mesures, le tout à 190 BPM |
 
 Pour charger ton propre son, glisse un fichier audio (WAV, MP3, FLAC, OGG…) sur un pad ou sur l'éditeur, ou utilise **Charger un son…**. Dans l'éditeur, tu peux aussi régler le nom, la couleur de la LED et le mode de lecture (**One-shot**, **Maintien** ou **Boucle**).
+
+## TR-909
+
+Une émulation de la Roland TR-909 avec ses 11 instruments : grosse caisse, caisse claire, 3 toms, rim shot, clap, charley fermé et ouvert, crash, ride. Chacun est synthétisé en direct, comme les circuits analogiques de la machine d'origine.
+
+**Potentiomètres** (page TR-909, ouverte par Maj + PLAY ou l'onglet « TR-909 ») :
+
+| K1-K4 | K5 | K6 | K7 | K8 |
+|---|---|---|---|---|
+| Paramètres de l'instrument choisi (ex. BD : Accord, Attaque, Déclin, Niveau) | **Drive** : quantité de distorsion | **Forme** : Douce, Dure, Lampe, Repli (wavefolder), Crush (réduction de bits) | Shuffle | Volume 909 |
+
+Chaque instrument a sa propre distorsion. La grosse caisse démarre avec une saturation « Lampe », pour le son gabber. La quantité d'accent se règle avec le curseur à l'écran.
+
+**Séquenceur** : 16 pas et 8 patterns, dont 4 préréglés (gabber, rave, breakbeat, roulement de grosse caisse). Il suit le même tempo et la même grille de mesures que les boucles, donc il reste calé avec elles. Un changement de pattern attend la mesure suivante. À l'écran, un clic sur un pas fait défiler note → accent → silence, et un clic sur le nom d'un instrument le joue et le sélectionne.
+
+**Grille de l'APC en mode 909** (Maj + PLAY) :
+
+| Rangée | Pads |
+|---|---|
+| 1-2 | Les 16 pas de l'instrument choisi (rouge = tête de lecture, vert = note, jaune = accent) |
+| 3 | BD, SD, LT, MT, HT, RS, HC, CH : jouer et sélectionner |
+| 4 | OH, CR, RD, puis **Accent** (les pas posés sont accentués), **Effacer** (vide l'instrument), **Muet** |
+| 5 | Patterns 1 à 8 |
+
+Un appui sur un bouton SCENE LAUNCH ramène la grille aux pads du sampler.
 
 ## Tempo et boucles
 
@@ -151,6 +179,7 @@ css/style.css         styles
 js/main.js            interface et liaisons
 js/apc.js             détection de l'APC Key 25, lecture MIDI, LEDs (mk1 + mk2)
 js/audio.js           moteur audio : synthé, sampler, effets, EQ, tempo
+js/tr909.js           émulation TR-909 et séquenceur
 js/presets.js         presets du synthé
 js/params.js          paramètres des potards
 js/i18n.js            traductions anglais / français
