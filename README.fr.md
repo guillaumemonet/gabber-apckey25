@@ -7,8 +7,8 @@
 GabberKey transforme l'Akai APC Key 25 (mk1 ou mk2) en instrument autonome. Il n'y a ni logiciel de musique, ni plugin, ni rien à installer à part un navigateur :
 
 - **Sampler 40 pads** avec 10 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de tes propres sons
-- **318 sons prêts à jouer** :
-  - trois **banques hardcore / gabber synthétisées** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, effets et boucles à 190 BPM ;
+- **358 sons prêts à jouer** :
+  - quatre **banques hardcore / gabber synthétisées** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, effets et boucles à 190 BPM ;
   - cinq banques d'échantillons **libres de droits (CC0)**.
 - **Synthé polyphonique** au clavier, avec 8 presets gabber : Hoover, Acid 303, Screech, Stab rave, Basse distordue, Horn, Kick accordé…
 - **Boucles synchronisées** : chaque boucle démarre sur la mesure suivante et suit le tempo global (avec un bouton Tap).
@@ -80,13 +80,13 @@ Tout se fait aussi à la souris. Sur le clavier de l'ordinateur, la rangée du m
 | 7 | **Gabber** : 8 kicks (Rotterdam, Early, Terror, Industrial, Frenchcore, Reverse…), percussions, hoovers, stabs, screeches, boucles à 190 BPM |
 | 8 | **Gabber 2** : kicks accordés de do à sol, effets (montée, descente, laser, impact…), 16 boucles, stabs rave |
 | 9 | **Hardcore** : kicks plus durs (terror, uptempo, speedcore, industrial, mainstream…), basses distordues, accords de cordes (Fm, Db, Eb, Cm, Bbm, Ab), staccato et coup d'orchestre, boucles cordes / basse (ostinato, progression, offbeat, roulante, reese, morceau complet de 4 mesures) et boucles de batterie hardcore, le tout à 190 BPM |
-| 10 | Vide : glisse tes propres fichiers audio sur les pads |
+| 10 | **Oldschool** (rave / hardcore début 90) : kicks 909 et 808, kit de breakbeat, pianos rave façon M1 (Fm, Db, Eb, Cm, Bbm, Ab), stabs Mentasm et belge, chœur « ahh », vox stab, sifflet, sirène d'alerte, break façon Amen et break découpé, riff de piano, arpège rave, morceau oldschool de 4 mesures, le tout à 190 BPM |
 
 Pour charger ton propre son, glisse un fichier audio (WAV, MP3, FLAC, OGG…) sur un pad ou sur l'éditeur, ou utilise **Charger un son…**. Dans l'éditeur, tu peux aussi régler le nom, la couleur de la LED et le mode de lecture (**One-shot**, **Maintien** ou **Boucle**).
 
 ## Tempo et boucles
 
-Le tempo global (en-tête, ou bouton **Tap**) pilote toutes les boucles. Chacune démarre sur la mesure suivante et reste calée quand tu changes le tempo. Pour tes propres boucles, indique leur tempo d'origine dans l'éditeur, ou clique sur **Auto** : le calcul suppose que le fichier dure un nombre entier de mesures. Règle le tempo à 190 pour les banques Gabber et Hardcore : leurs boucles partagent la même tonalité (fa mineur) et les mêmes longueurs, elles restent donc calées entre elles.
+Le tempo global (en-tête, ou bouton **Tap**) pilote toutes les boucles. Chacune démarre sur la mesure suivante et reste calée quand tu changes le tempo. Pour tes propres boucles, indique leur tempo d'origine dans l'éditeur, ou clique sur **Auto** : le calcul suppose que le fichier dure un nombre entier de mesures. Règle le tempo à 190 pour les banques Gabber, Hardcore et Oldschool : leurs boucles partagent la même tonalité (fa mineur) et les mêmes longueurs, elles restent donc calées entre elles.
 
 ## Pages des potentiomètres
 
@@ -139,7 +139,7 @@ tools/.venv/Scripts/python tools/build_banks.py --bpm 128 --gabber-bpm 200
 
 Le script travaille en deux temps :
 - **Échantillons CC0** : il télécharge les échantillons de Sonic Pi, retire le silence initial et normalise le volume. Pour les boucles, il détecte le tempo, étire le son au tempo cible sans changer la hauteur (WSOLA) et coupe chaque boucle à un nombre exact de mesures.
-- **Banques Gabber et Hardcore** : il les synthétise de zéro (`tools/gabber.py`).
+- **Banques Gabber, Hardcore et Oldschool** : il les synthétise de zéro (`tools/gabber.py`).
 
 Clique ensuite sur **Réinitialiser** dans l'appli.
 

@@ -7,8 +7,8 @@
 GabberKey turns the Akai APC Key 25 (mk1 or mk2) into a standalone instrument. It has no DAW, no plugin and nothing to install except a web browser:
 
 - **40-pad sampler** with 10 banks, pad LEDs synced to the screen, and drag & drop of your own sounds
-- **318 ready-to-play sounds**:
-  - three **synthesised hardcore / gabber banks**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, FX and loops at 190 BPM;
+- **358 ready-to-play sounds**:
+  - four **synthesised hardcore / gabber banks**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
 - **Polyphonic synth** on the keyboard with 8 gabber presets: Hoover, Acid 303, Screech, Rave stab, Distorted bass, Horn, Tuned kick…
 - **Tempo-synced loops**: every loop starts on the next bar and follows the global tempo (with a Tap button).
@@ -80,13 +80,13 @@ Everything can also be done with the mouse. On the computer keyboard, the middle
 | 7 | **Gabber**: 8 kicks (Rotterdam, Early, Terror, Industrial, Frenchcore, Reverse…), percussion, hoovers, stabs, screeches, loops at 190 BPM |
 | 8 | **Gabber 2**: kicks tuned from C to G, FX (riser, downlifter, laser, impact…), 16 loops, rave stabs |
 | 9 | **Hardcore**: harder kicks (terror, uptempo, speedcore, industrial, mainstream…), distorted basses, string chords (Fm, Db, Eb, Cm, Bbm, Ab), staccato and orchestra hit, string / bass loops (ostinato, progression, offbeat, rolling, reese, 4-bar full track) and hardcore drum loops, all at 190 BPM |
-| 10 | Empty: drop your own audio files on the pads |
+| 10 | **Oldschool** (early 90s rave / hardcore): 909 and 808 kicks, breakbeat kit, M1-style rave pianos (Fm, Db, Eb, Cm, Bbm, Ab), Mentasm and Belgian stabs, "ahh" choir, vox stab, whistle, air-raid siren, Amen-style and chopped breaks, piano riff, rave arp, 4-bar oldschool track, all at 190 BPM |
 
 To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. In the editor you can also set the name, the LED colour and the playback mode (**One-shot**, **Hold** or **Loop**).
 
 ## Tempo and loops
 
-The global tempo (header, or the **Tap** button) drives every loop. Each loop starts on the next bar and stays in sync when you change the tempo. For your own loops, enter their original tempo in the editor, or click **Auto**: this assumes the file lasts a whole number of bars. Set the tempo to 190 for the Gabber and Hardcore banks: their loops share the same key (F minor) and lengths, so they stay in sync with each other.
+The global tempo (header, or the **Tap** button) drives every loop. Each loop starts on the next bar and stays in sync when you change the tempo. For your own loops, enter their original tempo in the editor, or click **Auto**: this assumes the file lasts a whole number of bars. Set the tempo to 190 for the Gabber, Hardcore and Oldschool banks: their loops share the same key (F minor) and lengths, so they stay in sync with each other.
 
 ## Knob pages
 
@@ -139,7 +139,7 @@ tools/.venv/Scripts/python tools/build_banks.py --bpm 128 --gabber-bpm 200
 
 The script works in two parts:
 - **CC0 samples**: it downloads the Sonic Pi samples, trims silence and normalises levels. For loops, it detects the tempo, time-stretches them to the target tempo without changing pitch (WSOLA) and cuts them to an exact number of bars.
-- **Gabber and Hardcore banks**: it synthesises them from scratch (`tools/gabber.py`).
+- **Gabber, Hardcore and Oldschool banks**: it synthesises them from scratch (`tools/gabber.py`).
 
 After regenerating, click **Reset** in the app.
 

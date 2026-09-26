@@ -428,6 +428,155 @@ def industrial_kick(note=39):
     return fade(normalize(k + 0.35 * grit), fout=0.03)
 
 
+# ---------------------------------------------------------------- oldschool (rave / hardcore début 90)
+
+def kick808(note=29, dur=1.6):
+    t = t_of(dur)
+    x = sine_sweep(hz(note) * (1 + 1.5 * np.exp(-t / 0.02))) * exp_env(t, dur / 3, 0.02)
+    x += noise(len(t)) * np.exp(-t / 0.002) * 0.2
+    return fade(normalize(np.tanh(2 * x)), fout=0.05)
+
+
+def break_kick():
+    t = t_of(0.35)
+    x = sine_sweep(55 + 90 * np.exp(-t / 0.015)) * exp_env(t, 0.12)
+    x += biquad(noise(len(t)), 'lp', 3000) * np.exp(-t / 0.004) * 0.5
+    return fade(normalize(np.tanh(1.5 * x)))
+
+
+def break_snare(level=1.0, dur=0.25):
+    """Snare de breakbeat : peau + timbre + petite pièce."""
+    t = t_of(dur)
+    body = sine_sweep(210 + 40 * np.exp(-t / 0.01)) * exp_env(t, 0.05)
+    wires = biquad(biquad(noise(len(t)), 'bp', 3500, 0.7), 'hp', 900) * exp_env(t, dur / 3.5)
+    x = np.tanh(2 * (0.7 * body + wires))
+    return fade(normalize(reverb(x, 0.35, 0.18))[:int((dur + 0.1) * SR)] * level)
+
+
+def tambourine():
+    t = t_of(0.3)
+    jingles = biquad(noise(len(t)), 'bp', 7500, 2) * exp_env(t, 0.08)
+    shake = biquad(noise(len(t)), 'hp', 5000) * np.clip(t / 0.01, 0, 1) * exp_env(t, 0.05)
+    return fade(normalize(jingles + 0.6 * shake))
+
+
+def rave_piano(notes, dur=1.4, verb=0.25):
+    """Piano « house » façon M1 : partiels légèrement inharmoniques, marteau, réverbe."""
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    x = np.zeros(n)
+    for nt in notes:
+        f = hz(nt)
+        for k in range(1, 11):
+            fk = k * f * np.sqrt(1 + 0.0004 * k * k)
+            if fk > SR * 0.45:
+                break
+            amp = 1 / k ** 1.2
+            for det in (-0.6, 0.6):   # deux cordes par note, légèrement désaccordées
+                x += amp * np.sin(2 * np.pi * (fk + det) * t + rng.random() * 6.28) * np.exp(-t / (0.9 / k ** 0.6))
+    x /= len(notes) * 6
+    hammer = biquad(noise(n), 'bp', 2500, 1) * np.exp(-t / 0.006) * 0.6
+    x = biquad(x + hammer, 'peak', 3000, 0.8, 4) * np.clip(t / 0.002, 0, 1)
+    return fade(normalize(reverb(x, 1.4, verb)), fout=0.1)
+
+
+def mentasm(notes, dur=0.9):
+    """Stab « Mentasm » : scies désaccordées à l'octave, glissé vers le bas, chorus épais."""
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    bend = 3 * np.exp(-t / 0.05) - 1.2 * t
+    x = np.zeros(n)
+    for nt in notes:
+        for c in (-20, -8, 0, 9, 21):
+            x += saw(hz(nt + bend + c / 100), n)
+        x += 0.7 * pulse(hz(nt - 12 + bend), 0.3, n)
+    x = chorus(x / (len(notes) * 6), depth_ms=9, rate=1.1)
+    x = np.tanh(2 * biquad(x, 'lp', 3500, 1.2)) * adsr(n, 0.005, 0.25, 0.6, 0.2, dur - 0.2)
+    return fade(normalize(x))
+
+
+def belgian_stab(notes, dur=0.5):
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    x = sum(saw(hz(nt), n) + np.sign(np.sin(2 * np.pi * hz(nt + 0.08) * t)) for nt in notes)
+    x = sweep(x / (2 * len(notes)), 'lp', 300 + 5000 * np.exp(-t / 0.06), 5)
+    x = np.tanh(3 * x) * exp_env(t, 0.15, 0.01)
+    return fade(normalize(reverb(x, 0.9, 0.2)), fout=0.08)
+
+
+VOWEL_A = ((800, 1.0, 8), (1150, 0.6, 9), (2900, 0.25, 10))
+VOWEL_O = ((450, 1.0, 8), (800, 0.5, 9), (2830, 0.15, 10))
+
+
+def choir(notes, dur=3.0, vowel=VOWEL_A, attack=0.3, release=0.7, verb=0.4):
+    """Chœur « ahh » : scies passées dans des filtres de formants, vibrato, chorus."""
+    n = int((dur + release) * SR)
+    t = np.arange(n) / SR
+    vib = 0.15 * np.sin(2 * np.pi * 5 * t) * np.clip((t - 0.2) / 0.4, 0, 1)
+    src = np.zeros(n)
+    for nt in notes:
+        for c in (-9, 0, 8):
+            src += saw(hz(nt + vib + c / 100), n)
+    x = sum(g * biquad(src, 'bp', f, q) for f, g, q in vowel)
+    x = chorus(x, depth_ms=7, rate=0.4) * adsr(n, attack, 0.5, 0.9, release, dur)
+    return fade(normalize(reverb(fade(x), 2.0, verb)), fout=0.3)
+
+
+def vox_stab(note=65):
+    """Petit « oh-ah » : passage de la voyelle o vers a."""
+    a = choir([note, note + 7], 0.25, VOWEL_O, attack=0.01, release=0.15, verb=0)
+    b = choir([note, note + 7], 0.25, VOWEL_A, attack=0.01, release=0.2, verb=0)
+    cross = np.linspace(0, 1, min(len(a), len(b)))
+    x = a[:len(cross)] * (1 - cross) + b[:len(cross)] * cross
+    return fade(normalize(reverb(x, 0.8, 0.25)), fout=0.1)
+
+
+def whistle():
+    t = t_of(0.9)
+    f = 2300 + 500 * np.sin(2 * np.pi * 14 * t) * np.clip((t - 0.25) / 0.05, 0, 1) + 600 * np.exp(-t / 0.05)
+    x = np.sin(2 * np.pi * np.cumsum(f) / SR) + 0.15 * biquad(noise(len(t)), 'bp', 2500, 3)
+    return fade(normalize(x * adsr(len(t), 0.01, 0.2, 0.9, 0.1, 0.75)), fout=0.05)
+
+
+def air_raid(dur=4.0):
+    t = t_of(dur)
+    f = 250 + 650 * np.clip(t / (dur * 0.45), 0, 1) - 450 * np.clip((t - dur * 0.6) / (dur * 0.4), 0, 1)
+    x = saw(f, len(t)) + saw(f * 1.5, len(t)) * 0.5
+    x = biquad(np.tanh(2 * x), 'lp', 3000) * adsr(len(t), 0.3, 1, 1, 0.5)
+    return fade(normalize(x), fout=0.3)
+
+
+def hoover_down(note=65, dur=1.2):
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    drop = -12 * np.clip((t - 0.1) / (dur - 0.2), 0, 1) ** 1.5
+    x = sum(saw(hz(note + drop + c / 100), n) for c in (-25, -10, 0, 12, 26)) + 0.8 * saw(hz(note - 12 + drop), n)
+    x = np.tanh(1.8 * biquad(chorus(x / 6, 8, 0.9), 'lp', 4000)) * adsr(n, 0.01, 0.3, 0.9, 0.15, dur - 0.15)
+    return fade(normalize(x))
+
+
+def scratch():
+    t = t_of(0.6)
+    speed = np.abs(np.sin(2 * np.pi * 3.3 * t)) ** 0.7
+    src = saw(180 + 900 * speed, len(t)) * 0.5 + noise(len(t)) * 0.5
+    x = sweep(src, 'bp', 400 + 3000 * speed, 2) * (speed > 0.15)
+    return fade(normalize(np.tanh(2 * x)), fout=0.02)
+
+
+def rave_zap():
+    t = t_of(0.35)
+    x = np.sign(np.sin(2 * np.pi * np.cumsum(1800 * np.exp(-t / 0.06) + 60) / SR)) * exp_env(t, 0.1)
+    return fade(normalize(biquad(x, 'lp', 6000)))
+
+
+def slice_loop(loop, order, slices):
+    """Redécoupe une boucle en `slices` tranches égales et les réordonne (break « chopé »)."""
+    size = len(loop) // slices
+    parts = [fade(loop[i * size:(i + 1) * size], fin=0.001, fout=0.003) for i in range(slices)]
+    out = np.concatenate([parts[i] for i in order])
+    return np.concatenate([out, np.zeros(len(loop) - len(out))])
+
+
 # ---------------------------------------------------------------- boucles
 
 def step_len(bpm):
@@ -592,7 +741,94 @@ def build(bpm=190):
         *[(f'Rave {nm}', PINK, ONESHOT, stab([n, n + 3, n + 7], dur=0.45, drive=4), None)
           for nm, n in zip(['F', 'G', 'G#', 'A#', 'C', 'C#', 'D#', 'F+'], [65, 67, 68, 70, 72, 73, 75, 77])],
     ]
-    return [('Gabber', bank1), ('Gabber 2', bank2), ('Hardcore', build_hardcore(bpm))]
+    return [('Gabber', bank1), ('Gabber 2', bank2), ('Hardcore', build_hardcore(bpm)), ('Oldschool', build_oldschool(bpm))]
+
+
+def build_oldschool(bpm=190):
+    """Rave / hardcore début 90 : 909, breakbeats, pianos, stabs, chœurs. Même tempo et tonalité que les autres."""
+    RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, VIOLET, PINK, WHITE = 5, 9, 13, 21, 37, 41, 49, 57, 3
+    ONESHOT, HOLD, LOOP = 0, 1, 2
+    step = step_len(bpm)
+    bar = 16
+
+    k909 = gabber_kick(F, drive=4, lp=5000, mid_db=2, tail=0.7, dur=0.9, asym=0.1)
+    kb = break_kick()
+    sn = break_snare()
+    ghost = break_snare(0.35, 0.12)
+    rd = ride()
+    oh = hat(0.25, 1.5)
+    chords = {'Fm': [53, 56, 60, 65], 'Db': [49, 53, 56, 61], 'Eb': [51, 55, 58, 63],
+              'Cm': [48, 51, 55, 60], 'Bbm': [46, 53, 58, 61], 'Ab': [48, 51, 56, 60]}
+
+    # Break façon Amen sur 2 mesures (K = kick, S = snare, g = ghost), ride en croches.
+    pattern = [
+        ('K', 0), ('K', 2), ('S', 4), ('g', 7), ('S', 9), ('K', 10), ('K', 11), ('S', 12), ('g', 15),
+        ('K', 16), ('K', 18), ('S', 20), ('g', 23), ('S', 25), ('K', 26), ('S', 28), ('g', 30), ('S', 31),
+    ]
+    hits = {'K': (kb, 1.0), 'S': (sn, 0.9), 'g': (ghost, 1.0)}
+    brk = render(bpm, 2, [(s, hits[h][0], hits[h][1]) for h, s in pattern] + [(s, rd, 0.2) for s in range(0, 32, 2)])
+    brk = normalize(brk)
+    chopped = slice_loop(brk, [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 4, 5, 12, 13, 14, 15], 16)
+    kick_loop = normalize(render(bpm, 1, [(s, k909) for s in range(0, 16, 4)], choke=True))
+
+    stab_steps = [0, 3, 6, 10, 12]
+    piano = {c: rave_piano(chords[c], step * 3, verb=0.15) for c in ('Fm', 'Db')}
+    piano_riff = render(bpm, 2, [(b * bar + s, piano[c], 0.9) for b, c in enumerate(('Fm', 'Db')) for s in stab_steps])
+    arp_notes = [[65, 68, 72, 77], [61, 65, 68, 73]]
+    plucks = {nt: belgian_stab([nt], step * 1.2) for row in arp_notes for nt in row}
+    arp = render(bpm, 2, [(b * bar + s, plucks[arp_notes[b][s % 4]], 0.8) for b in range(2) for s in range(16)])
+    ment = {c: mentasm(chords[c][1:], step * 5) for c in ('Fm', 'Db', 'Eb')}
+    ment_riff = render(bpm, 2, [(0, ment['Fm']), (6, ment['Fm']), (12, ment['Fm']),
+                                (16, ment['Db']), (22, ment['Db']), (28, ment['Eb'])], choke=True)
+    prog = ['Fm', 'Db', 'Eb', 'Cm']
+    choir_prog = render(bpm, 4, [(b * bar, choir(chords[c], dur=step * bar, attack=0.25, release=0.5)) for b, c in enumerate(prog)])
+    subs = render(bpm, 4, [(b * bar, kick808(r, step * bar * 0.9), 0.6) for b, r in enumerate((29, 25, 27, 24))])
+
+    four = lambda loop: np.tile(loop, 4)
+    bank = [
+        # rangée 1 : kicks d'époque
+        ('909 boom', RED, ONESHOT, k909, None),
+        ('909 early', RED, ONESHOT, gabber_kick(F, drive=12, lp=4200, mid_db=3, tail=0.6), None),
+        ('808 long', ORANGE, ONESHOT, kick808(), None),
+        ('Thunderdome', RED, ONESHOT, gabber_kick(F + 2, drive=20, tail=1.1, dur=1.3, lp=3800), None),
+        ("Kick '93", RED, ONESHOT, gabber_kick(F + 5, drive=8, decay=0.12, tail=0.2, dur=0.4), None),
+        ('Break kick', ORANGE, ONESHOT, kb, None),
+        ('Soft doef', ORANGE, ONESHOT, gabber_kick(F, drive=6, lp=2500, tail=0.9, dur=1.1), None),
+        ('Kick + sub', RED, ONESHOT, layer(k909, kick808(29, 1.2), 0.7), None),
+        # rangée 2 : éléments de breakbeat
+        ('Break snare', YELLOW, ONESHOT, sn, None),
+        ('Ghost snare', YELLOW, ONESHOT, normalize(ghost), None),
+        ('Rim', YELLOW, ONESHOT, rim(), None),
+        ('Ride', YELLOW, ONESHOT, rd, None),
+        ('Open hat', YELLOW, ONESHOT, oh, None),
+        ('Clap 909', YELLOW, ONESHOT, clap(2), None),
+        ('Tambourine', YELLOW, ONESHOT, tambourine(), None),
+        ('Crash', YELLOW, ONESHOT, crash(), None),
+        # rangée 3 : pianos rave et stabs
+        *[(f'Piano {c}', PINK, ONESHOT, rave_piano(chords[c]), None) for c in ['Fm', 'Db', 'Eb', 'Cm', 'Bbm', 'Ab']],
+        ('Mentasm', VIOLET, ONESHOT, mentasm(chords['Fm'][1:]), None),
+        ('Belgian stab', VIOLET, ONESHOT, belgian_stab([65, 68, 72]), None),
+        # rangée 4 : voix, effets, leads
+        ('Choir ahh', CYAN, HOLD, choir(chords['Fm']), None),
+        ('Vox stab', CYAN, ONESHOT, vox_stab(), None),
+        ('Whistle', WHITE, ONESHOT, whistle(), None),
+        ('Air raid', WHITE, HOLD, air_raid(), None),
+        ('Hoover down', VIOLET, ONESHOT, hoover_down(), None),
+        ('Sub boom', BLUE, ONESHOT, kick808(29, 2.5), None),
+        ('Rave zap', WHITE, ONESHOT, rave_zap(), None),
+        ('Scratch', WHITE, ONESHOT, scratch(), None),
+        # rangée 5 : boucles
+        ('Amen-style break', GREEN, LOOP, brk, 2),
+        ('Break + kick', GREEN, LOOP, mix(np.tile(kick_loop, 2), brk * 0.8), 2),
+        ('Chopped break', GREEN, LOOP, normalize(chopped), 2),
+        ('Piano riff', PINK, LOOP, normalize(piano_riff), 2),
+        ('Rave arp', BLUE, LOOP, normalize(arp), 2),
+        ('Mentasm riff', VIOLET, LOOP, normalize(ment_riff), 2),
+        ('Choir chords', CYAN, LOOP, normalize(choir_prog), 4),
+        ('Oldschool track', GREEN, LOOP, mix(four(kick_loop), np.tile(brk, 2) * 0.7, np.tile(piano_riff, 2) * 0.8,
+                                              choir_prog * 0.5, subs * 0.8), 4),
+    ]
+    return bank
 
 
 def build_hardcore(bpm=190):

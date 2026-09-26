@@ -245,6 +245,9 @@ const SOUNDS_FR = {
   'Bass + kick': 'Basse + kick', 'Strings + beat': 'Cordes + beat', 'Full track': 'Morceau complet',
   'Terror loop': 'Boucle terror', 'Kick gallop': 'Kick galop', 'Industrial loop': 'Boucle industrial',
   'Snare fill': 'Roulement snare', 'Breakdown hit': 'Impact breakdown',
+  'Soft doef': 'Doef doux', 'Tambourine': 'Tambourin', 'Choir ahh': 'Chœur ahh', 'Whistle': 'Sifflet',
+  'Air raid': 'Sirène d\'alerte', 'Amen-style break': 'Break façon Amen', 'Chopped break': 'Break découpé',
+  'Choir chords': 'Accords chœur', 'Oldschool track': 'Morceau oldschool', 'Belgian stab': 'Stab belge',
 };
 
 export function t(key, vars = {}) {

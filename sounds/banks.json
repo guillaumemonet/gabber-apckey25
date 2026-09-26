@@ -2095,6 +2095,267 @@
      "mode": 0
     }
    ]
+  },
+  {
+   "name": "Oldschool",
+   "pads": [
+    {
+     "file": "bank9/01.flac",
+     "name": "909 boom",
+     "color": 5,
+     "mode": 0
+    },
+    {
+     "file": "bank9/02.flac",
+     "name": "909 early",
+     "color": 5,
+     "mode": 0
+    },
+    {
+     "file": "bank9/03.flac",
+     "name": "808 long",
+     "color": 9,
+     "mode": 0
+    },
+    {
+     "file": "bank9/04.flac",
+     "name": "Thunderdome",
+     "color": 5,
+     "mode": 0
+    },
+    {
+     "file": "bank9/05.flac",
+     "name": "Kick '93",
+     "color": 5,
+     "mode": 0
+    },
+    {
+     "file": "bank9/06.flac",
+     "name": "Break kick",
+     "color": 9,
+     "mode": 0
+    },
+    {
+     "file": "bank9/07.flac",
+     "name": "Soft doef",
+     "color": 9,
+     "mode": 0
+    },
+    {
+     "file": "bank9/08.flac",
+     "name": "Kick + sub",
+     "color": 5,
+     "mode": 0
+    },
+    {
+     "file": "bank9/09.flac",
+     "name": "Break snare",
+     "color": 13,
+     "mode": 0
+    },
+    {
+     "file": "bank9/10.flac",
+     "name": "Ghost snare",
+     "color": 13,
+     "mode": 0
+    },
+    {
+     "file": "bank9/11.flac",
+     "name": "Rim",
+     "color": 13,
+     "mode": 0
+    },
+    {
+     "file": "bank9/12.flac",
+     "name": "Ride",
+     "color": 13,
+     "mode": 0
+    },
+    {
+     "file": "bank9/13.flac",
+     "name": "Open hat",
+     "color": 13,
+     "mode": 0
+    },
+    {
+     "file": "bank9/14.flac",
+     "name": "Clap 909",
+     "color": 13,
+     "mode": 0
+    },
+    {
+     "file": "bank9/15.flac",
+     "name": "Tambourine",
+     "color": 13,
+     "mode": 0
+    },
+    {
+     "file": "bank9/16.flac",
+     "name": "Crash",
+     "color": 13,
+     "mode": 0
+    },
+    {
+     "file": "bank9/17.flac",
+     "name": "Piano Fm",
+     "color": 57,
+     "mode": 0
+    },
+    {
+     "file": "bank9/18.flac",
+     "name": "Piano Db",
+     "color": 57,
+     "mode": 0
+    },
+    {
+     "file": "bank9/19.flac",
+     "name": "Piano Eb",
+     "color": 57,
+     "mode": 0
+    },
+    {
+     "file": "bank9/20.flac",
+     "name": "Piano Cm",
+     "color": 57,
+     "mode": 0
+    },
+    {
+     "file": "bank9/21.flac",
+     "name": "Piano Bbm",
+     "color": 57,
+     "mode": 0
+    },
+    {
+     "file": "bank9/22.flac",
+     "name": "Piano Ab",
+     "color": 57,
+     "mode": 0
+    },
+    {
+     "file": "bank9/23.flac",
+     "name": "Mentasm",
+     "color": 49,
+     "mode": 0
+    },
+    {
+     "file": "bank9/24.flac",
+     "name": "Belgian stab",
+     "color": 49,
+     "mode": 0
+    },
+    {
+     "file": "bank9/25.flac",
+     "name": "Choir ahh",
+     "color": 37,
+     "mode": 1
+    },
+    {
+     "file": "bank9/26.flac",
+     "name": "Vox stab",
+     "color": 37,
+     "mode": 0
+    },
+    {
+     "file": "bank9/27.flac",
+     "name": "Whistle",
+     "color": 3,
+     "mode": 0
+    },
+    {
+     "file": "bank9/28.flac",
+     "name": "Air raid",
+     "color": 3,
+     "mode": 1
+    },
+    {
+     "file": "bank9/29.flac",
+     "name": "Hoover down",
+     "color": 49,
+     "mode": 0
+    },
+    {
+     "file": "bank9/30.flac",
+     "name": "Sub boom",
+     "color": 41,
+     "mode": 0
+    },
+    {
+     "file": "bank9/31.flac",
+     "name": "Rave zap",
+     "color": 3,
+     "mode": 0
+    },
+    {
+     "file": "bank9/32.flac",
+     "name": "Scratch",
+     "color": 3,
+     "mode": 0
+    },
+    {
+     "file": "bank9/33.flac",
+     "name": "Amen-style break",
+     "color": 21,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank9/34.flac",
+     "name": "Break + kick",
+     "color": 21,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank9/35.flac",
+     "name": "Chopped break",
+     "color": 21,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank9/36.flac",
+     "name": "Piano riff",
+     "color": 57,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank9/37.flac",
+     "name": "Rave arp",
+     "color": 41,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank9/38.flac",
+     "name": "Mentasm riff",
+     "color": 49,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank9/39.flac",
+     "name": "Choir chords",
+     "color": 37,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank9/40.flac",
+     "name": "Oldschool track",
+     "color": 21,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 4
+    }
+   ]
   }
  ]
 }
