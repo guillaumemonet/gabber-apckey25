@@ -41,7 +41,7 @@ Ou télécharge le ZIP depuis GitHub et décompresse-le.
 2. Lance le serveur local :
    - **Windows** : double-clic sur `start.bat`.
    - **macOS / Linux** : `./start.sh`.
-   - **Partout** : `python -m http.server 8025`, puis ouvre http://localhost:8025.
+   - **Partout** : `python tools/serve.py`, puis ouvre http://localhost:8025.
 3. Dans Chrome ou Edge, clique sur **Démarrer**, puis **autorise les appareils MIDI** quand le navigateur le demande.
 
 L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert quand le contrôleur est détecté.
@@ -123,6 +123,7 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 | « Port inaccessible » | Un autre logiciel (Ableton, FL Studio…) utilise l'APC. Sous Windows, un port MIDI ne se partage pas : ferme ce logiciel et recharge. |
 | Détecté mais les pads ne font rien | Débranche l'APC, attends 10 secondes, rebranche-le sur un autre port USB, puis recharge. Le service MIDI de Windows peut cesser de transmettre après une mise en veille ou un branchement à chaud. |
 | Pas de son | Clique d'abord sur **Démarrer** : les navigateurs bloquent le son avant un clic. |
+| Une nouvelle banque de sons n'apparaît pas | Relance `start.bat` / `start.sh`, puis recharge. Une nouvelle banque de la bibliothèque va dans sa banque prévue si elle est vide, sinon dans la première banque vide (un message indique laquelle). |
 | Voir ce qu'envoie l'APC | Ouvre le **Moniteur MIDI** en bas de page. |
 
 ## Régénérer les banques de sons (facultatif)
@@ -157,6 +158,7 @@ js/kit.js             kit de départ (synthétisé)
 js/kits.js            export / import de kits
 js/recorder*.js       enregistrement WAV
 js/storage.js         sauvegarde locale (IndexedDB)
+tools/serve.py        serveur web local (sans cache)
 tools/build_banks.py  construction des banques de sons
 tools/gabber.py       synthèse des sons gabber
 sounds/               banques générées + banks.json

@@ -15,6 +15,7 @@ const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (E
 const $ = sel => document.querySelector(sel);
 
 let engine, apc, kit, recorder;
+let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
   page: 'synth',
@@ -70,6 +71,7 @@ async function start() {
   drawMeter();
   renderAll();
   $('#start').classList.add('hidden');
+  if (libAdded.length) toast(libAdded.map(a => t('lib.added', { name: a.name, n: a.bank })).join(' · '), 6000);
 
   apc = new APC();
   bindController();
@@ -89,6 +91,7 @@ function globalValue(id, p) { return toValue(globalDef(id), p); }
 
 async function restore() {
   const saved = await store.loadState().catch(() => null);
+  const firstRun = !saved;
   state.banks = Array.from({ length: BANKS }, () => new Array(40).fill(null));
   if (!saved) {
     kit.forEach((s, i) => { state.banks[0][i] = newPad(soundName(s.name), s.color, `builtin:${i}`, s.buffer); });
@@ -111,7 +114,8 @@ async function restore() {
       }
     }
   }
-  await importLibrary();
+  const added = await importLibrary();
+  libAdded = firstRun ? [] : added;   // au premier lancement, tout est nouveau : pas de message
 
   // Décodage des fichiers (importés par l'utilisateur ou de la bibliothèque) en parallèle.
   const pending = state.banks.flat().filter(p => p && !p.buffer && /^(user|lib):/.test(p.sampleId));
@@ -121,32 +125,43 @@ async function restore() {
     if (pad.sampleId.startsWith('user:')) {
       data = (await store.loadSample(pad.sampleId).catch(() => null))?.data?.slice(0);
     } else {
-      data = await fetch(`sounds/${pad.sampleId.slice(4)}`).then(r => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
+      data = await fetch(`sounds/${pad.sampleId.slice(4)}`, { cache: 'no-cache' }).then(r => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
     }
     if (data) pad.buffer = await engine.ctx.decodeAudioData(data).catch(() => null);
     $('#start-msg').textContent = t('start.loading', { done: ++done, total: pending.length });
   }));
 }
 
-// Remplit les banques vides avec la bibliothèque générée par tools/build_banks.py.
+// Ajoute les banques de la bibliothèque (tools/build_banks.py) qui ne sont encore nulle part.
+// Une banque va à son emplacement prévu s'il est vide, sinon dans la première banque vide.
+// Renvoie la liste des banques ajoutées : [{ name, bank }].
 async function importLibrary() {
-  const lib = await fetch('sounds/banks.json').then(r => (r.ok ? r.json() : null)).catch(() => null);
-  if (!lib) return;
+  const lib = await fetch('sounds/banks.json', { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+  if (!lib) return [];
   const modeDef = PAGES.pad.params[7];
   const firstImport = !state.libBanks.length;
+  const added = [];
   lib.banks.forEach((bank, k) => {
-    const b = k + 1;   // la banque 1 garde le kit de synthèse
-    if (b >= BANKS || state.libBanks.includes(bank.name)) return;
-    state.libBanks.push(bank.name);
-    if (state.banks[b].some(Boolean)) return;   // ne jamais écraser une banque de l'utilisateur
+    const folder = `lib:${bank.pads.find(Boolean)?.file.split('/')[0]}/`;
+    const present = state.banks.some(bk => bk.some(p => p?.sampleId?.startsWith(folder)));
+    if (present) {
+      if (!state.libBanks.includes(bank.name)) state.libBanks.push(bank.name);
+      return;
+    }
+    const isFree = b => b > 0 && b < BANKS && !state.banks[b].some(Boolean);
+    const slot = isFree(k + 1) ? k + 1 : state.banks.findIndex((_, b) => isFree(b));
+    if (slot < 0) return;   // aucune banque libre : réessayé au prochain démarrage
     bank.pads.forEach((s, i) => {
       if (!s) return;
       const pad = newPad(soundName(s.name), s.color, `lib:${s.file}`, null, s.bpm || 0);
       pad.p.mode = s.mode / (modeDef.steps - 1);
-      state.banks[b][i] = pad;
+      state.banks[slot][i] = pad;
     });
+    if (!state.libBanks.includes(bank.name)) state.libBanks.push(bank.name);
+    added.push({ name: bank.name, bank: slot + 1 });
   });
   if (firstImport && lib.bpm) state.bpm = lib.bpm;
+  return added;
 }
 
 let saveTimer;
@@ -973,7 +988,7 @@ function bindKits() {
 // ---------- Divers ----------
 
 let toastTimer;
-function toast(text) {
+function toast(text, duration = 1800) {
   let el = $('#toast');
   if (!el) {
     el = document.createElement('div');
@@ -983,7 +998,7 @@ function toast(text) {
   el.textContent = text;
   el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+  toastTimer = setTimeout(() => el.classList.remove('show'), duration);
 }
 
 function drawMeter() {

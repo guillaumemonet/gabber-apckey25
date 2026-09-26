@@ -41,7 +41,7 @@ Or download the ZIP from GitHub and unzip it.
 2. Start the local server:
    - **Windows**: double-click `start.bat`.
    - **macOS / Linux**: run `./start.sh`.
-   - **Anywhere**: run `python -m http.server 8025`, then open http://localhost:8025.
+   - **Anywhere**: run `python tools/serve.py`, then open http://localhost:8025.
 3. In Chrome or Edge, click **Start**, then **allow MIDI devices** when the browser asks.
 
 The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot once the controller is detected.
@@ -123,6 +123,7 @@ The interface follows the browser language: French if the browser is set to Fren
 | "Port unavailable" | Another app (Ableton, FL Studio…) is using the APC. On Windows a MIDI port cannot be shared, so close that app and reload. |
 | Detected but pads do nothing | Unplug the APC, wait 10 seconds, plug it into another USB port, then reload. Windows' MIDI service can stop delivering input after sleep or hot-plugging. |
 | No sound | Click **Start** first: browsers block audio until a click. |
+| A new sound bank does not appear | Restart `start.bat` / `start.sh`, then reload. New library banks go to their planned bank if it is empty, otherwise to the first empty bank (a message tells you which). |
 | See what the APC sends | Open **MIDI monitor** at the bottom of the page. |
 
 ## Rebuilding the sound banks (optional)
@@ -157,6 +158,7 @@ js/kit.js             starter kit (synthesised)
 js/kits.js            kit export / import
 js/recorder*.js       WAV recording
 js/storage.js         local saving (IndexedDB)
+tools/serve.py        local web server (no cache)
 tools/build_banks.py  sound bank builder
 tools/gabber.py       gabber sound synthesis
 sounds/               generated banks + banks.json

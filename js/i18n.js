@@ -58,6 +58,7 @@ const STRINGS = {
     'kit.failed': 'Import failed: {msg}',
     'kit.badFile': 'This file is not a GabberKey kit.',
     'kit.file.bank': 'gabberkey-bank{n}',
+    'lib.added': 'New sound bank “{name}” added to bank {n}',
 
     'editor.title': 'Pad {pad} · Bank {bank}',
     'editor.name': 'Name',
@@ -169,6 +170,7 @@ const STRINGS = {
     'kit.failed': 'Import impossible : {msg}',
     'kit.badFile': 'Ce fichier n\'est pas un kit GabberKey.',
     'kit.file.bank': 'gabberkey-banque{n}',
+    'lib.added': 'Nouvelle banque de sons « {name} » ajoutée en banque {n}',
 
     'editor.title': 'Pad {pad} · Banque {bank}',
     'editor.name': 'Nom',
