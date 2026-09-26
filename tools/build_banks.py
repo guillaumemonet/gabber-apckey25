@@ -290,7 +290,7 @@ def main():
         '# Credits\n\nBanks 2-6 use samples from Sonic Pi (https://github.com/sonic-pi-net/sonic-pi, etc/samples),\n'
         'dedicated to the public domain (CC0) by their authors on freesound.org, Arovane and The Black Dog.\n'
         'They were processed (normalisation, trimming, tempo matching) by tools/build_banks.py.\n\n'
-        'The Gabber banks are fully synthesised by tools/gabber.py (no external samples).\n',
+        'The Gabber and Hardcore banks are fully synthesised by tools/gabber.py (no external samples).\n',
         encoding='utf-8')
     total = sum(p is not None for bank in manifest['banks'] for p in bank['pads'])
     print(f'\n{total} sounds written to {OUT}')

@@ -345,6 +345,89 @@ def reverse_crash():
     return normalize(crash()[::-1])
 
 
+# ---------------------------------------------------------------- cordes et basses (banque Hardcore)
+
+def strings(notes, dur=3.0, attack=0.35, release=0.8, bright=3800, verb=0.35):
+    """Ensemble de cordes : scies désaccordées + octave, vibrato retardé, chorus, réverbe."""
+    n = int((dur + release) * SR)
+    t = np.arange(n) / SR
+    vib = 0.12 * np.sin(2 * np.pi * 5.2 * t) * np.clip((t - 0.3) / 0.5, 0, 1)
+    x = np.zeros(n)
+    for nt in notes:
+        for cents in (-14, -7, -2, 3, 8, 13):
+            x += saw(hz(nt + vib + cents / 100), n)
+        x += 0.35 * saw(hz(nt + 12 + vib), n)
+    x = biquad(x / (len(notes) * 6), 'lp', bright, 0.7)
+    x = biquad(x, 'hp', 160)
+    x = biquad(x, 'peak', 1800, 1.0, 3)          # présence « archet »
+    x = chorus(x, depth_ms=5, rate=0.5) * adsr(n, attack, 0.6, 0.85, release, dur)
+    return fade(normalize(reverb(fade(x), 2.2, verb)), fout=0.3)
+
+
+def staccato(notes, dur=0.16, verb=0.2):
+    n = int((dur + 0.15) * SR)
+    t = np.arange(n) / SR
+    x = np.zeros(n)
+    for nt in notes:
+        for cents in (-10, -3, 4, 11):
+            x += saw(hz(nt + cents / 100), n)
+    x = biquad(x / (len(notes) * 4), 'lp', 5200, 0.8)
+    x = biquad(x, 'hp', 200) * adsr(n, 0.008, 0.08, 0.5, 0.08, dur)
+    return fade(normalize(reverb(fade(x), 1.2, verb)), fout=0.05)
+
+
+def orchestra_hit(notes=(53, 56, 60, 65, 68, 72)):
+    """Coup d'orchestre : cordes + cuivres + timbale + souffle, grosse réverbe."""
+    t = t_of(0.9)
+    st = staccato(notes, 0.35, verb=0)[:len(t)]
+    br = horn(tuple(n - 12 for n in notes[:3]), 0.6)[:len(t)]
+    timp = np.tanh(3 * sine_sweep(hz(29) * (1 + 0.4 * np.exp(-t / 0.03))) * exp_env(t, 0.35))
+    air = biquad(noise(len(t)), 'bp', 3000, 0.7) * exp_env(t, 0.05)
+    x = np.zeros(len(t))
+    for part, g in ((st, 1), (br, 0.6), (timp, 0.9), (air, 0.3)):
+        x[:len(part)] += g * part
+    return fade(normalize(reverb(np.tanh(1.5 * x), 2.5, 0.4)), fout=0.3)
+
+
+def hc_bass(note, dur=0.3, drive=6, cutoff=2600):
+    """Basse hardcore : scie + carré à l'octave basse + sinus, filtre qui se referme, saturation."""
+    n = int((dur + 0.02) * SR)
+    t = np.arange(n) / SR
+    f = hz(note)
+    x = saw(f, n) + 0.7 * np.sign(np.sin(2 * np.pi * f / 2 * t)) + 0.8 * np.sin(2 * np.pi * f / 2 * t)
+    x = sweep(x / 2.5, 'lp', 350 + cutoff * np.exp(-t / 0.05), 3)
+    x = np.tanh(drive * x)
+    x = biquad(biquad(x, 'lp', 5000), 'hp', 30) * adsr(n, 0.002, 0.15, 0.8, 0.02, dur)
+    return fade(normalize(x), fout=0.006)
+
+
+def reese(note, dur=2.0):
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    f = hz(note)
+    x = saw(f * 2 ** (-0.15 / 12), n) + saw(f * 2 ** (0.15 / 12), n) + 0.9 * np.sin(2 * np.pi * f / 2 * t)
+    x = sweep(x / 2.5, 'lp', 700 + 600 * np.sin(2 * np.pi * 0.5 * t), 4)
+    x = np.tanh(3 * x) * adsr(n, 0.01, 0.2, 0.9, 0.05, dur - 0.05)
+    return fade(normalize(x), fout=0.01)
+
+
+def mainstream_kick(note=41):
+    """Kick mainstream : attaque courte puis queue tonale saturée qui descend."""
+    t = t_of(0.7)
+    punch = gabber_kick(note + 12, drive=50, decay=0.04, tail=0.06, dur=0.7, lp=9000)
+    tail_f = hz(note + 12) * (1 + 0.8 * np.exp(-t / 0.05)) * (1 - 0.35 * t)
+    tail = np.tanh(10 * sine_sweep(tail_f)) * exp_env(t, 0.35, 0.08) * np.clip((t - 0.03) / 0.02, 0, 1)
+    tail = biquad(biquad(tail, 'bp', 900, 1.5), 'lp', 4000)
+    return fade(normalize(punch + 0.9 * normalize(tail)), fout=0.03)
+
+
+def industrial_kick(note=39):
+    t = t_of(0.6)
+    k = gabber_kick(note, drive=50, crush=6, dur=0.6)
+    grit = np.round(biquad(noise(len(t)), 'bp', 1500, 0.8) * 6) / 6 * exp_env(t, 0.12)
+    return fade(normalize(k + 0.35 * grit), fout=0.03)
+
+
 # ---------------------------------------------------------------- boucles
 
 def step_len(bpm):
@@ -371,6 +454,14 @@ def render(bpm, bars, events, choke=False):
             out[pos:pos + first] += chunk[:first]
             out[:len(chunk) - first] += chunk[first:]
     return out
+
+
+def layer(a, b, gain_b=1.0):
+    """Superpose deux sons de longueurs différentes."""
+    out = np.zeros(max(len(a), len(b)))
+    out[:len(a)] += a
+    out[:len(b)] += gain_b * b
+    return normalize(out)
 
 
 def mix(*loops):
@@ -501,4 +592,92 @@ def build(bpm=190):
         *[(f'Rave {nm}', PINK, ONESHOT, stab([n, n + 3, n + 7], dur=0.45, drive=4), None)
           for nm, n in zip(['F', 'G', 'G#', 'A#', 'C', 'C#', 'D#', 'F+'], [65, 67, 68, 70, 72, 73, 75, 77])],
     ]
-    return [('Gabber', bank1), ('Gabber 2', bank2)]
+    return [('Gabber', bank1), ('Gabber 2', bank2), ('Hardcore', build_hardcore(bpm))]
+
+
+def build_hardcore(bpm=190):
+    """Banque plus dure : kicks terror/uptempo, basses, cordes, boucles au même tempo que les banques Gabber."""
+    RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, VIOLET, PINK, WHITE = 5, 9, 13, 21, 37, 41, 49, 57, 3
+    ONESHOT, HOLD, LOOP = 0, 1, 2
+    step = step_len(bpm)
+    bar = 16
+
+    k_hard = gabber_kick(F, drive=50, mid_db=8)
+    k_terror = gabber_kick(F + 12, drive=90, decay=0.06, tail=0.12, dur=0.25, punch=500, mid_db=10)
+    k_speed = gabber_kick(F + 10, drive=120, decay=0.04, tail=0.07, dur=0.15, punch=700)
+    k_up = gabber_kick(F + 3, drive=60, tail=0.9, dur=1.0, lp=8000, mid_db=10)
+    hh = hat(0.05, 3)
+    oh = hat(0.2, 4)
+    cl = clap(6)
+    sn = snare(6)
+    grit = noise_hit()
+
+    # Accords de fa mineur : Fm, Db, Eb, Cm, Bbm, Ab (voicings moyens pour les nappes).
+    chords = {'Fm': [53, 56, 60, 65], 'Db': [49, 53, 56, 61], 'Eb': [51, 55, 58, 63],
+              'Cm': [48, 51, 55, 60], 'Bbm': [46, 53, 58, 61], 'Ab': [48, 51, 56, 60]}
+    roots = [41, 37, 39, 36]   # basse suivant la progression Fm - Db - Eb - Cm
+    prog = ['Fm', 'Db', 'Eb', 'Cm']
+
+    kick_loop = normalize(render(bpm, 1, [(s, k_hard) for s in range(0, 16, 4)], choke=True))
+    offhat = render(bpm, 1, [(s, oh, 0.5) for s in range(2, 16, 4)])
+    hats16 = render(bpm, 1, [(s, hh, 0.3 if s % 2 else 0.15) for s in range(16)])
+    claps = render(bpm, 1, [(4, cl, 0.7), (12, cl, 0.7)])
+
+    # Basses calées sur la grille (entre les kicks).
+    off_bass = render(bpm, 1, [(s, hc_bass(41, step * 1.8)) for s in (2, 6, 10, 14)])
+    roll_bass = render(bpm, 1, [(s, hc_bass(41, step * 0.9, drive=8)) for s in range(16) if s % 4])
+    reese_loop = render(bpm, 2, [(0, reese(41, step * bar)), (bar, reese(37, step * bar))], choke=True)
+    prog_bass = render(bpm, 4, [(b * bar + s, hc_bass(r, step * 1.8)) for b, r in enumerate(roots) for s in (2, 6, 10, 14)])
+
+    # Cordes : ostinato en doubles-croches (Fm puis Db) et nappes sur la progression.
+    stac = {nt: staccato([nt], step * 0.8, verb=0.1) for nt in (61, 65, 68, 72)}
+    arp = [[65, 68, 72, 68], [61, 65, 68, 65]]
+    ostinato = render(bpm, 2, [(b * bar + s, stac[arp[b][s % 4]], 0.9 if s % 4 == 0 else 0.7)
+                               for b in range(2) for s in range(16)])
+    pads = render(bpm, 4, [(b * bar, strings(chords[c], dur=step * bar, attack=0.2, release=0.6)) for b, c in enumerate(prog)])
+
+    terror = render(bpm, 1, [(s, k_terror) for s in range(0, 16, 2)], choke=True)
+    gallop = render(bpm, 1, [(s, k_hard) for s in (0, 3, 4, 7, 8, 11, 12, 14, 15)], choke=True)
+    industrial = mix(kick_loop, render(bpm, 1, [(s, grit, 0.5) for s in (2, 5, 6, 10, 13, 14)]), hats16)
+    speed_roll = render(bpm, 1, [(s, k_speed) for s in range(16)], choke=True)
+    snare_fill = render(bpm, 1, [(s, sn, 0.3 + 0.7 * s / 15) for s in range(16)] +
+                        [(s + 0.5, sn, 0.3 + 0.7 * s / 15) for s in range(8, 16)])
+
+    four = lambda loop: np.tile(loop, 4)
+    bank = [
+        # rangée 1 : kicks plus durs
+        ('Terror', RED, ONESHOT, k_terror, None),
+        ('Uptempo', RED, ONESHOT, k_up, None),
+        ('Speedcore', RED, ONESHOT, k_speed, None),
+        ('Industrial', ORANGE, ONESHOT, industrial_kick(), None),
+        ('Crunch', ORANGE, ONESHOT, gabber_kick(F, drive=45, crush=16, asym=0.5), None),
+        ('Mainstream', RED, ONESHOT, mainstream_kick(), None),
+        ('Distorted tok', ORANGE, ONESHOT, frenchcore_kick(F + 2), None),
+        ('Long tail', RED, ONESHOT, gabber_kick(F, drive=40, tail=1.6, dur=2.0), None),
+        # rangée 2 : basses (fa mineur)
+        *[(f'Bass {nm}', BLUE, ONESHOT, hc_bass(n, 0.5), None)
+          for nm, n in zip(['F', 'G', 'G#', 'A#', 'C', 'C#', 'D#', 'F+'], [41, 43, 44, 46, 48, 49, 51, 53])],
+        # rangée 3 : cordes
+        *[(f'Strings {c}', VIOLET, HOLD, strings(chords[c]), None) for c in ['Fm', 'Db', 'Eb', 'Cm', 'Bbm', 'Ab']],
+        ('Staccato Fm', PINK, ONESHOT, staccato(chords['Fm'], 0.2), None),
+        ('Orchestra hit', PINK, ONESHOT, orchestra_hit(), None),
+        # rangée 4 : boucles cordes et basses
+        ('String ostinato', CYAN, LOOP, normalize(ostinato), 2),
+        ('String pads', CYAN, LOOP, normalize(pads), 4),
+        ('Offbeat bass', BLUE, LOOP, normalize(off_bass), 1),
+        ('Rolling bass', BLUE, LOOP, normalize(roll_bass), 1),
+        ('Reese bass', BLUE, LOOP, normalize(reese_loop), 2),
+        ('Bass + kick', BLUE, LOOP, mix(kick_loop, off_bass), 1),
+        ('Strings + beat', CYAN, LOOP, mix(four(kick_loop), four(offhat), pads), 4),
+        ('Full track', CYAN, LOOP, mix(four(kick_loop), prog_bass, pads, np.tile(ostinato, 2) * 0.6, four(hats16) * 0.7), 4),
+        # rangée 5 : boucles de batterie hardcore
+        ('Terror loop', GREEN, LOOP, normalize(terror), 1),
+        ('Kick gallop', GREEN, LOOP, normalize(gallop), 1),
+        ('Industrial loop', GREEN, LOOP, industrial, 1),
+        ('Speed roll', GREEN, LOOP, normalize(speed_roll), 1),
+        ('Hard beat', GREEN, LOOP, mix(kick_loop, offhat, claps, hats16), 1),
+        ('Terror + hats', GREEN, LOOP, mix(terror, hats16), 1),
+        ('Snare fill', YELLOW, LOOP, normalize(snare_fill), 1),
+        ('Breakdown hit', WHITE, ONESHOT, layer(orchestra_hit(), impact(), 0.6), None),
+    ]
+    return bank

@@ -1820,6 +1820,281 @@
      "mode": 0
     }
    ]
+  },
+  {
+   "name": "Hardcore",
+   "pads": [
+    {
+     "file": "bank8/01.flac",
+     "name": "Terror",
+     "color": 5,
+     "mode": 0
+    },
+    {
+     "file": "bank8/02.flac",
+     "name": "Uptempo",
+     "color": 5,
+     "mode": 0
+    },
+    {
+     "file": "bank8/03.flac",
+     "name": "Speedcore",
+     "color": 5,
+     "mode": 0
+    },
+    {
+     "file": "bank8/04.flac",
+     "name": "Industrial",
+     "color": 9,
+     "mode": 0
+    },
+    {
+     "file": "bank8/05.flac",
+     "name": "Crunch",
+     "color": 9,
+     "mode": 0
+    },
+    {
+     "file": "bank8/06.flac",
+     "name": "Mainstream",
+     "color": 5,
+     "mode": 0
+    },
+    {
+     "file": "bank8/07.flac",
+     "name": "Distorted tok",
+     "color": 9,
+     "mode": 0
+    },
+    {
+     "file": "bank8/08.flac",
+     "name": "Long tail",
+     "color": 5,
+     "mode": 0
+    },
+    {
+     "file": "bank8/09.flac",
+     "name": "Bass F",
+     "color": 41,
+     "mode": 0
+    },
+    {
+     "file": "bank8/10.flac",
+     "name": "Bass G",
+     "color": 41,
+     "mode": 0
+    },
+    {
+     "file": "bank8/11.flac",
+     "name": "Bass G#",
+     "color": 41,
+     "mode": 0
+    },
+    {
+     "file": "bank8/12.flac",
+     "name": "Bass A#",
+     "color": 41,
+     "mode": 0
+    },
+    {
+     "file": "bank8/13.flac",
+     "name": "Bass C",
+     "color": 41,
+     "mode": 0
+    },
+    {
+     "file": "bank8/14.flac",
+     "name": "Bass C#",
+     "color": 41,
+     "mode": 0
+    },
+    {
+     "file": "bank8/15.flac",
+     "name": "Bass D#",
+     "color": 41,
+     "mode": 0
+    },
+    {
+     "file": "bank8/16.flac",
+     "name": "Bass F+",
+     "color": 41,
+     "mode": 0
+    },
+    {
+     "file": "bank8/17.flac",
+     "name": "Strings Fm",
+     "color": 49,
+     "mode": 1
+    },
+    {
+     "file": "bank8/18.flac",
+     "name": "Strings Db",
+     "color": 49,
+     "mode": 1
+    },
+    {
+     "file": "bank8/19.flac",
+     "name": "Strings Eb",
+     "color": 49,
+     "mode": 1
+    },
+    {
+     "file": "bank8/20.flac",
+     "name": "Strings Cm",
+     "color": 49,
+     "mode": 1
+    },
+    {
+     "file": "bank8/21.flac",
+     "name": "Strings Bbm",
+     "color": 49,
+     "mode": 1
+    },
+    {
+     "file": "bank8/22.flac",
+     "name": "Strings Ab",
+     "color": 49,
+     "mode": 1
+    },
+    {
+     "file": "bank8/23.flac",
+     "name": "Staccato Fm",
+     "color": 57,
+     "mode": 0
+    },
+    {
+     "file": "bank8/24.flac",
+     "name": "Orchestra hit",
+     "color": 57,
+     "mode": 0
+    },
+    {
+     "file": "bank8/25.flac",
+     "name": "String ostinato",
+     "color": 37,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank8/26.flac",
+     "name": "String pads",
+     "color": 37,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank8/27.flac",
+     "name": "Offbeat bass",
+     "color": 41,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank8/28.flac",
+     "name": "Rolling bass",
+     "color": 41,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank8/29.flac",
+     "name": "Reese bass",
+     "color": 41,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank8/30.flac",
+     "name": "Bass + kick",
+     "color": 41,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank8/31.flac",
+     "name": "Strings + beat",
+     "color": 37,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank8/32.flac",
+     "name": "Full track",
+     "color": 37,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank8/33.flac",
+     "name": "Terror loop",
+     "color": 21,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank8/34.flac",
+     "name": "Kick gallop",
+     "color": 21,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank8/35.flac",
+     "name": "Industrial loop",
+     "color": 21,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank8/36.flac",
+     "name": "Speed roll",
+     "color": 21,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank8/37.flac",
+     "name": "Hard beat",
+     "color": 21,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank8/38.flac",
+     "name": "Terror + hats",
+     "color": 21,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank8/39.flac",
+     "name": "Snare fill",
+     "color": 13,
+     "mode": 2,
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank8/40.flac",
+     "name": "Breakdown hit",
+     "color": 3,
+     "mode": 0
+    }
+   ]
   }
  ]
 }

@@ -237,6 +237,12 @@ const SOUNDS_FR = {
   'Open hat': 'Hat ouvert', 'Closed hat': 'Hat fermé', 'Siren': 'Sirène', 'Long siren': 'Sirène longue',
   'Downlifter': 'Descente', 'Reverse crash': 'Crash inversé', 'High horn': 'Horn aigu',
   'Acid only': 'Acid seul', 'Hoover only': 'Hoover seul', 'Stabs only': 'Stabs seuls',
+  'Distorted tok': 'Tok distordu', 'Long tail': 'Queue longue', 'Strings': 'Cordes',
+  'Orchestra hit': 'Coup d\'orchestre', 'String ostinato': 'Ostinato cordes', 'String pads': 'Nappes cordes',
+  'Offbeat bass': 'Basse offbeat', 'Rolling bass': 'Basse roulante', 'Reese bass': 'Basse reese',
+  'Bass + kick': 'Basse + kick', 'Strings + beat': 'Cordes + beat', 'Full track': 'Morceau complet',
+  'Terror loop': 'Boucle terror', 'Kick gallop': 'Kick galop', 'Industrial loop': 'Boucle industrial',
+  'Snare fill': 'Roulement snare', 'Breakdown hit': 'Impact breakdown',
 };
 
 export function t(key, vars = {}) {
