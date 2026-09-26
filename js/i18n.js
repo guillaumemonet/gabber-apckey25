@@ -21,7 +21,7 @@ const STRINGS = {
     'status.noPorts': 'no MIDI port detected',
     'status.portBusy': 'Port “{port}” unavailable: close Ableton / FL Studio / any app using it, then reload the page ({msg})',
     'status.denied': 'MIDI access denied: click the icon left of the address bar → MIDI devices → Allow, then reload the page',
-    'status.noWebMidi': 'Web MIDI is not supported (use Chrome or Edge).',
+    'status.noWebMidi': 'Web MIDI is not supported (use Chrome, Edge or Firefox).',
     'meter.aria': 'Output level',
 
     'tempo.title': 'Global tempo: loops follow it and start on the next bar',
@@ -133,7 +133,7 @@ const STRINGS = {
     'status.noPorts': 'aucun port MIDI détecté',
     'status.portBusy': 'Port « {port} » inaccessible : ferme Ableton / FL Studio / tout logiciel qui l\'utilise, puis recharge la page ({msg})',
     'status.denied': 'Accès MIDI refusé : clique sur l\'icône à gauche de l\'adresse → Appareils MIDI → Autoriser, puis recharge la page',
-    'status.noWebMidi': 'Web MIDI non supporté (utilise Chrome ou Edge).',
+    'status.noWebMidi': 'Web MIDI non supporté (utilise Chrome, Edge ou Firefox).',
     'meter.aria': 'Niveau de sortie',
 
     'tempo.title': 'Tempo global : les boucles suivent ce tempo et démarrent sur la mesure suivante',

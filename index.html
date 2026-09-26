@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -112,6 +112,23 @@
 
   <footer>GabberKey · © 2026 Guillaume Monet · MIT</footer>
 
-  <script type="module" src="js/main.js"></script>
+  <!-- Version des scripts : à incrémenter pour contourner les anciens caches des navigateurs. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "./js/apc.js": "./js/apc.js?v=4",
+      "./js/audio.js": "./js/audio.js?v=4",
+      "./js/i18n.js": "./js/i18n.js?v=4",
+      "./js/kit.js": "./js/kit.js?v=4",
+      "./js/kits.js": "./js/kits.js?v=4",
+      "./js/main.js": "./js/main.js?v=4",
+      "./js/params.js": "./js/params.js?v=4",
+      "./js/presets.js": "./js/presets.js?v=4",
+      "./js/recorder.js": "./js/recorder.js?v=4",
+      "./js/storage.js": "./js/storage.js?v=4"
+    }
+  }
+  </script>
+  <script type="module" src="js/main.js?v=4"></script>
 </body>
 </html>

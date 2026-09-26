@@ -23,7 +23,7 @@ GabberKey transforme l'Akai APC Key 25 (mk1 ou mk2) en instrument autonome. Il n
 ## Prérequis
 
 - Un **Akai APC Key 25**, mk1 ou mk2. Il est facultatif : tout marche aussi à la souris et au clavier de l'ordinateur.
-- **Google Chrome** ou **Microsoft Edge**. Firefox et Safari gèrent mal le Web MIDI.
+- **Google Chrome**, **Microsoft Edge** ou **Firefox** (version 108 ou plus). Safari ne gère pas le Web MIDI.
 - **Python 3**, uniquement pour servir la page en local (le Web MIDI exige `localhost` ou HTTPS).
 
 ## Installation
@@ -42,7 +42,7 @@ Ou télécharge le ZIP depuis GitHub et décompresse-le.
    - **Windows** : double-clic sur `start.bat`.
    - **macOS / Linux** : `./start.sh`.
    - **Partout** : `python tools/serve.py`, puis ouvre http://localhost:8025.
-3. Dans Chrome ou Edge, clique sur **Démarrer**, puis **autorise les appareils MIDI** quand le navigateur le demande.
+3. Dans le navigateur, clique sur **Démarrer**, puis **autorise les appareils MIDI** quand le navigateur le demande.
 
 L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert quand le contrôleur est détecté.
 
