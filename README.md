@@ -21,6 +21,8 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 - **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
 
+> 🚧 **GabberKey is constantly evolving.** New features land regularly, and plenty more is on the way: a **303-style acid bass line** emulation, **turntables** (vinyl decks to scratch and mix)… and much more. Star or watch the repository to follow what's coming!
+
 ---
 
 ## Screenshots
@@ -342,4 +344,4 @@ sounds/               generated banks + banks.json
 
 Code released under the [MIT License](LICENSE) © 2026 Guillaume Monet. The Sonic Pi samples in banks 2-6 remain public domain (CC0).
 
-Akai Professional, APC and MPK are trademarks of inMusic Brands, Inc. Roland and TR-909 are trademarks of Roland Corporation. GabberKey is an independent project, not affiliated with or endorsed by these companies.
+Akai Professional, APC and MPK are trademarks of inMusic Brands, Inc. Roland, TR-909 and TB-303 are trademarks of Roland Corporation. GabberKey is an independent project, not affiliated with or endorsed by these companies.
