@@ -140,7 +140,7 @@ main {
 .banks button.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; font-weight: 700; }
 
 /* --- Éditeur --- */
-.editor { display: flex; flex-direction: column; gap: 14px; }
+.editor .win-body { display: flex; flex-direction: column; gap: 14px; }
 .field { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muted); }
 #ed-wave { width: 100%; height: 90px; background: var(--bg); border-radius: 7px; }
 .swatches { display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px; }
@@ -349,12 +349,30 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .window { position: fixed; z-index: 10; overflow: auto; box-shadow: 0 16px 44px rgba(0, 0, 0, .6); }
 .window:not(.open) { display: none !important; }
 .window.dragging { opacity: .93; user-select: none; }
+/* Barre de titre fixe, contenu qui défile, marge du bas réservée à la poignée de redimensionnement. */
+.window { display: flex; flex-direction: column; overflow: hidden; padding: 0 0 16px; }
 .win-handle { cursor: grab; }
-.win-close { margin-left: auto; padding: 2px 9px; }
-.win-resize { position: sticky; float: right; bottom: 0; right: 0; width: 14px; height: 14px; margin: -14px -10px -10px 0; cursor: nwse-resize;
+.win-bar { flex: none; display: flex; align-items: center; gap: 12px; padding: 7px 8px 7px 16px; border-bottom: 1px solid var(--line); user-select: none; }
+.win-bar h2 { flex: 1; min-width: 0; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.win-actions { flex: none; display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.win-help, .win-close { width: 26px; height: 26px; padding: 0; display: grid; place-items: center; font-size: 13px; line-height: 1; border-radius: 6px; }
+.win-help { font-weight: 700; }
+.win-help.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
+.win-body { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 12px 16px 4px; }
+.window .section-title.win-empty { display: none; }
+.window .section-title > .hint:not([id]) { display: none; }
+.win-resize { position: absolute; right: 3px; bottom: 3px; width: 12px; height: 12px; cursor: nwse-resize; z-index: 2;
   border-right: 3px solid var(--muted); border-bottom: 3px solid var(--muted); border-radius: 0 0 4px 0; opacity: .5; }
 .win-resize:hover { opacity: 1; }
-.window.grid-area { display: flex; flex-direction: column; }
+.window.grid-area .win-body { display: flex; flex-direction: column; overflow: hidden; }
+.win-help-pop { position: fixed; z-index: 2000; width: min(420px, calc(100vw - 16px)); max-height: min(70vh, 640px); display: flex; flex-direction: column;
+  background: var(--panel); border: 1px solid var(--accent-2); border-radius: var(--radius); box-shadow: 0 16px 44px rgba(0, 0, 0, .6); }
+.win-help-pop[hidden] { display: none; }
+.win-help-pop .win-body { padding: 10px 16px 14px; font-size: 13px; line-height: 1.45; }
+.win-help-pop p { margin: 0 0 8px; }
+.win-help-pop ul { margin: 0; padding-left: 18px; }
+.win-help-pop li { margin: 0 0 6px; }
+.win-help-pop code { font-size: 12px; padding: 0 4px; border-radius: 4px; background: var(--bg); }
 .window.monitor #log { height: calc(100% - 70px); min-height: 120px; }
 @media (max-width: 900px) { main.app { grid-template-columns: 1fr; grid-template-rows: 220px 1fr; } }
 
@@ -364,8 +382,6 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .pad:hover .pad-edit { opacity: 1; }
 .pad-edit:hover { background: rgba(0, 0, 0, .7); }
 .pad.loop::after { top: auto; bottom: 3px; }
-.window.grid-area { overflow: hidden; }
-.window.grid-area .win-resize { position: absolute; float: none; margin: 0; right: 3px; bottom: 3px; }
 .window .pad { min-height: 30px; }
 
 /* Potards du pad dans l'éditeur */

@@ -173,7 +173,9 @@ En haut de la fenêtre de la table de mixage. Quand il est **Activé**, chaque k
 ## Fenêtres des plugins
 
 La barre sous l'en-tête ouvre et ferme les plugins : **Pads**, **Éditeur de pad**, **TR-909**, **Synthé** (clavier et presets), **Potards**, **Performance**, **Mixeur**, **Scènes** et **Moniteur MIDI**. Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
+- Chaque fenêtre a une barre de titre : le **titre** à gauche, **?** et **✕** à droite.
 - **Déplace**-la par sa barre de titre, **redimensionne**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.
+- **?** ouvre l'**aide** du contenu de la fenêtre, à côté d'elle (**?** à nouveau, ✕ ou Échap la ferme).
 - **✕** la ferme ; les fenêtres utilisées sont mémorisées avec leur position.
 - **Réorganiser les fenêtres** (en-tête) les remet à leur place et à leur taille de départ.
 
@@ -297,6 +299,7 @@ js/mixer.js           table de mixage : voies, envois, effets d'insert
 js/sidechain.js       sidechain (les kicks font baisser le synthé et les sons mélodiques)
 js/library.js         bibliothèque de sons (catégories)
 js/windows.js         fenêtres des plugins
+js/help.js            aide de chaque fenêtre (bouton ?)
 js/presets.js         presets du synthé
 js/performer.js       mode accords et arpégiateur
 js/chords.js          suites d'accords (générateur de nappes)

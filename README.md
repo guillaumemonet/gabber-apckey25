@@ -173,7 +173,9 @@ At the top of the mixer window. When it is **On**, every kick ducks the **synth*
 ## Plugin windows
 
 The bar under the header opens and closes the plugins: **Pads**, **Pad editor**, **TR-909**, **Synth** (keyboard and presets), **Knobs**, **Performance**, **Mixer**, **Scenes** and **MIDI monitor**. Each one opens in a window above the timeline:
+- Each window has a title bar: the **title** on the left, **?** and **✕** on the right.
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.
+- **?** opens the **help** for the window's content, next to it (**?** again, ✕ or Esc closes it).
 - **✕** closes it; the windows you use are remembered with their position.
 - **Reset windows** (header) puts them back in their default place and size.
 
@@ -297,6 +299,7 @@ js/mixer.js           mixer: channels, sends, insert effects
 js/sidechain.js       sidechain (kicks duck the synth and melodic sounds)
 js/library.js         sound library (categories)
 js/windows.js         plugin windows
+js/help.js            help of each window (? button)
 js/presets.js         synth presets
 js/performer.js       chord mode and arpeggiator
 js/chords.js          chord progressions (pad generator)
