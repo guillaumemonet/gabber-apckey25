@@ -11,7 +11,8 @@ GabberKey transforme l'Akai APC Key 25 (mk1 ou mk2) en instrument autonome. Il n
   - quatre **banques hardcore / gabber synthétisées** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, effets et boucles à 190 BPM ;
   - cinq banques d'échantillons **libres de droits (CC0)**.
 - **Émulation TR-909** : les 11 instruments synthétisés en direct, avec une **distorsion par instrument (drive + 5 formes)** sur les potentiomètres et un séquenceur 16 pas (8 patterns) calé sur les boucles.
-- **Table de mixage** : une voie par source (pads, synthé, kick / caisse / toms / charleys / cymbales de la 909) avec volume, panoramique, envois delay et reverb, muet / solo, vumètres et jusqu'à 4 effets d'insert (distorsion, filtre, compresseur, reverb).
+- **Table de mixage** : une voie par outil (pads, synthé, TR-909) avec volume, panoramique, envois delay et reverb, muet / solo, vumètres et jusqu'à 4 effets d'insert (distorsion, filtre, compresseur, reverb).
+- **Espace de travail en grille magnétique** : chaque panneau d'outil se déplace et se redimensionne ; la disposition est sauvegardée.
 - **Synthé polyphonique** au clavier, avec 8 presets gabber : Hoover, Acid 303, Screech, Stab rave, Basse distordue, Horn, Kick accordé…
 - **Boucles synchronisées** : chaque boucle démarre sur la mesure suivante et suit le tempo global (avec un bouton Tap).
 - **Effets de performance** : rolls (répétitions de 1/4 à 1/32), balayages de filtre, tape-stop, pump.
@@ -58,7 +59,7 @@ L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert
 | **Boutons de piste 1 / 2 / 3 / 4** | Page des potards : Synthé / Effets / Pad sélectionné / EQ |
 | **Boutons de piste 5 / 6 / 7 / 8** (maintenus) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filtre ↓ |
 | **Maj + piste 5 / 6 / 7 / 8** | Roll 1/4 · Tape-stop · Filtre ↑ · Pump (marche/arrêt) |
-| **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1-K7 = voies, K8 = master) |
+| **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1 Pads, K2 Synthé, K3 TR-909, K8 master) |
 | **Potards K1-K8** | Paramètres de la page active (Maj = réglage fin) |
 | **SUSTAIN** | Ouvre / ferme la page EQ (maintenu : EQ le temps de l'appui) |
 | **Maj + touche du piano** | Preset du synthé : do Hoover, ré Acid 303, mi Screech, fa Stab rave, sol Basse dist., la Horn, si Kick accordé, do# Init |
@@ -116,17 +117,7 @@ Un appui sur un bouton SCENE LAUNCH ramène la grille aux pads du sampler.
 
 ## Table de mixage
 
-Chaque source passe par sa propre voie avant le master (puis les effets de performance, l'égaliseur général et le limiteur) :
-
-| Voie | Source |
-|---|---|
-| Pads | le sampler 40 pads |
-| Synthé | le synthé du clavier |
-| 909 Kick | grosse caisse |
-| 909 Caisse | caisse claire, clap, rim shot |
-| 909 Toms | toms grave, médium et aigu |
-| 909 Charleys | charleys fermé et ouvert |
-| 909 Cymbales | crash et ride |
+Une voie par outil : **Pads**, **Synthé** et **TR-909**, puis le master (effets de performance, égaliseur général et limiteur). Le niveau de chaque son reste dans son outil (volume des pads, niveaux des instruments de la 909) ; la table de mixage équilibre les outils entre eux.
 
 Chaque voie a des effets d'insert (**+ FX**, jusqu'à 4, appliqués dans l'ordre), des envois reverb et delay, un panoramique, un fader (0 dB aux trois quarts), **M**uet, **S**olo et un vumètre. Effets disponibles :
 - **Distorsion** : drive et les 5 formes de la 909.
@@ -134,7 +125,15 @@ Chaque voie a des effets d'insert (**+ FX**, jusqu'à 4, appliqués dans l'ordre
 - **Compresseur** : seuil, ratio et gain.
 - **Reverb** : taille et dosage.
 
-Double-clic sur un réglage pour le remettre à zéro. Sur l'APC, **Maj + bouton de piste 1 / 2 / 3 / 4** transforme les potards en volumes / panoramiques / envois delay / envois reverb du mixeur : K1 à K7 règlent les 7 voies et K8 le volume général. Les réglages du mixeur sont sauvegardés et inclus dans les exports de session.
+Double-clic sur un réglage pour le remettre à zéro. Sur l'APC, **Maj + bouton de piste 1 / 2 / 3 / 4** transforme les potards en volumes / panoramiques / envois delay / envois reverb du mixeur : K1 = Pads, K2 = Synthé, K3 = TR-909, K8 = volume général. Les réglages du mixeur sont sauvegardés et inclus dans les exports de session.
+
+## Espace de travail
+
+Chaque outil (pads, éditeur de pad, potentiomètres, performance, TR-909, table de mixage, clavier, moniteur MIDI) est un panneau posé sur une **grille magnétique** de 12 colonnes :
+- **Déplacer** un panneau : tire-le par sa barre de titre. Il se cale sur la grille, et les panneaux qui gênent descendent.
+- **Redimensionner** : utilise la poignée dans son coin en bas à droite (les pads grandissent avec leur panneau).
+- Les panneaux ne se chevauchent jamais et remontent pour combler les vides. Ta disposition est sauvegardée.
+- **Disposition par défaut** (en-tête) remet tout en place. Sur un écran étroit, les panneaux sont simplement empilés.
 
 ## Tempo et boucles
 
@@ -205,6 +204,7 @@ js/apc.js             détection de l'APC Key 25, lecture MIDI, LEDs (mk1 + mk2)
 js/audio.js           moteur audio : synthé, sampler, effets, EQ, tempo
 js/tr909.js           émulation TR-909 et séquenceur
 js/mixer.js           table de mixage : voies, envois, effets d'insert
+js/layout.js          espace de travail en grille magnétique
 js/presets.js         presets du synthé
 js/params.js          paramètres des potards
 js/i18n.js            traductions anglais / français

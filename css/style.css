@@ -83,14 +83,11 @@ header {
 
 /* --- Mise en page --- */
 main {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 16px;
   padding: 16px 20px 30px;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
 }
-main > section, main > aside, main > details {
+.workspace > [data-panel] {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -247,3 +244,35 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 20
 .ms button { padding: 3px 10px; font-size: 11px; font-weight: 700; }
 .ms .mute.active { background: #d1242f; border-color: #d1242f; color: #fff; }
 .ms .solo.active { background: #ffd23f; border-color: #ffd23f; color: #000; }
+
+/* --- Espace de travail en grille magnétique --- */
+.workspace { position: relative; }
+.workspace > [data-panel] {
+  position: absolute; margin: 0; box-sizing: border-box; overflow: auto;
+  transition: left .12s, top .12s, width .12s, height .12s;
+}
+.workspace > [data-panel].ws-dragging { z-index: 5; opacity: .92; transition: none; box-shadow: 0 12px 32px rgba(0, 0, 0, .5); }
+.ws-handle { cursor: grab; }
+.ws-dragging .ws-handle { cursor: grabbing; }
+.ws-ghost {
+  position: absolute; display: none; z-index: 1; pointer-events: none;
+  border: 2px dashed var(--accent-2); border-radius: var(--radius); background: rgba(61, 214, 140, .07);
+}
+.ws-ghost.show { display: block; }
+.ws-resize {
+  position: absolute; z-index: 4; width: 14px; height: 14px; cursor: nwse-resize;
+  border-right: 3px solid var(--muted); border-bottom: 3px solid var(--muted); border-radius: 0 0 4px 0; opacity: .45;
+  transition: left .12s, top .12s;
+}
+.ws-resize.hidden { display: none; }
+.ws-resize:hover { opacity: 1; }
+.workspace.ws-flow { display: flex; flex-direction: column; gap: 16px; height: auto !important; }
+.workspace.ws-flow > [data-panel] { position: static; width: auto !important; height: auto !important; overflow: visible; }
+.workspace.ws-flow .ws-resize, .workspace.ws-flow .ws-ghost { display: none; }
+
+/* Les pads remplissent la hauteur de leur panneau. */
+.grid-area { display: flex; flex-direction: column; }
+.grid-area .grid-wrap { flex: 1; min-height: 0; }
+.pads { grid-template-rows: repeat(5, 1fr); }
+.pad { aspect-ratio: auto; min-height: 34px; }
+.ws-flow .pad { aspect-ratio: 1.25; }

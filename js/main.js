@@ -6,6 +6,7 @@ import { PRESETS, PRESET_KEYS } from './presets.js';
 import { Recorder, download, stamp } from './recorder.js';
 import { packBanks, unpack } from './kits.js';
 import * as store from './storage.js';
+import { Workspace, mergeLayout } from './layout.js';
 import { Mixer, CHANNELS, MIX_FIELDS, FX_TYPES, MAX_FX, defaultMixState, mergeMixState, mixKnobDefs, newFx, fxParamLabel } from './mixer.js';
 import { TR909, TR_INSTR, PATTERNS, trKnobDefs, defaultTrState, mergeTrState } from './tr909.js';
 import { t, soundName, translatePage } from './i18n.js';
@@ -17,7 +18,7 @@ const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (E
 const UI_PAGES = [...PAGE_ORDER, 'tr', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum, mixer;
+let engine, apc, kit, recorder, drum, mixer, workspace;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -31,6 +32,7 @@ const state = {
   banks: [],        // banks[b][i] = { name, color, sampleId, p, buffer } | null
   tr: defaultTrState(),   // TR-909 : réglages, patterns, instrument choisi
   mix: defaultMixState(), // table de mixage : voies, envois, effets d'insert
+  layout: mergeLayout(null),   // position des panneaux sur la grille magnétique
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -71,7 +73,7 @@ async function start() {
   engine.padBus.connect(mixer.input('pads'));
   engine.pumpGain.disconnect();
   engine.pumpGain.connect(mixer.input('synth'));
-  drum.setDestinations(Object.fromEntries(['bd', 'snare', 'toms', 'hats', 'cym'].map(g => [g, mixer.input(g)])));
+  drum.setDestinations(Object.fromEntries(['bd', 'snare', 'toms', 'hats', 'cym'].map(g => [g, mixer.input('tr')])));
   bindTempo();
 
   buildPads();
@@ -88,6 +90,8 @@ async function start() {
   bindComputerKeyboard();
   drawMeter();
   renderAll();
+  workspace = new Workspace($('#workspace'), () => state.layout, save);
+  $('#layout-reset').addEventListener('click', () => workspace.reset());
   $('#start').classList.add('hidden');
   if (libAdded.length) toast(libAdded.map(a => t('lib.added', { name: a.name, n: a.bank })).join(' · '), 6000);
 
@@ -124,6 +128,7 @@ async function restore() {
     state.model = saved.model ?? null;
     state.tr = mergeTrState(saved.tr);
     state.mix = mergeMixState(saved.mix);
+    state.layout = mergeLayout(saved.layout);
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
         const s = saved.banks?.[b]?.[i];
@@ -198,6 +203,7 @@ function save() {
       globals: state.globals,
       tr: state.tr,
       mix: state.mix,
+      layout: state.layout,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
   }, 400);
@@ -258,7 +264,10 @@ function onPadState(key, isPlaying, mode) {
 
 // Potards de la page active : définitions et objet qui stocke leurs positions.
 function knobDefs() {
-  if (mixField(state.page)) return [...mixKnobDefs(mixField(state.page)), masterDef()];
+  if (mixField(state.page)) {
+    const defs = mixKnobDefs(mixField(state.page));
+    return [...defs, ...new Array(7 - defs.length).fill(null), masterDef()];   // K8 = volume général
+  }
   return state.page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[state.page].params;
 }
 function knobTarget(def) {

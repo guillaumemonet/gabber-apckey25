@@ -1,9 +1,10 @@
-// Table de mixage : une voie par source (pads, synthé, groupes de la 909) avec effets en insert,
+// Table de mixage : une voie par outil (pads, synthé, TR-909) avec effets en insert,
 // panoramique, fader, envois delay / reverb, muet / solo et vumètre, puis le master du moteur.
 import { t } from './i18n.js';
 import { distCurve, SHAPES } from './tr909.js';
 
-export const CHANNELS = ['pads', 'synth', 'bd', 'snare', 'toms', 'hats', 'cym'];
+// Les niveaux de chaque son restent dans leur outil (volume des pads, niveaux de la 909).
+export const CHANNELS = ['pads', 'synth', 'tr'];
 export const MIX_FIELDS = ['vol', 'pan', 'delay', 'reverb'];   // pages de potards Maj + piste 1 à 4
 export const MAX_FX = 4;
 
@@ -48,7 +49,7 @@ export function fxParamLabel(type, key, v, p = {}) {
   return pct(v);
 }
 
-// Potards d'une page mixeur : les 7 voies pour le réglage `field`.
+// Potards d'une page mixeur : une voie par outil pour le réglage `field` (K1, K2, K3…).
 export function mixKnobDefs(field) {
   return CHANNELS.map(ch => ({
     id: field, ch, label: t(`mix.short.${ch}`), min: 0, max: 1,
