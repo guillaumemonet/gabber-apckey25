@@ -5,7 +5,7 @@
 export const WINDOWS = ['pads', 'editor', 'tr', 'piano', 'knobs', 'perf', 'mix', 'scenes', 'monitor'];
 const SNAP = 14;   // distance d'aimantation (px)
 const DEFAULT_SIZE = {
-  pads: [780, 470], editor: [360, null], tr: [900, null], piano: [760, null], knobs: [760, null],
+  pads: [780, null], editor: [360, null], tr: [900, null], piano: [760, null], knobs: [760, null],
   perf: [760, null], mix: [620, null], scenes: [760, null], monitor: [640, 280],
 };
 

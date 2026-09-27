@@ -79,6 +79,8 @@ async function start() {
   engine.pumpGain.connect(mixer.input('synth'));
   drum.setDestinations(Object.fromEntries(['bd', 'snare', 'toms', 'hats', 'cym'].map(g => [g, mixer.input('tr')])));
   timeline = new Timeline(engine, () => state.tl, clipBuffer, mixer.input('tl'));
+  timeline.getPad = (b, i) => state.banks[b]?.[i];
+  timeline.padKey = padKey;
   await loadTlBuffers();
   bindTempo();
 
@@ -229,6 +231,7 @@ function save() {
 function triggerPad(i) {
   selectPad(i);
   engine.playPad(padKey(state.bank, i), state.banks[state.bank][i]);
+  tlRecordPad(state.bank, i);
 }
 
 function releasePad(i) {
@@ -314,6 +317,7 @@ function turnKnob(index, { delta, value }) {
     renderStrip(def.ch);
   } else if (state.page === 'pad') {
     engine.updatePadVoice(padKey(state.bank, state.selected), pad);
+    renderEditorKnobs();
     if (def.id === 'mode') { renderPad(state.selected); renderEditor(); }
   } else if (state.page === 'tr') {
     if (def.id === 'volume') drum.setVolume(target.volume);
@@ -432,6 +436,7 @@ function bindController() {
     // Maj + touche : choisir un preset au lieu de jouer.
     if (on && shiftHeld && PRESET_KEYS[note % 12] !== undefined) { applyPreset(PRESET_KEYS[note % 12]); return; }
     if (on) engine.noteOn(note, velocity); else engine.noteOff(note);
+    tlRecordNote(note, on, velocity);
     setPianoKey(note, on);
   });
 
@@ -506,7 +511,10 @@ function buildPads() {
       const i = row * 8 + col;
       const el = document.createElement('div');
       el.className = 'pad';
-      el.innerHTML = `<span class="num">${i + 1}</span><span class="name"></span>`;
+      el.innerHTML = `<span class="num">${i + 1}</span><span class="name"></span><button class="pad-edit" title="${t('pad.edit')}">✎</button>`;
+      const pencil = el.querySelector('.pad-edit');
+      pencil.addEventListener('pointerdown', e => e.stopPropagation());
+      pencil.addEventListener('click', () => openPadEditor(i));
       el.addEventListener('pointerdown', e => {
         if (e.button !== 0) return;
         if (e.shiftKey) selectPad(i); else triggerPad(i);
@@ -583,6 +591,7 @@ function buildSwatches() {
 
 function buildEditor() {
   buildSwatches();
+  buildEditorKnobs();
 
   const modeDef = PAGES.pad.params[7];
   const modes = $('#ed-modes');
@@ -629,6 +638,7 @@ function renderEditor() {
   $('#ed-bpm').value = pad?.bpm || '';
   $('#ed-bpm').disabled = $('#ed-bpm-auto').disabled = !pad;
   drawWave(pad);
+  renderEditorKnobs();
 }
 
 function drawWave(pad) {
@@ -662,6 +672,71 @@ $('#editor').addEventListener('drop', e => {
   e.preventDefault();
   loadFileIntoPad(e.dataTransfer.files[0], state.selected);
 });
+
+
+// Potards du pad dans l'éditeur (les mêmes que la page « Pad » des potards de l'APC).
+const edKnobEls = [];
+function buildEditorKnobs() {
+  const wrap = $('#ed-knobs');
+  PAGES.pad.params.forEach((def, k) => {
+    const el = document.createElement('div');
+    el.className = 'knob';
+    el.innerHTML = `
+      <svg viewBox="0 0 80 80">
+        <path class="track" d="${arcPath(1)}" fill="none" stroke-width="8" stroke-linecap="round"/>
+        <path class="arc" fill="none" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+      <div class="value"></div><div class="label">${def.label}</div>`;
+    let lastY = null;
+    el.addEventListener('pointerdown', e => { lastY = e.clientY; try { el.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } });
+    el.addEventListener('pointermove', e => {
+      if (lastY === null || Math.abs(lastY - e.clientY) < 2) return;
+      turnPadParam(k, { delta: (lastY - e.clientY) / 2 * (e.shiftKey ? 0.25 : 1) });
+      lastY = e.clientY;
+    });
+    el.addEventListener('pointerup', () => { lastY = null; });
+    el.addEventListener('wheel', e => { e.preventDefault(); turnPadParam(k, { delta: e.deltaY < 0 ? 2 : -2 }); }, { passive: false });
+    el.addEventListener('dblclick', () => turnPadParam(k, { value: toPos(def, def.def) }));
+    edKnobEls[k] = el;
+    wrap.appendChild(el);
+  });
+}
+
+function turnPadParam(k, { delta, value }) {
+  const pad = currentPad();
+  if (!pad) return;
+  const def = PAGES.pad.params[k];
+  if (value !== undefined) pad.p[def.id] = value;
+  else {
+    const step = def.steps ? Math.max(0.01, 1 / (def.steps - 1) / 3) : 0.01;
+    pad.p[def.id] = Math.min(1, Math.max(0, pad.p[def.id] + delta * step));
+  }
+  engine.updatePadVoice(padKey(state.bank, state.selected), pad);
+  if (def.id === 'mode') { renderPad(state.selected); renderEditor(); } else renderEditorKnobs();
+  if (def.id === 'start') drawWave(pad);
+  if (state.page === 'pad') renderKnobs();
+  save();
+}
+
+function renderEditorKnobs() {
+  const pad = currentPad();
+  PAGES.pad.params.forEach((def, k) => {
+    const el = edKnobEls[k];
+    if (!el) return;
+    const p = pad ? pad.p[def.id] : 0;
+    el.querySelector('.arc').setAttribute('d', p > 0.001 ? arcPath(p) : '');
+    el.querySelector('.value').textContent = pad ? def.fmt(toValue(def, p)) : '—';
+    el.style.opacity = pad ? 1 : 0.4;
+  });
+}
+
+// Crayon d'un pad : ouvre l'éditeur sur ce pad, et les potards de l'APC passent sur ses réglages.
+function openPadEditor(i) {
+  selectPad(i);
+  if (!wm.isOpen('editor')) wm.toggle('editor', true); else wm.bring('editor');
+  setPage('pad');
+  renderEditor();
+}
 
 // ---------- Interface : potentiomètres ----------
 
@@ -706,7 +781,7 @@ function buildKnobs() {
       </svg>
       <div class="value"></div><div class="label"></div>`;
     let lastY = null;
-    el.addEventListener('pointerdown', e => { lastY = e.clientY; el.setPointerCapture(e.pointerId); });
+    el.addEventListener('pointerdown', e => { lastY = e.clientY; try { el.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } });
     el.addEventListener('pointermove', e => {
       if (lastY === null) return;
       const dy = lastY - e.clientY;
@@ -782,7 +857,7 @@ function buildPiano() {
     }
     el.classList.toggle('on', heldNotes.has(n));
     el.addEventListener('pointerdown', e => {
-      el.setPointerCapture(e.pointerId);
+      try { el.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ }
       playNote(n, 0.8, true);
     });
     el.addEventListener('pointerup', () => playNote(n, 0, false));
@@ -792,6 +867,7 @@ function buildPiano() {
 
 function playNote(note, velocity, on) {
   if (on) engine.noteOn(note, velocity); else engine.noteOff(note);
+  tlRecordNote(note, on, velocity);
   setPianoKey(note, on);
 }
 
@@ -1204,7 +1280,8 @@ function renderTrHead() {
 
 // ---------- Timeline (écran principal, façon eJay) ----------
 
-const TL_SOURCES = ['master', 'pads', 'synth', 'tr'];
+// Pads et synthé : blocs posés en jouant ; TR-909 : enregistrement audio.
+const TL_SOURCES = ['pads', 'synth', 'tr'];
 const bufferCache = new Map();   // sampleId -> AudioBuffer des blocs
 const peaksCache = new Map();    // sampleId -> crêtes pour dessiner la forme d'onde
 let tlRecorder = null;
@@ -1252,6 +1329,14 @@ function tlSourceNode(source) {
 async function tlStartRec() {
   if (timeline.playing) timeline.stop(true);
   const source = state.tl.source;
+  if (source !== 'tr') {
+    // Pads / synthé : on joue la timeline (en boucle si activée) et chaque coup devient un bloc.
+    tlRec = { mode: 'events', source, open: new Map(), dirty: false };
+    timeline.play(Math.round(state.tl.playhead));
+    renderTl();
+    renderLeds();
+    return;
+  }
   tlRecorder = new Recorder(engine.ctx, tlSourceNode(source));
   await tlRecorder.start();
   const beat = Math.round(state.tl.playhead);
@@ -1268,6 +1353,16 @@ async function tlStartRec() {
 async function tlStopRec() {
   const rec = tlRec;
   if (!rec) return;
+  if (rec.mode === 'events') {
+    for (const clip of rec.open.values()) growHeldNote(clip);
+    tlRec = null;
+    timeline.stop(true);
+    for (const tr of state.tl.tracks) for (const c of tr.clips) growSong(c);
+    save();
+    renderTl();
+    renderLeds();
+    return;
+  }
   tlRec = null;
   timeline.recording = false;
   const raw = await tlRecorder.stopRaw();
@@ -1388,6 +1483,10 @@ function buildTl() {
   timeline.onStop = () => { renderTl(); renderLeds(); };
   const scroll = $('#tl-scroll');
   (function frame() {
+    if (tlRec?.mode === 'events') {
+      for (const clip of tlRec.open.values()) growHeldNote(clip);
+      if ((tlRec.dirty || tlRec.open.size) && performance.now() - lastRecRender > 100) { tlRec.dirty = false; lastRecRender = performance.now(); renderTl(); }
+    }
     const x = 132 + timeline.position() * beatPx();
     line.style.left = `${x}px`;
     // Pendant la lecture, la vue suit la tête de lecture.
@@ -1450,6 +1549,7 @@ function drawClip(cv, clip) {
   const w = cv.width = Math.max(1, Math.floor(cv.clientWidth));
   const h = cv.height = Math.max(1, Math.floor(cv.clientHeight));
   const g = cv.getContext('2d');
+  if (clip.type === 'note') return;
   const p = peaks(clip.sampleId);
   if (!p) return;
   const natural = timeline.naturalBeats(clip) * beatPx();
@@ -1469,7 +1569,7 @@ function drawClip(cv, clip) {
 function clipEl(track, clip) {
   const bp = beatPx();
   const el = document.createElement('div');
-  el.className = 'tl-clip' + (tlSel?.clip === clip ? ' selected' : '') + (clip.loop ? ' loop' : '');
+  el.className = 'tl-clip' + (tlSel?.clip === clip ? ' selected' : '') + (clip.loop ? ' loop' : '') + (clip.type ? ` ${clip.type}` : '');
   el.style.left = `${clip.start * bp}px`;
   el.style.width = `${Math.max(4, timeline.clipBeats(clip) * bp - 1)}px`;
   el.style.setProperty('--c', PALETTE[uiColor(clip.color ?? catColor(clip.cat))]);
@@ -1482,7 +1582,11 @@ function clipEl(track, clip) {
   el.append(cv, label, grip);
   requestAnimationFrame(() => drawClip(cv, clip));
   el.addEventListener('contextmenu', e => { e.preventDefault(); tlDelete(track, clip); });
-  el.addEventListener('dblclick', () => previewSample({ sampleId: clip.sampleId, name: clip.name }));
+  el.addEventListener('dblclick', () => {
+    if (clip.type === 'note') { engine.noteOn(clip.note, clip.vel ?? 0.85, undefined, 'preview'); setTimeout(() => engine.noteOff(clip.note, false, undefined, 'preview'), 250); }
+    else if (clip.type === 'pad' && state.banks[clip.bank]?.[clip.pad]) engine.playPad(padKey(clip.bank, clip.pad), state.banks[clip.bank][clip.pad], { oneShot: true });
+    else previewSample({ sampleId: clip.sampleId, name: clip.name });
+  });
 
   // Glisser le bloc (Alt = copie) ; glisser son bord droit = longueur (une boucle se répète).
   el.addEventListener('pointerdown', e => {
@@ -1533,6 +1637,63 @@ function clipEl(track, clip) {
     window.addEventListener('pointerup', onUp);
   });
   return el;
+}
+
+
+// ---------- Enregistrement en jouant (pads et piano -> blocs posés en direct) ----------
+
+const REC_GRID = 0.25;   // calage des coups : la double-croche
+let lastRecRender = 0;
+const snapRec = v => Math.round(v / REC_GRID) * REC_GRID;
+const noteLabel = n => `${t('notes')[n % 12]}${Math.floor(n / 12) - 1}`;
+
+// Piste libre à cet endroit : la piste armée, sinon la suivante qui ne contient rien à ce moment-là.
+function freeTrack(start, len) {
+  const tracks = state.tl.tracks;
+  for (let k = 0; k < tracks.length; k++) {
+    const i = (state.tl.armed + k) % tracks.length;
+    const busy = tracks[i].clips.some(c => c.start < start + len - 1e-6 && start < c.start + timeline.clipBeats(c) - 1e-6);
+    if (!busy) return i;
+  }
+  return state.tl.armed;
+}
+
+function recPosition() {
+  const pos = timeline.position();
+  return snapRec(timeline.length ? pos % timeline.length : pos);
+}
+
+function tlRecordPad(bank, i) {
+  if (tlRec?.mode !== 'events' || tlRec.source !== 'pads' || !timeline.playing) return;
+  const pad = state.banks[bank][i];
+  if (!pad?.buffer) return;
+  const start = recPosition();
+  const len = Math.max(REC_GRID, Math.ceil(pad.buffer.duration / timeline.beatDur / REC_GRID) * REC_GRID);
+  const clip = { id: crypto.randomUUID(), type: 'pad', bank, pad: i, sampleId: pad.sampleId, name: pad.name, color: pad.color, cat: 'drums', start, len, loop: false };
+  state.tl.tracks[freeTrack(start, len)].clips.push(clip);
+  tlRec.dirty = true;
+}
+
+function tlRecordNote(note, on, velocity = 0.85) {
+  if (tlRec?.mode !== 'events' || tlRec.source !== 'synth' || !timeline.playing) return;
+  if (on) {
+    const start = recPosition();
+    const clip = { id: crypto.randomUUID(), type: 'note', note, vel: velocity, name: noteLabel(note), color: catColor('lead'), cat: 'lead', start, len: REC_GRID, loop: false };
+    state.tl.tracks[freeTrack(start, REC_GRID)].clips.push(clip);
+    tlRec.open.set(note, clip);   // s'allonge tant que la touche est tenue
+  } else {
+    const clip = tlRec.open.get(note);
+    if (!clip) return;
+    tlRec.open.delete(note);
+    growHeldNote(clip);
+  }
+  tlRec.dirty = true;
+}
+
+function growHeldNote(clip) {
+  let end = timeline.position();
+  if (timeline.length) { end %= timeline.length; if (end < clip.start) end += timeline.length; }
+  clip.len = Math.max(REC_GRID, snapRec(end - clip.start));
 }
 
 // ---------- Bibliothèque de sons ----------
@@ -1878,7 +2039,7 @@ function buildPerf() {
   PERF.forEach((fx, i) => {
     const btn = document.createElement('button');
     btn.innerHTML = `${fx.label}<small>${fx.hint}</small>`;
-    btn.addEventListener('pointerdown', e => { btn.setPointerCapture(e.pointerId); perfDown(i); });
+    btn.addEventListener('pointerdown', e => { try { btn.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } perfDown(i); });
     btn.addEventListener('pointerup', () => perfUp(i));
     $('#perf').appendChild(btn);
   });

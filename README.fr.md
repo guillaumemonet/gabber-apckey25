@@ -6,7 +6,7 @@
 
 GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une bibliothèque rangée par catégorie sur des pistes, les blocs se calent à la mesure et tout joue au même tempo, comme dans les anciens eJay. Les autres outils (pads du sampler, TR-909, synthé, table de mixage, effets…) sont des **plugins** qui s'ouvrent dans des fenêtres, et l'Akai APC Key 25 (mk1 ou mk2) les joue en direct. Rien à installer à part un navigateur :
 
-- **Timeline** : 16 pistes en mesures ; glisser, allonger (les boucles se répètent), copier et déplacer des blocs ; enregistrer n'importe quel outil (909, synthé, pads, master) dans une piste.
+- **Timeline** : 16 pistes en mesures ; glisser, allonger (les boucles se répètent), copier et déplacer des blocs ; joue les pads ou le clavier pendant l'enregistrement et chaque coup ou note tenue devient un bloc, en direct ; la TR-909 s'enregistre en audio.
 - **Bibliothèque de sons** : 358 sons rangés en Kicks, Batterie, Basses, Leads, Stabs / claviers, Nappes / cordes, Voix et Effets, plus tes propres sons et tes enregistrements ; un clic pour écouter, glisser pour poser.
   - quatre **banques hardcore / gabber synthétisées** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, effets et boucles à 190 BPM ;
   - cinq banques d'échantillons **libres de droits (CC0)**.
@@ -87,7 +87,7 @@ Tout se fait aussi à la souris. Sur le clavier de l'ordinateur, la rangée du m
 | 9 | **Hardcore** : kicks plus durs (terror, uptempo, speedcore, industrial, mainstream…), basses distordues, accords de cordes (Fm, Db, Eb, Cm, Bbm, Ab), staccato et coup d'orchestre, boucles cordes / basse (ostinato, progression, offbeat, roulante, reese, morceau complet de 4 mesures) et boucles de batterie hardcore, le tout à 190 BPM |
 | 10 | **Oldschool** (rave / hardcore début 90) : kicks 909 et 808, kit de breakbeat, pianos rave façon M1 (Fm, Db, Eb, Cm, Bbm, Ab), stabs Mentasm et belge, chœur « ahh », vox stab, sifflet, sirène d'alerte, break façon Amen et break découpé, riff de piano, arpège rave, morceau oldschool de 4 mesures, le tout à 190 BPM |
 
-Pour charger ton propre son, glisse un fichier audio (WAV, MP3, FLAC, OGG…) sur un pad ou sur l'éditeur, ou utilise **Charger un son…**. Dans l'éditeur, tu peux aussi régler le nom, la couleur de la LED et le mode de lecture (**One-shot**, **Maintien** ou **Boucle**).
+Pour charger ton propre son, glisse un fichier audio (WAV, MP3, FLAC, OGG…) sur un pad ou sur l'éditeur, ou utilise **Charger un son…**. Le **crayon ✎** de chaque pad ouvre l'**éditeur de pad** sur ce pad : nom, couleur de la LED, mode de lecture (**One-shot**, **Maintien** ou **Boucle**) et les **8 potards** du pad (volume, hauteur, panoramique, filtre, début, delay, reverb, mode), aussi sur les potards de l'APC.
 
 ## TR-909
 
@@ -121,7 +121,12 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
 - **Bibliothèque** : choisis une catégorie (Kicks, Batterie, Basses, Leads, Stabs / claviers, Nappes / cordes, Voix, Effets, Mes sons, Enregistrements) ou cherche par nom. Un **clic** sur un son l'écoute (et le choisit) ; l'étiquette indique sa longueur en mesures (boucles) ou « 1 coup ».
 - **Poser** : glisse un son sur une piste. Il se cale au début de la mesure (garde **Maj** enfoncée pour le poser sur un temps). Un clic dans une case vide pose le dernier son choisi.
 - **Modifier les blocs** : glisse un bloc pour le déplacer (vers une autre mesure ou une autre piste), tire son **bord droit** pour l'allonger ou le raccourcir (une boucle se répète pour remplir le bloc, comme dans eJay), **Alt + glisser** le copie, un **double-clic** l'écoute, un **clic droit** ou **Suppr** le retire. Chaque piste a un bouton muet.
-- **Enregistrer un outil** : choisis ce qu'on enregistre (Master, Pads, Synthé ou TR-909), arme une piste (●), place la tête de lecture (clic sur la règle), puis **● Rec** (ou REC sur l'APC). Ce que produit l'outil s'enregistre dans un bloc qui commence sur cette mesure : la 909 démarre toute seule, calée sur les mesures de la timeline, et tu joues les pads ou le clavier en direct. **■ Arrêter rec** termine le bloc, qui apparaît aussi dans la bibliothèque, rubrique Enregistrements.
+- **Enregistrer en jouant** : choisis ce qu'on enregistre, arme une piste (●), place la tête de lecture (clic sur la règle), puis **● Rec** (ou REC sur l'APC). La timeline joue (en boucle si Boucle est activé) et :
+  - **Pads** : chaque coup de pad devient un bloc de ce pad, là où tu l'as frappé (calé à la double-croche). Le bloc rejoue le pad avec ses réglages.
+  - **Synthé** : chaque note devient un bloc de note qui **s'allonge tant que tu tiens la touche** ; il rejoue avec le preset du synthé en cours.
+  - Les blocs apparaissent en direct pendant que tu joues. Si la piste armée est occupée à ce moment-là, le bloc va sur la piste libre suivante. Avec Boucle, tu peux ajouter des coups à chaque passage.
+  - **TR-909** : la 909 démarre calée sur les mesures de la timeline et s'enregistre en audio dans un bloc (aussi rangé dans la bibliothèque, rubrique Enregistrements).
+  - **■ Arrêter rec** (ou REC à nouveau) termine l'enregistrement.
 - **Lire** : ▶ (ou PLAY sur l'APC) joue depuis la tête de lecture ; la vue suit la tête de lecture. Les boucles faites à un autre tempo suivent le tempo global. La timeline a sa propre voie dans la table de mixage.
 
 ## Scènes

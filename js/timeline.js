@@ -3,6 +3,8 @@
 // Un bloc : { id, start, len (en temps), sampleId, name, cat, color, bpm, loop }.
 // - bpm : tempo d'origine du son ; il est lu plus vite / plus lentement pour suivre le tempo global.
 // - loop : le son se répète pour remplir toute la longueur du bloc.
+// Blocs enregistrés en jouant : { type: 'pad', bank, pad } rejoue le pad avec ses réglages,
+// { type: 'note', note, vel } rejoue une note du synthé (preset en cours) pendant `len` temps.
 
 export const TL_TRACKS = 16;
 export const BEATS_PER_BAR = 4;
@@ -13,7 +15,7 @@ export function defaultTlState() {
     zoom: 64,           // largeur d'une mesure (px)
     loop: true,
     playhead: 0,        // en temps (noires)
-    source: 'master',   // outil enregistré : master, pads, synth, tr
+    source: 'pads',     // outil enregistré : pads, synth (blocs posés en jouant), tr (audio)
     armed: 0,           // piste qui reçoit l'enregistrement
     tracks: Array.from({ length: TL_TRACKS }, () => ({ mute: false, clips: [] })),
   };
@@ -24,6 +26,7 @@ export function mergeTlState(saved) {
   if (!saved) return base;
   for (const k of ['bars', 'zoom', 'loop', 'playhead', 'source', 'armed']) if (saved[k] !== undefined) base[k] = saved[k];
   base.bars = Math.max(base.bars, 16);
+  if (!['pads', 'synth', 'tr'].includes(base.source)) base.source = 'pads';
   if (Array.isArray(saved.tracks)) {
     base.tracks = base.tracks.map((tr, i) => ({ mute: !!saved.tracks[i]?.mute, clips: Array.isArray(saved.tracks[i]?.clips) ? saved.tracks[i].clips : [] }));
   }
@@ -44,6 +47,10 @@ export class Timeline {
     this.cycles = [];         // débuts de lecture programmés : { time, beat }
     this.timer = null;
     this.onStop = () => {};
+    this.getPad = () => null;   // (banque, pad) -> pad ; branché par l'application
+    this.padKey = null;
+    this.offs = [];             // fins de notes programmées : { note, key, time }
+    this.padHits = new Set();   // voix de pads programmées (coupées à l'arrêt)
   }
 
   get st() { return this.getState(); }
@@ -66,6 +73,7 @@ export class Timeline {
     this.playing = true;
     this.cycles = [];
     this.scheduleCycle(start, beat);
+    this.ticker = setInterval(() => this.flush(this.ctx.currentTime + 0.1), 30);
     return start;
   }
 
@@ -79,6 +87,21 @@ export class Timeline {
     for (const track of st.tracks) {
       if (track.mute) continue;
       for (const clip of track.clips) {
+        if (clip.type === 'pad' || clip.type === 'note') {
+          // Un coup à moitié passé n'est pas rejoué.
+          if (clip.start < beat - 1e-6 || clip.start >= len) continue;
+          const when = time + (clip.start - beat) * bd;
+          if (clip.type === 'pad') {
+            const pad = this.getPad(clip.bank, clip.pad);
+            const key = this.padKey(clip.bank, clip.pad);
+            if (pad?.buffer) { this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1 }); this.padHits.add(key); }
+          } else {
+            const key = `tl:${clip.id}`;
+            this.engine.noteOn(clip.note, clip.vel ?? 0.85, when, key);
+            this.offs.push({ note: clip.note, key, time: when + clip.len * bd - 0.005 });
+          }
+          continue;
+        }
         const buf = this.bufferOf(clip.sampleId);
         if (!buf) continue;
         const end = clip.start + this.clipBeats(clip);
@@ -112,6 +135,14 @@ export class Timeline {
     else this.timer = setTimeout(() => this.stop(), Math.max(0, (endTime - this.ctx.currentTime) * 1000));
   }
 
+  flush(horizon) {
+    this.offs.sort((a, b) => a.time - b.time);
+    while (this.offs.length && this.offs[0].time < horizon) {
+      const o = this.offs.shift();
+      this.engine.noteOff(o.note, false, o.time, o.key);
+    }
+  }
+
   // Position actuelle (en temps) de la tête de lecture.
   position() {
     if (!this.playing) return this.st.playhead;
@@ -122,6 +153,11 @@ export class Timeline {
 
   stop(silent = false) {
     clearTimeout(this.timer);
+    clearInterval(this.ticker);
+    for (const o of this.offs) this.engine.noteOff(o.note, true, undefined, o.key);
+    this.offs = [];
+    for (const key of this.padHits) this.engine.stopPad(key, 0.01);
+    this.padHits.clear();
     const t = this.ctx.currentTime;
     for (const { src, gain } of this.sources) {
       gain.gain.setTargetAtTime(0, t, 0.01);

@@ -6,7 +6,7 @@
 
 GabberKey is built around a **timeline**: drag sounds from a library sorted by category onto tracks, the blocks snap to the bar and everything plays at the same tempo, like the old eJay games. The other tools (sampler pads, TR-909, synth, mixer, effects…) are **plugins** that open in windows, and the Akai APC Key 25 (mk1 or mk2) plays them live. Nothing to install except a web browser:
 
-- **Timeline**: 16 tracks in bars; drag, lengthen (loops repeat), copy and move blocks; record any tool (909, synth, pads, master) into a track.
+- **Timeline**: 16 tracks in bars; drag, lengthen (loops repeat), copy and move blocks; play the pads or the keyboard while recording and every hit or held note becomes a block, live; record the TR-909 as audio.
 - **Sound library**: 358 sounds sorted into Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices and FX, plus your own sounds and recordings; click to listen, drag to place.
   - four **synthesised hardcore / gabber banks**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
@@ -87,7 +87,7 @@ Everything can also be done with the mouse. On the computer keyboard, the middle
 | 9 | **Hardcore**: harder kicks (terror, uptempo, speedcore, industrial, mainstream…), distorted basses, string chords (Fm, Db, Eb, Cm, Bbm, Ab), staccato and orchestra hit, string / bass loops (ostinato, progression, offbeat, rolling, reese, 4-bar full track) and hardcore drum loops, all at 190 BPM |
 | 10 | **Oldschool** (early 90s rave / hardcore): 909 and 808 kicks, breakbeat kit, M1-style rave pianos (Fm, Db, Eb, Cm, Bbm, Ab), Mentasm and Belgian stabs, "ahh" choir, vox stab, whistle, air-raid siren, Amen-style and chopped breaks, piano riff, rave arp, 4-bar oldschool track, all at 190 BPM |
 
-To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. In the editor you can also set the name, the LED colour and the playback mode (**One-shot**, **Hold** or **Loop**).
+To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. The **✎ pencil** on each pad opens the **pad editor** on it: name, LED colour, playback mode (**One-shot**, **Hold** or **Loop**) and the pad's **8 knobs** (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs.
 
 ## TR-909
 
@@ -121,7 +121,12 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
 - **Library**: pick a category (Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices, FX, My sounds, Recordings) or search by name. **Click** a sound to listen to it (and pick it); the badge shows its length in bars (loops) or "1-shot".
 - **Place**: drag a sound onto a track. It snaps to the start of the bar (hold **Shift** to place it on a beat). Clicking an empty cell places the last sound picked.
 - **Edit blocks**: drag a block to move it (to another bar or track), drag its **right edge** to lengthen or shorten it (a loop repeats to fill the block, like in eJay), **Alt + drag** copies it, **double-click** listens to it, **right-click** or **Delete** removes it. Each track has a mute.
-- **Record a tool**: choose what to record (Master, Pads, Synth or TR-909), arm a track (●), set the playhead (click the ruler), then **● Rec** (or REC on the APC). What the tool produces is recorded into a block starting on that bar: the 909 starts by itself on the timeline's bars, and you play the pads or the keyboard live. **■ Stop rec** ends the block, which also appears in the library under Recordings.
+- **Record by playing**: choose what to record, arm a track (●), set the playhead (click the ruler), then **● Rec** (or REC on the APC). The timeline plays (in a loop if Loop is on) and:
+  - **Pads**: every pad hit becomes a block of that pad, where you hit it (snapped to the 16th note). The block replays the pad with its settings.
+  - **Synth**: every note becomes a note block that **grows while you hold the key**; it replays with the current synth preset.
+  - Blocks appear live as you play. If the armed track is taken at that moment, the block goes to the next free track. With Loop on, you can add hits on every pass.
+  - **TR-909**: the 909 starts on the timeline's bars and is recorded as audio into a block (also listed in the library under Recordings).
+  - **■ Stop rec** (or REC again) ends the recording.
 - **Play**: ▶ (or PLAY on the APC) plays from the playhead; the view follows the playhead. Loops recorded at another tempo follow the global tempo. The timeline has its own channel in the mixer.
 
 ## Scenes
