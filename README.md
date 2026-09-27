@@ -13,7 +13,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 - **Plugins** in movable, magnetic windows:
   - **40-pad sampler** with 10 banks, pad LEDs synced to the screen, and drag & drop of your own sounds;
   - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
-  - **Polyphonic synth** on the keyboard with 8 gabber presets (Hoover, Acid 303, Screech, Rave stab, Distorted bass, Horn, Tuned kick…);
+  - **Layered synth** on the keyboard: 35 presets in 10 families (strings, pads, choirs, supersaw, hoovers, leads, basses, stabs, keys, FX) with ensemble, stereo width, vibrato and 8 expression knobs;
   - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters and up to 4 insert effects;
   - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **MIDI monitor**.
 - **WAV recording** of your session and **kit export / import**.
@@ -60,7 +60,7 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 | **Shift + track 1 / 2 / 3 / 4** | Mixer knob page: volumes / pans / delay sends / reverb sends (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K8 master) |
 | **Knobs K1-K8** | Parameters of the current page (Shift = fine tuning) |
 | **SUSTAIN** | Opens / closes the EQ page (held: EQ while pressed) |
-| **Shift + piano key** | Synth preset: C Hoover, D Acid 303, E Screech, F Rave stab, G Dist. bass, A Horn, B Tuned kick, C# Init |
+| **Shift + white key** | Preset of the current synth family (C = 1st, D = 2nd…) · **Shift + C# / D#** = previous / next family |
 | **Keyboard** | Plays the synth |
 | **PLAY** | Start / stop the timeline (the TR-909 has its own ▶ in its window) |
 | **Shift + PLAY** | Turn the pad grid into the TR-909 (and back) |
@@ -164,13 +164,38 @@ The bar under the header opens and closes the plugins: **Pads**, **Pad editor**,
 - **✕** closes it; the windows you use are remembered with their position.
 - **Reset windows** (header) puts them back in their default place and size.
 
+## Synth
+
+The keyboard plays a layered synth built for hardcore: every preset stacks up to 3 **layers** of oscillators (saw, square, triangle, sine or pulse, each with its own unison, octave and level), with **formants** (string body resonance, "a" / "o" choir vowels), a stereo **ensemble** like the Solina string machines, unison spread across the stereo field, and a vibrato that comes in after a moment.
+
+**35 presets in 10 families** (Synth window, or **Shift + white key** on the APC = preset of the family, **Shift + C# / D#** = previous / next family):
+
+| Family | Presets |
+|---|---|
+| Strings | Epic, Dark, Staccato, Solina, High |
+| Pads | Thunderdome, Dark, Warm, Glass, Sweep |
+| Choirs | Rave, Ooh, Dark |
+| Supersaw | Uplifting, Hardstyle lead, Pad, Stab |
+| Hoovers | Hoover, Mentasm |
+| Leads | Init, Acid 303, Screech, Horn, Gabber lead |
+| Basses | Distorted, Reese, Sub |
+| Stabs | Rave, Belgian, Orchestra hit |
+| Keys | Rave piano, Organ |
+| FX | Tuned kick, Siren, Laser |
+
+**8 expression knobs**, adapted to the family (in the Synth window and on the APC's Synth page):
+- strings, pads, choirs, supersaw, stabs, keys: Brightness, Resonance, Attack, Release, **Width**, **Vibrato**, **Ensemble**, Reverb;
+- hoovers, leads, basses, FX: Brightness, Resonance, Attack, Release, Drive, **Glide**, Detune, Reverb.
+
+Double-click a knob in the Synth window to go back to the preset's value.
+
 ## Tempo and loops
 
 The global tempo (header, or the **Tap** button) drives every loop. Each loop starts on the next bar and stays in sync when you change the tempo. For your own loops, enter their original tempo in the editor, or click **Auto**: this assumes the file lasts a whole number of bars. Set the tempo to 190 for the Gabber, Hardcore and Oldschool banks: their loops share the same key (F minor) and lengths, so they stay in sync with each other.
 
 ## Knob pages
 
-- **Synth**: wave, detune, cutoff, resonance, filter envelope, attack, release, volume
+- **Synth**: the 8 expression knobs of the current synth family (see Synth)
 - **Effects**: delay time / feedback / send, reverb send / size, drive, pads volume, master volume
 - **Pad**: volume, pitch, pan, filter, start point, delay and reverb sends, and playback mode of the selected pad
 - **EQ**: low 100 Hz, low-mid 350 Hz, mid 1.2 kHz, high-mid 3.5 kHz, high 9 kHz (±15 dB), low-pass, high-pass, output gain

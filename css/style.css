@@ -350,3 +350,13 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .mini-knobs .knob svg { max-width: 46px; }
 .mini-knobs .label { font-size: 10px; line-height: 1.1; }
 .mini-knobs .value { font-size: 11px; }
+
+/* Fenêtre du synthé : familles, presets, potards d'expression */
+.synth-families { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.synth-families button { padding: 4px 10px; font-size: 12px; }
+.synth-families button.current { border-color: var(--accent); }
+.synth-families button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.preset-list { display: flex; flex-wrap: wrap; gap: 4px; min-height: 30px; margin-bottom: 10px; }
+.preset-list button { padding: 5px 11px; font-size: 12px; }
+.preset-list button.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; font-weight: 600; }
+.mini-knobs.synth-knobs { grid-template-columns: repeat(8, 1fr); margin-bottom: 12px; }

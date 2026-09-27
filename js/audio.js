@@ -22,6 +22,9 @@ export const DEFAULT_VOICE = {
   mono: false,        // monophonique avec glissé entre notes liées (acid)
   glide: 0,
   octave: 0,          // transposition en demi-tons
+  layers: null,       // couches d'oscillateurs (voir js/presets.js) ; null = scies en unisson
+  fenv: 0.4,          // enveloppe du filtre
+  vibRange: 0.5,      // vibrato maximal (demi-tons) quand le potard est au bout
 };
 
 function makeImpulse(ctx, seconds) {
@@ -127,7 +130,31 @@ export class Engine {
     this.pumpGain = gain();
     this.synthDSend = gain(0);
     this.synthRSend = gain(0);
-    this.synthIn.connect(this.shaper).connect(this.synthBus).connect(this.pumpGain).connect(this.master);
+    this.synthIn.connect(this.shaper);
+    // Ensemble stéréo façon Solina : trois lignes à retard modulées lentement, à gauche, au centre, à droite.
+    this.chorusDry = gain(1);
+    this.chorusWet = gain(0);
+    this.shaper.connect(this.chorusDry).connect(this.synthBus);
+    for (const [rate, fast, side] of [[0.43, 5.9, -0.9], [0.61, 6.7, 0], [0.79, 6.2, 0.9]]) {
+      const d = ctx.createDelay(0.05);
+      d.delayTime.value = 0.012;
+      for (const [f, depth] of [[rate, 0.004], [fast, 0.0003]]) {
+        const lfo = ctx.createOscillator();
+        lfo.frequency.value = f;
+        lfo.connect(gain(depth)).connect(d.delayTime);
+        lfo.start();
+      }
+      const pan = ctx.createStereoPanner();
+      pan.pan.value = side;
+      this.shaper.connect(d).connect(pan).connect(this.chorusWet);
+    }
+    this.chorusWet.connect(this.synthBus);
+    this.synthBus.connect(this.pumpGain).connect(this.master);
+    // Onde en impulsion (25 %) pour les hoovers.
+    const harmonics = 64;
+    const real = new Float32Array(harmonics);
+    for (let n = 1; n < harmonics; n++) real[n] = (2 / (n * Math.PI)) * Math.sin(n * Math.PI * 0.25);
+    this.pulseWave = ctx.createPeriodicWave(real, new Float32Array(harmonics));
     this.synthBus.connect(this.synthDSend).connect(this.delayIn);
     this.synthBus.connect(this.synthRSend).connect(this.reverbIn);
 
@@ -168,8 +195,18 @@ export class Engine {
         break;
       case 'detune':
         for (const voice of this.voices.values()) {
-          for (const o of voice.oscs) o.osc.detune.setTargetAtTime(o.spread * v, t, 0.02);
+          for (const o of voice.oscs) o.osc.detune.setTargetAtTime((o.cents ?? 0) * v / 12, t, 0.02);
         }
+        break;
+      case 'width':
+        for (const voice of this.voices.values()) for (const o of voice.oscs) o.pan?.pan.setTargetAtTime(o.spread * v, t, 0.02);
+        break;
+      case 'vibrato':
+        for (const voice of this.voices.values()) voice.vibGain?.gain.setTargetAtTime(v * (this.voiceCfg.vibRange ?? 0.5) * 100, t, 0.05);
+        break;
+      case 'chorus':
+        smooth(this.chorusWet.gain, v * 0.9);
+        smooth(this.chorusDry.gain, 1 - v * 0.35);
         break;
       case 'eqLow': case 'eqLowMid': case 'eqMid': case 'eqHiMid': case 'eqHigh':
         smooth(this.eq[id].gain, v);
@@ -187,36 +224,81 @@ export class Engine {
   }
 
   // --- Synthé ---
-  // `when` : instant (horloge audio) de départ, pour les notes programmées par le séquenceur.
+  // Formants posés après une couche : caisse de résonance des cordes, ou voyelles d'un chœur.
+  formant(input, kind) {
+    const { ctx } = this;
+    if (kind === 'strings') {
+      let node = input;
+      for (const [f, g, q] of [[350, 4, 1], [1100, 5, 1.2], [2700, 3, 1.5]]) {
+        const b = ctx.createBiquadFilter();
+        b.type = 'peaking';
+        b.frequency.value = f;
+        b.gain.value = g;
+        b.Q.value = q;
+        node = node.connect(b);
+      }
+      const shelf = ctx.createBiquadFilter();
+      shelf.type = 'highshelf';
+      shelf.frequency.value = 6000;
+      shelf.gain.value = -4;
+      return node.connect(shelf);
+    }
+    const vowels = { a: [[800, 1, 8], [1150, 0.6, 9], [2900, 0.25, 10]], o: [[450, 1, 8], [800, 0.5, 9], [2830, 0.15, 10]] };
+    const sum = ctx.createGain();
+    for (const [f, g, q] of vowels[kind] ?? vowels.a) {
+      const b = ctx.createBiquadFilter();
+      b.type = 'bandpass';
+      b.frequency.value = f;
+      b.Q.value = q;
+      const level = ctx.createGain();
+      level.gain.value = g * 2.5;
+      input.connect(b).connect(level).connect(sum);
+    }
+    return sum;
+  }
+
+  // `when` : instant (horloge audio) de départ, pour les notes programmées par la timeline.
   makeVoice(f, velocity, fromFreq, when) {
     const { ctx, values: p, voiceCfg: c } = this;
     const t = Math.max(ctx.currentTime, when ?? 0);
-    const wave = WAVES[p.wave] || 'sawtooth';
+    const attack = p.attack ?? 0.005;
+    const fenv = c.fenv ?? 0.4;
 
     const filter = ctx.createBiquadFilter();
     filter.type = c.filterType;
     filter.Q.value = p.reso;
-    const peak = Math.min(18000, p.cutoff * (1 + p.fenv * 10 * (0.4 + velocity * 0.6)));
+    const peak = Math.min(18000, p.cutoff * (1 + fenv * 10 * (0.4 + velocity * 0.6)));
     filter.frequency.setValueAtTime(peak, t);
-    filter.frequency.setTargetAtTime(p.cutoff, t + p.attack, 0.12 + p.fenv * 0.3);
+    filter.frequency.setTargetAtTime(p.cutoff, t + attack, 0.12 + fenv * 0.3);
 
     const amp = ctx.createGain();
-    const level = 0.22 * (0.25 + velocity * 0.75);
+    const level = 0.34 * (0.25 + velocity * 0.75);
     amp.gain.setValueAtTime(0, t);
-    amp.gain.linearRampToValueAtTime(level, t + p.attack);
-    amp.gain.setTargetAtTime(level * c.sustain, t + p.attack, c.decay / 3);
+    amp.gain.linearRampToValueAtTime(level, t + attack);
+    amp.gain.setTargetAtTime(level * c.sustain, t + attack, c.decay / 3);
 
-    const n = Math.max(1, c.unison);
-    const mix = ctx.createGain();
-    mix.gain.value = 1 / Math.sqrt(n);
+    // Couches d'oscillateurs : unisson désaccordé (« Désaccord ») et étalé dans la stéréo (« Largeur »).
+    const layers = c.layers ?? [{ osc: WAVES[p.wave] || 'sawtooth', voices: c.unison, spread: 12 }];
+    const width = p.width ?? 0.5;
+    const detune = (p.detune ?? 12) / 12;
+    const total = layers.reduce((sum, l) => sum + (l.level ?? 1), 0);
     const oscs = [];
-    for (let k = 0; k < n; k++) {
-      const osc = ctx.createOscillator();
-      osc.type = wave;
-      const spread = n > 1 ? (2 * k) / (n - 1) - 1 : 0;
-      osc.detune.value = spread * p.detune;
-      osc.connect(mix);
-      oscs.push({ osc, spread, ratio: 1 });
+    for (const layer of layers) {
+      const n = Math.max(1, layer.voices ?? 1);
+      const lg = ctx.createGain();
+      lg.gain.value = (layer.level ?? 1) / Math.sqrt(n) / Math.max(1, total * 0.8);
+      (layer.formant ? this.formant(lg, layer.formant) : lg).connect(filter);
+      for (let k = 0; k < n; k++) {
+        const osc = ctx.createOscillator();
+        if (layer.osc === 'pulse') osc.setPeriodicWave(this.pulseWave); else osc.type = layer.osc ?? 'sawtooth';
+        const spread = n > 1 ? (2 * k) / (n - 1) - 1 : 0;
+        const cents = spread * (layer.spread ?? 12);
+        osc.detune.value = cents * detune;
+        const pan = ctx.createStereoPanner();
+        pan.pan.value = spread * width;
+        osc.connect(pan).connect(lg);
+        oscs.push({ osc, spread, cents, pan, ratio: Math.pow(2, (layer.octave ?? 0) / 12) });
+      }
     }
     if (c.sub) {
       const osc = ctx.createOscillator();
@@ -224,28 +306,27 @@ export class Engine {
       const g = ctx.createGain();
       g.gain.value = c.sub * 0.6;
       osc.connect(g).connect(filter);
-      oscs.push({ osc, spread: 0, ratio: 0.5 });
+      oscs.push({ osc, spread: 0, cents: 0, ratio: 0.5 });
     }
 
     // Hauteur : glissé depuis la note précédente (mono) ou depuis un décalage (bend).
     const start = fromFreq ?? (c.bend ? f * Math.pow(2, c.bend / 12) : f);
-    const time = fromFreq ? Math.max(0.005, c.glide) : c.bendTime;
+    const time = fromFreq ? Math.max(0.005, p.glide ?? c.glide) : c.bendTime;
     for (const o of oscs) {
       o.osc.frequency.setValueAtTime(start * o.ratio, t);
       if (start !== f) o.osc.frequency.exponentialRampToValueAtTime(f * o.ratio, t + time);
     }
 
+    // Vibrato (potard « Vibrato »), qui arrive après un instant comme sur un instrument joué.
     const lfos = [];
-    if (c.vib) {
-      const lfo = ctx.createOscillator();
-      lfo.frequency.value = c.vibRate;
-      const depth = ctx.createGain();
-      depth.gain.setValueAtTime(0, t);
-      depth.gain.linearRampToValueAtTime(c.vib * 100, t + c.vibDelay + 0.2);
-      lfo.connect(depth);
-      for (const o of oscs) depth.connect(o.osc.detune);
-      lfos.push(lfo);
-    }
+    const vib = ctx.createOscillator();
+    vib.frequency.value = c.vibRate;
+    const vibGain = ctx.createGain();
+    vibGain.gain.setValueAtTime(0, t);
+    vibGain.gain.linearRampToValueAtTime((p.vibrato ?? 0) * (c.vibRange ?? 0.5) * 100, t + c.vibDelay + 0.3);
+    vib.connect(vibGain);
+    for (const o of oscs) vibGain.connect(o.osc.detune);
+    lfos.push(vib);
     if (c.lfoRate) {
       const lfo = ctx.createOscillator();
       lfo.frequency.value = c.lfoRate;
@@ -255,15 +336,15 @@ export class Engine {
       lfos.push(lfo);
     }
 
-    mix.connect(filter).connect(amp).connect(this.synthIn);
+    filter.connect(amp).connect(this.synthIn);
     for (const o of oscs) o.osc.start(t);
     for (const l of lfos) l.start(t);
-    return { oscs, lfos, filter, amp, freq: f };
+    return { oscs, lfos, filter, amp, vibGain, freq: f };
   }
 
   glideVoice(voice, f, when) {
     const t = Math.max(this.ctx.currentTime, when ?? 0);
-    const time = Math.max(0.005, this.voiceCfg.glide);
+    const time = Math.max(0.005, this.values.glide ?? this.voiceCfg.glide);
     for (const o of voice.oscs) {
       const param = o.osc.frequency;
       param.cancelScheduledValues(t);

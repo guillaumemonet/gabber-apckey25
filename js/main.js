@@ -1,8 +1,8 @@
 import { APC, BTN, PALETTE, PICKER_COLORS, MK1_PICKER_COLORS, mk1Equivalent } from './apc.js';
 import { Engine } from './audio.js';
-import { PAGES, MODES, toValue, toPos, defaultPositions } from './params.js';
+import { PAGES, MODES, SYNTH_KNOBS, toValue, toPos, defaultPositions } from './params.js';
 import { renderDefaultKit } from './kit.js';
-import { PRESETS, PRESET_KEYS } from './presets.js';
+import { PRESETS, FAMILIES, familyGroup, presetById, migratePreset, WHITE_KEYS } from './presets.js';
 import { Recorder, download, stamp, encodeWav } from './recorder.js';
 import { packBanks, unpack } from './kits.js';
 import * as store from './storage.js';
@@ -27,7 +27,7 @@ const state = {
   page: 'synth',
   selected: 0,
   bpm: 120,
-  preset: 0,        // preset du synthé (js/presets.js)
+  preset: 'init',   // preset du synthé (identifiant, voir js/presets.js)
   libBanks: [],     // noms des banques de la bibliothèque déjà importées
   model: null,      // dernier modèle d'APC vu ('mk1' | 'mk2')
   globals: { ...defaultPositions('synth'), ...defaultPositions('fx'), ...defaultPositions('eq') },
@@ -64,7 +64,7 @@ async function start() {
   await restore();
   for (const [id, p] of Object.entries(state.globals)) engine.set(id, globalValue(id, p));
   engine.setBpm(state.bpm);
-  engine.setVoice(PRESETS[state.preset]?.voice ?? {});
+  engine.setVoice(presetById(state.preset).voice);
   engine.onPadState = onPadState;
   recorder = new Recorder(engine.ctx, engine.output);
   drum = new TR909(engine, () => state.tr);
@@ -134,7 +134,7 @@ async function restore() {
     state.bank = Math.min(saved.bank ?? 0, BANKS - 1);
     state.page = saved.page ?? 'synth';
     state.bpm = saved.bpm ?? 120;
-    state.preset = saved.preset ?? 0;
+    state.preset = migratePreset(saved.preset);
     // Anciennes sauvegardes : les 5 premières banques de la bibliothèque étaient déjà importées.
     state.libBanks = saved.libBanks ?? (saved.libImported ? ['Batterie', 'Électro', 'Boucles', 'Textures', 'Tabla & divers'] : []);
     state.model = saved.model ?? null;
@@ -287,6 +287,7 @@ function knobDefs() {
     const defs = mixKnobDefs(mixField(state.page));
     return [...defs, ...new Array(7 - defs.length).fill(null), masterDef()];   // K8 = volume général
   }
+  if (state.page === 'synth') return synthKnobDefs();
   return state.page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[state.page].params;
 }
 function knobTarget(def) {
@@ -325,6 +326,7 @@ function turnKnob(index, { delta, value }) {
     engine.set(def.id, toValue(def, target[def.id]));
   }
   if (def.id === 'master') renderMixer();
+  if (state.page === 'synth') renderSynthKnobs();
   renderKnob(index, true);
   save();
 }
@@ -434,7 +436,7 @@ function bindController() {
 
   apc.addEventListener('key', ({ detail: { note, velocity, on } }) => {
     // Maj + touche : choisir un preset au lieu de jouer.
-    if (on && shiftHeld && PRESET_KEYS[note % 12] !== undefined) { applyPreset(PRESET_KEYS[note % 12]); return; }
+    if (on && shiftHeld && presetKey(note)) return;
     if (on) engine.noteOn(note, velocity); else engine.noteOff(note);
     tlRecordNote(note, on, velocity);
     setPianoKey(note, on);
@@ -1936,7 +1938,7 @@ function launchScene(n) {
     for (const id of CHANNELS) if (sc.mix?.[id]) Object.assign(state.mix.channels[id], sc.mix[id]);
     mixer.update();
     renderMixer();
-    if (sc.preset !== undefined && sc.preset !== state.preset) applyPreset(sc.preset);
+    if (sc.preset !== undefined && migratePreset(sc.preset) !== state.preset) applyPreset(migratePreset(sc.preset));
     if (!sc.running && drum.running) drum.stop();
     currentScene = n;
     queuedScene = null;
@@ -2003,36 +2005,126 @@ function renderScenes() {
 
 // ---------- Presets du synthé ----------
 
-function applyPreset(i) {
-  const preset = PRESETS[i];
-  if (!preset) return;
-  state.preset = i;
-  for (const [id, v] of Object.entries(preset.values)) {
-    const def = globalDef(id);
-    state.globals[id] = Math.min(1, Math.max(0, toPos(def, v)));
-    engine.set(id, toValue(def, state.globals[id]));
+let synthFamily = 'leads';   // famille affichée dans la fenêtre du synthé
+const synthKnobDefs = () => SYNTH_KNOBS[familyGroup(presetById(state.preset).family)].map(id => PAGES.synth.params.find(d => d.id === id));
+
+function applyPreset(id) {
+  const preset = presetById(id);
+  state.preset = preset.id;
+  synthFamily = preset.family;
+  // Tous les potards du synthé : valeur du preset, sinon valeur par défaut.
+  for (const def of PAGES.synth.params) {
+    const v = preset.values[def.id] ?? def.def;
+    state.globals[def.id] = Math.min(1, Math.max(0, toPos(def, v)));
+    engine.set(def.id, toValue(def, state.globals[def.id]));
   }
   engine.setVoice(preset.voice);
   renderPresets();
   renderKnobs();
-  toast(t('preset.toast', { name: preset.name }));
+  toast(t('preset.toast', { name: `${t(`family.${preset.family}`)} · ${preset.name}` }));
   save();
 }
 
+// Maj + touche du clavier : touches blanches = presets de la famille, do# / ré# = famille précédente / suivante.
+function presetKey(note) {
+  const pc = note % 12;
+  if (pc === 1 || pc === 3) {
+    const i = FAMILIES.indexOf(synthFamily);
+    synthFamily = FAMILIES[(i + (pc === 1 ? -1 : 1) + FAMILIES.length) % FAMILIES.length];
+    renderPresets();
+    toast(t('preset.family', { name: t(`family.${synthFamily}`) }));
+    return true;
+  }
+  const k = WHITE_KEYS.indexOf(pc);
+  if (k < 0) return false;
+  const list = PRESETS.filter(p => p.family === synthFamily);
+  if (list[k]) applyPreset(list[k].id);
+  return true;
+}
+
 function buildPresets() {
-  const keyName = Object.fromEntries(Object.entries(PRESET_KEYS).map(([k, i]) => [i, t('notes')[k]]));
-  PRESETS.forEach((preset, i) => {
+  synthFamily = presetById(state.preset).family;
+  for (const f of FAMILIES) {
     const btn = document.createElement('button');
-    btn.textContent = preset.name;
-    btn.title = t('preset.title', { key: keyName[i] });
-    btn.addEventListener('click', () => applyPreset(i));
-    $('#presets').appendChild(btn);
-  });
+    btn.dataset.family = f;
+    btn.textContent = t(`family.${f}`);
+    btn.addEventListener('click', () => { synthFamily = f; renderPresets(); });
+    $('#synth-families').appendChild(btn);
+  }
+  buildSynthKnobs();
   renderPresets();
 }
 
 function renderPresets() {
-  [...$('#presets').children].forEach((btn, i) => btn.classList.toggle('active', i === state.preset));
+  const current = presetById(state.preset);
+  for (const btn of $('#synth-families').children) {
+    btn.classList.toggle('active', btn.dataset.family === synthFamily);
+    btn.classList.toggle('current', btn.dataset.family === current.family);
+  }
+  const box = $('#presets');
+  box.innerHTML = '';
+  PRESETS.filter(p => p.family === synthFamily).forEach((preset, k) => {
+    const btn = document.createElement('button');
+    btn.textContent = preset.name;
+    btn.title = t('preset.title', { key: t('notes')[WHITE_KEYS[k]] });
+    btn.classList.toggle('active', preset.id === state.preset);
+    btn.addEventListener('click', () => applyPreset(preset.id));
+    box.appendChild(btn);
+  });
+  renderSynthKnobs();
+}
+
+// Les 8 potards d'expression dans la fenêtre du synthé (les mêmes que la page Synthé de l'APC).
+const synthKnobEls = [];
+function buildSynthKnobs() {
+  const wrap = $('#synth-knobs');
+  for (let k = 0; k < 8; k++) {
+    const el = document.createElement('div');
+    el.className = 'knob';
+    el.innerHTML = `
+      <svg viewBox="0 0 80 80">
+        <path class="track" d="${arcPath(1)}" fill="none" stroke-width="8" stroke-linecap="round"/>
+        <path class="arc" fill="none" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+      <div class="value"></div><div class="label"></div>`;
+    let lastY = null;
+    el.addEventListener('pointerdown', e => { lastY = e.clientY; try { el.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } });
+    el.addEventListener('pointermove', e => {
+      if (lastY === null || Math.abs(lastY - e.clientY) < 2) return;
+      turnSynthKnob(k, { delta: (lastY - e.clientY) / 2 * (e.shiftKey ? 0.25 : 1) });
+      lastY = e.clientY;
+    });
+    el.addEventListener('pointerup', () => { lastY = null; });
+    el.addEventListener('wheel', e => { e.preventDefault(); turnSynthKnob(k, { delta: e.deltaY < 0 ? 2 : -2 }); }, { passive: false });
+    el.addEventListener('dblclick', () => {
+      const def = synthKnobDefs()[k];
+      const preset = presetById(state.preset);
+      turnSynthKnob(k, { value: toPos(def, preset.values[def.id] ?? def.def) });   // retour à la valeur du preset
+    });
+    synthKnobEls[k] = el;
+    wrap.appendChild(el);
+  }
+}
+
+function turnSynthKnob(k, { delta, value }) {
+  const def = synthKnobDefs()[k];
+  const pos = value ?? Math.min(1, Math.max(0, state.globals[def.id] + delta * 0.01));
+  state.globals[def.id] = pos;
+  engine.set(def.id, toValue(def, pos));
+  renderSynthKnobs();
+  if (state.page === 'synth') renderKnobs();
+  save();
+}
+
+function renderSynthKnobs() {
+  synthKnobDefs().forEach((def, k) => {
+    const el = synthKnobEls[k];
+    if (!el) return;
+    const p = state.globals[def.id];
+    el.querySelector('.arc').setAttribute('d', p > 0.001 ? arcPath(p) : '');
+    el.querySelector('.label').textContent = def.label;
+    el.querySelector('.value').textContent = def.fmt(toValue(def, p));
+  });
 }
 
 // ---------- Effets de performance ----------
@@ -2171,8 +2263,9 @@ function bindKits() {
         for (let b = 0; b < BANKS; b++) replaceBank(b, await Promise.all((kitData.banks[b] ?? new Array(40).fill(null)).map(unpackPad)));
         Object.assign(state.globals, kitData.globals);
         for (const [id, p] of Object.entries(state.globals)) engine.set(id, globalValue(id, p));
-        state.preset = kitData.preset ?? 0;
-        engine.setVoice(PRESETS[state.preset]?.voice ?? {});
+        state.preset = migratePreset(kitData.preset);
+        synthFamily = presetById(state.preset).family;
+        engine.setVoice(presetById(state.preset).voice);
         if (kitData.bpm) setBpm(kitData.bpm);
         if (kitData.scenes) { state.scenes = mergeScenes(kitData.scenes); currentScene = null; renderScenes(); }
         if (kitData.mix) { state.mix = mergeMixState(kitData.mix); mixer.reload(); CHANNELS.forEach(renderFx); renderMixer(); }

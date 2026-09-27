@@ -13,7 +13,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 - **Plugins** dans des fenêtres déplaçables et aimantées :
   - **Sampler 40 pads** avec 10 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de tes propres sons ;
   - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
-  - **Synthé polyphonique** au clavier avec 8 presets gabber (Hoover, Acid 303, Screech, Stab rave, Basse distordue, Horn, Kick accordé…) ;
+  - **Synthé en couches** au clavier : 35 presets en 10 familles (cordes, nappes, chœurs, supersaw, hoovers, leads, basses, stabs, claviers, effets) avec ensemble, largeur stéréo, vibrato et 8 potards d'expression ;
   - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres et jusqu'à 4 effets d'insert ;
   - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **moniteur MIDI**.
 - **Enregistrement WAV** de ta session et **export / import de kits**.
@@ -60,7 +60,7 @@ L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert
 | **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K8 master) |
 | **Potards K1-K8** | Paramètres de la page active (Maj = réglage fin) |
 | **SUSTAIN** | Ouvre / ferme la page EQ (maintenu : EQ le temps de l'appui) |
-| **Maj + touche du piano** | Preset du synthé : do Hoover, ré Acid 303, mi Screech, fa Stab rave, sol Basse dist., la Horn, si Kick accordé, do# Init |
+| **Maj + touche blanche** | Preset de la famille du synthé (do = 1er, ré = 2e…) · **Maj + do# / ré#** = famille précédente / suivante |
 | **Clavier** | Joue le synthé |
 | **PLAY** | Lancer / arrêter la timeline (la TR-909 a son propre ▶ dans sa fenêtre) |
 | **Maj + PLAY** | Transformer la grille de pads en TR-909 (et revenir) |
@@ -164,13 +164,38 @@ La barre sous l'en-tête ouvre et ferme les plugins : **Pads**, **Éditeur de pa
 - **✕** la ferme ; les fenêtres utilisées sont mémorisées avec leur position.
 - **Réorganiser les fenêtres** (en-tête) les remet à leur place et à leur taille de départ.
 
+## Synthé
+
+Le clavier joue un synthé en couches pensé pour le hardcore : chaque preset empile jusqu'à 3 **couches** d'oscillateurs (scie, carré, triangle, sinus ou impulsion, chacune avec son unisson, son octave et son niveau), avec des **formants** (résonance de caisse des cordes, voyelles « a » / « o » des chœurs), un **ensemble** stéréo comme les machines à cordes Solina, l'unisson étalé dans la stéréo, et un vibrato qui arrive après un instant.
+
+**35 presets en 10 familles** (fenêtre Synthé, ou **Maj + touche blanche** sur l'APC = preset de la famille, **Maj + do# / ré#** = famille précédente / suivante) :
+
+| Famille | Presets |
+|---|---|
+| Cordes | Épiques, Sombres, Staccato, Solina, Aiguës |
+| Nappes | Thunderdome, Sombre, Chaude, De verre, Balayée |
+| Chœurs | Rave, « Ooh », Sombre |
+| Supersaw | Uplifting, Lead hardstyle, Nappe, Stab |
+| Hoovers | Hoover, Mentasm |
+| Leads | Init, Acid 303, Screech, Horn, Lead gabber |
+| Basses | Distordue, Reese, Sub |
+| Stabs | Rave, Belge, Coup d'orchestre |
+| Claviers | Piano rave, Orgue |
+| Effets | Kick accordé, Sirène, Laser |
+
+**8 potards d'expression**, adaptés à la famille (dans la fenêtre Synthé et sur la page Synthé de l'APC) :
+- cordes, nappes, chœurs, supersaw, stabs, claviers : Brillance, Résonance, Attaque, Relâche, **Largeur**, **Vibrato**, **Ensemble**, Réverb ;
+- hoovers, leads, basses, effets : Brillance, Résonance, Attaque, Relâche, Saturation, **Glissé**, Désaccord, Réverb.
+
+Double-clic sur un potard de la fenêtre Synthé pour revenir à la valeur du preset.
+
 ## Tempo et boucles
 
 Le tempo global (en-tête, ou bouton **Tap**) pilote toutes les boucles. Chacune démarre sur la mesure suivante et reste calée quand tu changes le tempo. Pour tes propres boucles, indique leur tempo d'origine dans l'éditeur, ou clique sur **Auto** : le calcul suppose que le fichier dure un nombre entier de mesures. Règle le tempo à 190 pour les banques Gabber, Hardcore et Oldschool : leurs boucles partagent la même tonalité (fa mineur) et les mêmes longueurs, elles restent donc calées entre elles.
 
 ## Pages des potentiomètres
 
-- **Synthé** : onde, désaccord, coupure, résonance, enveloppe de filtre, attaque, relâche, volume
+- **Synthé** : les 8 potards d'expression de la famille du synthé (voir Synthé)
 - **Effets** : temps, répétitions et envoi du delay, envoi et taille de la reverb, saturation, volume des pads, volume général
 - **Pad** : volume, hauteur, panoramique, filtre, point de départ, envois delay et reverb, et mode de lecture du pad sélectionné
 - **EQ** : grave 100 Hz, bas-médium 350 Hz, médium 1,2 kHz, haut-médium 3,5 kHz, aigu 9 kHz (±15 dB), passe-bas, passe-haut, gain de sortie

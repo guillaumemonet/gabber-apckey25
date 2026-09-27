@@ -13,17 +13,21 @@ const db = v => (Math.abs(v) < 0.25 ? '0 dB' : `${v > 0 ? '+' : ''}${v.toFixed(1
 const sec = v => (v < 1 ? `${Math.round(v * 1000)}ms` : `${v.toFixed(2)}s`);
 
 export const PAGES = {
+  // Potards d'expression du synthé ; chaque famille de sons en montre 8 (voir SYNTH_KNOBS).
   synth: {
     label: t('page.synth'),
     params: [
-      { id: 'wave', min: 0, max: 3, def: 2, steps: 4, fmt: v => WAVE_LABELS[v] },
-      { id: 'detune', min: 0, max: 50, def: 12, fmt: v => `${Math.round(v)}ct` },
       { id: 'cutoff', min: 80, max: 18000, def: 2400, curve: 'exp', fmt: hz },
-      { id: 'reso', min: 0.1, max: 20, def: 2, curve: 'exp', fmt: v => v.toFixed(1) },
-      { id: 'fenv', min: 0, max: 1, def: 0.4, fmt: pct },
+      { id: 'reso', min: 0.1, max: 20, def: 1.5, curve: 'exp', fmt: v => v.toFixed(1) },
       { id: 'attack', min: 0.002, max: 3, def: 0.005, curve: 'exp', fmt: sec },
-      { id: 'release', min: 0.01, max: 5, def: 0.35, curve: 'exp', fmt: sec },
-      { id: 'synthVol', min: 0, max: 1, def: 0.6, fmt: pct },
+      { id: 'release', min: 0.01, max: 6, def: 0.35, curve: 'exp', fmt: sec },
+      { id: 'width', min: 0, max: 1, def: 0.5, fmt: pct },
+      { id: 'vibrato', min: 0, max: 1, def: 0, fmt: pct },
+      { id: 'chorus', min: 0, max: 1, def: 0, fmt: pct },
+      { id: 'rSend', min: 0, max: 1, def: 0.25, fmt: pct },
+      { id: 'drive', min: 0, max: 1, def: 0, fmt: pct },
+      { id: 'glide', min: 0, max: 0.5, def: 0.05, fmt: sec },
+      { id: 'detune', min: 0, max: 50, def: 12, fmt: v => `${Math.round(v)}ct` },
     ],
   },
   fx: {
@@ -34,7 +38,7 @@ export const PAGES = {
       { id: 'dSend', min: 0, max: 1, def: 0.15, fmt: pct },
       { id: 'rSend', min: 0, max: 1, def: 0.25, fmt: pct },
       { id: 'rSize', min: 0.3, max: 8, def: 2.2, curve: 'exp', fmt: sec },
-      { id: 'drive', min: 0, max: 1, def: 0, fmt: pct },
+      { id: 'synthVol', min: 0, max: 1, def: 0.6, fmt: pct },
       { id: 'padVol', min: 0, max: 1, def: 0.8, fmt: pct },
       { id: 'master', min: 0, max: 1, def: 0.8, fmt: pct },
     ],
@@ -69,6 +73,12 @@ export const PAGES = {
 
 // Libellés des potards dans la langue du navigateur.
 for (const [page, { params }] of Object.entries(PAGES)) for (const d of params) d.label = t(`${page}.${d.id}`);
+
+// Potards du synthé selon la famille : nappes / cordes / chœurs, ou sons monophoniques (basses, leads).
+export const SYNTH_KNOBS = {
+  wide: ['cutoff', 'reso', 'attack', 'release', 'width', 'vibrato', 'chorus', 'rSend'],
+  mono: ['cutoff', 'reso', 'attack', 'release', 'drive', 'glide', 'detune', 'rSend'],
+};
 
 export function toValue(def, p) {
   p = Math.min(1, Math.max(0, p));
