@@ -4,10 +4,12 @@
 
 *By Guillaume Monet* · [Version française](README.fr.md) · <sub>[☕ Support the project](https://paypal.me/holythunderblade)</sub>
 
+![GabberKey: sound library, timeline with the demo song, and the pads window](docs/screenshots/overview-en.png)
+
 GabberKey is built around a **timeline**: drag sounds from a library sorted by category onto tracks, the blocks snap to the bar and everything plays at the same tempo. The other tools (sampler pads, TR-909, synth, mixer, effects…) are **plugins** that open in windows, and the Akai APC Key 25 (mk1 or mk2) plays them live. Nothing to install except a web browser:
 
 - **Timeline**: 16 tracks in bars; drag, lengthen (loops repeat), copy and move blocks; play the pads or the keyboard while recording and every hit or held note becomes a block, live; record the TR-909 as audio.
-- **Sound library**: 358 sounds sorted into Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices and FX, plus your own sounds and recordings; click to listen, drag to place.
+- **Sound library**: 438 sounds sorted into Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices and FX, plus your own sounds and recordings; click to listen, drag to place.
   - six **synthesised hardcore / gabber banks**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, dark mainstream kicks and leads, modern uptempo kicks with raw tails, supersaws, shouts, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
 - **Plugins** in movable, magnetic windows:
@@ -20,6 +22,12 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 - Interface in **English or French**, following the browser language.
 
 ---
+
+## Screenshots
+
+| Synth and pad generator | TR-909 | Mixer and sidechain |
+|---|---|---|
+| [![Synth window: families, presets, expression knobs, chords, arpeggiator and pad generator](docs/screenshots/synth-en.png)](docs/screenshots/synth-en.png) | [![TR-909 window: 16-step sequencer and knobs with per-instrument distortion](docs/screenshots/tr-en.png)](docs/screenshots/tr-en.png) | [![Mixer window: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png) |
 
 ## Requirements
 
@@ -89,7 +97,7 @@ Everything can also be done with the mouse. On the computer keyboard, the middle
 | 11 | **Mainstream** (dark mainstream hardcore, F harmonic minor): kicks with a distorted tonal tail (angry, dark, punchy, pitch drop, raw, tuned C# and G#), hard clap and percussion, dark and screaming leads, screeches, dark hoover, horror bells, dark piano, synthesised shouts ("hey", "oi", "yeah"), dark choir and strings, horror pad, loops (beat, lead riff, screech riff, bell melody, breakdown pad, build-up, 4-bar full track), all at 190 BPM |
 | 12 | **New wave** (modern hardcore / uptempo): kicks with long raw "zaag" tails (zaag, raw, screech kick, hard punch, tok, kick-bass), 8 tuned kicks (F to F) for kick melodies, supersaw lead and chords (Fm, Db, Ab, Eb), pluck, pitch lead, euphoric pad, shouts, uplifter, tunnel, glitch, loops (uptempo beat, kick-bass, kick melody, gallop, supersaw chords, pluck melody, build-up, 4-bar drop), all at 190 BPM |
 
-To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. The **✎ pencil** on each pad opens the **pad editor** on it: name, LED colour, playback mode (**One-shot**, **Hold** or **Loop**) and the pad's **8 knobs** (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs.
+To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. The **✎ pencil** that appears when the mouse is over a pad opens the **pad editor** on it: name, LED colour, playback mode (**One-shot**, **Hold** or **Loop**) and the pad's **8 knobs** (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs.
 
 ## TR-909
 
@@ -257,6 +265,14 @@ Your banks, sounds and settings are saved automatically in the browser.
 
 The interface follows the browser language: French if the browser is set to French, English otherwise. To force a language, add `?lang=en` or `?lang=fr` to the address.
 
+## Hardware compatibility
+
+GabberKey is developed and tested with an **Akai APC Key 25 mk1**. The **mk2** is supported from Akai Professional's MIDI documentation, but has not been tested on a real unit yet. Everything also works with the mouse and the computer keyboard.
+
+> **A word to Akai Professional** 🙏
+>
+> Dear Akai team, thank you for designing such inspiring controllers: GabberKey exists because the APC Key 25 is so much fun to play. If you would ever be kind enough to lend or send some of your hardware (an APC Key 25 mk2, an APC mini mk2, an APC64, an MPK mini…), I would be truly delighted to make GabberKey as compatible as possible with it, and to share the result freely with everyone who plays your instruments. Please do not hesitate to get in touch by [opening an issue](https://github.com/guillaumemonet/gabber-apckey25/issues) on this repository. Thank you very much for your time and for your kindness!
+
 ## Troubleshooting
 
 | Symptom | Fix |
@@ -325,3 +341,5 @@ sounds/               generated banks + banks.json
 ## License
 
 Code released under the [MIT License](LICENSE) © 2026 Guillaume Monet. The Sonic Pi samples in banks 2-6 remain public domain (CC0).
+
+Akai Professional, APC and MPK are trademarks of inMusic Brands, Inc. Roland and TR-909 are trademarks of Roland Corporation. GabberKey is an independent project, not affiliated with or endorsed by these companies.
