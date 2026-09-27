@@ -9,241 +9,281 @@
      "file": "bank1/bd_808.flac",
      "name": "bd 808",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank1/bd_boom.flac",
      "name": "bd boom",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank1/bd_fat.flac",
      "name": "bd fat",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank1/bd_haus.flac",
      "name": "bd haus",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank1/bd_klub.flac",
      "name": "bd klub",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank1/bd_tek.flac",
      "name": "bd tek",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank1/drum_heavy_kick.flac",
      "name": "heavy kick",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank1/bd_zum.flac",
      "name": "bd zum",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank1/sn_dolf.flac",
      "name": "sn dolf",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/sn_dub.flac",
      "name": "sn dub",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/sn_generic.flac",
      "name": "sn generic",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/sn_zome.flac",
      "name": "sn zome",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_snare_hard.flac",
      "name": "snare hard",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_snare_soft.flac",
      "name": "snare soft",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/elec_hi_snare.flac",
      "name": "hi snare",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/perc_snap.flac",
      "name": "snap",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_cymbal_closed.flac",
      "name": "cymbal closed",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_cymbal_pedal.flac",
      "name": "cymbal pedal",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_cymbal_open.flac",
      "name": "cymbal open",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/hat_cab.flac",
      "name": "hat cab",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/hat_gnu.flac",
      "name": "hat gnu",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/hat_psych.flac",
      "name": "hat psych",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/hat_raw.flac",
      "name": "hat raw",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/hat_snap.flac",
      "name": "hat snap",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_tom_lo_hard.flac",
      "name": "tom lo hard",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_tom_mid_hard.flac",
      "name": "tom mid hard",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_tom_hi_hard.flac",
      "name": "tom hi hard",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_tom_lo_soft.flac",
      "name": "tom lo soft",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_tom_mid_soft.flac",
      "name": "tom mid soft",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_tom_hi_soft.flac",
      "name": "tom hi soft",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_roll.flac",
      "name": "roll",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_cowbell.flac",
      "name": "cowbell",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_cymbal_hard.flac",
      "name": "cymbal hard",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_cymbal_soft.flac",
      "name": "cymbal soft",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_splash_hard.flac",
      "name": "splash hard",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/drum_splash_soft.flac",
      "name": "splash soft",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/ride_tri.flac",
      "name": "ride tri",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/ride_via.flac",
      "name": "ride via",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/hat_zild.flac",
      "name": "hat zild",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank1/hat_metal.flac",
      "name": "hat metal",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     }
    ]
   },
@@ -254,241 +294,281 @@
      "file": "bank2/bd_ada.flac",
      "name": "bd ada",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank2/bd_chip.flac",
      "name": "bd chip",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank2/bd_gas.flac",
      "name": "bd gas",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank2/bd_jazz.flac",
      "name": "bd jazz",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank2/bd_mehackit.flac",
      "name": "bd mehackit",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank2/bd_pure.flac",
      "name": "bd pure",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank2/bd_sone.flac",
      "name": "bd sone",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank2/bd_zome.flac",
      "name": "bd zome",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank2/elec_snare.flac",
      "name": "snare",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/elec_lo_snare.flac",
      "name": "lo snare",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/elec_mid_snare.flac",
      "name": "mid snare",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/elec_filt_snare.flac",
      "name": "filt snare",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/elec_hollow_kick.flac",
      "name": "hollow kick",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/elec_soft_kick.flac",
      "name": "soft kick",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/elec_fuzz_tom.flac",
      "name": "fuzz tom",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/elec_cymbal.flac",
      "name": "cymbal",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/hat_bdu.flac",
      "name": "hat bdu",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/hat_cats.flac",
      "name": "hat cats",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/hat_gem.flac",
      "name": "hat gem",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/hat_gump.flac",
      "name": "hat gump",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/hat_hier.flac",
      "name": "hat hier",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/hat_len.flac",
      "name": "hat len",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/hat_mess.flac",
      "name": "hat mess",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/hat_noiz.flac",
      "name": "hat noiz",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank2/elec_beep.flac",
      "name": "beep",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_bell.flac",
      "name": "bell",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_blip.flac",
      "name": "blip",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_blip2.flac",
      "name": "blip2",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_blup.flac",
      "name": "blup",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_bong.flac",
      "name": "bong",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_chime.flac",
      "name": "chime",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_ping.flac",
      "name": "ping",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_plip.flac",
      "name": "plip",
      "color": 33,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_pop.flac",
      "name": "pop",
      "color": 33,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_tick.flac",
      "name": "tick",
      "color": 33,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_triangle.flac",
      "name": "triangle",
      "color": 33,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_twang.flac",
      "name": "twang",
      "color": 33,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_twip.flac",
      "name": "twip",
      "color": 33,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_wood.flac",
      "name": "wood",
      "color": 33,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank2/elec_flip.flac",
      "name": "flip",
      "color": 33,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     }
    ]
   },
@@ -499,103 +579,120 @@
      "file": "bank3/glitch_perc1.flac",
      "name": "perc1",
      "color": 53,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank3/glitch_perc2.flac",
      "name": "perc2",
      "color": 53,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank3/glitch_perc3.flac",
      "name": "perc3",
      "color": 53,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank3/glitch_perc4.flac",
      "name": "perc4",
      "color": 53,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank3/glitch_perc5.flac",
      "name": "perc5",
      "color": 53,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank3/glitch_robot1.flac",
      "name": "robot1",
      "color": 53,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank3/glitch_robot2.flac",
      "name": "robot2",
      "color": 53,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank3/glitch_bass_g.flac",
      "name": "bass g",
      "color": 53,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank3/hat_sci.flac",
      "name": "hat sci",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank3/hat_star.flac",
      "name": "hat star",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank3/hat_tap.flac",
      "name": "hat tap",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank3/hat_yosh.flac",
      "name": "hat yosh",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank3/hat_zan.flac",
      "name": "hat zan",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank3/hat_zap.flac",
      "name": "hat zap",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank3/tbd_perc_blip.flac",
      "name": "perc blip",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank3/tbd_perc_tap_1.flac",
      "name": "perc tap 1",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank3/loop_amen.flac",
      "name": "amen",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 1,
      "sourceBpm": 136.88
@@ -605,6 +702,7 @@
      "name": "amen full",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 4,
      "sourceBpm": 140.0
@@ -614,6 +712,7 @@
      "name": "breakbeat",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 1,
      "sourceBpm": 126.0
@@ -623,6 +722,7 @@
      "name": "compus",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 4,
      "sourceBpm": 148.0
@@ -632,6 +732,7 @@
      "name": "garzul",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 4,
      "sourceBpm": 120.0
@@ -641,6 +742,7 @@
      "name": "industrial",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 0.5,
      "sourceBpm": 135.79
@@ -650,6 +752,7 @@
      "name": "mika",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 4,
      "sourceBpm": 120.0
@@ -659,6 +762,7 @@
      "name": "safari",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 4,
      "sourceBpm": 119.92
@@ -668,6 +772,7 @@
      "name": "mehackit1",
      "color": 41,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 1,
      "sourceBpm": 97.0
@@ -677,6 +782,7 @@
      "name": "mehackit2",
      "color": 41,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 1,
      "sourceBpm": 97.0
@@ -686,6 +792,7 @@
      "name": "perc1",
      "color": 41,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 1,
      "sourceBpm": 97.0
@@ -695,6 +802,7 @@
      "name": "perc2",
      "color": 41,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 1,
      "sourceBpm": 97.0
@@ -704,6 +812,7 @@
      "name": "tabla",
      "color": 41,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 4,
      "sourceBpm": 89.94
@@ -713,6 +822,7 @@
      "name": "electric",
      "color": 41,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 1,
      "sourceBpm": 97.0
@@ -722,6 +832,7 @@
      "name": "3d printer",
      "color": 41,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 4,
      "sourceBpm": 120.62
@@ -731,6 +842,7 @@
      "name": "weirdo",
      "color": 41,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 2,
      "sourceBpm": 97.0
@@ -740,6 +852,7 @@
      "name": "arovane beat a",
      "color": 49,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 8,
      "sourceBpm": 130.02
@@ -749,6 +862,7 @@
      "name": "arovane beat b",
      "color": 49,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 8,
      "sourceBpm": 129.95
@@ -758,6 +872,7 @@
      "name": "arovane beat c",
      "color": 49,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 4,
      "sourceBpm": 129.97
@@ -767,6 +882,7 @@
      "name": "arovane beat d",
      "color": 49,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 4,
      "sourceBpm": 86.65
@@ -776,6 +892,7 @@
      "name": "arovane beat e",
      "color": 49,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 8,
      "sourceBpm": 173.4
@@ -785,6 +902,7 @@
      "name": "fxbed loop",
      "color": 49,
      "mode": 2,
+     "cat": "drums",
      "bpm": 120,
      "bars": 4,
      "sourceBpm": 130.0
@@ -800,241 +918,281 @@
      "file": "bank4/bass_dnb_f.flac",
      "name": "bass dnb f",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank4/bass_drop_c.flac",
      "name": "bass drop c",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank4/bass_hard_c.flac",
      "name": "bass hard c",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank4/bass_hit_c.flac",
      "name": "bass hit c",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank4/bass_thick_c.flac",
      "name": "bass thick c",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank4/bass_trance_c.flac",
      "name": "bass trance c",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank4/bass_voxy_c.flac",
      "name": "bass voxy c",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "voice"
     },
     {
      "file": "bank4/bass_woodsy_c.flac",
      "name": "bass woodsy c",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank4/bass_voxy_hit_c.flac",
      "name": "bass voxy hit c",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "voice"
     },
     {
      "file": "bank4/guit_e_fifths.flac",
      "name": "e fifths",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank4/guit_e_slide.flac",
      "name": "e slide",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank4/guit_em9.flac",
      "name": "em9",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank4/guit_harmonics.flac",
      "name": "harmonics",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank4/tbd_highkey_c4.flac",
      "name": "highkey c4",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "lead"
     },
     {
      "file": "bank4/tbd_voctone.flac",
      "name": "voctone",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "voice"
     },
     {
      "file": "bank4/ambi_piano.flac",
      "name": "piano",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank4/tbd_pad_1.flac",
      "name": "pad 1",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank4/tbd_pad_2.flac",
      "name": "pad 2",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank4/tbd_pad_3.flac",
      "name": "pad 3",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank4/tbd_pad_4.flac",
      "name": "pad 4",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank4/ambi_choir.flac",
      "name": "choir",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "voice"
     },
     {
      "file": "bank4/ambi_drone.flac",
      "name": "drone",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank4/ambi_glass_hum.flac",
      "name": "glass hum",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank4/ambi_haunted_hum.flac",
      "name": "haunted hum",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank4/ambi_glass_rub.flac",
      "name": "glass rub",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "pad"
     },
     {
      "file": "bank4/ambi_lunar_land.flac",
      "name": "lunar land",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "pad"
     },
     {
      "file": "bank4/ambi_sauna.flac",
      "name": "sauna",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "pad"
     },
     {
      "file": "bank4/ambi_soft_buzz.flac",
      "name": "soft buzz",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "pad"
     },
     {
      "file": "bank4/ambi_dark_woosh.flac",
      "name": "dark woosh",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "pad"
     },
     {
      "file": "bank4/ambi_swoosh.flac",
      "name": "swoosh",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "pad"
     },
     {
      "file": "bank4/loop_drone_g_97.flac",
      "name": "drone g 97",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "pad"
     },
     {
      "file": "bank4/misc_cineboom.flac",
      "name": "cineboom",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "pad"
     },
     {
      "file": "bank4/vinyl_backspin.flac",
      "name": "backspin",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank4/vinyl_hiss.flac",
      "name": "hiss",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank4/vinyl_rewind.flac",
      "name": "rewind",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank4/vinyl_scratch.flac",
      "name": "scratch",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank4/perc_swoosh.flac",
      "name": "swoosh",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank4/perc_swash.flac",
      "name": "swash",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank4/perc_impact1.flac",
      "name": "impact1",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank4/perc_impact2.flac",
      "name": "impact2",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     }
    ]
   },
@@ -1045,241 +1203,281 @@
      "file": "bank5/tabla_dhec.flac",
      "name": "tabla dhec",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ghe1.flac",
      "name": "tabla ghe1",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ghe2.flac",
      "name": "tabla ghe2",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ghe3.flac",
      "name": "tabla ghe3",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ghe4.flac",
      "name": "tabla ghe4",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ghe5.flac",
      "name": "tabla ghe5",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ghe6.flac",
      "name": "tabla ghe6",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ghe7.flac",
      "name": "tabla ghe7",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ghe8.flac",
      "name": "tabla ghe8",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ke1.flac",
      "name": "tabla ke1",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ke2.flac",
      "name": "tabla ke2",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_ke3.flac",
      "name": "tabla ke3",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_na.flac",
      "name": "tabla na",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_na_o.flac",
      "name": "tabla na o",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_na_s.flac",
      "name": "tabla na s",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_re.flac",
      "name": "tabla re",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_tas1.flac",
      "name": "tabla tas1",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_tas2.flac",
      "name": "tabla tas2",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_tas3.flac",
      "name": "tabla tas3",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_te1.flac",
      "name": "tabla te1",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_te2.flac",
      "name": "tabla te2",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_te_m.flac",
      "name": "tabla te m",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_te_ne.flac",
      "name": "tabla te ne",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_tun1.flac",
      "name": "tabla tun1",
      "color": 17,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_tun2.flac",
      "name": "tabla tun2",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/tabla_tun3.flac",
      "name": "tabla tun3",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/perc_bell.flac",
      "name": "bell",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/perc_bell2.flac",
      "name": "bell2",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/perc_door.flac",
      "name": "door",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/perc_snap2.flac",
      "name": "snap2",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/perc_till.flac",
      "name": "till",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/misc_crow.flac",
      "name": "crow",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank5/mehackit_phone1.flac",
      "name": "phone1",
      "color": 21,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank5/mehackit_phone2.flac",
      "name": "phone2",
      "color": 21,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank5/mehackit_phone3.flac",
      "name": "phone3",
      "color": 21,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank5/mehackit_phone4.flac",
      "name": "phone4",
      "color": 21,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank5/mehackit_robot1.flac",
      "name": "robot1",
      "color": 21,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank5/mehackit_robot2.flac",
      "name": "robot2",
      "color": 21,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank5/mehackit_robot3.flac",
      "name": "robot3",
      "color": 21,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank5/misc_burp.flac",
      "name": "burp",
      "color": 21,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     }
    ]
   },
@@ -1290,199 +1488,232 @@
      "file": "bank6/01.flac",
      "name": "Rotterdam",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank6/02.flac",
      "name": "Rotterdam hard",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank6/03.flac",
      "name": "Early",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank6/04.flac",
      "name": "Terror",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank6/05.flac",
      "name": "Industrial",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank6/06.flac",
      "name": "Frenchcore",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank6/07.flac",
      "name": "Reverse",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank6/08.flac",
      "name": "Long doef",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank6/09.flac",
      "name": "Snare",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank6/10.flac",
      "name": "Clap",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank6/11.flac",
      "name": "Dirty clap",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank6/12.flac",
      "name": "Open hat",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank6/13.flac",
      "name": "Closed hat",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank6/14.flac",
      "name": "Ride",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank6/15.flac",
      "name": "Crash",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank6/16.flac",
      "name": "Rim",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank6/17.flac",
      "name": "Hoover F",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "lead"
     },
     {
      "file": "bank6/18.flac",
      "name": "Hoover G",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "lead"
     },
     {
      "file": "bank6/19.flac",
      "name": "Hoover G#",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "lead"
     },
     {
      "file": "bank6/20.flac",
      "name": "Hoover A#",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "lead"
     },
     {
      "file": "bank6/21.flac",
      "name": "Hoover C",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "lead"
     },
     {
      "file": "bank6/22.flac",
      "name": "Hoover C#",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "lead"
     },
     {
      "file": "bank6/23.flac",
      "name": "Hoover D#",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "lead"
     },
     {
      "file": "bank6/24.flac",
      "name": "Hoover F+",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "lead"
     },
     {
      "file": "bank6/25.flac",
      "name": "Stab Fm",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank6/26.flac",
      "name": "Stab G#",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank6/27.flac",
      "name": "Stab A#m",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank6/28.flac",
      "name": "Stab Cm",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank6/29.flac",
      "name": "Screech",
      "color": 53,
-     "mode": 1
+     "mode": 1,
+     "cat": "lead"
     },
     {
      "file": "bank6/30.flac",
      "name": "Screech 2",
      "color": 53,
-     "mode": 1
+     "mode": 1,
+     "cat": "lead"
     },
     {
      "file": "bank6/31.flac",
      "name": "Horn",
      "color": 53,
-     "mode": 0
+     "mode": 0,
+     "cat": "lead"
     },
     {
      "file": "bank6/32.flac",
      "name": "Siren",
      "color": 53,
-     "mode": 1
+     "mode": 1,
+     "cat": "fx"
     },
     {
      "file": "bank6/33.flac",
      "name": "Kick 4/4",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1491,6 +1722,7 @@
      "name": "Beat",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1499,6 +1731,7 @@
      "name": "Beat full",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1507,6 +1740,7 @@
      "name": "Roll",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1515,6 +1749,7 @@
      "name": "Build-up",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 4
     },
@@ -1523,6 +1758,7 @@
      "name": "Hoover riff",
      "color": 41,
      "mode": 2,
+     "cat": "lead",
      "bpm": 190,
      "bars": 2
     },
@@ -1531,6 +1767,7 @@
      "name": "Stab riff",
      "color": 41,
      "mode": 2,
+     "cat": "keys",
      "bpm": 190,
      "bars": 2
     },
@@ -1539,6 +1776,7 @@
      "name": "Acid",
      "color": 41,
      "mode": 2,
+     "cat": "lead",
      "bpm": 190,
      "bars": 1
     }
@@ -1551,103 +1789,120 @@
      "file": "bank7/01.flac",
      "name": "Kick C",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank7/02.flac",
      "name": "Kick C#",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank7/03.flac",
      "name": "Kick D",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank7/04.flac",
      "name": "Kick D#",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank7/05.flac",
      "name": "Kick E",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank7/06.flac",
      "name": "Kick F",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank7/07.flac",
      "name": "Kick F#",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank7/08.flac",
      "name": "Kick G",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank7/09.flac",
      "name": "Riser",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank7/10.flac",
      "name": "Downlifter",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank7/11.flac",
      "name": "Laser",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank7/12.flac",
      "name": "Impact",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank7/13.flac",
      "name": "Noise hit",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank7/14.flac",
      "name": "Reverse crash",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank7/15.flac",
      "name": "Long siren",
      "color": 3,
-     "mode": 1
+     "mode": 1,
+     "cat": "fx"
     },
     {
      "file": "bank7/16.flac",
      "name": "High horn",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "lead"
     },
     {
      "file": "bank7/17.flac",
      "name": "Frenchcore",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1656,6 +1911,7 @@
      "name": "Half-time",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 2
     },
@@ -1664,6 +1920,7 @@
      "name": "Hats 16",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1672,6 +1929,7 @@
      "name": "Off-hat",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1680,6 +1938,7 @@
      "name": "Claps",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1688,6 +1947,7 @@
      "name": "Ride",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1696,6 +1956,7 @@
      "name": "Beat + ride",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1704,6 +1965,7 @@
      "name": "Roll full",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -1712,6 +1974,7 @@
      "name": "Screech riff",
      "color": 41,
      "mode": 2,
+     "cat": "lead",
      "bpm": 190,
      "bars": 2
     },
@@ -1720,6 +1983,7 @@
      "name": "Acid + kick",
      "color": 41,
      "mode": 2,
+     "cat": "lead",
      "bpm": 190,
      "bars": 1
     },
@@ -1728,6 +1992,7 @@
      "name": "Hoover + beat",
      "color": 41,
      "mode": 2,
+     "cat": "lead",
      "bpm": 190,
      "bars": 2
     },
@@ -1736,6 +2001,7 @@
      "name": "Stabs + beat",
      "color": 41,
      "mode": 2,
+     "cat": "keys",
      "bpm": 190,
      "bars": 2
     },
@@ -1744,6 +2010,7 @@
      "name": "Acid only",
      "color": 41,
      "mode": 2,
+     "cat": "lead",
      "bpm": 190,
      "bars": 1
     },
@@ -1752,6 +2019,7 @@
      "name": "Hoover only",
      "color": 41,
      "mode": 2,
+     "cat": "lead",
      "bpm": 190,
      "bars": 2
     },
@@ -1760,6 +2028,7 @@
      "name": "Stabs only",
      "color": 41,
      "mode": 2,
+     "cat": "keys",
      "bpm": 190,
      "bars": 2
     },
@@ -1768,6 +2037,7 @@
      "name": "Build full",
      "color": 41,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 4
     },
@@ -1775,49 +2045,57 @@
      "file": "bank7/33.flac",
      "name": "Rave F",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank7/34.flac",
      "name": "Rave G",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank7/35.flac",
      "name": "Rave G#",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank7/36.flac",
      "name": "Rave A#",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank7/37.flac",
      "name": "Rave C",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank7/38.flac",
      "name": "Rave C#",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank7/39.flac",
      "name": "Rave D#",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank7/40.flac",
      "name": "Rave F+",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     }
    ]
   },
@@ -1828,151 +2106,176 @@
      "file": "bank8/01.flac",
      "name": "Terror",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank8/02.flac",
      "name": "Uptempo",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank8/03.flac",
      "name": "Speedcore",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank8/04.flac",
      "name": "Industrial",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank8/05.flac",
      "name": "Crunch",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank8/06.flac",
      "name": "Mainstream",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank8/07.flac",
      "name": "Distorted tok",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank8/08.flac",
      "name": "Long tail",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank8/09.flac",
      "name": "Bass F",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank8/10.flac",
      "name": "Bass G",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank8/11.flac",
      "name": "Bass G#",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank8/12.flac",
      "name": "Bass A#",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank8/13.flac",
      "name": "Bass C",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank8/14.flac",
      "name": "Bass C#",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank8/15.flac",
      "name": "Bass D#",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank8/16.flac",
      "name": "Bass F+",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "bass"
     },
     {
      "file": "bank8/17.flac",
      "name": "Strings Fm",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank8/18.flac",
      "name": "Strings Db",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank8/19.flac",
      "name": "Strings Eb",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank8/20.flac",
      "name": "Strings Cm",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank8/21.flac",
      "name": "Strings Bbm",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank8/22.flac",
      "name": "Strings Ab",
      "color": 49,
-     "mode": 1
+     "mode": 1,
+     "cat": "pad"
     },
     {
      "file": "bank8/23.flac",
      "name": "Staccato Fm",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "pad"
     },
     {
      "file": "bank8/24.flac",
      "name": "Orchestra hit",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "pad"
     },
     {
      "file": "bank8/25.flac",
      "name": "String ostinato",
      "color": 37,
      "mode": 2,
+     "cat": "pad",
      "bpm": 190,
      "bars": 2
     },
@@ -1981,6 +2284,7 @@
      "name": "String pads",
      "color": 37,
      "mode": 2,
+     "cat": "pad",
      "bpm": 190,
      "bars": 4
     },
@@ -1989,6 +2293,7 @@
      "name": "Offbeat bass",
      "color": 41,
      "mode": 2,
+     "cat": "bass",
      "bpm": 190,
      "bars": 1
     },
@@ -1997,6 +2302,7 @@
      "name": "Rolling bass",
      "color": 41,
      "mode": 2,
+     "cat": "bass",
      "bpm": 190,
      "bars": 1
     },
@@ -2005,6 +2311,7 @@
      "name": "Reese bass",
      "color": 41,
      "mode": 2,
+     "cat": "bass",
      "bpm": 190,
      "bars": 2
     },
@@ -2013,6 +2320,7 @@
      "name": "Bass + kick",
      "color": 41,
      "mode": 2,
+     "cat": "bass",
      "bpm": 190,
      "bars": 1
     },
@@ -2021,6 +2329,7 @@
      "name": "Strings + beat",
      "color": 37,
      "mode": 2,
+     "cat": "pad",
      "bpm": 190,
      "bars": 4
     },
@@ -2029,6 +2338,7 @@
      "name": "Full track",
      "color": 37,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 4
     },
@@ -2037,6 +2347,7 @@
      "name": "Terror loop",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -2045,6 +2356,7 @@
      "name": "Kick gallop",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -2053,6 +2365,7 @@
      "name": "Industrial loop",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -2061,6 +2374,7 @@
      "name": "Speed roll",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -2069,6 +2383,7 @@
      "name": "Hard beat",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -2077,6 +2392,7 @@
      "name": "Terror + hats",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -2085,6 +2401,7 @@
      "name": "Snare fill",
      "color": 13,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 1
     },
@@ -2092,7 +2409,8 @@
      "file": "bank8/40.flac",
      "name": "Breakdown hit",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     }
    ]
   },
@@ -2103,199 +2421,232 @@
      "file": "bank9/01.flac",
      "name": "909 boom",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank9/02.flac",
      "name": "909 early",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank9/03.flac",
      "name": "808 long",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank9/04.flac",
      "name": "Thunderdome",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank9/05.flac",
      "name": "Kick '93",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank9/06.flac",
      "name": "Break kick",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank9/07.flac",
      "name": "Soft doef",
      "color": 9,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank9/08.flac",
      "name": "Kick + sub",
      "color": 5,
-     "mode": 0
+     "mode": 0,
+     "cat": "kick"
     },
     {
      "file": "bank9/09.flac",
      "name": "Break snare",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank9/10.flac",
      "name": "Ghost snare",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank9/11.flac",
      "name": "Rim",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank9/12.flac",
      "name": "Ride",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank9/13.flac",
      "name": "Open hat",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank9/14.flac",
      "name": "Clap 909",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank9/15.flac",
      "name": "Tambourine",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank9/16.flac",
      "name": "Crash",
      "color": 13,
-     "mode": 0
+     "mode": 0,
+     "cat": "drums"
     },
     {
      "file": "bank9/17.flac",
      "name": "Piano Fm",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank9/18.flac",
      "name": "Piano Db",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank9/19.flac",
      "name": "Piano Eb",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank9/20.flac",
      "name": "Piano Cm",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank9/21.flac",
      "name": "Piano Bbm",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank9/22.flac",
      "name": "Piano Ab",
      "color": 57,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank9/23.flac",
      "name": "Mentasm",
      "color": 49,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank9/24.flac",
      "name": "Belgian stab",
      "color": 49,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank9/25.flac",
      "name": "Choir ahh",
      "color": 37,
-     "mode": 1
+     "mode": 1,
+     "cat": "voice"
     },
     {
      "file": "bank9/26.flac",
      "name": "Vox stab",
      "color": 37,
-     "mode": 0
+     "mode": 0,
+     "cat": "voice"
     },
     {
      "file": "bank9/27.flac",
      "name": "Whistle",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank9/28.flac",
      "name": "Air raid",
      "color": 3,
-     "mode": 1
+     "mode": 1,
+     "cat": "fx"
     },
     {
      "file": "bank9/29.flac",
      "name": "Hoover down",
      "color": 49,
-     "mode": 0
+     "mode": 0,
+     "cat": "lead"
     },
     {
      "file": "bank9/30.flac",
      "name": "Sub boom",
      "color": 41,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank9/31.flac",
      "name": "Rave zap",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "keys"
     },
     {
      "file": "bank9/32.flac",
      "name": "Scratch",
      "color": 3,
-     "mode": 0
+     "mode": 0,
+     "cat": "fx"
     },
     {
      "file": "bank9/33.flac",
      "name": "Amen-style break",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 2
     },
@@ -2304,6 +2655,7 @@
      "name": "Break + kick",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 2
     },
@@ -2312,6 +2664,7 @@
      "name": "Chopped break",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 2
     },
@@ -2320,6 +2673,7 @@
      "name": "Piano riff",
      "color": 57,
      "mode": 2,
+     "cat": "keys",
      "bpm": 190,
      "bars": 2
     },
@@ -2328,6 +2682,7 @@
      "name": "Rave arp",
      "color": 41,
      "mode": 2,
+     "cat": "lead",
      "bpm": 190,
      "bars": 2
     },
@@ -2336,6 +2691,7 @@
      "name": "Mentasm riff",
      "color": 49,
      "mode": 2,
+     "cat": "keys",
      "bpm": 190,
      "bars": 2
     },
@@ -2344,6 +2700,7 @@
      "name": "Choir chords",
      "color": 37,
      "mode": 2,
+     "cat": "voice",
      "bpm": 190,
      "bars": 4
     },
@@ -2352,6 +2709,7 @@
      "name": "Oldschool track",
      "color": 21,
      "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 4
     }

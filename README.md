@@ -1,26 +1,22 @@
 # GabberKey
 
-**A hardcore / gabber groovebox for the Akai APC Key 25, running in your browser.**
+**A hardcore / gabber music maker in the spirit of Dance eJay, played with an Akai APC Key 25, in your browser.**
 
 *By Guillaume Monet* · [Version française](README.fr.md)
 
-GabberKey turns the Akai APC Key 25 (mk1 or mk2) into a standalone instrument. It has no DAW, no plugin and nothing to install except a web browser:
+GabberKey is built around a **timeline**: drag sounds from a library sorted by category onto tracks, the blocks snap to the bar and everything plays at the same tempo, like the old eJay games. The other tools (sampler pads, TR-909, synth, mixer, effects…) are **plugins** that open in windows, and the Akai APC Key 25 (mk1 or mk2) plays them live. Nothing to install except a web browser:
 
-- **40-pad sampler** with 10 banks, pad LEDs synced to the screen, and drag & drop of your own sounds
-- **358 ready-to-play sounds**:
+- **Timeline**: 16 tracks in bars; drag, lengthen (loops repeat), copy and move blocks; record any tool (909, synth, pads, master) into a track.
+- **Sound library**: 358 sounds sorted into Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices and FX, plus your own sounds and recordings; click to listen, drag to place.
   - four **synthesised hardcore / gabber banks**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
-- **TR-909 emulation**: the 11 instruments synthesised live, with a per-instrument **distortion (drive + 5 shapes)** on the knobs and a 16-step sequencer (8 patterns) synced with the loops.
-- **Timeline**: tracks in bars and beats where you place bank sounds or record what a tool plays (909, synth, pads, master).
-- **Scenes**: 40 snapshots (loops, patterns, mixer, preset, tempo) recalled on the next bar, from the screen or the APC grid.
-- **Mixer**: one channel per tool (pads, synth, TR-909) with volume, pan, delay and reverb sends, mute / solo, meters and up to 4 insert effects (distortion, filter, compressor, reverb).
-- **Magnetic-grid workspace**: move and resize every tool panel; the layout is saved.
-- **Polyphonic synth** on the keyboard with 8 gabber presets: Hoover, Acid 303, Screech, Rave stab, Distorted bass, Horn, Tuned kick…
-- **Tempo-synced loops**: every loop starts on the next bar and follows the global tempo (with a Tap button).
-- **Performance effects**: beat-repeat rolls (1/4 to 1/32), filter sweeps, tape stop, pump.
-- **Master EQ** (5 bands + low-pass / high-pass) on the knobs, opened with the SUSTAIN button.
-- **WAV recording** of your session.
-- **Kit export / import**: share a bank or a whole session as a single file.
+- **Plugins** in movable, magnetic windows:
+  - **40-pad sampler** with 10 banks, pad LEDs synced to the screen, and drag & drop of your own sounds;
+  - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
+  - **Polyphonic synth** on the keyboard with 8 gabber presets (Hoover, Acid 303, Screech, Rave stab, Distorted bass, Horn, Tuned kick…);
+  - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters and up to 4 insert effects;
+  - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **MIDI monitor**.
+- **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
 
 ---
@@ -66,9 +62,9 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 | **SUSTAIN** | Opens / closes the EQ page (held: EQ while pressed) |
 | **Shift + piano key** | Synth preset: C Hoover, D Acid 303, E Screech, F Rave stab, G Dist. bass, A Horn, B Tuned kick, C# Init |
 | **Keyboard** | Plays the synth |
-| **PLAY** | Start / stop the TR-909 sequencer |
+| **PLAY** | Start / stop the timeline (the TR-909 has its own ▶ in its window) |
 | **Shift + PLAY** | Turn the pad grid into the TR-909 (and back) |
-| **REC** | Start / stop recording (downloads a WAV) |
+| **REC** | Record the chosen tool into the armed timeline track (and stop) |
 | **STOP ALL CLIPS** | Stops everything |
 | **Shift + STOP ALL CLIPS** | Turn the pad grid into the 40 scenes (and back) |
 
@@ -97,7 +93,7 @@ To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or 
 
 A Roland TR-909 emulation with its 11 instruments (bass drum, snare, 3 toms, rim shot, clap, closed / open hi-hat, crash, ride). Each one is synthesised live, like the analogue circuits of the original.
 
-**Knobs** (TR-909 page, opened by Shift + PLAY or the "TR-909" tab):
+**Knobs** (TR-909 page of the Knobs plugin, also opened by Shift + PLAY):
 
 | K1-K4 | K5 | K6 | K7 | K8 |
 |---|---|---|---|---|
@@ -118,14 +114,15 @@ Every instrument has its own distortion. The bass drum starts with a "Tube" driv
 
 Pressing a SCENE LAUNCH button brings the grid back to the sampler pads.
 
-## Timeline
+## Timeline and sound library
 
-A timeline in bars and beats (8 bars to start, − / + to change, **Loop** to play it in a loop) with 6 tracks. Each beat can receive a clip:
+The main screen: the **sound library** on the left, the **timeline** on the right (16 tracks, 32 bars to start, − / + to change the length, zoom, **Loop**).
 
-- **Place a sound from a bank**: select a pad (Shift + click on it), then click on a track at the beat you want.
-- **Record a tool**: choose what to record (Master, Pads, Synth or TR-909), arm a track (●), set the playhead (click the ruler), then **● Rec**. What the tool produces is recorded into a clip starting on that beat: the 909 starts by itself on the timeline's bars, and you play the pads or the keyboard live. **■ Stop rec** ends the clip.
-- **Edit**: drag a clip to another beat or track; right-click or Delete removes it. Each track has a mute.
-- ▶ plays the timeline from the playhead. It has its own channel in the mixer, and recordings are saved in the browser.
+- **Library**: pick a category (Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices, FX, My sounds, Recordings) or search by name. **Click** a sound to listen to it (and pick it); the badge shows its length in bars (loops) or "1-shot".
+- **Place**: drag a sound onto a track. It snaps to the start of the bar (hold **Shift** to place it on a beat). Clicking an empty cell places the last sound picked.
+- **Edit blocks**: drag a block to move it (to another bar or track), drag its **right edge** to lengthen or shorten it (a loop repeats to fill the block, like in eJay), **Alt + drag** copies it, **double-click** listens to it, **right-click** or **Delete** removes it. Each track has a mute.
+- **Record a tool**: choose what to record (Master, Pads, Synth or TR-909), arm a track (●), set the playhead (click the ruler), then **● Rec** (or REC on the APC). What the tool produces is recorded into a block starting on that bar: the 909 starts by itself on the timeline's bars, and you play the pads or the keyboard live. **■ Stop rec** ends the block, which also appears in the library under Recordings.
+- **Play**: ▶ (or PLAY on the APC) plays from the playhead; the view follows the playhead. Loops recorded at another tempo follow the global tempo. The timeline has its own channel in the mixer.
 
 ## Scenes
 
@@ -151,13 +148,12 @@ Each channel has insert effects (**+ FX**, up to 4, applied in order), reverb an
 
 Double-click a control to reset it. On the APC, **Shift + track button 1 / 2 / 3 / 4** turns the knobs into the mixer's volumes / pans / delay sends / reverb sends: K1 = Pads, K2 = Synth, K3 = TR-909, K4 = Timeline, K8 = master volume. The mixer settings are saved and included in session exports.
 
-## Workspace
+## Plugin windows
 
-Every tool (pads, pad editor, knobs, performance, TR-909, mixer, keyboard, MIDI monitor) is a panel on a **magnetic grid** of 12 columns:
-- **Move** a panel by dragging its title bar: it snaps to the grid, and the panels in the way move down.
-- **Resize** it with the handle in its bottom-right corner (the pads grow with their panel).
-- The panels never overlap and slide up to fill the gaps. Your layout is saved.
-- **Default layout** (header) puts everything back. On a narrow screen the panels are simply stacked.
+The bar under the header opens and closes the plugins: **Pads**, **Pad editor**, **TR-909**, **Synth** (keyboard and presets), **Knobs**, **Performance**, **Mixer**, **Scenes** and **MIDI monitor**. Each one opens in a window above the timeline:
+- **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.
+- **✕** closes it; the windows you use are remembered with their position.
+- **Reset windows** (header) puts them back in their default place and size.
 
 ## Tempo and loops
 
@@ -181,7 +177,7 @@ Double-click a knob on screen to reset it.
 
 ## Recording and kits
 
-- **● REC** (or the REC button on the APC) records the master output. Press it again to download a WAV file.
+- **● REC** in the header records the master output. Press it again to download a WAV file.
 - **Export bank** / **Export all** creates a self-contained `.apckit` file with the sounds and settings. **Import…** loads it back: a bank goes into the displayed bank, and a session replaces everything.
 
 Your banks, sounds and settings are saved automatically in the browser.
@@ -199,7 +195,7 @@ The interface follows the browser language: French if the browser is set to Fren
 | Detected but pads do nothing | Unplug the APC, wait 10 seconds, plug it into another USB port, then reload. Windows' MIDI service can stop delivering input after sleep or hot-plugging. |
 | No sound | Click **Start** first: browsers block audio until a click. |
 | A new sound bank does not appear | Restart `start.bat` / `start.sh`, then reload. New library banks go to their planned bank if it is empty, otherwise to the first empty bank (a message tells you which). |
-| See what the APC sends | Open **MIDI monitor** at the bottom of the page. |
+| See what the APC sends | Open the **MIDI monitor** plugin. |
 
 ## Rebuilding the sound banks (optional)
 
@@ -227,9 +223,10 @@ js/main.js            UI and wiring
 js/apc.js             APC Key 25 detection, MIDI input, LEDs (mk1 + mk2)
 js/audio.js           audio engine: synth, sampler, effects, EQ, tempo
 js/tr909.js           TR-909 emulation and sequencer
-js/timeline.js        timeline: tracks, clips, playback
+js/timeline.js        timeline: tracks, blocks, playback
 js/mixer.js           mixer: channels, sends, insert effects
-js/layout.js          magnetic-grid workspace
+js/library.js         sound library (categories)
+js/windows.js         plugin windows
 js/presets.js         synth presets
 js/params.js          knob parameters
 js/i18n.js            English / French translations

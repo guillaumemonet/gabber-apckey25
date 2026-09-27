@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=10">
+  <link rel="stylesheet" href="css/style.css?v=11">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -33,9 +33,36 @@
     <button id="reset" data-i18n="reset.label" data-i18n-title="reset.title"></button>
   </header>
 
-  <main>
-  <div id="workspace" class="workspace">
-    <section class="grid-area" data-panel="pads">
+  <nav id="plugins" class="plugins" data-i18n-aria="plugins.aria"></nav>
+
+  <main class="app">
+    <aside id="library" class="library">
+      <div class="lib-head">
+        <h2 data-i18n="lib.title"></h2>
+        <input id="lib-search" type="search" data-i18n-placeholder="lib.search">
+      </div>
+      <div id="lib-cats" class="lib-cats"></div>
+      <div id="lib-list" class="lib-list"></div>
+      <p class="hint" data-i18n="lib.hint"></p>
+    </aside>
+
+    <section id="timeline" class="tl-area">
+      <div class="section-title">
+        <h2 data-i18n="tl.title"></h2>
+        <button id="tl-play" class="primary"></button>
+        <button id="tl-rec"></button>
+        <label class="tl-src"><span data-i18n="tl.source"></span><select id="tl-source"></select></label>
+        <button id="tl-loop" data-i18n="tl.loop"></button>
+        <span class="tl-bars"><button id="tl-zoom-out" data-i18n-title="tl.zoomOut">−</button><span data-i18n="tl.zoom"></span><button id="tl-zoom-in" data-i18n-title="tl.zoomIn">+</button></span>
+        <span class="tl-bars"><button id="tl-less">−</button><span id="tl-bars"></span><button id="tl-more">+</button></span>
+        <span class="hint" data-i18n="tl.hint"></span>
+      </div>
+      <div id="tl-scroll" class="tl-scroll"><div id="tl-grid" class="tl"></div></div>
+    </section>
+  </main>
+
+  <div id="windows">
+    <section class="window grid-area" data-win="pads">
       <div class="section-title">
         <h2 data-i18n="pads.title"></h2>
         <span class="hint" data-i18n="pads.hint"></span>
@@ -53,7 +80,7 @@
       </div>
     </section>
 
-    <aside class="editor" id="editor" data-panel="editor">
+    <aside class="window editor" id="editor" data-win="editor">
       <div class="section-title"><h2 id="ed-title">Pad</h2></div>
       <label class="field"><span data-i18n="editor.name"></span>
         <input id="ed-name" type="text" maxlength="24" spellcheck="false">
@@ -79,7 +106,7 @@
       </div>
     </aside>
 
-    <section class="knobs-area" data-panel="knobs">
+    <section class="window knobs-area" data-win="knobs">
       <div class="section-title">
         <h2 data-i18n="knobs.title"></h2>
         <div id="pages" class="segmented" data-i18n-aria="pages.aria"></div>
@@ -88,7 +115,7 @@
       <div id="knobs" class="knobs"></div>
     </section>
 
-    <section class="perf-area" data-panel="perf">
+    <section class="window perf-area" data-win="perf">
       <div class="section-title">
         <h2 data-i18n="perf.title"></h2>
         <span class="hint" data-i18n="perf.hint"></span>
@@ -96,7 +123,7 @@
       <div id="perf" class="perf"></div>
     </section>
 
-    <section class="tr-area" data-panel="tr">
+    <section class="window tr-area" data-win="tr">
       <div class="section-title">
         <h2>TR-909</h2>
         <button id="tr-play" class="primary"></button>
@@ -108,20 +135,7 @@
       <div id="tr-grid" class="tr-grid"></div>
     </section>
 
-    <section class="tl-area" data-panel="tl">
-      <div class="section-title">
-        <h2 data-i18n="tl.title"></h2>
-        <button id="tl-play" class="primary"></button>
-        <button id="tl-rec"></button>
-        <label class="tl-src"><span data-i18n="tl.source"></span><select id="tl-source"></select></label>
-        <button id="tl-loop" data-i18n="tl.loop"></button>
-        <span class="tl-bars"><button id="tl-less">−</button><span id="tl-bars"></span><button id="tl-more">+</button></span>
-        <span class="hint" data-i18n="tl.hint"></span>
-      </div>
-      <div id="tl-grid" class="tl"></div>
-    </section>
-
-    <section class="scenes-area" data-panel="scenes">
+    <section class="window scenes-area" data-win="scenes">
       <div class="section-title">
         <h2 data-i18n="scene.title"></h2>
         <button id="scene-save" data-i18n="scene.saveMode" data-i18n-title="scene.saveMode.title"></button>
@@ -131,7 +145,7 @@
       <div id="scenes" class="scenes"></div>
     </section>
 
-    <section class="mix-area" data-panel="mix">
+    <section class="window mix-area" data-win="mix">
       <div class="section-title">
         <h2 data-i18n="mix.title"></h2>
         <span class="hint" data-i18n="mix.hint"></span>
@@ -139,7 +153,7 @@
       <div id="mixer" class="mixer"></div>
     </section>
 
-    <section class="piano-area" data-panel="piano">
+    <section class="window piano-area" data-win="piano">
       <div class="section-title">
         <h2 data-i18n="piano.title"></h2>
         <div id="presets" class="segmented" data-i18n-aria="presets.aria"></div>
@@ -148,13 +162,15 @@
       <div id="piano" class="piano"></div>
     </section>
 
-    <details class="monitor" data-panel="monitor">
-      <summary><span data-i18n="monitor.title"></span> <span id="ports" class="hint"></span></summary>
+    <section class="window monitor" data-win="monitor">
+      <div class="section-title">
+        <h2 data-i18n="monitor.title"></h2>
+        <span id="ports" class="hint"></span>
+      </div>
       <div class="row"><button id="swap-roles" hidden data-i18n="monitor.swap"></button></div>
       <pre id="log"></pre>
-    </details>
+    </section>
   </div>
-  </main>
 
   <footer>GabberKey · © 2026 Guillaume Monet · MIT</footer>
 
@@ -162,23 +178,24 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/apc.js": "./js/apc.js?v=10",
-      "./js/audio.js": "./js/audio.js?v=10",
-      "./js/i18n.js": "./js/i18n.js?v=10",
-      "./js/kit.js": "./js/kit.js?v=10",
-      "./js/kits.js": "./js/kits.js?v=10",
-      "./js/layout.js": "./js/layout.js?v=10",
-      "./js/main.js": "./js/main.js?v=10",
-      "./js/mixer.js": "./js/mixer.js?v=10",
-      "./js/params.js": "./js/params.js?v=10",
-      "./js/presets.js": "./js/presets.js?v=10",
-      "./js/recorder.js": "./js/recorder.js?v=10",
-      "./js/timeline.js": "./js/timeline.js?v=10",
-      "./js/storage.js": "./js/storage.js?v=10",
-      "./js/tr909.js": "./js/tr909.js?v=10"
+      "./js/apc.js": "./js/apc.js?v=11",
+      "./js/audio.js": "./js/audio.js?v=11",
+      "./js/i18n.js": "./js/i18n.js?v=11",
+      "./js/kit.js": "./js/kit.js?v=11",
+      "./js/kits.js": "./js/kits.js?v=11",
+      "./js/library.js": "./js/library.js?v=11",
+      "./js/main.js": "./js/main.js?v=11",
+      "./js/mixer.js": "./js/mixer.js?v=11",
+      "./js/params.js": "./js/params.js?v=11",
+      "./js/presets.js": "./js/presets.js?v=11",
+      "./js/recorder.js": "./js/recorder.js?v=11",
+      "./js/timeline.js": "./js/timeline.js?v=11",
+      "./js/storage.js": "./js/storage.js?v=11",
+      "./js/tr909.js": "./js/tr909.js?v=11",
+      "./js/windows.js": "./js/windows.js?v=11"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=10"></script>
+  <script type="module" src="js/main.js?v=11"></script>
 </body>
 </html>

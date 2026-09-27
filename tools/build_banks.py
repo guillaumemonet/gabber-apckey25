@@ -232,6 +232,40 @@ def pretty(name):
     return name.replace('_', ' ')[:24]
 
 
+
+# Catégories de la bibliothèque (façon eJay) : défaut par rangée de chaque banque, affiné par le nom.
+CATEGORIES = ['kick', 'drums', 'bass', 'lead', 'keys', 'pad', 'voice', 'fx']
+ROW_CATS = {
+    'Batterie': ['kick', 'drums', 'drums', 'drums', 'drums'],
+    'Électro': ['kick', 'drums', 'drums', 'fx', 'fx'],
+    'Boucles': ['fx', 'drums', 'drums', 'drums', 'drums'],
+    'Textures': ['bass', 'keys', 'pad', 'pad', 'fx'],
+    'Tabla & divers': ['drums', 'drums', 'drums', 'drums', 'fx'],
+    'Gabber': ['kick', 'drums', 'lead', 'keys', 'drums'],
+    'Gabber 2': ['kick', 'fx', 'drums', 'drums', 'keys'],
+    'Hardcore': ['kick', 'bass', 'pad', 'drums', 'drums'],
+    'Oldschool': ['kick', 'drums', 'keys', 'fx', 'drums'],
+}
+
+
+def categorize(bank, row, name, mode):
+    n = name.lower()
+    has = lambda *words: any(w in n for w in words)
+    if has('choir', 'chœur', 'vox', 'voctone'):
+        return 'voice'
+    if has('hoover', 'screech', 'acid', 'arp', 'horn', 'lead', 'highkey'):
+        return 'lead'
+    if has('stab', 'piano', 'mentasm', 'belgian', 'rave ', 'guit'):
+        return 'keys'
+    if has('string', 'pad', 'drone', 'staccato', 'orchestra'):
+        return 'pad'
+    if has('bass', 'reese'):
+        return 'bass'
+    if has('siren', 'riser', 'downlifter', 'laser', 'impact', 'noise', 'zap', 'scratch', 'whistle', 'air raid', 'crash inv', 'reverse crash', 'breakdown'):
+        return 'fx'
+    return ROW_CATS.get(bank, ['drums'] * 5)[min(row, 4)]
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--bpm', type=float, default=120, help='target tempo for loops (default 120)')
@@ -250,7 +284,7 @@ def main():
         folder = OUT / f'bank{b + 1}'
         folder.mkdir()
         pads = []
-        for color, mode, names in rows:
+        for row, (color, mode, names) in enumerate(rows):
             for name in names:
                 if name is None:
                     pads.append(None)
@@ -266,7 +300,8 @@ def main():
                 if info:
                     print(f"  {info['sourceBpm']} BPM, {info['bars']} bar(s) -> {args.bpm:g} BPM", end='')
                 print()
-                pads.append({'file': f'bank{b + 1}/{name}.flac', 'name': pretty(name), 'color': color, 'mode': mode, **info})
+                pads.append({'file': f'bank{b + 1}/{name}.flac', 'name': pretty(name), 'color': color, 'mode': mode,
+                             'cat': categorize(bank_name, row, pretty(name), mode), **info})
         manifest['banks'].append({'name': bank_name, 'pads': pads})
 
     # Banques hardcore / gabber générées par synthèse (tools/gabber.py).
@@ -279,7 +314,7 @@ def main():
             print(f'[{bank_name}] {name}', flush=True)
             fname = f'{i + 1:02d}.flac'
             sf.write(folder / fname, sig.astype(np.float32), gabber.SR, subtype='PCM_16')
-            pad = {'file': f'bank{b + 1}/{fname}', 'name': name, 'color': color, 'mode': mode}
+            pad = {'file': f'bank{b + 1}/{fname}', 'name': name, 'color': color, 'mode': mode, 'cat': categorize(bank_name, i // 8, name, mode)}
             if bars:
                 pad.update(bpm=args.gabber_bpm, bars=bars)
             pads.append(pad)

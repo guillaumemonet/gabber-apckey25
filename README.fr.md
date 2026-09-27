@@ -1,26 +1,22 @@
 # GabberKey
 
-**Une groovebox hardcore / gabber pour l'Akai APC Key 25, qui tourne dans le navigateur.**
+**Un logiciel de musique hardcore / gabber dans l'esprit de Dance eJay, joué avec un Akai APC Key 25, dans le navigateur.**
 
 *Par Guillaume Monet* · [English version](README.md)
 
-GabberKey transforme l'Akai APC Key 25 (mk1 ou mk2) en instrument autonome. Il n'y a ni logiciel de musique, ni plugin, ni rien à installer à part un navigateur :
+GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une bibliothèque rangée par catégorie sur des pistes, les blocs se calent à la mesure et tout joue au même tempo, comme dans les anciens eJay. Les autres outils (pads du sampler, TR-909, synthé, table de mixage, effets…) sont des **plugins** qui s'ouvrent dans des fenêtres, et l'Akai APC Key 25 (mk1 ou mk2) les joue en direct. Rien à installer à part un navigateur :
 
-- **Sampler 40 pads** avec 10 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de tes propres sons
-- **358 sons prêts à jouer** :
+- **Timeline** : 16 pistes en mesures ; glisser, allonger (les boucles se répètent), copier et déplacer des blocs ; enregistrer n'importe quel outil (909, synthé, pads, master) dans une piste.
+- **Bibliothèque de sons** : 358 sons rangés en Kicks, Batterie, Basses, Leads, Stabs / claviers, Nappes / cordes, Voix et Effets, plus tes propres sons et tes enregistrements ; un clic pour écouter, glisser pour poser.
   - quatre **banques hardcore / gabber synthétisées** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, effets et boucles à 190 BPM ;
   - cinq banques d'échantillons **libres de droits (CC0)**.
-- **Émulation TR-909** : les 11 instruments synthétisés en direct, avec une **distorsion par instrument (drive + 5 formes)** sur les potentiomètres et un séquenceur 16 pas (8 patterns) calé sur les boucles.
-- **Timeline** : des pistes en mesures et en temps, où l'on pose des sons des banques ou enregistre ce que joue un outil (909, synthé, pads, master).
-- **Scènes** : 40 instantanés (boucles, patterns, mixeur, preset, tempo) rappelés à la mesure suivante, depuis l'écran ou la grille de l'APC.
-- **Table de mixage** : une voie par outil (pads, synthé, TR-909) avec volume, panoramique, envois delay et reverb, muet / solo, vumètres et jusqu'à 4 effets d'insert (distorsion, filtre, compresseur, reverb).
-- **Espace de travail en grille magnétique** : chaque panneau d'outil se déplace et se redimensionne ; la disposition est sauvegardée.
-- **Synthé polyphonique** au clavier, avec 8 presets gabber : Hoover, Acid 303, Screech, Stab rave, Basse distordue, Horn, Kick accordé…
-- **Boucles synchronisées** : chaque boucle démarre sur la mesure suivante et suit le tempo global (avec un bouton Tap).
-- **Effets de performance** : rolls (répétitions de 1/4 à 1/32), balayages de filtre, tape-stop, pump.
-- **Égaliseur général** (5 bandes + passe-bas / passe-haut) sur les potentiomètres, ouvert avec le bouton SUSTAIN.
-- **Enregistrement WAV** de ta session.
-- **Export / import de kits** : partage une banque ou une session complète dans un seul fichier.
+- **Plugins** dans des fenêtres déplaçables et aimantées :
+  - **Sampler 40 pads** avec 10 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de tes propres sons ;
+  - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
+  - **Synthé polyphonique** au clavier avec 8 presets gabber (Hoover, Acid 303, Screech, Stab rave, Basse distordue, Horn, Kick accordé…) ;
+  - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres et jusqu'à 4 effets d'insert ;
+  - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **moniteur MIDI**.
+- **Enregistrement WAV** de ta session et **export / import de kits**.
 - Interface en **français ou en anglais**, selon la langue du navigateur.
 
 ---
@@ -66,9 +62,9 @@ L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert
 | **SUSTAIN** | Ouvre / ferme la page EQ (maintenu : EQ le temps de l'appui) |
 | **Maj + touche du piano** | Preset du synthé : do Hoover, ré Acid 303, mi Screech, fa Stab rave, sol Basse dist., la Horn, si Kick accordé, do# Init |
 | **Clavier** | Joue le synthé |
-| **PLAY** | Lancer / arrêter le séquenceur TR-909 |
+| **PLAY** | Lancer / arrêter la timeline (la TR-909 a son propre ▶ dans sa fenêtre) |
 | **Maj + PLAY** | Transformer la grille de pads en TR-909 (et revenir) |
-| **REC** | Démarrer / arrêter l'enregistrement (télécharge un WAV) |
+| **REC** | Enregistrer l'outil choisi dans la piste armée de la timeline (et arrêter) |
 | **STOP ALL CLIPS** | Coupe tout |
 | **Maj + STOP ALL CLIPS** | Transformer la grille de pads en 40 scènes (et revenir) |
 
@@ -97,7 +93,7 @@ Pour charger ton propre son, glisse un fichier audio (WAV, MP3, FLAC, OGG…) su
 
 Une émulation de la Roland TR-909 avec ses 11 instruments : grosse caisse, caisse claire, 3 toms, rim shot, clap, charley fermé et ouvert, crash, ride. Chacun est synthétisé en direct, comme les circuits analogiques de la machine d'origine.
 
-**Potentiomètres** (page TR-909, ouverte par Maj + PLAY ou l'onglet « TR-909 ») :
+**Potentiomètres** (page TR-909 du plugin Potards, aussi ouverte par Maj + PLAY) :
 
 | K1-K4 | K5 | K6 | K7 | K8 |
 |---|---|---|---|---|
@@ -118,14 +114,15 @@ Chaque instrument a sa propre distorsion. La grosse caisse démarre avec une sat
 
 Un appui sur un bouton SCENE LAUNCH ramène la grille aux pads du sampler.
 
-## Timeline
+## Timeline et bibliothèque de sons
 
-Une ligne de temps en mesures et en temps (8 mesures au départ, − / + pour changer, **Boucle** pour la jouer en boucle), avec 6 pistes. Chaque temps peut recevoir un clip :
+L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à droite (16 pistes, 32 mesures au départ, − / + pour changer la longueur, zoom, **Boucle**).
 
-- **Poser un son d'une banque** : choisis un pad (Maj + clic dessus), puis clique sur une piste, au temps voulu.
-- **Enregistrer un outil** : choisis ce qu'on enregistre (Master, Pads, Synthé ou TR-909), arme une piste (●), place la tête de lecture (clic sur la règle), puis **● Rec**. Ce que produit l'outil s'enregistre dans un clip qui commence sur ce temps : la 909 démarre toute seule, calée sur les mesures de la timeline, et tu joues les pads ou le clavier en direct. **■ Arrêter rec** termine le clip.
-- **Modifier** : glisse un clip vers un autre temps ou une autre piste ; clic droit ou Suppr pour le retirer. Chaque piste a un bouton muet.
-- ▶ joue la timeline depuis la tête de lecture. Elle a sa propre voie dans la table de mixage, et les enregistrements sont sauvegardés dans le navigateur.
+- **Bibliothèque** : choisis une catégorie (Kicks, Batterie, Basses, Leads, Stabs / claviers, Nappes / cordes, Voix, Effets, Mes sons, Enregistrements) ou cherche par nom. Un **clic** sur un son l'écoute (et le choisit) ; l'étiquette indique sa longueur en mesures (boucles) ou « 1 coup ».
+- **Poser** : glisse un son sur une piste. Il se cale au début de la mesure (garde **Maj** enfoncée pour le poser sur un temps). Un clic dans une case vide pose le dernier son choisi.
+- **Modifier les blocs** : glisse un bloc pour le déplacer (vers une autre mesure ou une autre piste), tire son **bord droit** pour l'allonger ou le raccourcir (une boucle se répète pour remplir le bloc, comme dans eJay), **Alt + glisser** le copie, un **double-clic** l'écoute, un **clic droit** ou **Suppr** le retire. Chaque piste a un bouton muet.
+- **Enregistrer un outil** : choisis ce qu'on enregistre (Master, Pads, Synthé ou TR-909), arme une piste (●), place la tête de lecture (clic sur la règle), puis **● Rec** (ou REC sur l'APC). Ce que produit l'outil s'enregistre dans un bloc qui commence sur cette mesure : la 909 démarre toute seule, calée sur les mesures de la timeline, et tu joues les pads ou le clavier en direct. **■ Arrêter rec** termine le bloc, qui apparaît aussi dans la bibliothèque, rubrique Enregistrements.
+- **Lire** : ▶ (ou PLAY sur l'APC) joue depuis la tête de lecture ; la vue suit la tête de lecture. Les boucles faites à un autre tempo suivent le tempo global. La timeline a sa propre voie dans la table de mixage.
 
 ## Scènes
 
@@ -151,13 +148,12 @@ Chaque voie a des effets d'insert (**+ FX**, jusqu'à 4, appliqués dans l'ordre
 
 Double-clic sur un réglage pour le remettre à zéro. Sur l'APC, **Maj + bouton de piste 1 / 2 / 3 / 4** transforme les potards en volumes / panoramiques / envois delay / envois reverb du mixeur : K1 = Pads, K2 = Synthé, K3 = TR-909, K4 = Timeline, K8 = volume général. Les réglages du mixeur sont sauvegardés et inclus dans les exports de session.
 
-## Espace de travail
+## Fenêtres des plugins
 
-Chaque outil (pads, éditeur de pad, potentiomètres, performance, TR-909, table de mixage, clavier, moniteur MIDI) est un panneau posé sur une **grille magnétique** de 12 colonnes :
-- **Déplacer** un panneau : tire-le par sa barre de titre. Il se cale sur la grille, et les panneaux qui gênent descendent.
-- **Redimensionner** : utilise la poignée dans son coin en bas à droite (les pads grandissent avec leur panneau).
-- Les panneaux ne se chevauchent jamais et remontent pour combler les vides. Ta disposition est sauvegardée.
-- **Disposition par défaut** (en-tête) remet tout en place. Sur un écran étroit, les panneaux sont simplement empilés.
+La barre sous l'en-tête ouvre et ferme les plugins : **Pads**, **Éditeur de pad**, **TR-909**, **Synthé** (clavier et presets), **Potards**, **Performance**, **Mixeur**, **Scènes** et **Moniteur MIDI**. Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
+- **Déplace**-la par sa barre de titre, **redimensionne**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.
+- **✕** la ferme ; les fenêtres utilisées sont mémorisées avec leur position.
+- **Réorganiser les fenêtres** (en-tête) les remet à leur place et à leur taille de départ.
 
 ## Tempo et boucles
 
@@ -181,7 +177,7 @@ Double-clic sur un potard à l'écran pour le remettre à zéro.
 
 ## Enregistrement et kits
 
-- **● REC** (ou le bouton REC de l'APC) enregistre la sortie générale. Un second appui télécharge un fichier WAV.
+- **● REC** dans l'en-tête enregistre la sortie générale. Un second appui télécharge un fichier WAV.
 - **Exporter la banque** / **Exporter tout** crée un fichier `.apckit` autonome, avec les sons et les réglages. **Importer…** le recharge : une banque va dans la banque affichée, une session remplace tout.
 
 Tes banques, tes sons et tes réglages sont sauvegardés automatiquement dans le navigateur.
@@ -199,7 +195,7 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 | Détecté mais les pads ne font rien | Débranche l'APC, attends 10 secondes, rebranche-le sur un autre port USB, puis recharge. Le service MIDI de Windows peut cesser de transmettre après une mise en veille ou un branchement à chaud. |
 | Pas de son | Clique d'abord sur **Démarrer** : les navigateurs bloquent le son avant un clic. |
 | Une nouvelle banque de sons n'apparaît pas | Relance `start.bat` / `start.sh`, puis recharge. Une nouvelle banque de la bibliothèque va dans sa banque prévue si elle est vide, sinon dans la première banque vide (un message indique laquelle). |
-| Voir ce qu'envoie l'APC | Ouvre le **Moniteur MIDI** en bas de page. |
+| Voir ce qu'envoie l'APC | Ouvre le plugin **Moniteur MIDI**. |
 
 ## Régénérer les banques de sons (facultatif)
 
@@ -227,9 +223,10 @@ js/main.js            interface et liaisons
 js/apc.js             détection de l'APC Key 25, lecture MIDI, LEDs (mk1 + mk2)
 js/audio.js           moteur audio : synthé, sampler, effets, EQ, tempo
 js/tr909.js           émulation TR-909 et séquenceur
-js/timeline.js        timeline : pistes, clips, lecture
+js/timeline.js        timeline : pistes, blocs, lecture
 js/mixer.js           table de mixage : voies, envois, effets d'insert
-js/layout.js          espace de travail en grille magnétique
+js/library.js         bibliothèque de sons (catégories)
+js/windows.js         fenêtres des plugins
 js/presets.js         presets du synthé
 js/params.js          paramètres des potards
 js/i18n.js            traductions anglais / français
