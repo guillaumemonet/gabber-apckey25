@@ -160,6 +160,7 @@ export class Engine {
 
     this.padBus = gain();
     this.padBus.connect(this.master);
+    this.padOut = () => this.padBus;   // bus de sortie d'un pad (le sidechain en fournit un autre)
   }
 
   resume() { return this.ctx.resume(); }
@@ -560,11 +561,13 @@ export class Engine {
     const rSend = ctx.createGain();
     rSend.gain.value = this.padValue(pad, 'rSend');
 
-    src.connect(filter).connect(amp).connect(pan).connect(this.padBus);
+    src.connect(filter).connect(amp).connect(pan).connect(this.padOut(pad) ?? this.padBus);
     pan.connect(dSend).connect(this.delayIn);
     pan.connect(rSend).connect(this.reverbIn);
 
-    const voice = { src, amp, filter, pan, dSend, rSend, mode, pitchRate, syncBpm: src.loop ? pad.bpm : 0 };
+    // startBeat : temps de la grille où la boucle démarre (pour placer ses kicks, voir js/sidechain.js).
+    const startBeat = this.origin === null ? 0 : (startAt - this.origin) * this.bpm / 60;
+    const voice = { src, amp, filter, pan, dSend, rSend, mode, pitchRate, syncBpm: src.loop ? pad.bpm : 0, pad, startBeat };
     src.onended = () => {
       if (this.padVoices.get(index) === voice) {
         this.padVoices.delete(index);

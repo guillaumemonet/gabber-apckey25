@@ -321,6 +321,9 @@ def main():
             pad = {'file': f'bank{b + 1}/{fname}', 'name': name, 'color': color, 'mode': mode, 'cat': categorize(bank_name, i // 8, name, mode)}
             if bars:
                 pad.update(bpm=args.gabber_bpm, bars=bars)
+                kicks = gabber.kicks_of(bank_name, name)
+                if kicks:
+                    pad['kicks'] = kicks   # position des kicks (sidechain)
             pads.append(pad)
         manifest['banks'].append({'name': bank_name, 'pads': pads})
 

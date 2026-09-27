@@ -14,7 +14,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **40-pad sampler** with 15 banks, pad LEDs synced to the screen, and drag & drop of your own sounds;
   - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
   - **Layered synth** on the keyboard: 35 presets in 10 families (strings, pads, choirs, supersaw, hoovers, leads, basses, stabs, keys, FX) with ensemble, stereo width, vibrato and 8 expression knobs, chord mode and a tempo-synced arpeggiator;
-  - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters and up to 4 insert effects;
+  - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters, up to 4 insert effects, and a **sidechain** triggered by the kicks;
   - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **MIDI monitor**.
 - **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
@@ -135,19 +135,6 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
   - **■ Stop rec** (or REC again) ends the recording.
 - **Play**: ▶ (or PLAY on the APC) plays from the playhead; the view follows the playhead. Loops recorded at another tempo follow the global tempo. The timeline has its own channel in the mixer.
 
-### Pad generator
-
-**Chords…** in the timeline toolbar opens the generator: it lays string or pad blocks on the timeline from a chord progression.
-
-- **Progression**: type the chords separated by spaces or dashes (`Fm Db Eb Cm`, `Fm-Bbm-Db-C`…), or click a ready-made one. Recognised: major (`Db`), minor (`Fm`), `7`, `m7`, `maj7`, `sus2`, `sus4`, `dim`, `aug`, `5`, `add9`, with `#` / `b`.
-- **Sound**: a synth preset from the strings, pads, choirs, supersaw, stabs or keys families. Each block keeps **its own preset**: you can play something else on the keyboard, or change preset, without changing the pads.
-- **Register** (low, middle, high), **bars per chord** (1, 2 or 4), **repeat** (×1, ×2, ×4), **rhythm** (held, every beat, offbeat, 8th notes).
-- **Bass**: none, sub (held), hardcore offbeat or reese (held), on the root of each chord, on a second track.
-- The chords follow each other with smooth **voice leading**: common notes are kept and the others move as little as possible.
-- **▶ Listen** plays the first chord; **Generate** places the blocks from the playhead's bar, on the first track that is free for the whole length, starting from the armed track. The timeline grows if needed.
-
-A chord block works like any other block: move it, lengthen it, copy it (Alt), listen to it (double-click) or delete it.
-
 ## Scenes
 
 40 scenes laid out like the APC grid (1-8 at the bottom). A scene stores:
@@ -171,6 +158,17 @@ Each channel has insert effects (**+ FX**, up to 4, applied in order), reverb an
 - **Reverb**: size and mix.
 
 Double-click a control to reset it. On the APC, **Shift + track button 1 / 2 / 3 / 4** turns the knobs into the mixer's volumes / pans / delay sends / reverb sends: K1 = Pads, K2 = Synth, K3 = TR-909, K4 = Timeline, K8 = master volume. The mixer settings are saved and included in session exports.
+
+### Sidechain
+
+At the top of the mixer window. When it is **On**, every kick ducks the **synth** (keyboard, note and chord blocks) and the **melodic sounds** (pads and timeline blocks in the Bass, Leads, Stabs / keys, Pads / strings and Voices categories), which then come back up smoothly: the track breathes with the kick. Kicks and drums are never ducked.
+
+- **Triggered by**:
+  - **Kicks**: the TR-909 bass drum, the kick pads and blocks, and the kicks of the GabberKey loops (their exact positions are stored in the library: a gallop, a roll or a build-up ducks on each of its kicks). A recording of the 909 in the timeline keeps the position of its kicks too.
+  - **Every beat**: on each beat of the grid, for loops whose kicks are unknown (Sonic Pi loops, your own loops).
+- **Depth** (how far the sound goes down) and **Release** (how long it takes to come back up); double-click to reset.
+- **Ducks**: choose the synth, the melodic sounds, or both. The meter shows the ducking in real time.
+- The ducking is scheduled at the exact time of each kick (on the audio clock), not detected afterwards: no delay, and it stays in time at any tempo.
 
 ## Plugin windows
 
@@ -212,6 +210,19 @@ Below the knobs of the Synth window:
 - On the APC: **Shift + F#** = next chord type, **Shift + G#** = arpeggio on / off, **Shift + A#** = arpeggio speed.
 
 When the timeline records the synth, chords and every arpeggio note become blocks.
+
+### Pad generator
+
+**Pad generator → timeline**, in the Synth window, opens the generator: it lays string or pad blocks on the timeline from a chord progression.
+
+- **Progression**: type the chords separated by spaces or dashes (`Fm Db Eb Cm`, `Fm-Bbm-Db-C`…), or click a ready-made one. Recognised: major (`Db`), minor (`Fm`), `7`, `m7`, `maj7`, `sus2`, `sus4`, `dim`, `aug`, `5`, `add9`, with `#` / `b`.
+- **Sound**: the current synth preset, or a preset from the strings, pads, choirs, supersaw, stabs or keys families. Each block keeps **its own preset**: you can play something else on the keyboard, or change preset, without changing the pads.
+- **Register** (low, middle, high), **bars per chord** (1, 2 or 4), **repeat** (×1, ×2, ×4), **rhythm** (held, every beat, offbeat, 8th notes).
+- **Bass**: none, sub (held), hardcore offbeat or reese (held), on the root of each chord, on a second track.
+- The chords follow each other with smooth **voice leading**: common notes are kept and the others move as little as possible.
+- **▶ Listen** plays the first chord; **Generate** places the blocks from the playhead's bar, on the first track that is free for the whole length, starting from the armed track. The timeline grows if needed.
+
+A chord block works like any other block: move it, lengthen it, copy it (Alt), listen to it (double-click) or delete it.
 
 ## Tempo and loops
 
@@ -283,6 +294,7 @@ js/audio.js           audio engine: synth, sampler, effects, EQ, tempo
 js/tr909.js           TR-909 emulation and sequencer
 js/timeline.js        timeline: tracks, blocks, playback
 js/mixer.js           mixer: channels, sends, insert effects
+js/sidechain.js       sidechain (kicks duck the synth and melodic sounds)
 js/library.js         sound library (categories)
 js/windows.js         plugin windows
 js/presets.js         synth presets

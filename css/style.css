@@ -320,6 +320,18 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .tl-bars { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
 .tl-bars button { padding: 3px 9px; }
 #tl-rec.active { background: #d1242f; border-color: #d1242f; color: #fff; animation: blink 1s steps(2) infinite; }
+.sidechain { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 6px 8px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 8px; font-size: 12px; }
+.sidechain.active { border-color: var(--accent-2); }
+.sidechain .sc-title { font-weight: 700; letter-spacing: .04em; text-transform: uppercase; font-size: 11px; }
+.sidechain label, .sidechain .sc-targets { display: inline-flex; align-items: center; gap: 5px; }
+.sidechain label > span, .sidechain .sc-targets > span { color: var(--muted); font-size: 11px; }
+.sidechain select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 2px 4px; }
+.sidechain input[type=range] { width: 80px; }
+.sidechain em { font-style: normal; min-width: 42px; color: var(--muted); }
+.sidechain button { padding: 3px 9px; font-size: 12px; }
+.sidechain button.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; font-weight: 600; }
+.sc-meter { width: 60px; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.sc-meter i { display: block; height: 100%; width: 0; background: var(--accent-2); }
 .tl-gen { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 12px; }
 .tl-gen[hidden] { display: none; }
 .gen-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; }
@@ -329,7 +341,8 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .gen-row input[type=text] { width: 220px; font-family: ui-monospace, monospace; }
 .gen-chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .gen-chips button { padding: 3px 8px; font-size: 11px; }
-#tl-gen-btn.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
+#gen-btn { margin-bottom: 8px; }
+#gen-btn.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
 #tl-loop.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
 
 /* Fenêtres des plugins */

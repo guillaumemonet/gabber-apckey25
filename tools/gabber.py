@@ -621,6 +621,47 @@ def mix(*loops):
     return normalize(np.tanh(1.2 * normalize(out, 1.0)), 0.89)
 
 
+# ---------------------------------------------------------------- kicks des boucles (sidechain)
+# Position des kicks de chaque boucle, en doubles-croches depuis le début (0.5 = entre deux) :
+# l'application s'en sert pour déclencher le sidechain exactement sur les kicks.
+
+def four(bars=1):
+    return [s + 16 * b for b in range(bars) for s in (0, 4, 8, 12)]
+
+
+def union(*lists):
+    return sorted(set(x for l in lists for x in l))
+
+
+ROLL = list(range(0, 14, 2)) + [14, 15]
+GABBER_BUILD = list(range(0, 16, 4)) + list(range(16, 32, 2)) + list(range(32, 48)) + [48 + i / 2 for i in range(32)]
+AMEN = [0, 2, 10, 11, 16, 18, 26]
+# Break découpé : 16 tranches de 2 doubles-croches réordonnées.
+CHOP = [j * 2 + o for j, i in enumerate([0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 4, 5, 12, 13, 14, 15]) for o in (0, 1) if i * 2 + o in AMEN]
+GALLOP = [0, 3, 4, 7, 8, 11, 12, 14, 15]
+MAIN_BUILD = list(range(0, 32, 4)) + list(range(32, 48, 2)) + list(range(48, 64))
+WAVE_BUILD = list(range(0, 32, 4)) + list(range(32, 48, 2)) + list(range(48, 60)) + [60 + i / 2 for i in range(8)]
+
+KICKS = {
+    'Gabber': {'Kick 4/4': four(), 'Beat': four(), 'Beat full': four(), 'Roll': ROLL, 'Build-up': GABBER_BUILD},
+    'Gabber 2': {'Frenchcore': [0, 4, 8, 10, 12], 'Half-time': [0, 14, 16, 22], 'Beat + ride': four(), 'Roll full': ROLL,
+                 'Acid + kick': four(), 'Hoover + beat': four(2), 'Stabs + beat': four(2), 'Build full': GABBER_BUILD},
+    'Hardcore': {'Bass + kick': four(), 'Strings + beat': four(4), 'Full track': four(4), 'Terror loop': list(range(0, 16, 2)),
+                 'Kick gallop': GALLOP, 'Industrial loop': four(), 'Speed roll': list(range(16)), 'Hard beat': four(),
+                 'Terror + hats': list(range(0, 16, 2))},
+    'Oldschool': {'Amen-style break': AMEN, 'Break + kick': union(four(2), AMEN), 'Chopped break': CHOP,
+                  'Oldschool track': union(four(4), AMEN, [x + 32 for x in AMEN])},
+    'Mainstream': {'Mainstream beat': four(), 'Beat + hats': four(), 'Build-up': MAIN_BUILD, 'Full track': four(4)},
+    'New wave': {'Uptempo beat': four(), 'Kick-bass loop': four(), 'Kick melody': list(range(0, 32, 4)), 'Gallop': GALLOP,
+                 'Build-up': WAVE_BUILD, 'Full drop': four(4)},
+}
+
+
+def kicks_of(bank, name):
+    """Kicks d'une boucle (liste de doubles-croches), ou None si elle n'en contient pas."""
+    return KICKS.get(bank, {}).get(name)
+
+
 # ---------------------------------------------------------------- banques
 
 F = 41  # fa1 : tonalité de base

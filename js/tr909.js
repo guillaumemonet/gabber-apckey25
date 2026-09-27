@@ -118,6 +118,7 @@ export class TR909 {
     this.queued = null;
     this.onStep = () => {};      // (pas 0-15, ou -1 à l'arrêt)
     this.onPattern = () => {};   // changement de pattern effectué
+    this.onKick = () => {};      // (instant) : grosse caisse jouée, pour le sidechain
     this.listeners = [];         // autres séquenceurs calés sur la même horloge : (pas, instant, durée d'un pas)
     this.onStop = () => {};
   }
@@ -181,6 +182,7 @@ export class TR909 {
 
   // Joue un instrument à l'instant `time` (secondes, horloge audio) avec une vélocité 0..1.
   trigger(id, time = this.ctx.currentTime, vel = 1) {
+    if (id === 'bd') this.onKick(time);
     const level = this.p(id, 'level') * vel;
     const out = this.gain(level);
     // Chaîne de sortie : [distorsion + filtre anti-crissement] -> niveau -> bus 909.

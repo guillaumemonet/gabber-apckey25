@@ -7,13 +7,14 @@ import { Recorder, download, stamp, encodeWav } from './recorder.js';
 import { packBanks, unpack } from './kits.js';
 import * as store from './storage.js';
 import { WindowManager, WINDOWS, mergeWindows } from './windows.js';
-import { LIB_CATS, catColor, libraryItems } from './library.js';
+import { LIB_CATS, catColor, libraryItems, guessCat } from './library.js';
 import { Mixer, CHANNELS, MIX_FIELDS, FX_TYPES, MAX_FX, defaultMixState, mergeMixState, mixKnobDefs, newFx, fxParamLabel } from './mixer.js';
 import { Timeline, TL_TRACKS, BEATS_PER_BAR, defaultTlState, mergeTlState } from './timeline.js';
 import { TR909, TR_INSTR, PATTERNS, trKnobDefs, defaultTrState, mergeTrState } from './tr909.js';
 import { t, soundName, translatePage } from './i18n.js';
 import { Performer, CHORD_MODES, ARP_MODES, ARP_RATES, defaultPlayState, mergePlayState } from './performer.js';
 import { PROGRESSIONS, parseProgression, voiceChords, bassNote } from './chords.js';
+import { Sidechain, SC_SOURCES, SC_DUCKED, defaultScState, mergeScState } from './sidechain.js';
 
 translatePage();
 
@@ -22,7 +23,7 @@ const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (E
 const UI_PAGES = [...PAGE_ORDER, 'tr', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer;
+let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -41,6 +42,7 @@ const state = {
   scenes: new Array(40).fill(null),   // 40 scènes (instantanés rappelés à la mesure suivante)
   play: defaultPlayState(),           // jeu du clavier : mode accords, arpégiateur
   gen: null,                          // générateur de nappes (voir defaultGen)
+  sc: defaultScState(),               // sidechain : les kicks font respirer synthé, nappes et basses
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -79,13 +81,27 @@ async function start() {
   mixer = new Mixer(engine, () => state.mix);
   engine.padBus.disconnect();
   engine.padBus.connect(mixer.input('pads'));
+  // Sidechain : le synthé et les sons mélodiques passent par des bus que les kicks font baisser.
+  sidechain = new Sidechain(engine, () => state.sc);
   engine.pumpGain.disconnect();
-  engine.pumpGain.connect(mixer.input('synth'));
+  engine.pumpGain.connect(sidechain.synth).connect(mixer.input('synth'));
+  sidechain.pads.connect(engine.padBus);
+  engine.padOut = pad => (isDuckedSound(pad.sampleId, padCat(pad)) ? sidechain.pads : engine.padBus);
+  drum.onKick = time => { sidechain.kick(time); if (tlRec?.source === 'tr') tlRec.kicks.push(time); };
+  sidechain.isRunning = () => timeline?.playing || drum.running || [...engine.padVoices.values()].some(v => v.mode === 'loop');
+  sidechain.loopKicks = padLoopKicks;
   drum.setDestinations(Object.fromEntries(['bd', 'snare', 'toms', 'hats', 'cym'].map(g => [g, mixer.input('tr')])));
   timeline = new Timeline(engine, () => state.tl, clipBuffer, mixer.input('tl'));
   timeline.getPad = (b, i) => state.banks[b]?.[i];
   timeline.padKey = padKey;
   timeline.getPatch = presetPatch;
+  sidechain.tl.connect(mixer.input('tl'));
+  timeline.duckOutput = sidechain.tl;
+  timeline.isDucked = clip => isDuckedSound(clip.sampleId, clip.cat) && !clip.kickBeats;
+  timeline.isKickPad = pad => padCat(pad) === 'kick' && !soundKicks(pad.sampleId);
+  timeline.kicksOf = clipKicks;
+  timeline.onKick = time => sidechain.kick(time);
+  timeline.onHalt = () => sidechain.clear();
   // Le clavier passe par le mode accords / l'arpégiateur ; les notes produites s'enregistrent dans la timeline.
   performer = new Performer(engine, () => state.play);
   performer.onNote = (note, vel, on) => tlRecordNote(note, on, vel);
@@ -103,6 +119,7 @@ async function start() {
   buildPerf();
   buildTr();
   buildMixer();
+  buildSidechain();
   buildTl();
   buildGen();
   buildScenes();
@@ -164,6 +181,7 @@ async function restore() {
     state.scenes = mergeScenes(saved.scenes);
     state.play = mergePlayState(saved.play);
     state.gen = mergeGen(saved.gen);
+    state.sc = mergeScState(saved.sc);
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
         const s = saved.banks?.[b]?.[i];
@@ -244,6 +262,7 @@ function save() {
       scenes: state.scenes,
       play: state.play,
       gen: state.gen,
+      sc: state.sc,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
   }, 400);
@@ -253,7 +272,9 @@ function save() {
 
 function triggerPad(i) {
   selectPad(i);
-  engine.playPad(padKey(state.bank, i), state.banks[state.bank][i]);
+  const pad = state.banks[state.bank][i];
+  engine.playPad(padKey(state.bank, i), pad);
+  if (pad?.buffer && padCat(pad) === 'kick' && engine.padMode(pad) !== 'loop') sidechain.kick();
   tlRecordPad(state.bank, i);
 }
 
@@ -1372,7 +1393,7 @@ async function tlStartRec() {
   const time = timeline.play(beat);
   let startedDrum = false;
   if (source === 'tr' && !drum.running) { drum.start(true); startedDrum = true; }   // la 909 joue calée sur la timeline
-  tlRec = { beat, time, track: state.tl.armed, source, startedDrum, bpm: state.bpm };
+  tlRec = { beat, time, track: state.tl.armed, source, startedDrum, bpm: state.bpm, kicks: [] };
   renderTl();
   renderTr();
   renderLeds();
@@ -1410,6 +1431,8 @@ async function tlStopRec() {
     bufferCache.set(id, buffer);
     const len = Math.max(1, Math.round(buffer.duration * rec.bpm / 60));
     const clip = { id: crypto.randomUUID(), start: rec.beat, len, sampleId: id, name, cat: 'rec', color: catColor('rec'), bpm: rec.bpm, loop: false };
+    const kicks = rec.kicks.map(k => (k - rec.time) * rec.bpm / 60).filter(k => k >= 0 && k < len);
+    if (kicks.length) clip.kickBeats = kicks.map(k => Math.round(k * 1000) / 1000);   // sidechain
     state.tl.tracks[rec.track].clips.push(clip);
     growSong(clip);
     tlSel = { track: rec.track, clip };
@@ -2254,7 +2277,7 @@ function mergeGen(saved) {
   const g = defaultGen();
   if (!saved || typeof saved !== 'object') return g;
   if (typeof saved.prog === 'string') g.prog = saved.prog;
-  if (PRESETS.some(p => p.id === saved.preset)) g.preset = saved.preset;
+  if (saved.preset === 'current' || PRESETS.some(p => p.id === saved.preset)) g.preset = saved.preset;
   if (saved.register in GEN_REGISTERS) g.register = saved.register;
   if ([1, 2, 4].includes(saved.bars)) g.bars = saved.bars;
   if ([1, 2, 4].includes(saved.repeat)) g.repeat = saved.repeat;
@@ -2285,6 +2308,9 @@ function genHits(rhythm, beats) {
   }
   return hits;
 }
+
+// Son choisi, ou le preset joué au clavier.
+const genPreset = () => (state.gen.preset === 'current' ? state.preset : state.gen.preset);
 
 function generatePads() {
   const g = state.gen;
@@ -2322,7 +2348,7 @@ function generatePads() {
   if (lanes[0] >= 0) used.push(lanes[0]);
   if (bass) { lanes.push(lane()); }
   if (lanes.some(i => i < 0)) { toast(t('gen.full', { bars: total / BEATS_PER_BAR, bar: start / BEATS_PER_BAR + 1 }), 4000); return; }
-  state.tl.tracks[lanes[0]].clips.push(...blocks(i => voiced[i], g.rhythm, g.preset, 'pad'));
+  state.tl.tracks[lanes[0]].clips.push(...blocks(i => voiced[i], g.rhythm, genPreset(), 'pad'));
   if (bass) state.tl.tracks[lanes[1]].clips.push(...blocks(i => [bassNote(chords[i])], bass.rhythm, bass.preset, 'bass'));
   if (start + total > state.tl.bars * BEATS_PER_BAR) state.tl.bars = Math.min(256, Math.ceil((start + total) / BEATS_PER_BAR));
   renderTl();
@@ -2337,7 +2363,7 @@ function previewGen() {
   const { chords } = parseProgression(g.prog);
   if (!chords.length) { toast(t('gen.none'), 3000); return; }
   const notes = voiceChords(chords, GEN_REGISTERS[g.register])[0];
-  const patch = presetPatch(g.preset);
+  const patch = presetPatch(genPreset());
   const t0 = engine.ctx.currentTime + 0.02;
   notes.forEach((n, k) => {
     engine.noteOn(n, 0.8, t0, `gen:${k}`, patch);
@@ -2346,7 +2372,7 @@ function previewGen() {
 }
 
 function buildGen() {
-  const box = $('#tl-gen');
+  const box = $('#gen');
   const g = state.gen;
   const field = (label, el) => {
     const l = document.createElement('label');
@@ -2377,6 +2403,7 @@ function buildGen() {
     chips.appendChild(b);
   }
   const sound = document.createElement('select');
+  sound.add(new Option(t('gen.current'), 'current'));
   for (const f of GEN_SOUNDS) {
     const grp = document.createElement('optgroup');
     grp.label = t(`family.${f}`);
@@ -2409,16 +2436,16 @@ function buildGen() {
     listen, go,
   );
   box.append(row1, row2, info);
-  $('#tl-gen-btn').addEventListener('click', () => {
+  $('#gen-btn').addEventListener('click', () => {
     box.hidden = !box.hidden;
-    $('#tl-gen-btn').classList.toggle('active', !box.hidden);
+    $('#gen-btn').classList.toggle('active', !box.hidden);
     renderGenInfo();
   });
 }
 
 // Accords reconnus, durée et point de départ.
 function renderGenInfo() {
-  const el = $('#tl-gen .gen-info');
+  const el = $('#gen .gen-info');
   if (!el) return;
   const g = state.gen;
   const { chords, bad } = parseProgression(g.prog);
@@ -2426,6 +2453,104 @@ function renderGenInfo() {
   el.textContent = chords.length
     ? t('gen.where', { chords: chords.map(c => c.name).join(' – '), bars, bar: Math.floor(state.tl.playhead / BEATS_PER_BAR) + 1 }) + (bad.length ? ` · ${t('gen.bad', { list: bad.join(' ') })}` : '')
     : t('gen.none');
+}
+
+// ---------- Sidechain ----------
+
+// Catégorie et kicks connus d'un son de la bibliothèque (sounds/banks.json).
+let soundInfo = null;
+function soundMeta(sampleId) {
+  if (!soundInfo && libManifest) {
+    soundInfo = new Map();
+    for (const bank of libManifest?.banks ?? []) for (const p of bank.pads) if (p) soundInfo.set(`lib:${p.file}`, p);
+  }
+  return soundInfo?.get(sampleId);
+}
+// Kicks d'une boucle de la bibliothèque, en temps depuis son début (null si elle n'en a pas).
+const soundKicks = sampleId => soundMeta(sampleId)?.kicks?.map(s => s / 4) ?? null;
+function padCat(pad) {
+  if (!pad) return null;
+  const meta = soundMeta(pad.sampleId);
+  if (meta?.cat) return meta.cat;
+  if (pad.sampleId?.startsWith('builtin:')) return guessCat(kit[+pad.sampleId.slice(8)]?.name ?? pad.name);
+  return guessCat(pad.name);
+}
+// Son baissé par le sidechain : mélodique (basse, nappe, lead, clavier, voix), et sans kick dedans.
+const isDuckedSound = (sampleId, cat) => SC_DUCKED.has(cat) && !soundKicks(sampleId);
+
+// Kicks d'un bloc de la timeline : enregistrement de la 909, boucle de la bibliothèque, ou son de kick.
+function clipKicks(clip) {
+  if (clip.kickBeats) return clip.kickBeats;
+  const known = soundKicks(clip.sampleId);
+  if (known) return known;
+  return clip.cat === 'kick' ? [0] : null;
+}
+
+// Boucles des pads qui contiennent des kicks (pour le mode « kicks »).
+function padLoopKicks() {
+  const out = [];
+  for (const [key, v] of engine.padVoices) {
+    if (v.mode !== 'loop' || !v.pad?.buffer) continue;
+    const kicks = soundKicks(v.pad.sampleId) ?? (padCat(v.pad) === 'kick' ? [0] : null);
+    if (!kicks) continue;
+    const beats = v.pad.bpm ? v.pad.buffer.duration * v.pad.bpm / 60 : v.pad.buffer.duration * engine.bpm / 60;
+    if (beats > 0.25) out.push({ key, startBeat: v.startBeat, beats, kicks });
+  }
+  return out;
+}
+
+function setSidechain(changes) {
+  Object.assign(state.sc, changes);
+  sidechain.apply();
+  renderSidechain();
+  save();
+}
+
+function buildSidechain() {
+  const box = $('#sidechain');
+  box.innerHTML = `
+    <span class="sc-title">${t('sc.title')}</span>
+    <button data-sc="on" title="${t('sc.onTitle')}">${t('sc.on')}</button>
+    <label><span>${t('sc.source')}</span><select data-sc="source">${SC_SOURCES.map(s => `<option value="${s}">${t(`sc.src.${s}`)}</option>`).join('')}</select></label>
+    <label class="sc-range"><span>${t('sc.depth')}</span><input type="range" min="0" max="1" step="0.01" data-sc="depth"><em></em></label>
+    <label class="sc-range"><span>${t('sc.release')}</span><input type="range" min="0.05" max="0.6" step="0.01" data-sc="release"><em></em></label>
+    <span class="sc-targets"><span>${t('sc.targets')}</span>
+      <button data-sc="synth" title="${t('sc.synthTitle')}">${t('sc.synth')}</button>
+      <button data-sc="samples" title="${t('sc.samplesTitle')}">${t('sc.samples')}</button>
+    </span>
+    <span class="sc-meter" title="${t('sc.meter')}"><i></i></span>`;
+  for (const el of box.querySelectorAll('button[data-sc]')) el.addEventListener('click', () => setSidechain({ [el.dataset.sc]: !state.sc[el.dataset.sc] }));
+  box.querySelector('select').addEventListener('change', e => setSidechain({ source: e.target.value }));
+  for (const el of box.querySelectorAll('input[data-sc]')) {
+    el.addEventListener('input', () => setSidechain({ [el.dataset.sc]: +el.value }));
+    el.addEventListener('dblclick', () => setSidechain({ [el.dataset.sc]: defaultScState()[el.dataset.sc] }));
+  }
+  // Témoin : baisse du gain en cours, lue sur le bus du synthé.
+  const probe = engine.ctx.createAnalyser();
+  probe.fftSize = 256;
+  sidechain.shaper.connect(probe);
+  const data = new Float32Array(probe.fftSize);
+  const bar = box.querySelector('.sc-meter i');
+  (function frame() {
+    probe.getFloatTimeDomainData(data);
+    let min = 0;
+    for (const v of data) min = Math.min(min, v);
+    bar.style.width = state.sc.on ? `${Math.round(-min * 100)}%` : '0';
+    requestAnimationFrame(frame);
+  })();
+  renderSidechain();
+}
+
+function renderSidechain() {
+  const s = state.sc;
+  const box = $('#sidechain');
+  box.classList.toggle('active', s.on);
+  for (const el of box.querySelectorAll('button[data-sc]')) el.classList.toggle('active', !!s[el.dataset.sc]);
+  box.querySelector('select').value = s.source;
+  for (const el of box.querySelectorAll('input[data-sc]')) {
+    el.value = s[el.dataset.sc];
+    el.nextElementSibling.textContent = el.dataset.sc === 'depth' ? `${Math.round(s.depth * 100)}%` : `${Math.round(s.release * 1000)} ms`;
+  }
 }
 
 // ---------- Effets de performance ----------

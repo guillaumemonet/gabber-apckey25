@@ -14,7 +14,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Sampler 40 pads** avec 15 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de tes propres sons ;
   - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
   - **Synthé en couches** au clavier : 35 presets en 10 familles (cordes, nappes, chœurs, supersaw, hoovers, leads, basses, stabs, claviers, effets) avec ensemble, largeur stéréo, vibrato et 8 potards d'expression, mode accords et arpégiateur calé sur le tempo ;
-  - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres et jusqu'à 4 effets d'insert ;
+  - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres, jusqu'à 4 effets d'insert, et un **sidechain** déclenché par les kicks ;
   - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **moniteur MIDI**.
 - **Enregistrement WAV** de ta session et **export / import de kits**.
 - Interface en **français ou en anglais**, selon la langue du navigateur.
@@ -135,19 +135,6 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
   - **■ Arrêter rec** (ou REC à nouveau) termine l'enregistrement.
 - **Lire** : ▶ (ou PLAY sur l'APC) joue depuis la tête de lecture ; la vue suit la tête de lecture. Les boucles faites à un autre tempo suivent le tempo global. La timeline a sa propre voie dans la table de mixage.
 
-### Générateur de nappes
-
-**Accords…** dans la barre de la timeline ouvre le générateur : il pose des blocs de cordes ou de nappes sur la timeline à partir d'une suite d'accords.
-
-- **Suite d'accords** : tape les accords séparés par des espaces ou des tirets (`Fm Db Eb Cm`, `Fm-Bbm-Db-C`…), ou clique sur une suite toute prête. Reconnus : majeur (`Db`), mineur (`Fm`), `7`, `m7`, `maj7`, `sus2`, `sus4`, `dim`, `aug`, `5`, `add9`, avec `#` / `b`.
-- **Son** : un preset du synthé parmi les familles cordes, nappes, chœurs, supersaw, stabs ou claviers. Chaque bloc garde **son propre preset** : tu peux jouer autre chose au clavier, ou changer de preset, sans changer les nappes.
-- **Registre** (grave, médium, aigu), **mesures par accord** (1, 2 ou 4), **répétitions** (×1, ×2, ×4), **rythme** (tenu, chaque temps, contretemps, croches).
-- **Basse** : aucune, sub (tenue), hardcore en contretemps ou reese (tenue), sur la fondamentale de chaque accord, sur une deuxième piste.
-- Les accords s'enchaînent en douceur : les notes communes sont gardées et les autres bougent le moins possible.
-- **▶ Écouter** joue le premier accord ; **Générer** pose les blocs à partir de la mesure de la tête de lecture, sur la première piste libre sur toute la durée, en partant de la piste armée. La timeline s'allonge si besoin.
-
-Un bloc d'accord se manipule comme les autres : le déplacer, l'allonger, le copier (Alt), l'écouter (double-clic) ou le supprimer.
-
 ## Scènes
 
 40 scènes disposées comme la grille de l'APC (1-8 en bas). Une scène mémorise :
@@ -171,6 +158,17 @@ Chaque voie a des effets d'insert (**+ FX**, jusqu'à 4, appliqués dans l'ordre
 - **Reverb** : taille et dosage.
 
 Double-clic sur un réglage pour le remettre à zéro. Sur l'APC, **Maj + bouton de piste 1 / 2 / 3 / 4** transforme les potards en volumes / panoramiques / envois delay / envois reverb du mixeur : K1 = Pads, K2 = Synthé, K3 = TR-909, K4 = Timeline, K8 = volume général. Les réglages du mixeur sont sauvegardés et inclus dans les exports de session.
+
+### Sidechain
+
+En haut de la fenêtre de la table de mixage. Quand il est **Activé**, chaque kick fait baisser le **synthé** (clavier, blocs de notes et d'accords) et les **sons mélodiques** (pads et blocs de la timeline des catégories Basses, Leads, Stabs / claviers, Nappes / cordes et Voix), qui remontent ensuite en douceur : le morceau respire avec le kick. Les kicks et la batterie ne sont jamais baissés.
+
+- **Déclenché par** :
+  - **Les kicks** : la grosse caisse de la TR-909, les pads et blocs de kick, et les kicks des boucles de GabberKey (leur position exacte est enregistrée dans la bibliothèque : un galop, un roulement ou une montée baisse le son sur chacun de ses kicks). Un enregistrement de la 909 dans la timeline garde aussi la position de ses kicks.
+  - **Chaque temps** : sur chaque temps de la grille, pour les boucles dont on ne connaît pas les kicks (boucles Sonic Pi, tes propres boucles).
+- **Profondeur** (de combien le son baisse) et **Relâche** (le temps qu'il met à remonter) ; double-clic pour revenir à la valeur par défaut.
+- **Baisse** : choisis le synthé, les sons mélodiques, ou les deux. Le témoin montre la baisse en temps réel.
+- La baisse est programmée à l'instant exact de chaque kick (sur l'horloge audio), et non détectée après coup : aucun retard, et elle reste calée à n'importe quel tempo.
 
 ## Fenêtres des plugins
 
@@ -212,6 +210,19 @@ Sous les potards de la fenêtre Synthé :
 - Sur l'APC : **Maj + fa#** = type d'accord suivant, **Maj + sol#** = arpège oui / non, **Maj + la#** = vitesse de l'arpège.
 
 Quand la timeline enregistre le synthé, les accords et chaque note de l'arpège deviennent des blocs.
+
+### Générateur de nappes
+
+**Générateur de nappes → timeline**, dans la fenêtre Synthé, ouvre le générateur : il pose des blocs de cordes ou de nappes sur la timeline à partir d'une suite d'accords.
+
+- **Suite d'accords** : tape les accords séparés par des espaces ou des tirets (`Fm Db Eb Cm`, `Fm-Bbm-Db-C`…), ou clique sur une suite toute prête. Reconnus : majeur (`Db`), mineur (`Fm`), `7`, `m7`, `maj7`, `sus2`, `sus4`, `dim`, `aug`, `5`, `add9`, avec `#` / `b`.
+- **Son** : le preset du synthé en cours, ou un preset parmi les familles cordes, nappes, chœurs, supersaw, stabs ou claviers. Chaque bloc garde **son propre preset** : tu peux jouer autre chose au clavier, ou changer de preset, sans changer les nappes.
+- **Registre** (grave, médium, aigu), **mesures par accord** (1, 2 ou 4), **répétitions** (×1, ×2, ×4), **rythme** (tenu, chaque temps, contretemps, croches).
+- **Basse** : aucune, sub (tenue), hardcore en contretemps ou reese (tenue), sur la fondamentale de chaque accord, sur une deuxième piste.
+- Les accords s'enchaînent en douceur : les notes communes sont gardées et les autres bougent le moins possible.
+- **▶ Écouter** joue le premier accord ; **Générer** pose les blocs à partir de la mesure de la tête de lecture, sur la première piste libre sur toute la durée, en partant de la piste armée. La timeline s'allonge si besoin.
+
+Un bloc d'accord se manipule comme les autres : le déplacer, l'allonger, le copier (Alt), l'écouter (double-clic) ou le supprimer.
 
 ## Tempo et boucles
 
@@ -283,6 +294,7 @@ js/audio.js           moteur audio : synthé, sampler, effets, EQ, tempo
 js/tr909.js           émulation TR-909 et séquenceur
 js/timeline.js        timeline : pistes, blocs, lecture
 js/mixer.js           table de mixage : voies, envois, effets d'insert
+js/sidechain.js       sidechain (les kicks font baisser le synthé et les sons mélodiques)
 js/library.js         bibliothèque de sons (catégories)
 js/windows.js         fenêtres des plugins
 js/presets.js         presets du synthé

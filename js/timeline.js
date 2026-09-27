@@ -50,6 +50,14 @@ export class Timeline {
     this.onStop = () => {};
     this.getPad = () => null;   // (banque, pad) -> pad ; branché par l'application
     this.padKey = null;
+    // Sidechain (branché par l'application) : kicks d'un bloc en temps depuis son début (null si aucun),
+    // pad qui est un kick, instant d'un kick, sortie des sons mélodiques baissés par le sidechain.
+    this.kicksOf = () => null;
+    this.isKickPad = () => false;
+    this.onKick = () => {};
+    this.onHalt = () => {};
+    this.duckOutput = null;
+    this.isDucked = () => false;
     this.getPatch = () => undefined;   // preset d'un bloc -> { cfg, values } ; branché par l'application
     this.offs = [];             // fins de notes programmées : { note, key, time }
     this.padHits = new Set();   // voix de pads programmées (coupées à l'arrêt)
@@ -96,7 +104,11 @@ export class Timeline {
           if (clip.type === 'pad') {
             const pad = this.getPad(clip.bank, clip.pad);
             const key = this.padKey(clip.bank, clip.pad);
-            if (pad?.buffer) { this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1 }); this.padHits.add(key); }
+            if (pad?.buffer) {
+              this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1 });
+              this.padHits.add(key);
+              if (this.isKickPad(pad)) this.onKick(when);
+            }
           } else {
             const notes = clip.notes ?? [clip.note];
             const patch = clip.preset ? this.getPatch(clip.preset) : undefined;
@@ -121,7 +133,7 @@ export class Timeline {
         if (clip.loop) { src.loop = true; src.loopStart = 0; src.loopEnd = buf.duration; }
         const gain = this.ctx.createGain();
         const level = clip.gain ?? 1;
-        src.connect(gain).connect(this.output);
+        src.connect(gain).connect(this.duckOutput && this.isDucked(clip) ? this.duckOutput : this.output);
         const when = time + Math.max(0, clip.start - beat) * bd;
         let stopAt = time + (end - beat) * bd;
         if (st.loop && !this.recording) stopAt = Math.min(stopAt, endTime);
@@ -129,6 +141,7 @@ export class Timeline {
         gain.gain.setValueAtTime(level, Math.max(when, stopAt - 0.006));
         gain.gain.linearRampToValueAtTime(0, stopAt);   // fin du bloc sans clic
         src.start(when, clip.loop ? into % buf.duration : into);
+        this.scheduleKicks(clip, time, beat, Math.min(end, st.loop && !this.recording ? len : Infinity));
         src.stop(stopAt + 0.01);
         src.onended = () => { this.sources = this.sources.filter(s => s.src !== src); };
         this.sources.push({ src, gain });
@@ -139,6 +152,23 @@ export class Timeline {
     const lead = (endTime - this.ctx.currentTime - 0.25) * 1000;
     if (st.loop) this.timer = setTimeout(() => { if (this.playing) this.scheduleCycle(endTime, 0); }, Math.max(0, lead));
     else this.timer = setTimeout(() => this.stop(), Math.max(0, (endTime - this.ctx.currentTime) * 1000));
+  }
+
+  // Kicks d'un bloc audio entre le temps `beat` (joué à l'instant `time`) et `until` (en temps de la timeline).
+  scheduleKicks(clip, time, beat, until) {
+    const kicks = this.kicksOf(clip);
+    if (!kicks?.length) return;
+    const bd = this.beatDur;
+    const period = clip.loop ? this.naturalBeats(clip) : Infinity;   // une boucle recommence après sa durée naturelle
+    if (!(period > 0.25)) return;
+    const last = clip.start + this.clipBeats(clip);
+    for (let rep = clip.start; rep < Math.min(until, last); rep += period) {
+      for (const k of kicks) {
+        const b = rep + k;
+        if (b >= beat - 1e-6 && b < until && b < last) this.onKick(time + (b - beat) * bd);
+      }
+      if (period === Infinity) break;
+    }
   }
 
   flush(horizon) {
@@ -170,6 +200,7 @@ export class Timeline {
       src.stop(t + 0.05);
     }
     this.sources = [];
+    this.onHalt();
     const was = this.playing;
     this.playing = false;
     if (was && !silent) this.onStop();
