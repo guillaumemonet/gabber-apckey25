@@ -741,7 +741,8 @@ def build(bpm=190):
         *[(f'Rave {nm}', PINK, ONESHOT, stab([n, n + 3, n + 7], dur=0.45, drive=4), None)
           for nm, n in zip(['F', 'G', 'G#', 'A#', 'C', 'C#', 'D#', 'F+'], [65, 67, 68, 70, 72, 73, 75, 77])],
     ]
-    return [('Gabber', bank1), ('Gabber 2', bank2), ('Hardcore', build_hardcore(bpm)), ('Oldschool', build_oldschool(bpm))]
+    return [('Gabber', bank1), ('Gabber 2', bank2), ('Hardcore', build_hardcore(bpm)), ('Oldschool', build_oldschool(bpm)),
+            ('Mainstream', build_mainstream(bpm)), ('New wave', build_newwave(bpm))]
 
 
 def build_oldschool(bpm=190):
@@ -915,5 +916,276 @@ def build_hardcore(bpm=190):
         ('Terror + hats', GREEN, LOOP, mix(terror, hats16), 1),
         ('Snare fill', YELLOW, LOOP, normalize(snare_fill), 1),
         ('Breakdown hit', WHITE, ONESHOT, layer(orchestra_hit(), impact(), 0.6), None),
+    ]
+    return bank
+
+
+# ---------------------------------------------------------------- mainstream et nouvelle vague
+
+def tail_kick(note=41, drive=14, tail=0.45, dur=0.7, bend=0.3, zaag=0.0, formant=1100, bite=6,
+              punch_drive=60, click=1.0, top=0.8, screech=0.0):
+    """Kick moderne : attaque courte et claquante + queue tonale distordue, accordée sur `note`.
+    bend : chute de hauteur de la queue (en octaves sur la durée) ; zaag : part de scie dans la queue
+    (son « râpeux ») ; screech : formant résonant qui balaie la queue de haut en bas."""
+    t = t_of(dur)
+    f = hz(note + 12) * (1 + 1.5 * np.exp(-t / 0.018)) * 2 ** (-bend * t / dur)
+    osc = np.sin(2 * np.pi * np.cumsum(f) / SR)
+    if zaag:
+        osc = (1 - zaag) * osc + zaag * saw(f, len(t))
+    env = exp_env(t, tail, hold=0.05) * np.clip((t - 0.01) / 0.012, 0, 1)
+    # Saturation asymétrique sans composante continue quand la queue s'éteint.
+    x = np.tanh(drive * (osc + 0.25) * env) - np.tanh(drive * 0.25 * env)
+    if screech:
+        x = x * (1 - screech) + screech * np.tanh(4 * sweep(x, 'bp', 3200 * np.exp(-t / (dur / 2.5)) + 350, 5))
+    x = biquad(x, 'peak', formant, 1.0, bite)
+    x = biquad(biquad(x, 'lp', 6500, 0.8), 'hp', 35)
+    x = normalize(x)
+    if top:
+        x = x + top * gabber_kick(note + 12, drive=punch_drive, decay=0.02, tail=0.035, dur=dur, lp=11000, click=click)
+    return fade(normalize(x), fout=0.03)
+
+
+VOWEL_E = ((530, 1.0, 8), (1850, 0.6, 10), (2500, 0.3, 10))
+VOWEL_I = ((300, 1.0, 8), (2300, 0.5, 10), (3000, 0.3, 10))
+VOWEL_U = ((320, 1.0, 8), (870, 0.35, 9), (2240, 0.1, 10))
+
+
+def shout(vowels, note=52, dur=0.45, drive=4, breath=0.5):
+    """Cri synthétique (« hey », « oi »…) : source rauque + souffle dans des formants qui passent d'une voyelle à l'autre."""
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    f = hz(note + 2 * np.exp(-t / 0.05) - 1.5 * t / dur)
+    src = saw(f, n) + 0.6 * saw(f * 1.012, n) + breath * noise(n) * (0.3 + 0.7 * np.exp(-t / 0.04))
+    pos = np.clip(t / dur * 1.4, 0, 1) * (len(vowels) - 1)
+    idx = range(len(vowels))
+    x = np.zeros(n)
+    for j in range(3):
+        fr = np.interp(pos, idx, [v[j][0] for v in vowels])
+        g = np.interp(pos, idx, [v[j][1] for v in vowels])
+        x += g * sweep(src, 'bp', fr, vowels[0][j][2])
+    x = np.tanh(drive * normalize(x)) * adsr(n, 0.004, 0.1, 0.9, 0.08, dur - 0.08)
+    return fade(normalize(reverb(x, 0.6, 0.15)), fout=0.05)
+
+
+def bell(notes, dur=2.5, ratio=3.5, index=4.0, verb=0.4):
+    """Cloche FM sombre (mélodies « horreur »)."""
+    t = t_of(dur)
+    x = np.zeros(len(t))
+    for nt in notes:
+        f = hz(nt)
+        mod = index * np.exp(-t / 0.4) * np.sin(2 * np.pi * f * ratio * t)
+        x += np.sin(2 * np.pi * f * t + mod) * exp_env(t, dur / 3) + 0.3 * np.sin(np.pi * f * t) * exp_env(t, dur / 2)
+    return fade(normalize(reverb(x * np.clip(t / 0.002, 0, 1), 2.0, verb)), fout=0.2)
+
+
+def dark_lead(note, dur=0.6, bend=0.0, bend_time=0.04, drive=5, cutoff=3500):
+    """Lead sombre et saturé : scies désaccordées + sous-octave ; bend < 0 = attaque par en dessous."""
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    p = note + bend * np.exp(-t / bend_time)
+    x = sum(saw(hz(p + c / 100), n) for c in (-18, -9, 0, 9, 18)) + 0.8 * saw(hz(p - 12), n)
+    x = np.tanh(drive * biquad(x / 6, 'lp', cutoff, 1.2))
+    x = biquad(biquad(x, 'peak', 2200, 1.0, 4), 'lp', 8000)
+    return fade(normalize(x * adsr(n, 0.003, 0.2, 0.8, 0.06, dur - 0.06)), fout=0.01)
+
+
+def supersaw(notes, dur=1.5, attack=0.01, release=0.4, cutoff=6000, verb=0.3, pluck=False):
+    """Supersaw : 9 scies désaccordées par note + sous-octave ; pluck = filtre qui se referme vite."""
+    n = int((dur + release) * SR)
+    t = np.arange(n) / SR
+    x = np.zeros(n)
+    for nt in notes:
+        for c in (-35, -24, -14, -6, 0, 6, 14, 24, 35):
+            x += saw(hz(nt + c / 100), n)
+    x += 0.5 * len(notes) * saw(hz(min(notes) - 12), n)
+    x = chorus(x / (9.5 * len(notes)), depth_ms=6, rate=0.3)
+    x = sweep(x, 'lp', 400 + cutoff * np.exp(-t / 0.09), 1.2) if pluck else biquad(x, 'lp', cutoff, 0.8)
+    x = np.tanh(1.5 * biquad(x, 'hp', 150)) * adsr(n, attack, 0.3 if pluck else 0.5, 0.35 if pluck else 0.85, release, dur)
+    return fade(normalize(reverb(fade(x), 1.8, verb)), fout=0.2)
+
+
+def uplifter(dur=4.0):
+    """Montée : bruit filtré et scies qui grimpent de deux octaves, de plus en plus fort."""
+    t = t_of(dur)
+    x = sweep(noise(len(t)), 'bp', 300 * (25 ** (t / dur)), 2.5)
+    x += 0.5 * sum(saw(hz(53 + 24 * (t / dur) ** 1.5 + c / 100), len(t)) for c in (-15, 0, 15)) / 3
+    x = biquad(x, 'hp', 200) * (t / dur) ** 1.5
+    return fade(normalize(np.tanh(2 * x)), fout=0.01)
+
+
+def tunnel(dur=2.5):
+    """Souffle en balayage lent (« tunnel ») pour les transitions."""
+    t = t_of(dur)
+    x = sweep(noise(len(t)), 'bp', 900 + 700 * np.sin(2 * np.pi * 0.6 * t), 6)
+    return fade(normalize(np.tanh(3 * x) * adsr(len(t), 0.4, 1, 1, 0.6)), fout=0.2)
+
+
+def glitch(k, bpm):
+    """Bégaiement de kick sur une mesure : croches, puis doubles, puis triples croches."""
+    bar = int(round(240 / bpm * SR))
+    out = np.zeros(bar)
+    pos = 0
+    for div in [8] * 4 + [16] * 4 + [32] * 8:
+        size = bar // div
+        chunk = fade(k[:size], fout=0.003)
+        out[pos:pos + len(chunk)] += chunk[:bar - pos]
+        pos += size
+    return normalize(out)
+
+
+def build_mainstream(bpm=190):
+    """Mainstream hardcore sombre : kicks à queue tonale, leads saturés, cris, cloches, nappes en fa mineur harmonique."""
+    RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, VIOLET, MAGENTA, PINK, WHITE = 5, 9, 13, 21, 37, 41, 49, 53, 57, 3
+    ONESHOT, HOLD, LOOP = 0, 1, 2
+    step = step_len(bpm)
+    bar = 16
+
+    k_main = tail_kick(F)
+    cl = layer(clap(8), snare(8), 0.5)
+    oh = hat(0.2, 5)
+    hh = hat(0.04, 4)
+
+    # Fa mineur harmonique (mi naturel) : la couleur sombre du mainstream.
+    chords = {'Fm': [53, 56, 60, 65], 'Db': [49, 53, 56, 61], 'Bbm': [46, 53, 58, 61], 'C': [48, 52, 55, 60]}
+    prog = ['Fm', 'Db', 'Bbm', 'C']
+
+    kick_loop = normalize(render(bpm, 1, [(s, k_main) for s in range(0, 16, 4)], choke=True))
+    claps = render(bpm, 1, [(4, cl, 0.6), (12, cl, 0.6)])
+    offhat = render(bpm, 1, [(s, oh, 0.45) for s in range(2, 16, 4)])
+    hats16 = render(bpm, 1, [(s, hh, 0.25 if s % 2 else 0.12) for s in range(16)])
+    beat = mix(kick_loop, claps, offhat)
+
+    riff = [(0, 65), (2, 65), (4, 68), (6, 67), (8, 65), (10, 64), (12, 65), (14, 72),
+            (16, 70), (18, 68), (20, 67), (22, 68), (24, 67), (26, 65), (28, 64), (30, 67)]
+    lead_riff = render(bpm, 2, [(s, dark_lead(n, step * 1.8), 0.85) for s, n in riff], choke=True)
+    scr = [(0, 77), (6, 76), (8, 77), (14, 80), (16, 79), (22, 77), (24, 76), (30, 72)]
+    screech_riff = render(bpm, 2, [(s, screech(n, step * 5.5, rate=bpm / 20)) for s, n in scr], choke=True)
+    bell_notes = [(0, 77), (4, 76), (8, 77), (12, 80), (16, 79), (20, 77), (24, 76), (28, 73)]
+    bell_mel = render(bpm, 2, [(s, bell([n], step * 6, verb=0.25), 0.8) for s, n in bell_notes])
+    pads = render(bpm, 4, [(b * bar, strings(chords[c], dur=step * bar, attack=0.3, release=0.6, bright=2000))
+                           for b, c in enumerate(prog)])
+    build_up = render(bpm, 4, [(s, fade(k_main[:int(step * 4 * SR)], fout=0.01), 0.55 + 0.45 * s / 64) for s in
+                               list(range(0, 32, 4)) + list(range(32, 48, 2)) + list(range(48, 64))], choke=True)
+    build_up = mix(build_up, riser(240 / bpm * 4) * 0.6)
+
+    bank = [
+        # rangée 1 : kicks à queue tonale
+        ('Mainstream F', RED, ONESHOT, k_main, None),
+        ('Angry', RED, ONESHOT, tail_kick(F, drive=25, bite=9, formant=1500), None),
+        ('Dark tail', ORANGE, ONESHOT, tail_kick(F - 2, drive=12, tail=0.6, dur=0.9, formant=700), None),
+        ('Punchy', RED, ONESHOT, tail_kick(F, tail=0.25, dur=0.45, punch_drive=80), None),
+        ('Pitch drop', ORANGE, ONESHOT, tail_kick(F, bend=1.0, tail=0.5), None),
+        ('Raw zaag', RED, ONESHOT, tail_kick(F, zaag=0.5, drive=10), None),
+        ('Kick C#', ORANGE, ONESHOT, tail_kick(37), None),
+        ('Kick G#', ORANGE, ONESHOT, tail_kick(44), None),
+        # rangée 2 : percussions
+        ('Hard clap', YELLOW, ONESHOT, cl, None),
+        ('Snare', YELLOW, ONESHOT, snare(8), None),
+        ('Open hat', YELLOW, ONESHOT, oh, None),
+        ('Closed hat', YELLOW, ONESHOT, hh, None),
+        ('Ride', YELLOW, ONESHOT, ride(), None),
+        ('Crash', YELLOW, ONESHOT, crash(), None),
+        ('Reverse crash', WHITE, ONESHOT, reverse_crash(), None),
+        ('Industrial hit', WHITE, ONESHOT, layer(noise_hit(), industrial_kick(), 0.5), None),
+        # rangée 3 : leads, cloches, piano
+        ('Dark lead', MAGENTA, HOLD, dark_lead(65, 1.2), None),
+        ('Scream lead', MAGENTA, HOLD, dark_lead(65, 1.2, bend=-12, bend_time=0.15, drive=8), None),
+        ('Screech', MAGENTA, HOLD, screech(77, 1.4, rate=9), None),
+        ('Screech low', MAGENTA, HOLD, screech(65, 1.4, rate=5), None),
+        ('Hoover dark', VIOLET, HOLD, hoover(53, 1.4), None),
+        ('Horror bell', PINK, ONESHOT, bell([77]), None),
+        ('Bell chord', PINK, ONESHOT, bell([65, 68, 72]), None),
+        ('Dark piano', PINK, ONESHOT, rave_piano([41, 53, 56, 60], 2.0, verb=0.4), None),
+        # rangée 4 : cris, nappes, effets
+        ('Shout hey', CYAN, ONESHOT, shout([VOWEL_E, VOWEL_I]), None),
+        ('Shout oi', CYAN, ONESHOT, shout([VOWEL_O, VOWEL_I], 50), None),
+        ('Shout yeah', CYAN, ONESHOT, shout([VOWEL_I, VOWEL_E, VOWEL_A], 51, 0.6), None),
+        ('Dark choir', CYAN, HOLD, choir([41, 48, 53, 56], vowel=VOWEL_O), None),
+        ('Dark strings', VIOLET, HOLD, strings(chords['Fm'], bright=2000), None),
+        ('Horror pad', VIOLET, HOLD, strings([52, 53, 60, 61], bright=1600, verb=0.5), None),
+        ('Riser', WHITE, ONESHOT, riser(), None),
+        ('Impact', WHITE, ONESHOT, impact(), None),
+        # rangée 5 : boucles
+        ('Mainstream beat', GREEN, LOOP, beat, 1),
+        ('Beat + hats', GREEN, LOOP, mix(kick_loop, claps, offhat, hats16), 1),
+        ('Lead riff', MAGENTA, LOOP, normalize(lead_riff), 2),
+        ('Screech riff', MAGENTA, LOOP, normalize(screech_riff), 2),
+        ('Bell melody', PINK, LOOP, normalize(bell_mel), 2),
+        ('Breakdown pad', VIOLET, LOOP, normalize(pads), 4),
+        ('Build-up', GREEN, LOOP, build_up, 4),
+        ('Full track', GREEN, LOOP, mix(np.tile(beat, 4), np.tile(lead_riff, 2) * 0.7, pads * 0.5), 4),
+    ]
+    return bank
+
+
+def build_newwave(bpm=190):
+    """Hardcore nouvelle vague / uptempo : kicks à longue queue « zaag », mélodies de kicks, supersaws, plucks."""
+    RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, VIOLET, MAGENTA, PINK, WHITE = 5, 9, 13, 21, 37, 41, 49, 53, 57, 3
+    ONESHOT, HOLD, LOOP = 0, 1, 2
+    step = step_len(bpm)
+    bar = 16
+
+    up = dict(drive=18, zaag=0.7, tail=0.5, formant=1400, bite=8, punch_drive=90)
+    tuned = {n: tail_kick(n, **up) for n in (41, 43, 44, 46, 36, 37, 39, 53)}
+    k_up = tuned[F]
+    k_bass = tail_kick(F, drive=16, zaag=0.6, tail=0.12, dur=0.3, top=0)   # queue seule : basse entre les kicks
+    oh = hat(0.15, 4)
+    chords = {'Fm': [65, 68, 72], 'Db': [61, 65, 68], 'Ab': [60, 63, 68], 'Eb': [63, 67, 70]}
+    prog = ['Fm', 'Db', 'Ab', 'Eb']
+
+    kick_loop = normalize(render(bpm, 1, [(s, k_up) for s in range(0, 16, 4)], choke=True))
+    offhat = render(bpm, 1, [(s, oh, 0.4) for s in range(2, 16, 4)])
+    beat = mix(kick_loop, offhat)
+    kick_bass = normalize(render(bpm, 1, [(s, k_up) for s in range(0, 16, 4)] + [(s, k_bass, 0.8) for s in (2, 6, 10, 14)], choke=True))
+    melody = [41, 41, 44, 41, 37, 37, 39, 36]
+    kick_mel = normalize(render(bpm, 2, [(i * 4, tuned[n]) for i, n in enumerate(melody)], choke=True))
+    gallop = normalize(render(bpm, 1, [(s, k_up) for s in (0, 3, 4, 7, 8, 11, 12, 14, 15)], choke=True))
+    saw_chords = render(bpm, 4, [(b * bar, supersaw(chords[c], dur=step * bar - 0.05, attack=0.02, release=0.3))
+                                 for b, c in enumerate(prog)], choke=True)
+    pl = [77, 75, 72, 75, 77, 80, 79, 75, 73, 72, 68, 72, 75, 72, 70, 67]
+    plucks = {n: supersaw([n], step * 1.4, release=0.15, verb=0.15, pluck=True) for n in sorted(set(pl))}
+    pluck_mel = render(bpm, 2, [(i * 2, plucks[n], 0.9) for i, n in enumerate(pl)])
+    build_up = render(bpm, 4, [(s, fade(k_up[:int(step * 4 * SR)], fout=0.01), 0.5 + 0.5 * s / 64) for s in
+                               list(range(0, 32, 4)) + list(range(32, 48, 2)) + list(range(48, 60)) + [60 + i / 2 for i in range(8)]],
+                      choke=True)
+    build_up = mix(build_up, uplifter(240 / bpm * 4) * 0.7)
+
+    bank = [
+        # rangée 1 : kicks uptempo
+        ('Uptempo F', RED, ONESHOT, k_up, None),
+        ('Zaag', RED, ONESHOT, tail_kick(F, drive=22, zaag=1.0, tail=0.55, formant=1800, bite=9, punch_drive=90), None),
+        ('Raw', ORANGE, ONESHOT, tail_kick(F, drive=20, zaag=0.4, bend=0.8, tail=0.45, formant=900), None),
+        ('Screech kick', RED, ONESHOT, tail_kick(F, drive=18, zaag=0.6, screech=0.7, tail=0.5), None),
+        ('Hard punch', ORANGE, ONESHOT, tail_kick(F, drive=14, tail=0.15, dur=0.35, punch_drive=110, click=1.5), None),
+        ('Long zaag', RED, ONESHOT, tail_kick(F, drive=18, zaag=0.8, tail=1.2, dur=1.6, bend=0.6), None),
+        ('Tok', ORANGE, ONESHOT, frenchcore_kick(F + 2), None),
+        ('Kick-bass', BLUE, ONESHOT, k_bass, None),
+        # rangée 2 : kicks accordés pour les mélodies de kicks
+        *[(f'Kick {nm}', RED, ONESHOT, tuned[n], None)
+          for nm, n in zip(['F', 'G', 'G#', 'A#', 'C', 'C#', 'D#', 'F+'], [41, 43, 44, 46, 36, 37, 39, 53])],
+        # rangée 3 : supersaws et leads
+        ('Supersaw lead', MAGENTA, HOLD, supersaw([77], 1.5), None),
+        *[(f'Supersaw {c}', VIOLET, HOLD, supersaw(chords[c], 2.0, attack=0.02), None) for c in prog],
+        ('Pluck', PINK, ONESHOT, supersaw([77], 0.25, release=0.2, pluck=True), None),
+        ('Pitch lead', MAGENTA, HOLD, dark_lead(77, 1.2, bend=-5, bend_time=0.08, drive=3, cutoff=6000), None),
+        ('Euphoric pad', CYAN, HOLD, supersaw([53, 60, 65, 68, 72], 3.0, attack=0.4, release=0.8, cutoff=3500, verb=0.5), None),
+        # rangée 4 : cris et effets
+        ('Shout go', CYAN, ONESHOT, shout([VOWEL_O, VOWEL_U], 53, 0.4), None),
+        ('Shout hey', CYAN, ONESHOT, shout([VOWEL_E, VOWEL_I], 55), None),
+        ('Uplifter', WHITE, ONESHOT, uplifter(), None),
+        ('Downlifter', WHITE, ONESHOT, downlifter(), None),
+        ('Tunnel', WHITE, HOLD, tunnel(), None),
+        ('Glitch', WHITE, ONESHOT, glitch(k_up, bpm), None),
+        ('Reverse kick', ORANGE, ONESHOT, normalize(k_up[::-1]), None),
+        ('Laser', WHITE, ONESHOT, laser(), None),
+        # rangée 5 : boucles
+        ('Uptempo beat', GREEN, LOOP, beat, 1),
+        ('Kick-bass loop', GREEN, LOOP, kick_bass, 1),
+        ('Kick melody', GREEN, LOOP, kick_mel, 2),
+        ('Gallop', GREEN, LOOP, gallop, 1),
+        ('Supersaw chords', VIOLET, LOOP, normalize(saw_chords), 4),
+        ('Pluck melody', PINK, LOOP, normalize(pluck_mel), 2),
+        ('Build-up', GREEN, LOOP, build_up, 4),
+        ('Full drop', GREEN, LOOP, mix(np.tile(kick_bass, 4), np.tile(offhat, 4), saw_chords * 0.5, np.tile(pluck_mel, 2) * 0.5), 4),
     ]
     return bank

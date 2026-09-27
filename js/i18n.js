@@ -39,6 +39,8 @@ const STRINGS = {
     'pad.empty': 'empty',
     'bank.title1': 'Bank {n}: SCENE LAUNCH {n}',
     'bank.title2': 'Bank {n}: Shift + SCENE LAUNCH {m}',
+    'bank.title3': 'Bank {n}: Shift + SCENE LAUNCH {m} twice',
+    'bank.toast': 'Bank {n}',
     'banks.aria': 'Banks (SCENE LAUNCH buttons)',
 
     'kit.exportBank': 'Export bank',
@@ -263,6 +265,8 @@ const STRINGS = {
     'pad.empty': 'vide',
     'bank.title1': 'Banque {n} : SCENE LAUNCH {n}',
     'bank.title2': 'Banque {n} : Maj + SCENE LAUNCH {m}',
+    'bank.title3': 'Banque {n} : Maj + SCENE LAUNCH {m} deux fois',
+    'bank.toast': 'Banque {n}',
     'banks.aria': 'Banques (boutons SCENE LAUNCH)',
 
     'kit.exportBank': 'Exporter la banque',
@@ -472,6 +476,16 @@ const SOUNDS_FR = {
   'Soft doef': 'Doef doux', 'Tambourine': 'Tambourin', 'Choir ahh': 'Chœur ahh', 'Whistle': 'Sifflet',
   'Air raid': 'Sirène d\'alerte', 'Amen-style break': 'Break façon Amen', 'Chopped break': 'Break découpé',
   'Choir chords': 'Accords chœur', 'Oldschool track': 'Morceau oldschool', 'Belgian stab': 'Stab belge',
+  'Angry': 'Rageur', 'Dark tail': 'Queue sombre', 'Pitch drop': 'Chute de hauteur', 'Raw zaag': 'Zaag brut',
+  'Hard clap': 'Clap dur', 'Industrial hit': 'Impact industrial', 'Dark lead': 'Lead sombre', 'Scream lead': 'Lead hurlant',
+  'Screech low': 'Screech grave', 'Hoover dark': 'Hoover sombre', 'Horror bell': 'Cloche horreur', 'Bell chord': 'Accord de cloches',
+  'Dark piano': 'Piano sombre', 'Shout hey': 'Cri « hey »', 'Shout oi': 'Cri « oi »', 'Shout yeah': 'Cri « yeah »',
+  'Shout go': 'Cri « go »', 'Dark choir': 'Chœur sombre', 'Dark strings': 'Cordes sombres', 'Horror pad': 'Nappe horreur',
+  'Beat + hats': 'Beat + hats', 'Lead riff': 'Riff lead', 'Bell melody': 'Mélodie de cloches', 'Breakdown pad': 'Nappe breakdown',
+  'Hard punch': 'Attaque dure', 'Long zaag': 'Zaag long', 'Kick-bass': 'Kick-basse', 'Pitch lead': 'Lead glissé',
+  'Euphoric pad': 'Nappe euphorique', 'Uplifter': 'Montée synthé', 'Glitch': 'Bégaiement', 'Reverse kick': 'Kick inversé',
+  'Kick-bass loop': 'Boucle kick-basse', 'Kick melody': 'Mélodie de kicks', 'Gallop': 'Galop', 'Supersaw chords': 'Accords supersaw',
+  'Pluck melody': 'Mélodie pluck', 'Full drop': 'Drop complet',
 };
 
 export function t(key, vars = {}) {

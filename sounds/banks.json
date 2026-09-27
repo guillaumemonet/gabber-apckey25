@@ -379,14 +379,14 @@
      "name": "hollow kick",
      "color": 9,
      "mode": 0,
-     "cat": "drums"
+     "cat": "kick"
     },
     {
      "file": "bank2/elec_soft_kick.flac",
      "name": "soft kick",
      "color": 9,
      "mode": 0,
-     "cat": "drums"
+     "cat": "kick"
     },
     {
      "file": "bank2/elec_fuzz_tom.flac",
@@ -2707,6 +2707,608 @@
     {
      "file": "bank9/40.flac",
      "name": "Oldschool track",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4
+    }
+   ]
+  },
+  {
+   "name": "Mainstream",
+   "pads": [
+    {
+     "file": "bank10/01.flac",
+     "name": "Mainstream F",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank10/02.flac",
+     "name": "Angry",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank10/03.flac",
+     "name": "Dark tail",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank10/04.flac",
+     "name": "Punchy",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank10/05.flac",
+     "name": "Pitch drop",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank10/06.flac",
+     "name": "Raw zaag",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank10/07.flac",
+     "name": "Kick C#",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank10/08.flac",
+     "name": "Kick G#",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank10/09.flac",
+     "name": "Hard clap",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank10/10.flac",
+     "name": "Snare",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank10/11.flac",
+     "name": "Open hat",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank10/12.flac",
+     "name": "Closed hat",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank10/13.flac",
+     "name": "Ride",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank10/14.flac",
+     "name": "Crash",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank10/15.flac",
+     "name": "Reverse crash",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank10/16.flac",
+     "name": "Industrial hit",
+     "color": 3,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank10/17.flac",
+     "name": "Dark lead",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank10/18.flac",
+     "name": "Scream lead",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank10/19.flac",
+     "name": "Screech",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank10/20.flac",
+     "name": "Screech low",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank10/21.flac",
+     "name": "Hoover dark",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank10/22.flac",
+     "name": "Horror bell",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "bank10/23.flac",
+     "name": "Bell chord",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "bank10/24.flac",
+     "name": "Dark piano",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "bank10/25.flac",
+     "name": "Shout hey",
+     "color": 37,
+     "mode": 0,
+     "cat": "voice"
+    },
+    {
+     "file": "bank10/26.flac",
+     "name": "Shout oi",
+     "color": 37,
+     "mode": 0,
+     "cat": "voice"
+    },
+    {
+     "file": "bank10/27.flac",
+     "name": "Shout yeah",
+     "color": 37,
+     "mode": 0,
+     "cat": "voice"
+    },
+    {
+     "file": "bank10/28.flac",
+     "name": "Dark choir",
+     "color": 37,
+     "mode": 1,
+     "cat": "voice"
+    },
+    {
+     "file": "bank10/29.flac",
+     "name": "Dark strings",
+     "color": 49,
+     "mode": 1,
+     "cat": "pad"
+    },
+    {
+     "file": "bank10/30.flac",
+     "name": "Horror pad",
+     "color": 49,
+     "mode": 1,
+     "cat": "pad"
+    },
+    {
+     "file": "bank10/31.flac",
+     "name": "Riser",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank10/32.flac",
+     "name": "Impact",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank10/33.flac",
+     "name": "Mainstream beat",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank10/34.flac",
+     "name": "Beat + hats",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank10/35.flac",
+     "name": "Lead riff",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank10/36.flac",
+     "name": "Screech riff",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank10/37.flac",
+     "name": "Bell melody",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank10/38.flac",
+     "name": "Breakdown pad",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank10/39.flac",
+     "name": "Build-up",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank10/40.flac",
+     "name": "Full track",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4
+    }
+   ]
+  },
+  {
+   "name": "New wave",
+   "pads": [
+    {
+     "file": "bank11/01.flac",
+     "name": "Uptempo F",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/02.flac",
+     "name": "Zaag",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/03.flac",
+     "name": "Raw",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/04.flac",
+     "name": "Screech kick",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/05.flac",
+     "name": "Hard punch",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/06.flac",
+     "name": "Long zaag",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/07.flac",
+     "name": "Tok",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/08.flac",
+     "name": "Kick-bass",
+     "color": 41,
+     "mode": 0,
+     "cat": "bass"
+    },
+    {
+     "file": "bank11/09.flac",
+     "name": "Kick F",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/10.flac",
+     "name": "Kick G",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/11.flac",
+     "name": "Kick G#",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/12.flac",
+     "name": "Kick A#",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/13.flac",
+     "name": "Kick C",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/14.flac",
+     "name": "Kick C#",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/15.flac",
+     "name": "Kick D#",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/16.flac",
+     "name": "Kick F+",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/17.flac",
+     "name": "Supersaw lead",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank11/18.flac",
+     "name": "Supersaw Fm",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank11/19.flac",
+     "name": "Supersaw Db",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank11/20.flac",
+     "name": "Supersaw Ab",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank11/21.flac",
+     "name": "Supersaw Eb",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank11/22.flac",
+     "name": "Pluck",
+     "color": 57,
+     "mode": 0,
+     "cat": "lead"
+    },
+    {
+     "file": "bank11/23.flac",
+     "name": "Pitch lead",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank11/24.flac",
+     "name": "Euphoric pad",
+     "color": 37,
+     "mode": 1,
+     "cat": "pad"
+    },
+    {
+     "file": "bank11/25.flac",
+     "name": "Shout go",
+     "color": 37,
+     "mode": 0,
+     "cat": "voice"
+    },
+    {
+     "file": "bank11/26.flac",
+     "name": "Shout hey",
+     "color": 37,
+     "mode": 0,
+     "cat": "voice"
+    },
+    {
+     "file": "bank11/27.flac",
+     "name": "Uplifter",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank11/28.flac",
+     "name": "Downlifter",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank11/29.flac",
+     "name": "Tunnel",
+     "color": 3,
+     "mode": 1,
+     "cat": "fx"
+    },
+    {
+     "file": "bank11/30.flac",
+     "name": "Glitch",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank11/31.flac",
+     "name": "Reverse kick",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank11/32.flac",
+     "name": "Laser",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank11/33.flac",
+     "name": "Uptempo beat",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank11/34.flac",
+     "name": "Kick-bass loop",
+     "color": 21,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank11/35.flac",
+     "name": "Kick melody",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank11/36.flac",
+     "name": "Gallop",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 1
+    },
+    {
+     "file": "bank11/37.flac",
+     "name": "Supersaw chords",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank11/38.flac",
+     "name": "Pluck melody",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank11/39.flac",
+     "name": "Build-up",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank11/40.flac",
+     "name": "Full drop",
      "color": 21,
      "mode": 2,
      "cat": "drums",
