@@ -2,7 +2,7 @@
 
 **A hardcore / gabber music maker in the spirit of Dance eJay, played with an Akai APC Key 25, in your browser.**
 
-*By Guillaume Monet* · [Version française](README.fr.md)
+*By Guillaume Monet* · [Version française](README.fr.md) · <sub>[☕ Support the project](https://paypal.me/holythunderblade)</sub>
 
 GabberKey is built around a **timeline**: drag sounds from a library sorted by category onto tracks, the blocks snap to the bar and everything plays at the same tempo, like the old eJay games. The other tools (sampler pads, TR-909, synth, mixer, effects…) are **plugins** that open in windows, and the Akai APC Key 25 (mk1 or mk2) plays them live. Nothing to install except a web browser:
 
