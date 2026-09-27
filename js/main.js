@@ -12,6 +12,7 @@ import { Mixer, CHANNELS, MIX_FIELDS, FX_TYPES, MAX_FX, defaultMixState, mergeMi
 import { Timeline, TL_TRACKS, BEATS_PER_BAR, defaultTlState, mergeTlState } from './timeline.js';
 import { TR909, TR_INSTR, PATTERNS, trKnobDefs, defaultTrState, mergeTrState } from './tr909.js';
 import { t, soundName, translatePage } from './i18n.js';
+import { Performer, CHORD_MODES, ARP_MODES, ARP_RATES, defaultPlayState, mergePlayState } from './performer.js';
 
 translatePage();
 
@@ -20,7 +21,7 @@ const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (E
 const UI_PAGES = [...PAGE_ORDER, 'tr', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum, mixer, wm, timeline;
+let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -37,6 +38,7 @@ const state = {
   windows: mergeWindows(null), // fenêtres des plugins : ouverte ou non, position, taille
   tl: defaultTlState(),        // timeline : pistes de clips (sons posés ou enregistrements d'outils)
   scenes: new Array(40).fill(null),   // 40 scènes (instantanés rappelés à la mesure suivante)
+  play: defaultPlayState(),           // jeu du clavier : mode accords, arpégiateur
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -81,6 +83,10 @@ async function start() {
   timeline = new Timeline(engine, () => state.tl, clipBuffer, mixer.input('tl'));
   timeline.getPad = (b, i) => state.banks[b]?.[i];
   timeline.padKey = padKey;
+  // Le clavier passe par le mode accords / l'arpégiateur ; les notes produites s'enregistrent dans la timeline.
+  performer = new Performer(engine, () => state.play);
+  performer.onNote = (note, vel, on) => tlRecordNote(note, on, vel);
+  performer.onNoteAt = tlRecordArpNote;
   await loadTlBuffers();
   bindTempo();
 
@@ -151,6 +157,7 @@ async function restore() {
     state.windows = mergeWindows(saved.windows);
     state.tl = mergeTlState(saved.tl);
     state.scenes = mergeScenes(saved.scenes);
+    state.play = mergePlayState(saved.play);
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
         const s = saved.banks?.[b]?.[i];
@@ -229,6 +236,7 @@ function save() {
       windows: state.windows,
       tl: state.tl,
       scenes: state.scenes,
+      play: state.play,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
   }, 400);
@@ -272,6 +280,7 @@ function setPage(page) {
 function panic() {
   drum.stop();
   engine.stopAllPads();
+  performer.allOff();
   engine.allNotesOff();
   for (const i of [...perfActive]) { perfActive.delete(i); PERF[i].off?.(); }
   heldRolls.length = 0;
@@ -445,8 +454,7 @@ function bindController() {
   apc.addEventListener('key', ({ detail: { note, velocity, on } }) => {
     // Maj + touche : choisir un preset au lieu de jouer.
     if (on && shiftHeld && presetKey(note)) return;
-    if (on) engine.noteOn(note, velocity); else engine.noteOff(note);
-    tlRecordNote(note, on, velocity);
+    if (on) performer.noteOn(note, velocity); else performer.noteOff(note);
     setPianoKey(note, on);
   });
 
@@ -876,8 +884,7 @@ function buildPiano() {
 }
 
 function playNote(note, velocity, on) {
-  if (on) engine.noteOn(note, velocity); else engine.noteOff(note);
-  tlRecordNote(note, on, velocity);
+  if (on) performer.noteOn(note, velocity); else performer.noteOff(note);
   setPianoKey(note, on);
 }
 
@@ -1701,6 +1708,19 @@ function tlRecordNote(note, on, velocity = 0.85) {
   tlRec.dirty = true;
 }
 
+// Note de l'arpège programmée à l'instant `when` (secondes) pour `dur` secondes : calée sur la triple-croche.
+const ARP_GRID = 0.125;
+function tlRecordArpNote(note, vel, when, dur) {
+  if (tlRec?.mode !== 'events' || tlRec.source !== 'synth' || !timeline.playing) return;
+  let pos = timeline.position() + (when - engine.ctx.currentTime) / timeline.beatDur;
+  if (timeline.length) pos %= timeline.length;
+  const start = Math.round(pos / ARP_GRID) * ARP_GRID;
+  const len = Math.max(ARP_GRID, Math.round(dur / timeline.beatDur / ARP_GRID) * ARP_GRID);
+  const clip = { id: crypto.randomUUID(), type: 'note', note, vel, name: noteLabel(note), color: catColor('lead'), cat: 'lead', start, len, loop: false };
+  state.tl.tracks[freeTrack(start, len)].clips.push(clip);
+  tlRec.dirty = true;
+}
+
 function growHeldNote(clip) {
   let end = timeline.position();
   if (timeline.length) { end %= timeline.length; if (end < clip.start) end += timeline.length; }
@@ -2036,6 +2056,9 @@ function applyPreset(id) {
 // Maj + touche du clavier : touches blanches = presets de la famille, do# / ré# = famille précédente / suivante.
 function presetKey(note) {
   const pc = note % 12;
+  if (pc === 6) { setPlay({ chord: CHORD_MODES[(CHORD_MODES.indexOf(state.play.chord) + 1) % CHORD_MODES.length] }, true); return true; }
+  if (pc === 8) { setPlay({ arp: !state.play.arp }, true); return true; }
+  if (pc === 10) { setPlay({ rate: ARP_RATES[(ARP_RATES.indexOf(state.play.rate) + 1) % ARP_RATES.length] }, true); return true; }
   if (pc === 1 || pc === 3) {
     const i = FAMILIES.indexOf(synthFamily);
     synthFamily = FAMILIES[(i + (pc === 1 ? -1 : 1) + FAMILIES.length) % FAMILIES.length];
@@ -2060,6 +2083,7 @@ function buildPresets() {
     $('#synth-families').appendChild(btn);
   }
   buildSynthKnobs();
+  buildPlayControls();
   renderPresets();
 }
 
@@ -2133,6 +2157,71 @@ function renderSynthKnobs() {
     el.querySelector('.label').textContent = def.label;
     el.querySelector('.value').textContent = def.fmt(toValue(def, p));
   });
+}
+
+// ---------- Mode accords et arpégiateur ----------
+
+function setPlay(changes, announce = false) {
+  Object.assign(state.play, changes);
+  performer.refresh();
+  renderPlayControls();
+  if (announce) {
+    const p = state.play;
+    toast(p.arp ? t('play.toastArp', { chord: t(`chord.${p.chord}`), rate: `1/${p.rate}`, mode: t(`arp.${p.mode}`) }) : t('play.toastChord', { chord: t(`chord.${p.chord}`) }));
+  }
+  save();
+}
+
+function buildPlayControls() {
+  const box = $('#synth-play');
+  const select = (field, values, label, cast = v => v) => {
+    const el = document.createElement('select');
+    el.dataset.field = field;
+    el.title = t(`play.${field}`);
+    for (const v of values) el.add(new Option(label(v), v));
+    el.addEventListener('change', () => setPlay({ [field]: cast(el.value) }));
+    return el;
+  };
+  const toggle = field => {
+    const el = document.createElement('button');
+    el.dataset.field = field;
+    el.textContent = t(`play.${field}`);
+    el.title = t(`play.${field}Title`);
+    el.addEventListener('click', () => setPlay({ [field]: !state.play[field] }));
+    return el;
+  };
+  const group = (title, ...els) => {
+    const g = document.createElement('div');
+    g.className = 'play-group';
+    const h = document.createElement('span');
+    h.textContent = title;
+    g.append(h, ...els);
+    return g;
+  };
+  const gate = document.createElement('input');
+  gate.type = 'range'; gate.min = 0.1; gate.max = 1; gate.step = 0.05;
+  gate.dataset.field = 'gate';
+  gate.title = t('play.gate');
+  gate.addEventListener('input', () => setPlay({ gate: +gate.value }));
+  box.append(
+    group(t('play.chords'), select('chord', CHORD_MODES, v => t(`chord.${v}`))),
+    group(t('play.arpeggio'), toggle('arp'),
+      select('rate', ARP_RATES, v => `1/${v}`, Number),
+      select('mode', ARP_MODES, v => t(`arp.${v}`)),
+      select('octaves', [1, 2, 3], v => t('play.oct', { n: v }), Number),
+      gate, toggle('latch')),
+  );
+  renderPlayControls();
+}
+
+function renderPlayControls() {
+  const p = state.play;
+  for (const el of document.querySelectorAll('#synth-play [data-field]')) {
+    const f = el.dataset.field;
+    if (el.tagName === 'BUTTON') el.classList.toggle('active', !!p[f]);
+    else el.value = p[f];
+    if (!['arp', 'chord'].includes(f)) el.disabled = !p.arp;
+  }
 }
 
 // ---------- Effets de performance ----------

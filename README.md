@@ -13,7 +13,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 - **Plugins** in movable, magnetic windows:
   - **40-pad sampler** with 10 banks, pad LEDs synced to the screen, and drag & drop of your own sounds;
   - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
-  - **Layered synth** on the keyboard: 35 presets in 10 families (strings, pads, choirs, supersaw, hoovers, leads, basses, stabs, keys, FX) with ensemble, stereo width, vibrato and 8 expression knobs;
+  - **Layered synth** on the keyboard: 35 presets in 10 families (strings, pads, choirs, supersaw, hoovers, leads, basses, stabs, keys, FX) with ensemble, stereo width, vibrato and 8 expression knobs, chord mode and a tempo-synced arpeggiator;
   - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters and up to 4 insert effects;
   - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **MIDI monitor**.
 - **WAV recording** of your session and **kit export / import**.
@@ -60,7 +60,7 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 | **Shift + track 1 / 2 / 3 / 4** | Mixer knob page: volumes / pans / delay sends / reverb sends (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K8 master) |
 | **Knobs K1-K8** | Parameters of the current page (Shift = fine tuning) |
 | **SUSTAIN** | Opens / closes the EQ page (held: EQ while pressed) |
-| **Shift + white key** | Preset of the current synth family (C = 1st, D = 2nd…) · **Shift + C# / D#** = previous / next family |
+| **Shift + white key** | Preset of the current synth family (C = 1st, D = 2nd…) · **Shift + C# / D#** = previous / next family · **Shift + F# / G# / A#** = chord type / arpeggio on-off / arpeggio speed |
 | **Keyboard** | Plays the synth |
 | **PLAY** | Start / stop the timeline (the TR-909 has its own ▶ in its window) |
 | **Shift + PLAY** | Turn the pad grid into the TR-909 (and back) |
@@ -188,6 +188,15 @@ The keyboard plays a layered synth built for hardcore: every preset stacks up to
 - hoovers, leads, basses, FX: Brightness, Resonance, Attack, Release, Drive, **Glide**, Detune, Reverb.
 
 Double-click a knob in the Synth window to go back to the preset's value.
+
+### Chords and arpeggiator
+
+Below the knobs of the Synth window:
+- **Chords**: one key plays a whole chord: minor, major, sus2, sus4, minor 7th, fifth or octave. **In key (F minor)** builds the right chord of the scale on each key (F → Fm, G# → Ab, C# → Db, D# → Eb…), so everything stays in tune with the banks.
+- **Arpeggio**: the held notes (or the chord) are played one after another, in time with the tempo and on the same grid as the loops. Speed 1/8, 1/16 or 1/32; order up, down, up-down, random or as played; range 1 to 3 octaves; note length; **Hold** keeps the arpeggio going after the keys are released (the next key starts a new one).
+- On the APC: **Shift + F#** = next chord type, **Shift + G#** = arpeggio on / off, **Shift + A#** = arpeggio speed.
+
+When the timeline records the synth, chords and every arpeggio note become blocks.
 
 ## Tempo and loops
 

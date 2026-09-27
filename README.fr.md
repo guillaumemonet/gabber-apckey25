@@ -13,7 +13,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 - **Plugins** dans des fenêtres déplaçables et aimantées :
   - **Sampler 40 pads** avec 10 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de tes propres sons ;
   - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
-  - **Synthé en couches** au clavier : 35 presets en 10 familles (cordes, nappes, chœurs, supersaw, hoovers, leads, basses, stabs, claviers, effets) avec ensemble, largeur stéréo, vibrato et 8 potards d'expression ;
+  - **Synthé en couches** au clavier : 35 presets en 10 familles (cordes, nappes, chœurs, supersaw, hoovers, leads, basses, stabs, claviers, effets) avec ensemble, largeur stéréo, vibrato et 8 potards d'expression, mode accords et arpégiateur calé sur le tempo ;
   - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres et jusqu'à 4 effets d'insert ;
   - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **moniteur MIDI**.
 - **Enregistrement WAV** de ta session et **export / import de kits**.
@@ -60,7 +60,7 @@ L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert
 | **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K8 master) |
 | **Potards K1-K8** | Paramètres de la page active (Maj = réglage fin) |
 | **SUSTAIN** | Ouvre / ferme la page EQ (maintenu : EQ le temps de l'appui) |
-| **Maj + touche blanche** | Preset de la famille du synthé (do = 1er, ré = 2e…) · **Maj + do# / ré#** = famille précédente / suivante |
+| **Maj + touche blanche** | Preset de la famille du synthé (do = 1er, ré = 2e…) · **Maj + do# / ré#** = famille précédente / suivante · **Maj + fa# / sol# / la#** = type d'accord / arpège oui-non / vitesse de l'arpège |
 | **Clavier** | Joue le synthé |
 | **PLAY** | Lancer / arrêter la timeline (la TR-909 a son propre ▶ dans sa fenêtre) |
 | **Maj + PLAY** | Transformer la grille de pads en TR-909 (et revenir) |
@@ -188,6 +188,15 @@ Le clavier joue un synthé en couches pensé pour le hardcore : chaque preset em
 - hoovers, leads, basses, effets : Brillance, Résonance, Attaque, Relâche, Saturation, **Glissé**, Désaccord, Réverb.
 
 Double-clic sur un potard de la fenêtre Synthé pour revenir à la valeur du preset.
+
+### Accords et arpégiateur
+
+Sous les potards de la fenêtre Synthé :
+- **Accords** : une touche joue un accord complet : mineur, majeur, sus2, sus4, mineur 7, quinte ou octave. **Dans la tonalité (fa mineur)** construit sur chaque touche l'accord juste de la gamme (fa → fa m, sol# → lab, do# → réb, ré# → mib…), pour rester accordé avec les banques.
+- **Arpège** : les notes tenues (ou l'accord) sont jouées l'une après l'autre, calées sur le tempo et sur la même grille que les boucles. Vitesse 1/8, 1/16 ou 1/32 ; ordre montant, descendant, montant-descendant, aléatoire ou joué ; étendue de 1 à 3 octaves ; durée des notes ; **Tenue** garde l'arpège quand on lâche les touches (la touche suivante en commence un nouveau).
+- Sur l'APC : **Maj + fa#** = type d'accord suivant, **Maj + sol#** = arpège oui / non, **Maj + la#** = vitesse de l'arpège.
+
+Quand la timeline enregistre le synthé, les accords et chaque note de l'arpège deviennent des blocs.
 
 ## Tempo et boucles
 

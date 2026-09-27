@@ -360,3 +360,11 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .preset-list button { padding: 5px 11px; font-size: 12px; }
 .preset-list button.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; font-weight: 600; }
 .mini-knobs.synth-knobs { grid-template-columns: repeat(8, 1fr); margin-bottom: 12px; }
+.synth-play { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 12px; font-size: 12px; }
+.play-group { display: inline-flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.play-group > span { color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-size: 11px; }
+.synth-play select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 3px 4px; }
+.synth-play button { padding: 3px 10px; font-size: 12px; }
+.synth-play button.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; font-weight: 600; }
+.synth-play input[type=range] { width: 70px; }
+.synth-play :disabled { opacity: .45; }
