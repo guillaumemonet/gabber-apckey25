@@ -293,12 +293,15 @@ export class TR909 {
     return this.engine.origin + idx * this.stepDur() + swing;
   }
 
-  start() {
+  // keepOrigin : la grille a déjà été posée (timeline) ; la 909 démarre sur le pas suivant de cette grille.
+  start(keepOrigin = false) {
     if (this.running) return;
     const e = this.engine;
     const looping = [...e.padVoices.values()].some(v => v.mode === 'loop');
     let startAt;
-    if (!looping || e.origin === null) {
+    if (keepOrigin && e.origin !== null) {
+      startAt = e.origin + Math.max(0, Math.ceil((this.ctx.currentTime + 0.02 - e.origin) / this.stepDur())) * this.stepDur();
+    } else if (!looping || e.origin === null) {
       e.origin = this.ctx.currentTime + 0.05;
       startAt = e.origin;
     } else {

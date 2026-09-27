@@ -11,7 +11,7 @@ GabberKey transforme l'Akai APC Key 25 (mk1 ou mk2) en instrument autonome. Il n
   - quatre **banques hardcore / gabber synthétisées** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, effets et boucles à 190 BPM ;
   - cinq banques d'échantillons **libres de droits (CC0)**.
 - **Émulation TR-909** : les 11 instruments synthétisés en direct, avec une **distorsion par instrument (drive + 5 formes)** sur les potentiomètres et un séquenceur 16 pas (8 patterns) calé sur les boucles.
-- **Séquenceur global** : 8 pistes de pads et un piano roll pour le synthé, avec enregistrement du clavier en direct, sur le même transport que la 909.
+- **Timeline** : des pistes en mesures et en temps, où l'on pose des sons des banques ou enregistre ce que joue un outil (909, synthé, pads, master).
 - **Scènes** : 40 instantanés (boucles, patterns, mixeur, preset, tempo) rappelés à la mesure suivante, depuis l'écran ou la grille de l'APC.
 - **Table de mixage** : une voie par outil (pads, synthé, TR-909) avec volume, panoramique, envois delay et reverb, muet / solo, vumètres et jusqu'à 4 effets d'insert (distorsion, filtre, compresseur, reverb).
 - **Espace de travail en grille magnétique** : chaque panneau d'outil se déplace et se redimensionne ; la disposition est sauvegardée.
@@ -61,12 +61,12 @@ L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert
 | **Boutons de piste 1 / 2 / 3 / 4** | Page des potards : Synthé / Effets / Pad sélectionné / EQ |
 | **Boutons de piste 5 / 6 / 7 / 8** (maintenus) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filtre ↓ |
 | **Maj + piste 5 / 6 / 7 / 8** | Roll 1/4 · Tape-stop · Filtre ↑ · Pump (marche/arrêt) |
-| **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1 Pads, K2 Synthé, K3 TR-909, K8 master) |
+| **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K8 master) |
 | **Potards K1-K8** | Paramètres de la page active (Maj = réglage fin) |
 | **SUSTAIN** | Ouvre / ferme la page EQ (maintenu : EQ le temps de l'appui) |
 | **Maj + touche du piano** | Preset du synthé : do Hoover, ré Acid 303, mi Screech, fa Stab rave, sol Basse dist., la Horn, si Kick accordé, do# Init |
 | **Clavier** | Joue le synthé |
-| **PLAY** | Lancer / arrêter le transport (TR-909 + séquenceur) |
+| **PLAY** | Lancer / arrêter le séquenceur TR-909 |
 | **Maj + PLAY** | Transformer la grille de pads en TR-909 (et revenir) |
 | **REC** | Démarrer / arrêter l'enregistrement (télécharge un WAV) |
 | **STOP ALL CLIPS** | Coupe tout |
@@ -118,21 +118,20 @@ Chaque instrument a sa propre distorsion. La grosse caisse démarre avec une sat
 
 Un appui sur un bouton SCENE LAUNCH ramène la grille aux pads du sampler.
 
-## Séquenceur
+## Timeline
 
-Un seul transport pour tout : **PLAY** (APC, ou ▶ à l'écran) lance ensemble la TR-909 et le séquenceur, sur la même grille de mesures que les boucles.
+Une ligne de temps en mesures et en temps (8 mesures au départ, − / + pour changer, **Boucle** pour la jouer en boucle), avec 6 pistes. Chaque temps peut recevoir un clip :
 
-- **8 pistes de pads** : chacune joue un pad de n'importe quelle banque. Pour en assigner un, choisis un pad (Maj + clic dessus), puis clique sur **↺** sur la piste. Un clic sur le nom de la piste la joue et la sélectionne, un clic droit la vide. Les pas passent de note à accent puis à silence, et chaque piste a un bouton muet.
-- **Piste synthé (piano roll)**, 2 octaves × 16 pas (▼ ▲ pour changer d'octave) : clic pour ajouter une note, glisser pour régler sa longueur, clic sur une note pour la supprimer. Elle joue avec le preset du synthé en cours ; avec les presets mono (Acid 303, Basse dist.), les notes qui se chevauchent glissent.
-- **REC synthé** : pendant la lecture, ce que tu joues au clavier s'enregistre dans la piste synthé, calé sur la grille.
-- **8 patterns** ; un changement attend la mesure suivante.
-- **APC** : dans la grille 909 (Maj + PLAY), le **pad 32** affiche les pistes de pads du séquenceur et le **pad 31** revient à la 909. Sur la page des pistes, les rangées 1-2 sont les pas de la piste choisie, la rangée 3 les 8 pistes (Maj + piste = assigner le pad choisi), puis Accent / Effacer / Muet, et la rangée 5 les patterns.
+- **Poser un son d'une banque** : choisis un pad (Maj + clic dessus), puis clique sur une piste, au temps voulu.
+- **Enregistrer un outil** : choisis ce qu'on enregistre (Master, Pads, Synthé ou TR-909), arme une piste (●), place la tête de lecture (clic sur la règle), puis **● Rec**. Ce que produit l'outil s'enregistre dans un clip qui commence sur ce temps : la 909 démarre toute seule, calée sur les mesures de la timeline, et tu joues les pads ou le clavier en direct. **■ Arrêter rec** termine le clip.
+- **Modifier** : glisse un clip vers un autre temps ou une autre piste ; clic droit ou Suppr pour le retirer. Chaque piste a un bouton muet.
+- ▶ joue la timeline depuis la tête de lecture. Elle a sa propre voie dans la table de mixage, et les enregistrements sont sauvegardés dans le navigateur.
 
 ## Scènes
 
 40 scènes disposées comme la grille de l'APC (1-8 en bas). Une scène mémorise :
 - les boucles lancées ;
-- les patterns de la TR-909 et du séquenceur, et leurs pistes muettes ;
+- le pattern de la TR-909 et ses instruments muets ;
 - les niveaux, panoramiques, envois, muets et solos de la table de mixage ;
 - le preset du synthé, le tempo, et l'état lecture ou arrêt.
 
@@ -142,7 +141,7 @@ Un seul transport pour tout : **PLAY** (APC, ou ▶ à l'écran) lance ensemble 
 
 ## Table de mixage
 
-Une voie par outil : **Pads**, **Synthé** et **TR-909**, puis le master (effets de performance, égaliseur général et limiteur). Le niveau de chaque son reste dans son outil (volume des pads, niveaux des instruments de la 909) ; la table de mixage équilibre les outils entre eux.
+Une voie par outil : **Pads**, **Synthé**, **TR-909** et **Timeline**, puis le master (effets de performance, égaliseur général et limiteur). Le niveau de chaque son reste dans son outil (volume des pads, niveaux des instruments de la 909) ; la table de mixage équilibre les outils entre eux.
 
 Chaque voie a des effets d'insert (**+ FX**, jusqu'à 4, appliqués dans l'ordre), des envois reverb et delay, un panoramique, un fader (0 dB aux trois quarts), **M**uet, **S**olo et un vumètre. Effets disponibles :
 - **Distorsion** : drive et les 5 formes de la 909.
@@ -150,7 +149,7 @@ Chaque voie a des effets d'insert (**+ FX**, jusqu'à 4, appliqués dans l'ordre
 - **Compresseur** : seuil, ratio et gain.
 - **Reverb** : taille et dosage.
 
-Double-clic sur un réglage pour le remettre à zéro. Sur l'APC, **Maj + bouton de piste 1 / 2 / 3 / 4** transforme les potards en volumes / panoramiques / envois delay / envois reverb du mixeur : K1 = Pads, K2 = Synthé, K3 = TR-909, K8 = volume général. Les réglages du mixeur sont sauvegardés et inclus dans les exports de session.
+Double-clic sur un réglage pour le remettre à zéro. Sur l'APC, **Maj + bouton de piste 1 / 2 / 3 / 4** transforme les potards en volumes / panoramiques / envois delay / envois reverb du mixeur : K1 = Pads, K2 = Synthé, K3 = TR-909, K4 = Timeline, K8 = volume général. Les réglages du mixeur sont sauvegardés et inclus dans les exports de session.
 
 ## Espace de travail
 
@@ -227,8 +226,8 @@ css/style.css         styles
 js/main.js            interface et liaisons
 js/apc.js             détection de l'APC Key 25, lecture MIDI, LEDs (mk1 + mk2)
 js/audio.js           moteur audio : synthé, sampler, effets, EQ, tempo
-js/tr909.js           émulation TR-909 et séquenceur (l'horloge)
-js/sequencer.js       séquenceur global : pistes de pads et piano roll
+js/tr909.js           émulation TR-909 et séquenceur
+js/timeline.js        timeline : pistes, clips, lecture
 js/mixer.js           table de mixage : voies, envois, effets d'insert
 js/layout.js          espace de travail en grille magnétique
 js/presets.js         presets du synthé

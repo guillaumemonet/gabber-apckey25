@@ -22,6 +22,8 @@ export function encodeWav(channels, sampleRate) {
   return buf;
 }
 
+const loadedModules = new WeakMap();   // un seul chargement du module par contexte audio
+
 export class Recorder {
   constructor(ctx, source) {
     this.ctx = ctx;
@@ -36,7 +38,8 @@ export class Recorder {
 
   async start() {
     if (!this.node) {
-      await this.ctx.audioWorklet.addModule('js/recorder-worklet.js');
+      if (!loadedModules.has(this.ctx)) loadedModules.set(this.ctx, this.ctx.audioWorklet.addModule('js/recorder-worklet.js'));
+      await loadedModules.get(this.ctx);
       this.node = new AudioWorkletNode(this.ctx, 'recorder', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [2] });
       const mute = this.ctx.createGain();
       mute.gain.value = 0;
@@ -52,8 +55,8 @@ export class Recorder {
     this.source.connect(this.node);
   }
 
-  // Renvoie un Blob WAV.
-  async stop() {
+  // Renvoie l'audio brut : { channels: [gauche, droite], sampleRate, startedAt (horloge audio) }.
+  async stopRaw() {
     this.source.disconnect(this.node);
     await new Promise(r => setTimeout(r, 250));   // derniers blocs en transit
     const chunks = this.chunks;
@@ -64,7 +67,13 @@ export class Recorder {
       for (const a of list) { out.set(a, o); o += a.length; }
       return out;
     };
-    return new Blob([encodeWav([join(chunks[0]), join(chunks[1])], this.ctx.sampleRate)], { type: 'audio/wav' });
+    return { channels: [join(chunks[0]), join(chunks[1])], sampleRate: this.ctx.sampleRate, startedAt: this.startedAt };
+  }
+
+  // Renvoie un Blob WAV.
+  async stop() {
+    const raw = await this.stopRaw();
+    return new Blob([encodeWav(raw.channels, raw.sampleRate)], { type: 'audio/wav' });
   }
 }
 

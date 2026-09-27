@@ -16,7 +16,7 @@ export const DEFAULT_LAYOUT = {
   perf: { x: 0, y: 2, w: 12, h: null },
   scenes: { x: 0, y: 3, w: 12, h: null },
   tr: { x: 0, y: 4, w: 12, h: null },
-  seq: { x: 0, y: 5, w: 12, h: null },
+  tl: { x: 0, y: 5, w: 12, h: null },
   mix: { x: 0, y: 6, w: 6, h: null },
   piano: { x: 6, y: 6, w: 6, h: null },
   monitor: { x: 0, y: 7, w: 12, h: 3 },

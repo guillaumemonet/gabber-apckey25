@@ -11,7 +11,7 @@ GabberKey turns the Akai APC Key 25 (mk1 or mk2) into a standalone instrument. I
   - four **synthesised hardcore / gabber banks**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
 - **TR-909 emulation**: the 11 instruments synthesised live, with a per-instrument **distortion (drive + 5 shapes)** on the knobs and a 16-step sequencer (8 patterns) synced with the loops.
-- **Global sequencer**: 8 pad tracks and a synth piano roll, with live keyboard recording, on the same transport as the 909.
+- **Timeline**: tracks in bars and beats where you place bank sounds or record what a tool plays (909, synth, pads, master).
 - **Scenes**: 40 snapshots (loops, patterns, mixer, preset, tempo) recalled on the next bar, from the screen or the APC grid.
 - **Mixer**: one channel per tool (pads, synth, TR-909) with volume, pan, delay and reverb sends, mute / solo, meters and up to 4 insert effects (distortion, filter, compressor, reverb).
 - **Magnetic-grid workspace**: move and resize every tool panel; the layout is saved.
@@ -61,12 +61,12 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 | **Track buttons 1 / 2 / 3 / 4** | Knob page: Synth / Effects / Selected pad / EQ |
 | **Track buttons 5 / 6 / 7 / 8** (hold) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filter down |
 | **Shift + track 5 / 6 / 7 / 8** | Roll 1/4 · Tape stop · Filter up · Pump (on/off) |
-| **Shift + track 1 / 2 / 3 / 4** | Mixer knob page: volumes / pans / delay sends / reverb sends (K1 Pads, K2 Synth, K3 TR-909, K8 master) |
+| **Shift + track 1 / 2 / 3 / 4** | Mixer knob page: volumes / pans / delay sends / reverb sends (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K8 master) |
 | **Knobs K1-K8** | Parameters of the current page (Shift = fine tuning) |
 | **SUSTAIN** | Opens / closes the EQ page (held: EQ while pressed) |
 | **Shift + piano key** | Synth preset: C Hoover, D Acid 303, E Screech, F Rave stab, G Dist. bass, A Horn, B Tuned kick, C# Init |
 | **Keyboard** | Plays the synth |
-| **PLAY** | Start / stop the transport (TR-909 + sequencer) |
+| **PLAY** | Start / stop the TR-909 sequencer |
 | **Shift + PLAY** | Turn the pad grid into the TR-909 (and back) |
 | **REC** | Start / stop recording (downloads a WAV) |
 | **STOP ALL CLIPS** | Stops everything |
@@ -118,21 +118,20 @@ Every instrument has its own distortion. The bass drum starts with a "Tube" driv
 
 Pressing a SCENE LAUNCH button brings the grid back to the sampler pads.
 
-## Sequencer
+## Timeline
 
-One transport for everything: **PLAY** (APC or ▶ on screen) starts the TR-909 and the sequencer together, on the same bar grid as the loops.
+A timeline in bars and beats (8 bars to start, − / + to change, **Loop** to play it in a loop) with 6 tracks. Each beat can receive a clip:
 
-- **8 pad tracks**: each one plays a pad from any bank. To assign one, select a pad (Shift + click on it), then click **↺** on the track. Click the track name to play and select it, right-click to clear it. Steps cycle note → accent → off, and each track has a mute.
-- **Synth track (piano roll)**, 2 octaves × 16 steps (▼ ▲ to change octave): click to add a note, drag to set its length, click a note to delete it. It plays with the current synth preset; with the mono presets (Acid 303, Dist. bass), overlapping notes slide.
-- **REC synth**: while playing, what you play on the keyboard is recorded into the synth track, on the grid.
-- **8 patterns**; a change waits for the next bar.
-- **APC**: in the 909 grid (Shift + PLAY), **pad 32** shows the sequencer pad tracks and **pad 31** goes back to the 909. On the tracks page, rows 1-2 are the steps of the selected track, row 3 the 8 tracks (Shift + track = assign the selected pad), then Accent / Clear / Mute, and row 5 the patterns.
+- **Place a sound from a bank**: select a pad (Shift + click on it), then click on a track at the beat you want.
+- **Record a tool**: choose what to record (Master, Pads, Synth or TR-909), arm a track (●), set the playhead (click the ruler), then **● Rec**. What the tool produces is recorded into a clip starting on that beat: the 909 starts by itself on the timeline's bars, and you play the pads or the keyboard live. **■ Stop rec** ends the clip.
+- **Edit**: drag a clip to another beat or track; right-click or Delete removes it. Each track has a mute.
+- ▶ plays the timeline from the playhead. It has its own channel in the mixer, and recordings are saved in the browser.
 
 ## Scenes
 
 40 scenes laid out like the APC grid (1-8 at the bottom). A scene stores:
 - the loops that are playing;
-- the TR-909 and sequencer patterns, and their muted tracks;
+- the TR-909 pattern and its muted instruments;
 - the mixer levels, pans, sends, mutes and solos;
 - the synth preset, the tempo, and whether the transport is playing.
 
@@ -142,7 +141,7 @@ One transport for everything: **PLAY** (APC or ▶ on screen) starts the TR-909 
 
 ## Mixer
 
-One channel per tool: **Pads**, **Synth** and **TR-909**, then the master (performance effects, master EQ and limiter). The level of each sound stays in its tool (pad volume, 909 instrument levels); the mixer balances the tools.
+One channel per tool: **Pads**, **Synth**, **TR-909** and **Timeline**, then the master (performance effects, master EQ and limiter). The level of each sound stays in its tool (pad volume, 909 instrument levels); the mixer balances the tools.
 
 Each channel has insert effects (**+ FX**, up to 4, applied in order), reverb and delay sends, pan, a fader (0 dB at three quarters), **M**ute, **S**olo and a meter. Available effects:
 - **Distortion**: drive and the 5 shapes of the 909.
@@ -150,7 +149,7 @@ Each channel has insert effects (**+ FX**, up to 4, applied in order), reverb an
 - **Compressor**: threshold, ratio and gain.
 - **Reverb**: size and mix.
 
-Double-click a control to reset it. On the APC, **Shift + track button 1 / 2 / 3 / 4** turns the knobs into the mixer's volumes / pans / delay sends / reverb sends: K1 = Pads, K2 = Synth, K3 = TR-909, K8 = master volume. The mixer settings are saved and included in session exports.
+Double-click a control to reset it. On the APC, **Shift + track button 1 / 2 / 3 / 4** turns the knobs into the mixer's volumes / pans / delay sends / reverb sends: K1 = Pads, K2 = Synth, K3 = TR-909, K4 = Timeline, K8 = master volume. The mixer settings are saved and included in session exports.
 
 ## Workspace
 
@@ -227,8 +226,8 @@ css/style.css         styles
 js/main.js            UI and wiring
 js/apc.js             APC Key 25 detection, MIDI input, LEDs (mk1 + mk2)
 js/audio.js           audio engine: synth, sampler, effects, EQ, tempo
-js/tr909.js           TR-909 emulation and sequencer (the clock)
-js/sequencer.js       global sequencer: pad tracks and piano roll
+js/tr909.js           TR-909 emulation and sequencer
+js/timeline.js        timeline: tracks, clips, playback
 js/mixer.js           mixer: channels, sends, insert effects
 js/layout.js          magnetic-grid workspace
 js/presets.js         synth presets
