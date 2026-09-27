@@ -114,6 +114,10 @@ Chaque instrument a sa propre distorsion. La grosse caisse démarre avec une sat
 
 Un appui sur un bouton SCENE LAUNCH ramène la grille aux pads du sampler.
 
+## Démo
+
+Clique sur **Démo** dans la barre de la timeline pour charger le morceau de démonstration : environ une minute à 190 BPM en fa mineur, construit avec les banques Gabber, Hardcore et Oldschool (intro aux cordes, montée gabber avec hoovers, premier drop, break oldschool avec break façon Amen, piano et chœurs, second drop hardcore avec screech et cordes, final en roulement de kicks). Appuie sur ▶ pour l'écouter, puis modifie-le comme tu veux. Tu peux aussi l'écouter directement : [`demo/gabberkey-demo.ogg`](demo/gabberkey-demo.ogg) (rendu par `tools/render_demo.py` à partir de `demo/demo.json`).
+
 ## Timeline et bibliothèque de sons
 
 L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à droite (16 pistes, 32 mesures au départ, − / + pour changer la longueur, zoom, **Boucle**).

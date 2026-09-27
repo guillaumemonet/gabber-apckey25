@@ -1,0 +1,78 @@
+{
+  "name": "GabberKey demo",
+  "bpm": 190,
+  "bars": 50,
+  "gain": 0.6,
+  "tracks": [
+    [
+      { "bank": "Gabber", "sound": "Kick 4/4", "bar": 4, "bars": 4 },
+      { "bank": "Gabber", "sound": "Beat", "bar": 8, "bars": 8 },
+      { "bank": "Gabber", "sound": "Beat full", "bar": 16, "bars": 8 },
+      { "bank": "Hardcore", "sound": "Hard beat", "bar": 32, "bars": 12 },
+      { "bank": "Gabber", "sound": "Build-up", "bar": 44, "bars": 4 }
+    ],
+    [
+      { "bank": "Oldschool", "sound": "Amen-style break", "bar": 24, "bars": 8, "gain": 0.9 }
+    ],
+    [
+      { "bank": "Hardcore", "sound": "Offbeat bass", "bar": 16, "bars": 8, "gain": 0.8 },
+      { "bank": "Hardcore", "sound": "Rolling bass", "bar": 32, "bars": 8, "gain": 0.75 },
+      { "bank": "Hardcore", "sound": "Reese bass", "bar": 40, "bars": 4, "gain": 0.75 }
+    ],
+    [
+      { "bank": "Gabber", "sound": "Hoover riff", "bar": 8, "bars": 16, "gain": 0.65 },
+      { "bank": "Gabber 2", "sound": "Screech riff", "bar": 32, "bars": 8, "gain": 0.55 },
+      { "bank": "Gabber", "sound": "Hoover riff", "bar": 40, "bars": 4, "gain": 0.65 }
+    ],
+    [
+      { "bank": "Hardcore", "sound": "Snare fill", "bar": 15, "bars": 1, "gain": 0.8 },
+      { "bank": "Hardcore", "sound": "Snare fill", "bar": 31, "bars": 1, "gain": 0.8 },
+      { "bank": "Hardcore", "sound": "Snare fill", "bar": 43, "bars": 1, "gain": 0.8 }
+    ],
+    [
+      { "bank": "Gabber 2", "sound": "Hats 16", "bar": 12, "bars": 4, "gain": 0.5 },
+      { "bank": "Gabber 2", "sound": "Hats 16", "bar": 44, "bars": 4, "gain": 0.5 }
+    ],
+    [
+      { "bank": "Hardcore", "sound": "String pads", "bar": 0, "bars": 8, "gain": 0.6 },
+      { "bank": "Hardcore", "sound": "String pads", "bar": 36, "bars": 8, "gain": 0.45 }
+    ],
+    [
+      { "bank": "Gabber", "sound": "Stab riff", "bar": 16, "bars": 8, "gain": 0.5 }
+    ],
+    [
+      { "bank": "Oldschool", "sound": "Piano riff", "bar": 24, "bars": 8, "gain": 0.65 }
+    ],
+    [
+      { "bank": "Oldschool", "sound": "Choir chords", "bar": 24, "bars": 8, "gain": 0.5 }
+    ],
+    [
+      { "bank": "Hardcore", "sound": "String ostinato", "bar": 32, "bars": 12, "gain": 0.45 }
+    ],
+    [
+      { "bank": "Gabber", "sound": "Crash", "bar": 16, "gain": 0.6 },
+      { "bank": "Oldschool", "sound": "Crash", "bar": 24, "gain": 0.5 },
+      { "bank": "Gabber", "sound": "Crash", "bar": 32, "gain": 0.6 }
+    ],
+    [
+      { "bank": "Gabber 2", "sound": "Riser", "bar": 6, "gain": 0.6 },
+      { "bank": "Gabber 2", "sound": "Impact", "bar": 16, "gain": 0.6 },
+      { "bank": "Gabber 2", "sound": "Downlifter", "bar": 22, "gain": 0.5 },
+      { "bank": "Oldschool", "sound": "Air raid", "bar": 28, "gain": 0.35 },
+      { "bank": "Hardcore", "sound": "Breakdown hit", "bar": 32, "gain": 0.6 },
+      { "bank": "Gabber 2", "sound": "Riser", "bar": 42, "gain": 0.6 },
+      { "bank": "Hardcore", "sound": "Breakdown hit", "bar": 48, "gain": 0.7 }
+    ],
+    [
+      { "bank": "Oldschool", "sound": "Whistle", "bar": 20, "gain": 0.45 },
+      { "bank": "Oldschool", "sound": "Whistle", "bar": 22, "gain": 0.45 }
+    ],
+    [
+      { "bank": "Gabber", "sound": "Acid", "bar": 20, "bars": 4, "gain": 0.5 }
+    ],
+    [
+      { "bank": "Oldschool", "sound": "Vox stab", "bar": 30, "gain": 0.55 },
+      { "bank": "Oldschool", "sound": "Vox stab", "bar": 31, "gain": 0.55 }
+    ]
+  ]
+}

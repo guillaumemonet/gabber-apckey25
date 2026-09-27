@@ -114,6 +114,10 @@ Every instrument has its own distortion. The bass drum starts with a "Tube" driv
 
 Pressing a SCENE LAUNCH button brings the grid back to the sampler pads.
 
+## Demo
+
+Click **Demo** in the timeline toolbar to load the demo song: about one minute at 190 BPM in F minor, built from the Gabber, Hardcore and Oldschool banks (intro with strings, gabber build-up with hoovers, first drop, oldschool break with Amen break, piano and choir, hardcore second drop with screech and strings, final kick build-up). Press ▶ to listen, then change it as you like. You can also listen to it directly: [`demo/gabberkey-demo.ogg`](demo/gabberkey-demo.ogg) (rendered by `tools/render_demo.py` from `demo/demo.json`).
+
 ## Timeline and sound library
 
 The main screen: the **sound library** on the left, the **timeline** on the right (16 tracks, 32 bars to start, − / + to change the length, zoom, **Loop**).

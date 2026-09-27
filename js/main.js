@@ -1437,6 +1437,7 @@ function tlTarget(ev) {
 
 function buildTl() {
   $('#tl-play').addEventListener('click', tlToggle);
+  $('#tl-demo').addEventListener('click', loadDemo);
   $('#tl-rec').addEventListener('click', tlRecToggle);
   $('#tl-loop').addEventListener('click', () => { state.tl.loop = !state.tl.loop; renderTl(); save(); });
   $('#tl-less').addEventListener('click', () => { state.tl.bars = Math.max(4, state.tl.bars - 4); renderTl(); save(); });
@@ -1694,6 +1695,47 @@ function growHeldNote(clip) {
   let end = timeline.position();
   if (timeline.length) { end %= timeline.length; if (end < clip.start) end += timeline.length; }
   clip.len = Math.max(REC_GRID, snapRec(end - clip.start));
+}
+
+
+// ---------- Démo ----------
+
+// Charge le morceau de démonstration (demo/demo.json) dans la timeline, avec les sons de la bibliothèque.
+async function loadDemo() {
+  if (state.tl.tracks.some(tr => tr.clips.length) && !confirm(t('tl.demoConfirm'))) return;
+  const demo = await fetch('demo/demo.json', { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null);
+  if (!demo || !libManifest) { toast(t('lib.loadFail'), 3000); return; }
+  if (tlRec) await tlStopRec();
+  timeline.stop(true);
+  setBpm(demo.bpm);
+  const find = (bank, sound) => libManifest.banks.find(b => b.name === bank)?.pads.find(p => p?.name === sound);
+  const tracks = state.tl.tracks.map(() => ({ mute: false, clips: [] }));
+  const pending = [];
+  demo.tracks.slice(0, tracks.length).forEach((list, i) => {
+    for (const e of list) {
+      const p = find(e.bank, e.sound);
+      if (!p) continue;
+      const clip = {
+        id: crypto.randomUUID(), start: e.bar * BEATS_PER_BAR, len: e.bars ? e.bars * BEATS_PER_BAR : null,
+        sampleId: `lib:${p.file}`, name: soundName(p.name), cat: p.cat, color: catColor(p.cat),
+        bpm: p.bpm || 0, loop: p.mode === 2, gain: (e.gain ?? 1) * (demo.gain ?? 1),
+      };
+      tracks[i].clips.push(clip);
+      pending.push(clip);
+    }
+  });
+  await loadBuffers(pending.map(c => c.sampleId));
+  for (const clip of pending) if (clip.len === null) clip.len = Math.max(1, Math.ceil(timeline.naturalBeats(clip) - 0.05));
+  // Les enregistrements remplacés ne servent plus : on les efface de la sauvegarde.
+  for (const c of state.tl.tracks.flatMap(tr => tr.clips)) if (c.sampleId.startsWith('rec:')) store.deleteSample(c.sampleId).catch(() => {});
+  state.tl.tracks = tracks;
+  state.tl.bars = demo.bars;
+  state.tl.playhead = 0;
+  tlSel = null;
+  renderTl();
+  renderLibrary();
+  save();
+  toast(t('tl.demoLoaded', { bpm: demo.bpm }), 5000);
 }
 
 // ---------- Bibliothèque de sons ----------
