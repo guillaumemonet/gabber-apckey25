@@ -188,21 +188,21 @@ export class Engine {
         this._irTimer = setTimeout(() => { this.reverb.buffer = makeImpulse(this.ctx, v); }, prev === undefined ? 0 : 150);
         break;
       case 'cutoff':
-        for (const voice of this.voices.values()) voice.filter.frequency.setTargetAtTime(v, t, 0.02);
+        for (const voice of this.liveVoices()) voice.filter.frequency.setTargetAtTime(v, t, 0.02);
         break;
       case 'reso':
-        for (const voice of this.voices.values()) voice.filter.Q.setTargetAtTime(v, t, 0.02);
+        for (const voice of this.liveVoices()) voice.filter.Q.setTargetAtTime(v, t, 0.02);
         break;
       case 'detune':
-        for (const voice of this.voices.values()) {
+        for (const voice of this.liveVoices()) {
           for (const o of voice.oscs) o.osc.detune.setTargetAtTime((o.cents ?? 0) * v / 12, t, 0.02);
         }
         break;
       case 'width':
-        for (const voice of this.voices.values()) for (const o of voice.oscs) o.pan?.pan.setTargetAtTime(o.spread * v, t, 0.02);
+        for (const voice of this.liveVoices()) for (const o of voice.oscs) o.pan?.pan.setTargetAtTime(o.spread * v, t, 0.02);
         break;
       case 'vibrato':
-        for (const voice of this.voices.values()) voice.vibGain?.gain.setTargetAtTime(v * (this.voiceCfg.vibRange ?? 0.5) * 100, t, 0.05);
+        for (const voice of this.liveVoices()) voice.vibGain?.gain.setTargetAtTime(v * (this.voiceCfg.vibRange ?? 0.5) * 100, t, 0.05);
         break;
       case 'chorus':
         smooth(this.chorusWet.gain, v * 0.9);
@@ -218,8 +218,11 @@ export class Engine {
     }
   }
 
+  // Voix du preset en cours (les blocs de la timeline qui ont leur propre preset n'en font pas partie).
+  *liveVoices() { for (const v of this.voices.values()) if (!v.patched) yield v; }
+
   setVoice(cfg) {
-    this.allNotesOff();
+    this.allNotesOff(true);
     this.voiceCfg = { ...DEFAULT_VOICE, ...cfg };
   }
 
@@ -258,8 +261,11 @@ export class Engine {
   }
 
   // `when` : instant (horloge audio) de départ, pour les notes programmées par la timeline.
-  makeVoice(f, velocity, fromFreq, when) {
-    const { ctx, values: p, voiceCfg: c } = this;
+  // `patch` : { cfg, values } d'un autre preset que celui en cours (blocs de nappes de la timeline).
+  makeVoice(f, velocity, fromFreq, when, patch) {
+    const { ctx } = this;
+    const c = patch ? { ...DEFAULT_VOICE, ...patch.cfg } : this.voiceCfg;
+    const p = patch ? { ...this.values, ...patch.values } : this.values;
     const t = Math.max(ctx.currentTime, when ?? 0);
     const attack = p.attack ?? 0.005;
     const fenv = c.fenv ?? 0.4;
@@ -339,7 +345,7 @@ export class Engine {
     filter.connect(amp).connect(this.synthIn);
     for (const o of oscs) o.osc.start(t);
     for (const l of lfos) l.start(t);
-    return { oscs, lfos, filter, amp, vibGain, freq: f };
+    return { oscs, lfos, filter, amp, vibGain, freq: f, patched: !!patch, release: p.release };
   }
 
   glideVoice(voice, f, when) {
@@ -364,7 +370,12 @@ export class Engine {
 
   // `when` : instant de départ (séquenceur) ; `key` : identifiant de la voix (le séquenceur
   // utilise ses propres clés pour ne pas couper les notes jouées à la main).
-  noteOn(note, velocity, when, key = note) {
+  noteOn(note, velocity, when, key = note, patch) {
+    if (patch) {   // preset propre au bloc : toujours polyphonique
+      this.noteOff(note, true, when, key);
+      this.voices.set(key, this.makeVoice(midiToFreq(note + (patch.cfg.octave ?? DEFAULT_VOICE.octave)), velocity, undefined, when, patch));
+      return;
+    }
     const f = midiToFreq(note + this.voiceCfg.octave);
     if (this.voiceCfg.mono) {
       this.monoStack = this.monoStack.filter(n => n !== note).concat(note);
@@ -378,7 +389,7 @@ export class Engine {
   }
 
   noteOff(note, immediate = false, when, key = note) {
-    if (this.voiceCfg.mono && !immediate) {
+    if (this.voiceCfg.mono && !immediate && !this.voices.get(key)?.patched) {
       this.monoStack = this.monoStack.filter(n => n !== note);
       const voice = this.voices.get('mono');
       if (!voice) return;
@@ -395,7 +406,7 @@ export class Engine {
     if (this.sustain && !immediate && when === undefined) { this.sustained.add(key); return; }
     this.voices.delete(key);
     this.sustained.delete(key);
-    this.releaseVoice(voice, immediate ? 0.01 : this.values.release, when);
+    this.releaseVoice(voice, immediate ? 0.01 : voice.patched ? voice.release : this.values.release, when);
   }
 
   setSustain(on) {
@@ -403,10 +414,12 @@ export class Engine {
     if (!on) for (const n of [...this.sustained]) this.noteOff(n);
   }
 
-  allNotesOff() {
+  // keepPatched : garder les notes de la timeline jouées avec leur propre preset (changement de preset).
+  allNotesOff(keepPatched = false) {
     this.sustained.clear();
     this.monoStack = [];
     for (const [key, voice] of [...this.voices]) {
+      if (keepPatched && voice.patched) continue;
       this.voices.delete(key);
       this.releaseVoice(voice, 0.01);
     }

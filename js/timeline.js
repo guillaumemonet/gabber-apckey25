@@ -4,7 +4,8 @@
 // - bpm : tempo d'origine du son ; il est lu plus vite / plus lentement pour suivre le tempo global.
 // - loop : le son se répète pour remplir toute la longueur du bloc.
 // Blocs enregistrés en jouant : { type: 'pad', bank, pad } rejoue le pad avec ses réglages,
-// { type: 'note', note, vel } rejoue une note du synthé (preset en cours) pendant `len` temps.
+// { type: 'note', note, vel } rejoue une note du synthé (preset en cours) pendant `len` temps ;
+// avec `notes` (accord) et `preset`, le bloc joue plusieurs notes avec son propre preset (générateur de nappes).
 
 export const TL_TRACKS = 16;
 export const BEATS_PER_BAR = 4;
@@ -49,6 +50,7 @@ export class Timeline {
     this.onStop = () => {};
     this.getPad = () => null;   // (banque, pad) -> pad ; branché par l'application
     this.padKey = null;
+    this.getPatch = () => undefined;   // preset d'un bloc -> { cfg, values } ; branché par l'application
     this.offs = [];             // fins de notes programmées : { note, key, time }
     this.padHits = new Set();   // voix de pads programmées (coupées à l'arrêt)
   }
@@ -96,9 +98,13 @@ export class Timeline {
             const key = this.padKey(clip.bank, clip.pad);
             if (pad?.buffer) { this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1 }); this.padHits.add(key); }
           } else {
-            const key = `tl:${clip.id}`;
-            this.engine.noteOn(clip.note, clip.vel ?? 0.85, when, key);
-            this.offs.push({ note: clip.note, key, time: when + clip.len * bd - 0.005 });
+            const notes = clip.notes ?? [clip.note];
+            const patch = clip.preset ? this.getPatch(clip.preset) : undefined;
+            notes.forEach((note, k) => {
+              const key = k ? `tl:${clip.id}:${k}` : `tl:${clip.id}`;
+              this.engine.noteOn(note, clip.vel ?? 0.85, when, key, patch);
+              this.offs.push({ note, key, time: when + clip.len * bd - 0.005 });
+            });
           }
           continue;
         }

@@ -135,6 +135,19 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
   - **■ Arrêter rec** (ou REC à nouveau) termine l'enregistrement.
 - **Lire** : ▶ (ou PLAY sur l'APC) joue depuis la tête de lecture ; la vue suit la tête de lecture. Les boucles faites à un autre tempo suivent le tempo global. La timeline a sa propre voie dans la table de mixage.
 
+### Générateur de nappes
+
+**Accords…** dans la barre de la timeline ouvre le générateur : il pose des blocs de cordes ou de nappes sur la timeline à partir d'une suite d'accords.
+
+- **Suite d'accords** : tape les accords séparés par des espaces ou des tirets (`Fm Db Eb Cm`, `Fm-Bbm-Db-C`…), ou clique sur une suite toute prête. Reconnus : majeur (`Db`), mineur (`Fm`), `7`, `m7`, `maj7`, `sus2`, `sus4`, `dim`, `aug`, `5`, `add9`, avec `#` / `b`.
+- **Son** : un preset du synthé parmi les familles cordes, nappes, chœurs, supersaw, stabs ou claviers. Chaque bloc garde **son propre preset** : tu peux jouer autre chose au clavier, ou changer de preset, sans changer les nappes.
+- **Registre** (grave, médium, aigu), **mesures par accord** (1, 2 ou 4), **répétitions** (×1, ×2, ×4), **rythme** (tenu, chaque temps, contretemps, croches).
+- **Basse** : aucune, sub (tenue), hardcore en contretemps ou reese (tenue), sur la fondamentale de chaque accord, sur une deuxième piste.
+- Les accords s'enchaînent en douceur : les notes communes sont gardées et les autres bougent le moins possible.
+- **▶ Écouter** joue le premier accord ; **Générer** pose les blocs à partir de la mesure de la tête de lecture, sur la première piste libre sur toute la durée, en partant de la piste armée. La timeline s'allonge si besoin.
+
+Un bloc d'accord se manipule comme les autres : le déplacer, l'allonger, le copier (Alt), l'écouter (double-clic) ou le supprimer.
+
 ## Scènes
 
 40 scènes disposées comme la grille de l'APC (1-8 en bas). Une scène mémorise :
@@ -273,6 +286,8 @@ js/mixer.js           table de mixage : voies, envois, effets d'insert
 js/library.js         bibliothèque de sons (catégories)
 js/windows.js         fenêtres des plugins
 js/presets.js         presets du synthé
+js/performer.js       mode accords et arpégiateur
+js/chords.js          suites d'accords (générateur de nappes)
 js/params.js          paramètres des potards
 js/i18n.js            traductions anglais / français
 js/kit.js             kit de départ (synthétisé)

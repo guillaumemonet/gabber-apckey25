@@ -47,7 +47,7 @@ export function libraryItems({ manifest, kit, banks, tl }) {
     add({ sampleId: pad.sampleId, name: pad.name, cat: 'mine', bpm: pad.bpm || 0, bars: 0, loop: !!pad.bpm });
   }
   for (const clip of tl.tracks.flatMap(tr => tr.clips)) {
-    if (clip.sampleId.startsWith('rec:')) add({ sampleId: clip.sampleId, name: clip.name, cat: 'rec', bpm: 0, bars: 0, loop: false });
+    if (clip.sampleId?.startsWith('rec:')) add({ sampleId: clip.sampleId, name: clip.name, cat: 'rec', bpm: 0, bars: 0, loop: false });
   }
   return [...items.values()];
 }

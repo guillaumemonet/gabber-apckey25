@@ -135,6 +135,19 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
   - **■ Stop rec** (or REC again) ends the recording.
 - **Play**: ▶ (or PLAY on the APC) plays from the playhead; the view follows the playhead. Loops recorded at another tempo follow the global tempo. The timeline has its own channel in the mixer.
 
+### Pad generator
+
+**Chords…** in the timeline toolbar opens the generator: it lays string or pad blocks on the timeline from a chord progression.
+
+- **Progression**: type the chords separated by spaces or dashes (`Fm Db Eb Cm`, `Fm-Bbm-Db-C`…), or click a ready-made one. Recognised: major (`Db`), minor (`Fm`), `7`, `m7`, `maj7`, `sus2`, `sus4`, `dim`, `aug`, `5`, `add9`, with `#` / `b`.
+- **Sound**: a synth preset from the strings, pads, choirs, supersaw, stabs or keys families. Each block keeps **its own preset**: you can play something else on the keyboard, or change preset, without changing the pads.
+- **Register** (low, middle, high), **bars per chord** (1, 2 or 4), **repeat** (×1, ×2, ×4), **rhythm** (held, every beat, offbeat, 8th notes).
+- **Bass**: none, sub (held), hardcore offbeat or reese (held), on the root of each chord, on a second track.
+- The chords follow each other with smooth **voice leading**: common notes are kept and the others move as little as possible.
+- **▶ Listen** plays the first chord; **Generate** places the blocks from the playhead's bar, on the first track that is free for the whole length, starting from the armed track. The timeline grows if needed.
+
+A chord block works like any other block: move it, lengthen it, copy it (Alt), listen to it (double-click) or delete it.
+
 ## Scenes
 
 40 scenes laid out like the APC grid (1-8 at the bottom). A scene stores:
@@ -273,6 +286,8 @@ js/mixer.js           mixer: channels, sends, insert effects
 js/library.js         sound library (categories)
 js/windows.js         plugin windows
 js/presets.js         synth presets
+js/performer.js       chord mode and arpeggiator
+js/chords.js          chord progressions (pad generator)
 js/params.js          knob parameters
 js/i18n.js            English / French translations
 js/kit.js             starter kit (synthesised)

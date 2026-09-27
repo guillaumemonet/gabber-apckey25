@@ -320,6 +320,16 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .tl-bars { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
 .tl-bars button { padding: 3px 9px; }
 #tl-rec.active { background: #d1242f; border-color: #d1242f; color: #fff; animation: blink 1s steps(2) infinite; }
+.tl-gen { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 12px; }
+.tl-gen[hidden] { display: none; }
+.gen-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; }
+.gen-row label { display: flex; flex-direction: column; gap: 3px; }
+.gen-row label > span { color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
+.gen-row input, .gen-row select { font: inherit; color: var(--text); background: var(--panel, var(--bg)); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
+.gen-row input[type=text] { width: 220px; font-family: ui-monospace, monospace; }
+.gen-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.gen-chips button { padding: 3px 8px; font-size: 11px; }
+#tl-gen-btn.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
 #tl-loop.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
 
 /* Fenêtres des plugins */
