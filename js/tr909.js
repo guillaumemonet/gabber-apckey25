@@ -26,7 +26,32 @@ export const PATTERNS = 8;
 
 const pct = v => `${Math.round(v * 100)}%`;
 
-const shapeIndex = pos => Math.round(pos * (SHAPES.length - 1));
+export const shapeIndex = pos => Math.round(pos * (SHAPES.length - 1));
+
+// Courbe de distorsion partagée (909 et table de mixage) : quantité 0..1 et forme.
+const curves = new Map();
+export function distCurve(amount, shape) {
+  const key = `${shape}:${Math.round(amount * 50)}`;
+  if (!curves.has(key)) {
+    const a = Math.round(amount * 50) / 50;
+    const k = 1 + a * a * 60;
+    const levels = Math.max(2, Math.round(2 + (1 - a) ** 2 * 60));
+    const f = {
+      soft: x => Math.tanh(k * x) / Math.tanh(k),
+      hard: x => Math.max(-1, Math.min(1, k * x)),
+      tube: x => (x >= 0 ? Math.tanh(k * x) : Math.tanh(k * 0.45 * x) * 0.8) + 0.1 * a * x * x,
+      fold: x => Math.sin(x * (1 + a * 7) * Math.PI / 2),
+      crush: x => Math.round(Math.tanh((1 + a * 6) * x) * levels) / levels,
+    }[shape] ?? (x => x);
+    const c = Float32Array.from({ length: 2048 }, (_, i) => f((i / 2047) * 2 - 1));
+    const peak = c.reduce((m, v) => Math.max(m, Math.abs(v)), 1e-6);
+    curves.set(key, c.map(v => v / peak));
+  }
+  return curves.get(key);
+}
+
+// Voie de la table de mixage qui reçoit chaque instrument.
+export const TR_GROUPS = { bd: 'bd', sd: 'snare', rs: 'snare', hc: 'snare', lt: 'toms', mt: 'toms', ht: 'toms', ch: 'hats', oh: 'hats', cr: 'cym', rd: 'cym' };
 
 // Définitions des 8 potards de la page TR-909 : paramètres de l'instrument choisi (K1-K4),
 // sa distorsion Drive / Shape (K5-K6), puis Shuffle et Volume (K7-K8). Valeurs = positions 0..1.
@@ -81,12 +106,12 @@ export class TR909 {
     this.engine = engine;
     this.ctx = engine.ctx;
     this.getState = getState;
-    this.out = this.ctx.createGain();
-    this.out.connect(engine.master);
+    this.volume = 1;
+    this.buses = {};     // groupe -> gain de volume, relié à la voie du mixeur (ou au master)
+    this.dests = {};
     this.noise = this.ctx.createBuffer(1, this.ctx.sampleRate * 2, this.ctx.sampleRate);
     const d = this.noise.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-    this.curves = new Map();
     this.openHat = null;
     this.running = false;
     this.idx = 0;
@@ -98,7 +123,28 @@ export class TR909 {
   get st() { return this.getState(); }
   p(id, param) { return this.st.params[id]?.[param] ?? 0.5; }
 
-  setVolume(v) { this.out.gain.setTargetAtTime(v * v * 1.3, this.ctx.currentTime, 0.02); }
+  setVolume(v) {
+    this.volume = v * v * 1.3;
+    for (const g of Object.values(this.buses)) g.gain.setTargetAtTime(this.volume, this.ctx.currentTime, 0.02);
+  }
+
+  bus(id) {
+    const group = TR_GROUPS[id];
+    if (!this.buses[group]) {
+      this.buses[group] = this.gain(this.volume);
+      this.buses[group].connect(this.dests[group] ?? this.engine.master);
+    }
+    return this.buses[group];
+  }
+
+  // Envoie chaque groupe d'instruments vers une voie de la table de mixage.
+  setDestinations(dests) {
+    this.dests = dests;
+    for (const [group, bus] of Object.entries(this.buses)) {
+      bus.disconnect();
+      bus.connect(dests[group] ?? this.engine.master);
+    }
+  }
 
   // --- briques de synthèse ---
   gain(v = 1) { const g = this.ctx.createGain(); g.gain.value = v; return g; }
@@ -124,26 +170,6 @@ export class TR909 {
     g.gain.setTargetAtTime(0, time + attack, decay / 4);
     return g;
   }
-  // Courbe de distorsion : quantité 0..1 et forme (soft, hard, tube, fold, crush).
-  distCurve(amount, shape) {
-    const key = `${shape}:${Math.round(amount * 50)}`;
-    if (!this.curves.has(key)) {
-      const a = Math.round(amount * 50) / 50;
-      const k = 1 + a * a * 60;
-      const levels = Math.max(2, Math.round(2 + (1 - a) ** 2 * 60));
-      const f = {
-        soft: x => Math.tanh(k * x) / Math.tanh(k),
-        hard: x => Math.max(-1, Math.min(1, k * x)),
-        tube: x => (x >= 0 ? Math.tanh(k * x) : Math.tanh(k * 0.45 * x) * 0.8) + 0.1 * a * x * x,
-        fold: x => Math.sin(x * (1 + a * 7) * Math.PI / 2),
-        crush: x => Math.round(Math.tanh((1 + a * 6) * x) * levels) / levels,
-      }[shape];
-      const c = Float32Array.from({ length: 2048 }, (_, i) => f((i / 2047) * 2 - 1));
-      const peak = c.reduce((m, v) => Math.max(m, Math.abs(v)), 1e-6);
-      this.curves.set(key, c.map(v => v / peak));
-    }
-    return this.curves.get(key);
-  }
   // Six oscillateurs carrés aux rapports inharmoniques, comme les cymbales analogiques.
   metal(time, dur, base) {
     const mix = this.gain(0.25);
@@ -159,13 +185,13 @@ export class TR909 {
     const drive = this.p(id, 'drive');
     if (drive > 0.01) {
       const shaper = this.ctx.createWaveShaper();
-      shaper.curve = this.distCurve(drive, SHAPES[shapeIndex(this.p(id, 'shape'))]);
+      shaper.curve = distCurve(drive, SHAPES[shapeIndex(this.p(id, 'shape'))]);
       shaper.oversample = '2x';
       const tame = this.filter('lowpass', 16000 - drive * 8000, 0.7);
-      shaper.connect(tame).connect(this.gain(1 - drive * 0.35)).connect(this.out);
+      shaper.connect(tame).connect(this.gain(1 - drive * 0.35)).connect(this.bus(id));
       out.connect(shaper);
     } else {
-      out.connect(this.out);
+      out.connect(this.bus(id));
     }
     const tune = this.p(id, 'tune');
     const decay = this.p(id, 'decay');

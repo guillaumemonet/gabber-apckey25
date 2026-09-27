@@ -11,6 +11,7 @@ GabberKey turns the Akai APC Key 25 (mk1 or mk2) into a standalone instrument. I
   - four **synthesised hardcore / gabber banks**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
 - **TR-909 emulation**: the 11 instruments synthesised live, with a per-instrument **distortion (drive + 5 shapes)** on the knobs and a 16-step sequencer (8 patterns) synced with the loops.
+- **Mixer**: one channel per source (pads, synth, 909 kick / snare / toms / hats / cymbals) with volume, pan, delay and reverb sends, mute / solo, meters and up to 4 insert effects (distortion, filter, compressor, reverb).
 - **Polyphonic synth** on the keyboard with 8 gabber presets: Hoover, Acid 303, Screech, Rave stab, Distorted bass, Horn, Tuned kick…
 - **Tempo-synced loops**: every loop starts on the next bar and follows the global tempo (with a Tap button).
 - **Performance effects**: beat-repeat rolls (1/4 to 1/32), filter sweeps, tape stop, pump.
@@ -57,6 +58,7 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 | **Track buttons 1 / 2 / 3 / 4** | Knob page: Synth / Effects / Selected pad / EQ |
 | **Track buttons 5 / 6 / 7 / 8** (hold) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filter down |
 | **Shift + track 5 / 6 / 7 / 8** | Roll 1/4 · Tape stop · Filter up · Pump (on/off) |
+| **Shift + track 1 / 2 / 3 / 4** | Mixer knob page: volumes / pans / delay sends / reverb sends (K1-K7 = channels, K8 = master) |
 | **Knobs K1-K8** | Parameters of the current page (Shift = fine tuning) |
 | **SUSTAIN** | Opens / closes the EQ page (held: EQ while pressed) |
 | **Shift + piano key** | Synth preset: C Hoover, D Acid 303, E Screech, F Rave stab, G Dist. bass, A Horn, B Tuned kick, C# Init |
@@ -111,6 +113,28 @@ Every instrument has its own distortion. The bass drum starts with a "Tube" driv
 | 5 | Patterns 1-8 |
 
 Pressing a SCENE LAUNCH button brings the grid back to the sampler pads.
+
+## Mixer
+
+Every source goes through its own channel before the master (then the performance effects, master EQ and limiter):
+
+| Channel | Source |
+|---|---|
+| Pads | the 40-pad sampler |
+| Synth | the keyboard synth |
+| 909 Kick | bass drum |
+| 909 Snare | snare, clap, rim shot |
+| 909 Toms | low, mid and high toms |
+| 909 Hats | closed and open hi-hats |
+| 909 Cymbals | crash and ride |
+
+Each channel has insert effects (**+ FX**, up to 4, applied in order), reverb and delay sends, pan, a fader (0 dB at three quarters), **M**ute, **S**olo and a meter. Available effects:
+- **Distortion**: drive and the 5 shapes of the 909.
+- **Filter**: low-pass or high-pass, cutoff and resonance.
+- **Compressor**: threshold, ratio and gain.
+- **Reverb**: size and mix.
+
+Double-click a control to reset it. On the APC, **Shift + track button 1 / 2 / 3 / 4** turns the knobs into the mixer's volumes / pans / delay sends / reverb sends: K1-K7 control the 7 channels and K8 the master volume. The mixer settings are saved and included in session exports.
 
 ## Tempo and loops
 
@@ -180,6 +204,7 @@ js/main.js            UI and wiring
 js/apc.js             APC Key 25 detection, MIDI input, LEDs (mk1 + mk2)
 js/audio.js           audio engine: synth, sampler, effects, EQ, tempo
 js/tr909.js           TR-909 emulation and sequencer
+js/mixer.js           mixer: channels, sends, insert effects
 js/presets.js         synth presets
 js/params.js          knob parameters
 js/i18n.js            English / French translations

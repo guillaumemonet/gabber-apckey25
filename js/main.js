@@ -6,6 +6,7 @@ import { PRESETS, PRESET_KEYS } from './presets.js';
 import { Recorder, download, stamp } from './recorder.js';
 import { packBanks, unpack } from './kits.js';
 import * as store from './storage.js';
+import { Mixer, CHANNELS, MIX_FIELDS, FX_TYPES, MAX_FX, defaultMixState, mergeMixState, mixKnobDefs, newFx, fxParamLabel } from './mixer.js';
 import { TR909, TR_INSTR, PATTERNS, trKnobDefs, defaultTrState, mergeTrState } from './tr909.js';
 import { t, soundName, translatePage } from './i18n.js';
 
@@ -13,10 +14,10 @@ translatePage();
 
 const BANKS = 10;   // SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = banques 6-10
 const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (EQ aussi via SUSTAIN)
-const UI_PAGES = [...PAGE_ORDER, 'tr'];              // + page TR-909 (Maj + PLAY sur l'APC)
+const UI_PAGES = [...PAGE_ORDER, 'tr', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum;
+let engine, apc, kit, recorder, drum, mixer;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -29,6 +30,7 @@ const state = {
   globals: { ...defaultPositions('synth'), ...defaultPositions('fx'), ...defaultPositions('eq') },
   banks: [],        // banks[b][i] = { name, color, sampleId, p, buffer } | null
   tr: defaultTrState(),   // TR-909 : réglages, patterns, instrument choisi
+  mix: defaultMixState(), // table de mixage : voies, envois, effets d'insert
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -63,6 +65,13 @@ async function start() {
   drum.setVolume(state.tr.globals.volume);
   drum.onStep = onTrStep;
   drum.onPattern = () => { renderTr(); renderLeds(); save(); };
+  // Toutes les sources passent par la table de mixage avant le master.
+  mixer = new Mixer(engine, () => state.mix);
+  engine.padBus.disconnect();
+  engine.padBus.connect(mixer.input('pads'));
+  engine.pumpGain.disconnect();
+  engine.pumpGain.connect(mixer.input('synth'));
+  drum.setDestinations(Object.fromEntries(['bd', 'snare', 'toms', 'hats', 'cym'].map(g => [g, mixer.input(g)])));
   bindTempo();
 
   buildPads();
@@ -74,6 +83,7 @@ async function start() {
   buildPresets();
   buildPerf();
   buildTr();
+  buildMixer();
   bindKits();
   bindComputerKeyboard();
   drawMeter();
@@ -113,6 +123,7 @@ async function restore() {
     state.libBanks = saved.libBanks ?? (saved.libImported ? ['Batterie', 'Électro', 'Boucles', 'Textures', 'Tabla & divers'] : []);
     state.model = saved.model ?? null;
     state.tr = mergeTrState(saved.tr);
+    state.mix = mergeMixState(saved.mix);
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
         const s = saved.banks?.[b]?.[i];
@@ -186,6 +197,7 @@ function save() {
       model: state.model,
       globals: state.globals,
       tr: state.tr,
+      mix: state.mix,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
   }, 400);
@@ -245,9 +257,14 @@ function onPadState(key, isPlaying, mode) {
 }
 
 // Potards de la page active : définitions et objet qui stocke leurs positions.
-function knobDefs() { return state.page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[state.page].params; }
+function knobDefs() {
+  if (mixField(state.page)) return [...mixKnobDefs(mixField(state.page)), masterDef()];
+  return state.page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[state.page].params;
+}
 function knobTarget(def) {
   if (!def) return null;
+  if (def.ch) return state.mix.channels[def.ch];
+  if (mixField(state.page)) return state.globals;   // K8 = volume général
   if (state.page === 'pad') return currentPad()?.p;
   if (state.page === 'tr') return def.group === 'global' ? state.tr.globals : state.tr.params[state.tr.sel];
   return state.globals;
@@ -267,7 +284,10 @@ function turnKnob(index, { delta, value }) {
     target[def.id] = Math.min(1, Math.max(0, target[def.id] + delta * stepSize * (shiftHeld && !def.steps ? 0.25 : 1)));
   }
 
-  if (state.page === 'pad') {
+  if (def.ch) {
+    mixer.update();
+    renderStrip(def.ch);
+  } else if (state.page === 'pad') {
     engine.updatePadVoice(padKey(state.bank, state.selected), pad);
     if (def.id === 'mode') { renderPad(state.selected); renderEditor(); }
   } else if (state.page === 'tr') {
@@ -275,6 +295,7 @@ function turnKnob(index, { delta, value }) {
   } else {
     engine.set(def.id, toValue(def, target[def.id]));
   }
+  if (def.id === 'master') renderMixer();
   renderKnob(index, true);
   save();
 }
@@ -371,7 +392,7 @@ function bindController() {
       if (trMode) toggleTrMode(false);   // choisir une banque ramène la grille aux pads
       setBank(+name.slice(5) - 1 + (shiftHeld ? 5 : 0));
     }
-    else if (name.startsWith('track')) setPage(PAGE_ORDER[+name.slice(5) - 1]);
+    else if (name.startsWith('track')) setPage((shiftHeld ? MIX_PAGES : PAGE_ORDER)[+name.slice(5) - 1]);
     else if (name === 'stopAll') panic();
     else if (name === 'record') toggleRecording();
   });
@@ -437,7 +458,7 @@ function renderLeds() {
   // Banques 1-5 : LED fixe ; banques 6-10 : LED clignotante.
   BTN.scene.forEach((n, b) => apc.setButton(n, b === state.bank % 5 ? (state.bank >= 5 ? 2 : 1) : 0));
   BTN.track.forEach((n, t) => apc.setButton(n, t < 4
-    ? (PAGE_ORDER[t] === state.page ? 1 : 0)
+    ? (PAGE_ORDER[t] === state.page ? 1 : MIX_PAGES[t] === state.page ? 2 : 0)
     : (perfActive.has(t - 4) || perfActive.has(t) ? 1 : 0)));
   apc.setButton(BTN.record, recorder?.recording ? 2 : 0);
   apc.setButton(BTN.play, drum?.running ? 1 : 0);
@@ -618,8 +639,10 @@ function buildPages() {
   const wrap = $('#pages');
   UI_PAGES.forEach((page, k) => {
     const btn = document.createElement('button');
-    btn.textContent = page === 'tr' ? t('page.tr') : PAGES[page].label;
-    btn.title = page === 'tr' ? t('tr.pageTitle') : t('page.title', { n: k + 1 });
+    btn.textContent = PAGES[page]?.label ?? t(`page.${page}`);
+    btn.title = page === 'tr' ? t('tr.pageTitle')
+      : mixField(page) ? t('mix.pageTitle', { n: MIX_FIELDS.indexOf(mixField(page)) + 1 })
+      : t('page.title', { n: k + 1 });
     btn.addEventListener('click', () => setPage(page));
     wrap.appendChild(btn);
   });
@@ -832,6 +855,157 @@ function bindTempo() {
     renderEditor();
     save();
   });
+}
+
+// ---------- Table de mixage ----------
+
+const MIX_PAGES = MIX_FIELDS.map(f => `mix_${f}`);   // pages de potards : Maj + piste 1 à 4
+const mixField = page => (page?.startsWith('mix_') ? page.slice(4) : null);
+const masterDef = () => PAGES.fx.params.find(d => d.id === 'master');
+const stripEls = {};
+const DEFAULT_FIELD = { vol: 0.75, pan: 0.5, delay: 0, reverb: 0 };
+
+function fieldFmt(field, id, v) { return mixKnobDefs(field).find(d => d.ch === id).fmt(v); }
+
+function buildMixer() {
+  const wrap = $('#mixer');
+  const fxOptions = Object.keys(FX_TYPES).map(k => `<option value="${k}">${t(`fx.${k}`)}</option>`).join('');
+  for (const id of CHANNELS) {
+    const el = document.createElement('div');
+    el.className = 'strip';
+    el.innerHTML = `
+      <div class="strip-name">${t(`mix.ch.${id}`)}</div>
+      <div class="fx-list"></div>
+      <select class="fx-add"><option value="">${t('mix.addFx')}</option>${fxOptions}</select>
+      ${['reverb', 'delay', 'pan'].map(f => `<label class="send"><span>${t(`mix.${f}`)}</span><input type="range" min="0" max="1" step="0.01" data-field="${f}"><em></em></label>`).join('')}
+      <div class="fader"><canvas class="vu" width="6" height="150"></canvas><input type="range" min="0" max="1" step="0.005" data-field="vol" orient="vertical"></div>
+      <div class="db"></div>
+      <div class="ms"><button class="mute" title="${t('mix.mute')}">M</button><button class="solo" title="${t('mix.solo')}">S</button></div>`;
+    const ch = () => state.mix.channels[id];
+    for (const inp of el.querySelectorAll('input[data-field]')) {
+      const field = inp.dataset.field;
+      inp.addEventListener('input', () => { ch()[field] = +inp.value; onMixChange(id); });
+      inp.addEventListener('dblclick', () => { ch()[field] = DEFAULT_FIELD[field]; onMixChange(id); });
+    }
+    el.querySelector('.mute').addEventListener('click', () => { ch().mute = !ch().mute; onMixChange(id); });
+    el.querySelector('.solo').addEventListener('click', () => { ch().solo = !ch().solo; onMixChange(id); });
+    el.querySelector('.fx-add').addEventListener('change', e => {
+      const type = e.target.value;
+      e.target.value = '';
+      if (!type || ch().fx.length >= MAX_FX) return;
+      ch().fx.push(newFx(type));
+      mixer.rebuild(id);
+      renderFx(id);
+      save();
+    });
+    stripEls[id] = el;
+    wrap.appendChild(el);
+    renderFx(id);
+  }
+  // Voie master : volume général du moteur et vumètre de sortie.
+  const m = document.createElement('div');
+  m.className = 'strip master';
+  m.innerHTML = `<div class="strip-name">${t('mix.master')}</div><div class="spacer"></div>
+    <div class="fader"><canvas class="vu" width="6" height="150"></canvas><input type="range" min="0" max="1" step="0.005" orient="vertical"></div>
+    <div class="db"></div>`;
+  const mi = m.querySelector('input');
+  mi.addEventListener('input', () => {
+    state.globals.master = +mi.value;
+    engine.set('master', toValue(masterDef(), state.globals.master));
+    renderMixer();
+    if (mixField(state.page) || state.page === 'fx') renderKnobs();
+    save();
+  });
+  stripEls.master = m;
+  wrap.appendChild(m);
+  renderMixer();
+  drawMixerMeters();
+}
+
+function onMixChange(id) {
+  mixer.update();
+  renderStrip(id);
+  if (mixField(state.page)) renderKnobs();
+  save();
+}
+
+function renderStrip(id) {
+  const ch = state.mix.channels[id];
+  const el = stripEls[id];
+  for (const inp of el.querySelectorAll('input[data-field]')) {
+    const field = inp.dataset.field;
+    inp.value = ch[field];
+    const em = inp.nextElementSibling;
+    if (em?.tagName === 'EM') em.textContent = fieldFmt(field, id, ch[field]);
+  }
+  el.querySelector('.db').textContent = fieldFmt('vol', id, ch.vol);
+  el.querySelector('.mute').classList.toggle('active', ch.mute);
+  el.querySelector('.solo').classList.toggle('active', ch.solo);
+}
+
+function renderMixer() {
+  if (!stripEls.master) return;
+  for (const id of CHANNELS) renderStrip(id);
+  stripEls.master.querySelector('input').value = state.globals.master;
+  stripEls.master.querySelector('.db').textContent = masterDef().fmt(toValue(masterDef(), state.globals.master));
+}
+
+function renderFx(id) {
+  const list = state.mix.channels[id].fx;
+  const box = stripEls[id].querySelector('.fx-list');
+  box.innerHTML = '';
+  list.forEach((fx, k) => {
+    const item = document.createElement('div');
+    item.className = 'fx';
+    item.innerHTML = `<div class="fx-head"><b>${t(`fx.${fx.type}`)}</b><button class="fx-del" title="${t('mix.removeFx')}">✕</button></div>`;
+    for (const [key, [min, max, step]] of Object.entries(FX_TYPES[fx.type])) {
+      const row = document.createElement('label');
+      row.className = 'fx-param';
+      row.innerHTML = `<span>${t(`fx.p.${key}`)}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${fx.p[key]}"><em></em>`;
+      const inp = row.querySelector('input');
+      const em = row.querySelector('em');
+      em.textContent = fxParamLabel(fx.type, key, fx.p[key], fx.p);
+      inp.addEventListener('input', () => {
+        fx.p[key] = +inp.value;
+        mixer.updateFx(id, k);
+        if (key === 'mode') renderFx(id); else em.textContent = fxParamLabel(fx.type, key, fx.p[key], fx.p);
+        save();
+      });
+      item.appendChild(row);
+    }
+    item.querySelector('.fx-del').addEventListener('click', () => {
+      list.splice(k, 1);
+      mixer.rebuild(id);
+      renderFx(id);
+      save();
+    });
+    box.appendChild(item);
+  });
+  stripEls[id].querySelector('.fx-add').disabled = list.length >= MAX_FX;
+}
+
+function drawMixerMeters() {
+  const levels = {};
+  const master = new Float32Array(engine.analyser.fftSize);
+  const draw = (cv, lvl) => {
+    const g = cv.getContext('2d');
+    g.clearRect(0, 0, cv.width, cv.height);
+    const h = Math.min(1, lvl) * cv.height;
+    g.fillStyle = lvl > 0.95 ? '#ff5a36' : lvl > 0.7 ? '#ffd23f' : '#3dd68c';
+    g.fillRect(0, cv.height - h, cv.width, h);
+  };
+  (function frame() {
+    for (const id of CHANNELS) {
+      levels[id] = Math.max(mixer.level(id), (levels[id] ?? 0) * 0.88);
+      draw(stripEls[id].querySelector('.vu'), levels[id]);
+    }
+    engine.analyser.getFloatTimeDomainData(master);
+    let peak = 0;
+    for (const v of master) peak = Math.max(peak, Math.abs(v));
+    levels.master = Math.max(peak, (levels.master ?? 0) * 0.88);
+    draw(stripEls.master.querySelector('.vu'), levels.master);
+    requestAnimationFrame(frame);
+  })();
 }
 
 // ---------- TR-909 ----------
@@ -1149,7 +1323,7 @@ function bindKits() {
   });
   $('#kit-export-all').addEventListener('click', async () => {
     toast(t('kit.exportingAll'));
-    const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr });
+    const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr, mix: state.mix });
     download(blob, `gabberkey-session-${stamp()}.apckit`);
     toast(t('kit.exportedAll'));
   });
@@ -1169,6 +1343,7 @@ function bindKits() {
         state.preset = kitData.preset ?? 0;
         engine.setVoice(PRESETS[state.preset]?.voice ?? {});
         if (kitData.bpm) setBpm(kitData.bpm);
+        if (kitData.mix) { state.mix = mergeMixState(kitData.mix); mixer.reload(); CHANNELS.forEach(renderFx); renderMixer(); }
         if (kitData.tr) { drum.stop(); state.tr = mergeTrState(kitData.tr); drum.setVolume(state.tr.globals.volume); renderTr(); }
       } else {
         if (state.banks[state.bank].some(Boolean) && !confirm(t('kit.confirmBank', { n: state.bank + 1 }))) return;
