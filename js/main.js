@@ -62,7 +62,7 @@ async function start() {
   await engine.resume();
   kit = await renderDefaultKit();
   await restore();
-  for (const [id, p] of Object.entries(state.globals)) engine.set(id, globalValue(id, p));
+  applyGlobals();
   engine.setBpm(state.bpm);
   engine.setVoice(presetById(state.preset).voice);
   engine.onPadState = onPadState;
@@ -120,6 +120,14 @@ function globalDef(id) {
   return ['synth', 'fx', 'eq'].map(p => PAGES[p].params.find(d => d.id === id)).find(Boolean);
 }
 function globalValue(id, p) { return toValue(globalDef(id), p); }
+
+// Applique les réglages globaux ; ceux qui n'existent plus (anciennes versions) sont retirés.
+function applyGlobals() {
+  for (const [id, p] of Object.entries(state.globals)) {
+    if (!globalDef(id) || !Number.isFinite(p)) { delete state.globals[id]; continue; }
+    engine.set(id, globalValue(id, p));
+  }
+}
 
 // ---------- Sauvegarde ----------
 
@@ -2262,7 +2270,7 @@ function bindKits() {
         if (!confirm(t('kit.confirmSession'))) return;
         for (let b = 0; b < BANKS; b++) replaceBank(b, await Promise.all((kitData.banks[b] ?? new Array(40).fill(null)).map(unpackPad)));
         Object.assign(state.globals, kitData.globals);
-        for (const [id, p] of Object.entries(state.globals)) engine.set(id, globalValue(id, p));
+        applyGlobals();
         state.preset = migratePreset(kitData.preset);
         synthFamily = presetById(state.preset).family;
         engine.setVoice(presetById(state.preset).voice);
