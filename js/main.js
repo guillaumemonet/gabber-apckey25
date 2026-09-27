@@ -8,6 +8,7 @@ import { packBanks, unpack } from './kits.js';
 import * as store from './storage.js';
 import { Workspace, mergeLayout } from './layout.js';
 import { Mixer, CHANNELS, MIX_FIELDS, FX_TYPES, MAX_FX, defaultMixState, mergeMixState, mixKnobDefs, newFx, fxParamLabel } from './mixer.js';
+import { StepSequencer, SEQ_TRACKS, SEQ_PATTERNS, ROLL_NOTES, defaultSeqState, mergeSeqState, patternUsed } from './sequencer.js';
 import { TR909, TR_INSTR, PATTERNS, trKnobDefs, defaultTrState, mergeTrState } from './tr909.js';
 import { t, soundName, translatePage } from './i18n.js';
 
@@ -18,7 +19,7 @@ const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (E
 const UI_PAGES = [...PAGE_ORDER, 'tr', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum, mixer, workspace;
+let engine, apc, kit, recorder, drum, mixer, workspace, seq;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -33,6 +34,8 @@ const state = {
   tr: defaultTrState(),   // TR-909 : réglages, patterns, instrument choisi
   mix: defaultMixState(), // table de mixage : voies, envois, effets d'insert
   layout: mergeLayout(null),   // position des panneaux sur la grille magnétique
+  seq: defaultSeqState(),      // séquenceur global : pistes de pads + piano roll du synthé
+  scenes: new Array(40).fill(null),   // 40 scènes (instantanés rappelés à la mesure suivante)
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -67,6 +70,11 @@ async function start() {
   drum.setVolume(state.tr.globals.volume);
   drum.onStep = onTrStep;
   drum.onPattern = () => { renderTr(); renderLeds(); save(); };
+  // Le séquenceur global suit l'horloge de la 909 : un seul transport pour tout.
+  seq = new StepSequencer(engine, () => state.seq, (b, i) => state.banks[b]?.[i], padKey);
+  seq.onPattern = () => { renderSeq(); renderLeds(); save(); };
+  drum.listeners.push((step, time, dur) => seq.schedule(step, time, dur));
+  drum.onStop = () => seq.stop();
   // Toutes les sources passent par la table de mixage avant le master.
   mixer = new Mixer(engine, () => state.mix);
   engine.padBus.disconnect();
@@ -86,6 +94,8 @@ async function start() {
   buildPerf();
   buildTr();
   buildMixer();
+  buildSeq();
+  buildScenes();
   bindKits();
   bindComputerKeyboard();
   drawMeter();
@@ -129,6 +139,8 @@ async function restore() {
     state.tr = mergeTrState(saved.tr);
     state.mix = mergeMixState(saved.mix);
     state.layout = mergeLayout(saved.layout);
+    state.seq = mergeSeqState(saved.seq);
+    state.scenes = mergeScenes(saved.scenes);
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
         const s = saved.banks?.[b]?.[i];
@@ -204,6 +216,8 @@ function save() {
       tr: state.tr,
       mix: state.mix,
       layout: state.layout,
+      seq: state.seq,
+      scenes: state.scenes,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
   }, 400);
@@ -252,6 +266,7 @@ function panic() {
   engine.rollOff();
   renderPerf();
   renderTr();
+  renderSeq();
   renderLeds();
 }
 
@@ -375,6 +390,7 @@ function bindController() {
   apc.addEventListener('roles', renderPorts);
 
   apc.addEventListener('pad', ({ detail: { index, pressed } }) => {
+    if (sceneMode) { if (pressed) { if (shiftHeld) captureScene(index); else launchScene(index); } return; }
     if (trMode) { if (pressed) trPad(index); return; }
     if (!pressed) return releasePad(index);
     if (shiftHeld) selectPad(index); else triggerPad(index);
@@ -399,10 +415,11 @@ function bindController() {
     if (name === 'play') { if (shiftHeld) toggleTrMode(); else toggleSeq(); return; }
     if (name.startsWith('scene')) {
       if (trMode) toggleTrMode(false);   // choisir une banque ramène la grille aux pads
+      if (sceneMode) toggleSceneMode(false);
       setBank(+name.slice(5) - 1 + (shiftHeld ? 5 : 0));
     }
     else if (name.startsWith('track')) setPage((shiftHeld ? MIX_PAGES : PAGE_ORDER)[+name.slice(5) - 1]);
-    else if (name === 'stopAll') panic();
+    else if (name === 'stopAll') { if (shiftHeld) toggleSceneMode(); else panic(); }
     else if (name === 'record') toggleRecording();
   });
 
@@ -412,6 +429,7 @@ function bindController() {
     // Maj + touche : choisir un preset au lieu de jouer.
     if (on && shiftHeld && PRESET_KEYS[note % 12] !== undefined) { applyPreset(PRESET_KEYS[note % 12]); return; }
     if (on) engine.noteOn(note, velocity); else engine.noteOff(note);
+    seqRecord(note, on);
     setPianoKey(note, on);
   });
 
@@ -454,7 +472,7 @@ $('#swap-roles').addEventListener('click', () => apc.swapRoles());
 function renderLeds() {
   if (!apc?.connected) return;
   const bank = state.banks[state.bank];
-  for (let i = 0; i < 40 && !trMode; i++) {
+  for (let i = 0; i < 40 && !trMode && !sceneMode; i++) {
     const pad = bank[i];
     const mode = playing.get(padKey(state.bank, i));
     let led = 'off';
@@ -472,6 +490,7 @@ function renderLeds() {
   apc.setButton(BTN.record, recorder?.recording ? 2 : 0);
   apc.setButton(BTN.play, drum?.running ? 1 : 0);
   if (trMode) renderTrLeds();
+  if (sceneMode) renderSceneLeds();
 }
 
 // ---------- Interface : pads ----------
@@ -771,6 +790,7 @@ function buildPiano() {
 
 function playNote(note, velocity, on) {
   if (on) engine.noteOn(note, velocity); else engine.noteOff(note);
+  seqRecord(note, on);
   setPianoKey(note, on);
 }
 
@@ -1028,12 +1048,15 @@ const trPattern = () => state.tr.patterns[state.tr.pattern];
 function toggleSeq() {
   drum.toggle();
   renderTr();
+  renderSeq();
   renderLeds();
 }
 
 function toggleTrMode(on = !trMode) {
   trMode = on;
   if (on) {
+    sceneMode = false;
+    renderScenes();
     if (state.page !== 'tr') pageBeforeTr = state.page;
     setPage('tr');
     toast(t('tr.modeOn'), 5000);
@@ -1063,6 +1086,14 @@ function cycleTrStep(id, step) {
 // Grille de l'APC en mode 909 : rangées 1-2 = 16 pas de l'instrument choisi, rangées 3-4 = instruments
 // puis Accent / Effacer / Muet, rangée 5 = patterns.
 function trPad(i) {
+  // Pads 31 / 32 : page 909 ou page des pistes du séquenceur.
+  if (i === 30 || i === 31) {
+    trPage = i === 30 ? '909' : 'seq';
+    toast(t(trPage === 'seq' ? 'seq.pageSeq' : 'seq.page909'), 3500);
+    renderLeds();
+    return;
+  }
+  if (trPage === 'seq') return seqPad(i);
   const sel = state.tr.sel;
   const row = trPattern()[sel];
   if (i < 16) {
@@ -1089,11 +1120,14 @@ function trPad(i) {
 
 function onTrStep(step) {
   trHead = step;
+  seqHead = step;
   renderTrHead();
+  renderSeqHead();
   if (trMode) renderTrLeds();
 }
 
 function renderTrLeds() {
+  if (trPage === 'seq') return renderSeqLeds();
   const GREEN = 21, RED = 5, YELLOW = 13;
   const sel = state.tr.sel;
   const pat = trPattern();
@@ -1109,8 +1143,8 @@ function renderTrLeds() {
   apc.setPad(27, YELLOW, trAccentMode ? 'on' : 'dim');
   apc.setPad(28, RED, 'dim');
   apc.setPad(29, RED, state.tr.mutes[sel] ? 'on' : 'dim');
-  apc.setPad(30, 0, 'off');
-  apc.setPad(31, 0, 'off');
+  apc.setPad(30, YELLOW, 'on');    // page 909 (active)
+  apc.setPad(31, GREEN, 'dim');    // page des pistes du séquenceur
   for (let k = 0; k < PATTERNS; k++) {
     const used = TR_INSTR.some(({ id }) => state.tr.patterns[k][id].some(Boolean));
     if (k === state.tr.pattern) apc.setPad(32 + k, RED, 'on');
@@ -1177,6 +1211,389 @@ function renderTr() {
 
 function renderTrHead() {
   trCells.forEach(row => row.forEach((cell, s) => cell.classList.toggle('head', s === trHead)));
+}
+
+// ---------- Séquenceur global ----------
+
+let trPage = '909';           // page de la grille APC en mode séquenceur : '909' ou 'seq'
+let seqRec = false;           // enregistrement du clavier dans la piste synthé
+const recStarts = new Map();  // note -> pas absolu de départ (enregistrement)
+const seqPattern = () => state.seq.patterns[state.seq.pattern];
+const seqPadCells = [];       // [piste][pas]
+let rollCells = [];           // [rangée][pas] ; rangée 0 = note la plus aiguë
+let rollDrag = null;          // note en cours d'allongement dans le piano roll
+let seqHead = -1;
+const BLACK_KEYS = new Set([1, 3, 6, 8, 10]);
+
+const trackPad = i => { const tr = state.seq.tracks[i]; return tr ? state.banks[tr.bank]?.[tr.pad] : null; };
+const noteName = n => `${t('notes')[n % 12]}${Math.floor(n / 12) - 1}`;
+
+function assignTrack(i, clear = false) {
+  if (clear) state.seq.tracks[i] = null;
+  else if (state.banks[state.bank][state.selected]) state.seq.tracks[i] = { bank: state.bank, pad: state.selected };
+  else { toast(t('seq.noPad'), 3500); return; }
+  state.seq.sel = i;
+  renderSeq();
+  renderLeds();
+  save();
+}
+
+function playTrack(i) {
+  const tr = state.seq.tracks[i];
+  const pad = trackPad(i);
+  if (pad?.buffer) engine.playPad(padKey(tr.bank, tr.pad), pad, { oneShot: true });
+}
+
+function previewNote(note) {
+  engine.noteOn(note, 0.8, undefined, 'preview');
+  setTimeout(() => engine.noteOff(note, false, undefined, 'preview'), 180);
+}
+
+// Enregistre au clavier dans la piste synthé, calé sur la grille (pendant la lecture).
+function seqRecord(note, on) {
+  if (!seqRec || !drum.running) return;
+  const idx = Math.round((engine.ctx.currentTime - engine.origin) / drum.stepDur());
+  if (on) { recStarts.set(note, idx); return; }
+  if (!recStarts.has(note)) return;
+  const start = recStarts.get(note);
+  recStarts.delete(note);
+  const step = ((start % 16) + 16) % 16;
+  const old = seq.noteAt(step, note);
+  if (old) seq.removeNote(old);
+  seq.addNote(step, note, Math.max(1, Math.min(16, idx - start)));
+  renderRoll();
+  save();
+}
+
+function shiftRoll(delta) {
+  state.seq.rollBase = Math.max(24, Math.min(84, state.seq.rollBase + delta));
+  buildRoll();
+  save();
+}
+
+function buildSeq() {
+  $('#seq-play').addEventListener('click', toggleSeq);
+  $('#seq-rec').addEventListener('click', () => { seqRec = !seqRec; recStarts.clear(); renderSeq(); });
+  $('#seq-up').addEventListener('click', () => shiftRoll(12));
+  $('#seq-down').addEventListener('click', () => shiftRoll(-12));
+  $('#seq-synth-mute').addEventListener('click', () => { state.seq.mutes.synth = !state.seq.mutes.synth; renderSeq(); save(); });
+  for (let k = 0; k < SEQ_PATTERNS; k++) {
+    const btn = document.createElement('button');
+    btn.textContent = k + 1;
+    btn.title = t('tr.pattern', { n: k + 1 });
+    btn.addEventListener('click', () => seq.selectPattern(k, drum.running));
+    $('#seq-patterns').appendChild(btn);
+  }
+  const grid = $('#seq-pads');
+  for (let i = 0; i < SEQ_TRACKS; i++) {
+    const name = document.createElement('button');
+    name.className = 'seq-name';
+    name.addEventListener('click', () => {
+      if (!state.seq.tracks[i]) return assignTrack(i);
+      playTrack(i);
+      state.seq.sel = i;
+      renderSeq();
+      renderLeds();
+    });
+    name.addEventListener('contextmenu', e => { e.preventDefault(); assignTrack(i, true); });
+    const assign = document.createElement('button');
+    assign.className = 'seq-assign';
+    assign.textContent = '↺';
+    assign.title = t('seq.assignBtn.title');
+    assign.addEventListener('click', () => assignTrack(i));
+    const mute = document.createElement('button');
+    mute.className = 'seq-mute';
+    mute.textContent = 'M';
+    mute.title = t('mix.mute');
+    mute.addEventListener('click', () => { state.seq.mutes[i] = !state.seq.mutes[i]; renderSeq(); renderLeds(); save(); });
+    grid.append(name, assign, mute);
+    seqPadCells[i] = [];
+    for (let s = 0; s < 16; s++) {
+      const cell = document.createElement('button');
+      cell.className = 'tr-cell' + (s % 4 === 0 ? ' beat' : '');
+      cell.addEventListener('click', () => {
+        const row = seqPattern().pads[i];
+        row[s] = (row[s] + 1) % 3;
+        renderSeq();
+        renderLeds();
+        save();
+      });
+      grid.appendChild(cell);
+      seqPadCells[i][s] = cell;
+    }
+  }
+  window.addEventListener('pointerup', () => { if (rollDrag) { rollDrag = null; save(); } });
+  buildRoll();
+}
+
+function buildRoll() {
+  const roll = $('#seq-roll');
+  roll.innerHTML = '';
+  rollCells = [];
+  for (let r = 0; r < ROLL_NOTES; r++) {
+    const note = state.seq.rollBase + ROLL_NOTES - 1 - r;
+    const black = BLACK_KEYS.has(note % 12);
+    const key = document.createElement('div');
+    key.className = 'roll-key' + (black ? ' black' : '');
+    key.textContent = noteName(note);
+    key.addEventListener('pointerdown', () => previewNote(note));
+    roll.appendChild(key);
+    rollCells[r] = [];
+    for (let s = 0; s < 16; s++) {
+      const cell = document.createElement('button');
+      cell.className = 'roll-cell' + (black ? ' black' : '') + (s % 4 === 0 ? ' beat' : '');
+      cell.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        const existing = seq.noteAt(s, note);
+        if (existing) { seq.removeNote(existing); rollDrag = null; }
+        else { rollDrag = seq.addNote(s, note); previewNote(note); }
+        renderRoll();
+        save();
+      });
+      cell.addEventListener('pointerenter', e => {
+        if (!rollDrag || !e.buttons || rollDrag.note !== note || s < rollDrag.step) return;
+        rollDrag.len = s - rollDrag.step + 1;
+        renderRoll();
+      });
+      roll.appendChild(cell);
+      rollCells[r][s] = cell;
+    }
+  }
+  $('#seq-oct').textContent = `${noteName(state.seq.rollBase)} – ${noteName(state.seq.rollBase + ROLL_NOTES - 1)}`;
+  renderRoll();
+}
+
+function renderRoll() {
+  rollCells.forEach((row, r) => {
+    const note = state.seq.rollBase + ROLL_NOTES - 1 - r;
+    row.forEach((cell, s) => {
+      const n = seq.noteAt(s, note);
+      cell.classList.toggle('n-on', !!n);
+      cell.classList.toggle('n-start', !!n && n.step === s);
+    });
+  });
+  renderSeqHead();
+}
+
+function renderSeq() {
+  const play = $('#seq-play');
+  play.textContent = drum.running ? t('tr.stop') : t('tr.play');
+  play.classList.toggle('active', drum.running);
+  $('#seq-rec').classList.toggle('active', seqRec);
+  $('#seq-synth-mute').classList.toggle('active', !!state.seq.mutes.synth);
+  [...$('#seq-patterns').children].forEach((btn, k) => {
+    btn.classList.toggle('active', k === state.seq.pattern);
+    btn.classList.toggle('queued', k === seq.queued);
+    btn.classList.toggle('used', patternUsed(state.seq.patterns[k]));
+  });
+  const pat = seqPattern();
+  const names = $('#seq-pads').querySelectorAll('.seq-name');
+  const mutes = $('#seq-pads').querySelectorAll('.seq-mute');
+  for (let i = 0; i < SEQ_TRACKS; i++) {
+    const pad = trackPad(i);
+    const tr = state.seq.tracks[i];
+    names[i].textContent = tr ? `${tr.bank + 1}·${tr.pad + 1}  ${pad?.name ?? '?'}` : t('seq.assign');
+    names[i].title = tr ? t('seq.trackTitle') : t('seq.assignBtn.title');
+    names[i].classList.toggle('empty', !tr);
+    names[i].classList.toggle('selected', i === state.seq.sel);
+    mutes[i].classList.toggle('active', !!state.seq.mutes[i]);
+    seqPadCells[i].forEach((cell, s) => {
+      cell.classList.toggle('on', pat.pads[i][s] === 1);
+      cell.classList.toggle('accent', pat.pads[i][s] === 2);
+    });
+  }
+  renderRoll();
+}
+
+function renderSeqHead() {
+  seqPadCells.forEach(row => row.forEach((cell, s) => cell.classList.toggle('head', s === seqHead)));
+  rollCells.forEach(row => row.forEach((cell, s) => cell.classList.toggle('head', s === seqHead)));
+}
+
+// Grille de l'APC, page « pistes du séquenceur » (pad 32 depuis la page 909).
+function seqPad(i) {
+  const sel = state.seq.sel;
+  const row = seqPattern().pads[sel];
+  if (i < 16) row[i] = row[i] ? 0 : (trAccentMode ? 2 : 1);
+  else if (i < 24) {
+    const k = i - 16;
+    if (shiftHeld) return assignTrack(k);
+    playTrack(k);
+    state.seq.sel = k;
+  } else if (i === 27) trAccentMode = !trAccentMode;
+  else if (i === 28) row.fill(0);
+  else if (i === 29) state.seq.mutes[sel] = !state.seq.mutes[sel];
+  else if (i >= 32) return seq.selectPattern(i - 32, drum.running);
+  else return;
+  renderSeq();
+  renderLeds();
+  save();
+}
+
+function renderSeqLeds() {
+  const GREEN = 21, RED = 5, YELLOW = 13;
+  const sel = state.seq.sel;
+  const pat = seqPattern();
+  for (let i = 0; i < 16; i++) {
+    const v = pat.pads[sel][i];
+    if (i === seqHead) apc.setPad(i, RED, 'on');
+    else apc.setPad(i, v === 2 ? YELLOW : v ? GREEN : 0, v ? 'dim' : 'off');
+  }
+  for (let k = 0; k < SEQ_TRACKS; k++) {
+    if (k === sel) apc.setPad(16 + k, YELLOW, 'on');
+    else if (state.seq.tracks[k]) apc.setPad(16 + k, state.seq.mutes[k] ? RED : GREEN, 'dim');
+    else apc.setPad(16 + k, 0, 'off');
+  }
+  for (const i of [24, 25, 26]) apc.setPad(i, 0, 'off');
+  apc.setPad(27, YELLOW, trAccentMode ? 'on' : 'dim');
+  apc.setPad(28, RED, 'dim');
+  apc.setPad(29, RED, state.seq.mutes[sel] ? 'on' : 'dim');
+  apc.setPad(30, GREEN, 'dim');
+  apc.setPad(31, YELLOW, 'on');
+  for (let k = 0; k < SEQ_PATTERNS; k++) {
+    if (k === state.seq.pattern) apc.setPad(32 + k, RED, 'on');
+    else if (k === seq.queued) apc.setPad(32 + k, YELLOW, 'blink');
+    else apc.setPad(32 + k, GREEN, patternUsed(state.seq.patterns[k]) ? 'dim' : 'off');
+  }
+}
+
+// ---------- Scènes ----------
+
+const SCENES = 40;
+let sceneMode = false;        // grille de l'APC = 40 scènes
+let sceneSaveMode = false;    // à l'écran : un clic enregistre au lieu de lancer
+let currentScene = null;
+let queuedScene = null;
+
+function mergeScenes(saved) {
+  const out = new Array(SCENES).fill(null);
+  if (Array.isArray(saved)) saved.slice(0, SCENES).forEach((s, i) => { out[i] = s ?? null; });
+  return out;
+}
+
+function toggleSceneMode(on = !sceneMode) {
+  sceneMode = on;
+  if (on) {
+    if (trMode) toggleTrMode(false);
+    toast(t('scene.modeOn'), 5000);
+  }
+  renderScenes();
+  renderLeds();
+}
+
+// Mémorise l'état actuel : boucles lancées, patterns, pistes muettes, mixeur, preset, tempo, lecture.
+function captureScene(n) {
+  state.scenes[n] = {
+    tr: { pattern: drum.queued ?? state.tr.pattern, mutes: { ...state.tr.mutes } },
+    seq: { pattern: seq.queued ?? state.seq.pattern, mutes: { ...state.seq.mutes } },
+    loops: [...engine.padVoices].filter(([, v]) => v.mode === 'loop').map(([k]) => k),
+    running: drum.running,
+    mix: Object.fromEntries(CHANNELS.map(id => {
+      const { vol, pan, delay, reverb, mute, solo } = state.mix.channels[id];
+      return [id, { vol, pan, delay, reverb, mute, solo }];
+    })),
+    preset: state.preset,
+    bpm: state.bpm,
+  };
+  currentScene = n;
+  toast(t('scene.saved', { n: n + 1 }));
+  renderScenes();
+  renderLeds();
+  save();
+}
+
+// Rappelle une scène : tout bascule au début de la mesure suivante.
+function launchScene(n) {
+  const sc = state.scenes[n];
+  if (!sc) { toast(t('scene.empty', { n: n + 1 }), 3500); return; }
+  const ctx = engine.ctx;
+  if (sc.bpm && sc.bpm !== state.bpm) setBpm(sc.bpm);
+  const busy = drum.running || [...engine.padVoices.values()].some(v => v.mode === 'loop');
+  const at = busy ? engine.nextBar() : ctx.currentTime;
+  queuedScene = n;
+  drum.selectPattern(sc.tr.pattern);
+  seq.selectPattern(sc.seq.pattern, drum.running);
+  for (const [key, v] of [...engine.padVoices]) {
+    if (v.mode === 'loop' && !sc.loops.includes(key)) engine.stopPad(key, 0.01, at);
+  }
+  for (const key of sc.loops) {
+    if (engine.padVoices.has(key)) continue;
+    const pad = state.banks[Math.floor(key / 40)]?.[key % 40];
+    if (pad?.buffer && engine.padMode(pad) === 'loop') engine.playPad(key, pad);   // démarre à la mesure suivante
+  }
+  if (sc.running && !drum.running) drum.start();
+  const apply = () => {
+    if (queuedScene !== n) return;   // une autre scène a été demandée entre-temps
+    state.tr.mutes = { ...sc.tr.mutes };
+    state.seq.mutes = { ...sc.seq.mutes };
+    for (const id of CHANNELS) if (sc.mix?.[id]) Object.assign(state.mix.channels[id], sc.mix[id]);
+    mixer.update();
+    renderMixer();
+    if (sc.preset !== undefined && sc.preset !== state.preset) applyPreset(sc.preset);
+    if (!sc.running && drum.running) drum.stop();
+    currentScene = n;
+    queuedScene = null;
+    renderScenes();
+    renderTr();
+    renderSeq();
+    renderLeds();
+    save();
+  };
+  setTimeout(apply, Math.max(0, (at - ctx.currentTime) * 1000 - 10));
+  renderScenes();
+  renderTr();
+  renderSeq();
+  renderLeds();
+}
+
+function clearScene(n) {
+  if (!state.scenes[n] || !confirm(t('scene.confirmClear', { n: n + 1 }))) return;
+  state.scenes[n] = null;
+  if (currentScene === n) currentScene = null;
+  renderScenes();
+  renderLeds();
+  save();
+}
+
+function renderSceneLeds() {
+  const GREEN = 21, RED = 5, YELLOW = 13;
+  for (let i = 0; i < SCENES; i++) {
+    if (i === queuedScene) apc.setPad(i, YELLOW, 'blink');
+    else if (i === currentScene) apc.setPad(i, RED, 'on');
+    else apc.setPad(i, GREEN, state.scenes[i] ? 'dim' : 'off');
+  }
+}
+
+const sceneEls = [];
+function buildScenes() {
+  $('#scene-save').addEventListener('click', () => { sceneSaveMode = !sceneSaveMode; renderScenes(); });
+  $('#scene-apc').addEventListener('click', () => toggleSceneMode());
+  const grid = $('#scenes');
+  // Même disposition que la grille de l'APC : scènes 1-8 en bas, 33-40 en haut.
+  for (let row = 4; row >= 0; row--) {
+    for (let col = 0; col < 8; col++) {
+      const n = row * 8 + col;
+      const btn = document.createElement('button');
+      btn.className = 'scene';
+      btn.addEventListener('click', e => { if (e.shiftKey || sceneSaveMode) captureScene(n); else launchScene(n); });
+      btn.addEventListener('contextmenu', e => { e.preventDefault(); clearScene(n); });
+      sceneEls[n] = btn;
+      grid.appendChild(btn);
+    }
+  }
+  renderScenes();
+}
+
+function renderScenes() {
+  $('#scene-save').classList.toggle('active', sceneSaveMode);
+  $('#scene-apc').classList.toggle('active', sceneMode);
+  sceneEls.forEach((btn, n) => {
+    const sc = state.scenes[n];
+    btn.innerHTML = `<b>${n + 1}</b><small>${sc ? t('scene.summary', { tr: sc.tr.pattern + 1, seq: sc.seq.pattern + 1, loops: sc.loops.length }) : ''}</small>`;
+    btn.classList.toggle('empty', !sc);
+    btn.classList.toggle('current', n === currentScene);
+    btn.classList.toggle('queued', n === queuedScene);
+  });
 }
 
 // ---------- Presets du synthé ----------
@@ -1332,7 +1749,7 @@ function bindKits() {
   });
   $('#kit-export-all').addEventListener('click', async () => {
     toast(t('kit.exportingAll'));
-    const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr, mix: state.mix });
+    const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr, mix: state.mix, seq: state.seq, scenes: state.scenes });
     download(blob, `gabberkey-session-${stamp()}.apckit`);
     toast(t('kit.exportedAll'));
   });
@@ -1352,6 +1769,8 @@ function bindKits() {
         state.preset = kitData.preset ?? 0;
         engine.setVoice(PRESETS[state.preset]?.voice ?? {});
         if (kitData.bpm) setBpm(kitData.bpm);
+        if (kitData.seq) { state.seq = mergeSeqState(kitData.seq); buildRoll(); renderSeq(); }
+        if (kitData.scenes) { state.scenes = mergeScenes(kitData.scenes); currentScene = null; renderScenes(); }
         if (kitData.mix) { state.mix = mergeMixState(kitData.mix); mixer.reload(); CHANNELS.forEach(renderFx); renderMixer(); }
         if (kitData.tr) { drum.stop(); state.tr = mergeTrState(kitData.tr); drum.setVolume(state.tr.globals.volume); renderTr(); }
       } else {

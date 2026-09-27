@@ -187,9 +187,10 @@ export class Engine {
   }
 
   // --- Synthé ---
-  makeVoice(f, velocity, fromFreq) {
+  // `when` : instant (horloge audio) de départ, pour les notes programmées par le séquenceur.
+  makeVoice(f, velocity, fromFreq, when) {
     const { ctx, values: p, voiceCfg: c } = this;
-    const t = ctx.currentTime;
+    const t = Math.max(ctx.currentTime, when ?? 0);
     const wave = WAVES[p.wave] || 'sawtooth';
 
     const filter = ctx.createBiquadFilter();
@@ -260,60 +261,60 @@ export class Engine {
     return { oscs, lfos, filter, amp, freq: f };
   }
 
-  glideVoice(voice, f) {
-    const t = this.ctx.currentTime;
+  glideVoice(voice, f, when) {
+    const t = Math.max(this.ctx.currentTime, when ?? 0);
     const time = Math.max(0.005, this.voiceCfg.glide);
     for (const o of voice.oscs) {
       const param = o.osc.frequency;
       param.cancelScheduledValues(t);
-      param.setValueAtTime(param.value, t);
-      param.exponentialRampToValueAtTime(f * o.ratio, t + time);
+      param.setTargetAtTime(f * o.ratio, t, time / 3);
     }
     voice.freq = f;
   }
 
-  releaseVoice(voice, rel) {
-    const t = this.ctx.currentTime;
+  releaseVoice(voice, rel, when) {
+    const t = Math.max(this.ctx.currentTime, when ?? 0);
     voice.amp.gain.cancelScheduledValues(t);
-    voice.amp.gain.setValueAtTime(voice.amp.gain.value, t);
     voice.amp.gain.setTargetAtTime(0, t, rel / 4);
     const end = t + rel * 1.5 + 0.05;
     for (const o of voice.oscs) o.osc.stop(end);
     for (const l of voice.lfos) l.stop(end);
   }
 
-  noteOn(note, velocity) {
+  // `when` : instant de départ (séquenceur) ; `key` : identifiant de la voix (le séquenceur
+  // utilise ses propres clés pour ne pas couper les notes jouées à la main).
+  noteOn(note, velocity, when, key = note) {
     const f = midiToFreq(note + this.voiceCfg.octave);
     if (this.voiceCfg.mono) {
       this.monoStack = this.monoStack.filter(n => n !== note).concat(note);
       const voice = this.voices.get('mono');
-      if (voice) this.glideVoice(voice, f);   // notes liées : glissé sans redéclencher
-      else this.voices.set('mono', this.makeVoice(f, velocity));
+      if (voice) this.glideVoice(voice, f, when);   // notes liées : glissé sans redéclencher
+      else this.voices.set('mono', this.makeVoice(f, velocity, undefined, when));
       return;
     }
-    this.noteOff(note, true);
-    this.voices.set(note, this.makeVoice(f, velocity));
+    this.noteOff(note, true, when, key);
+    this.voices.set(key, this.makeVoice(f, velocity, undefined, when));
   }
 
-  noteOff(note, immediate = false) {
+  noteOff(note, immediate = false, when, key = note) {
     if (this.voiceCfg.mono && !immediate) {
       this.monoStack = this.monoStack.filter(n => n !== note);
       const voice = this.voices.get('mono');
       if (!voice) return;
       if (this.monoStack.length) {
-        this.glideVoice(voice, midiToFreq(this.monoStack[this.monoStack.length - 1] + this.voiceCfg.octave));
+        this.glideVoice(voice, midiToFreq(this.monoStack[this.monoStack.length - 1] + this.voiceCfg.octave), when);
       } else {
         this.voices.delete('mono');
-        this.releaseVoice(voice, this.values.release);
+        this.releaseVoice(voice, this.values.release, when);
       }
       return;
     }
-    const voice = this.voices.get(note);
+    const voice = this.voices.get(key);
     if (!voice) return;
-    if (this.sustain && !immediate) { this.sustained.add(note); return; }
-    this.voices.delete(note);
-    this.sustained.delete(note);
-    this.releaseVoice(voice, immediate ? 0.01 : this.values.release);
+    if (this.sustain && !immediate && when === undefined) { this.sustained.add(key); return; }
+    this.voices.delete(key);
+    this.sustained.delete(key);
+    this.releaseVoice(voice, immediate ? 0.01 : this.values.release, when);
   }
 
   setSustain(on) {
@@ -435,14 +436,15 @@ export class Engine {
   padMode(pad) { return MODES[this.padValue(pad, 'mode')]; }
   syncRate(pad, mode) { return mode === 'loop' && pad.bpm ? this.bpm / pad.bpm : 1; }
 
-  playPad(index, pad) {
+  // opts : { when, vel, oneShot } — le séquenceur joue les pads à un instant précis, toujours en one-shot.
+  playPad(index, pad, opts = {}) {
     if (!pad?.buffer) return;
-    const mode = this.padMode(pad);
+    const mode = opts.oneShot ? 'oneshot' : this.padMode(pad);
     if (mode === 'loop' && this.padVoices.has(index)) { this.stopPad(index); return; }
-    this.stopPad(index, 0.005);
-
     const { ctx } = this;
-    const t = ctx.currentTime;
+    const t = Math.max(ctx.currentTime, opts.when ?? 0);
+    this.stopPad(index, 0.005, t);
+
     const src = ctx.createBufferSource();
     src.buffer = pad.buffer;
     const pitchRate = Math.pow(2, this.padValue(pad, 'pitch') / 12);
@@ -456,7 +458,7 @@ export class Engine {
     filter.type = 'lowpass';
     filter.frequency.value = this.padValue(pad, 'cutoff');
     const amp = ctx.createGain();
-    amp.gain.value = this.padValue(pad, 'volume');
+    amp.gain.value = this.padValue(pad, 'volume') * (opts.vel ?? 1);
     const pan = ctx.createStereoPanner();
     pan.pan.value = this.padValue(pad, 'pan');
     const dSend = ctx.createGain();
@@ -485,11 +487,11 @@ export class Engine {
     if (v && v.mode === 'hold') this.stopPad(index);
   }
 
-  stopPad(index, fade = 0.03) {
+  stopPad(index, fade = 0.03, when) {
     const v = this.padVoices.get(index);
     if (!v) return;
     this.padVoices.delete(index);
-    const t = this.ctx.currentTime;
+    const t = Math.max(this.ctx.currentTime, when ?? 0);
     v.amp.gain.cancelScheduledValues(t);
     v.amp.gain.setValueAtTime(v.amp.gain.value, t);
     v.amp.gain.linearRampToValueAtTime(0, t + fade);

@@ -14,10 +14,12 @@ export const DEFAULT_LAYOUT = {
   editor: { x: 8, y: 0, w: 4, h: null },
   knobs: { x: 0, y: 1, w: 12, h: null },
   perf: { x: 0, y: 2, w: 12, h: null },
-  tr: { x: 0, y: 3, w: 12, h: null },
-  mix: { x: 0, y: 4, w: 6, h: null },
-  piano: { x: 6, y: 4, w: 6, h: null },
-  monitor: { x: 0, y: 5, w: 12, h: 3 },
+  scenes: { x: 0, y: 3, w: 12, h: null },
+  tr: { x: 0, y: 4, w: 12, h: null },
+  seq: { x: 0, y: 5, w: 12, h: null },
+  mix: { x: 0, y: 6, w: 6, h: null },
+  piano: { x: 6, y: 6, w: 6, h: null },
+  monitor: { x: 0, y: 7, w: 12, h: 3 },
 };
 
 const collides = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;

@@ -118,6 +118,8 @@ export class TR909 {
     this.queued = null;
     this.onStep = () => {};      // (pas 0-15, ou -1 à l'arrêt)
     this.onPattern = () => {};   // changement de pattern effectué
+    this.listeners = [];         // autres séquenceurs calés sur la même horloge : (pas, instant, durée d'un pas)
+    this.onStop = () => {};
   }
 
   get st() { return this.getState(); }
@@ -314,6 +316,7 @@ export class TR909 {
     this.running = false;
     this.engine.seqRunning = false;
     clearInterval(this.timer);
+    this.onStop();
     this.onStep(-1);
   }
 
@@ -344,6 +347,7 @@ export class TR909 {
         const v = pat[id][step];
         if (v && !this.st.mutes[id]) this.trigger(id, time, v === 2 ? 1 : 1 - accent * 0.45);
       }
+      for (const listen of this.listeners) listen(step, time, this.stepDur());
       const delay = Math.max(0, (time - now) * 1000);
       setTimeout(() => { if (this.running) this.onStep(step); }, delay);
       this.idx++;

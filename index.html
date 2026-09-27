@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=8">
+  <link rel="stylesheet" href="css/style.css?v=9">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -108,6 +108,34 @@
       <div id="tr-grid" class="tr-grid"></div>
     </section>
 
+    <section class="seq-area" data-panel="seq">
+      <div class="section-title">
+        <h2 data-i18n="seq.title"></h2>
+        <button id="seq-play" class="primary"></button>
+        <div id="seq-patterns" class="segmented"></div>
+        <button id="seq-rec" data-i18n="seq.rec" data-i18n-title="seq.rec.title"></button>
+        <span class="hint" data-i18n="seq.hint"></span>
+      </div>
+      <div id="seq-pads" class="seq-grid"></div>
+      <div class="roll-head">
+        <b data-i18n="seq.synth"></b>
+        <button id="seq-synth-mute" data-i18n-title="mix.mute">M</button>
+        <button id="seq-down">▼</button><span id="seq-oct"></span><button id="seq-up">▲</button>
+        <span class="hint" data-i18n="seq.rollHint"></span>
+      </div>
+      <div id="seq-roll" class="roll"></div>
+    </section>
+
+    <section class="scenes-area" data-panel="scenes">
+      <div class="section-title">
+        <h2 data-i18n="scene.title"></h2>
+        <button id="scene-save" data-i18n="scene.saveMode" data-i18n-title="scene.saveMode.title"></button>
+        <button id="scene-apc" data-i18n="scene.apcMode" data-i18n-title="scene.apcMode.title"></button>
+        <span class="hint" data-i18n="scene.hint"></span>
+      </div>
+      <div id="scenes" class="scenes"></div>
+    </section>
+
     <section class="mix-area" data-panel="mix">
       <div class="section-title">
         <h2 data-i18n="mix.title"></h2>
@@ -139,22 +167,23 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/apc.js": "./js/apc.js?v=8",
-      "./js/audio.js": "./js/audio.js?v=8",
-      "./js/i18n.js": "./js/i18n.js?v=8",
-      "./js/kit.js": "./js/kit.js?v=8",
-      "./js/kits.js": "./js/kits.js?v=8",
-      "./js/layout.js": "./js/layout.js?v=8",
-      "./js/main.js": "./js/main.js?v=8",
-      "./js/mixer.js": "./js/mixer.js?v=8",
-      "./js/params.js": "./js/params.js?v=8",
-      "./js/presets.js": "./js/presets.js?v=8",
-      "./js/recorder.js": "./js/recorder.js?v=8",
-      "./js/storage.js": "./js/storage.js?v=8",
-      "./js/tr909.js": "./js/tr909.js?v=8"
+      "./js/apc.js": "./js/apc.js?v=9",
+      "./js/audio.js": "./js/audio.js?v=9",
+      "./js/i18n.js": "./js/i18n.js?v=9",
+      "./js/kit.js": "./js/kit.js?v=9",
+      "./js/kits.js": "./js/kits.js?v=9",
+      "./js/layout.js": "./js/layout.js?v=9",
+      "./js/main.js": "./js/main.js?v=9",
+      "./js/mixer.js": "./js/mixer.js?v=9",
+      "./js/params.js": "./js/params.js?v=9",
+      "./js/presets.js": "./js/presets.js?v=9",
+      "./js/recorder.js": "./js/recorder.js?v=9",
+      "./js/sequencer.js": "./js/sequencer.js?v=9",
+      "./js/storage.js": "./js/storage.js?v=9",
+      "./js/tr909.js": "./js/tr909.js?v=9"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=8"></script>
+  <script type="module" src="js/main.js?v=9"></script>
 </body>
 </html>

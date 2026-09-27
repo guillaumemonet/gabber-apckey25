@@ -11,6 +11,8 @@ GabberKey turns the Akai APC Key 25 (mk1 or mk2) into a standalone instrument. I
   - four **synthesised hardcore / gabber banks**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
 - **TR-909 emulation**: the 11 instruments synthesised live, with a per-instrument **distortion (drive + 5 shapes)** on the knobs and a 16-step sequencer (8 patterns) synced with the loops.
+- **Global sequencer**: 8 pad tracks and a synth piano roll, with live keyboard recording, on the same transport as the 909.
+- **Scenes**: 40 snapshots (loops, patterns, mixer, preset, tempo) recalled on the next bar, from the screen or the APC grid.
 - **Mixer**: one channel per tool (pads, synth, TR-909) with volume, pan, delay and reverb sends, mute / solo, meters and up to 4 insert effects (distortion, filter, compressor, reverb).
 - **Magnetic-grid workspace**: move and resize every tool panel; the layout is saved.
 - **Polyphonic synth** on the keyboard with 8 gabber presets: Hoover, Acid 303, Screech, Rave stab, Distorted bass, Horn, Tuned kick…
@@ -64,10 +66,11 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 | **SUSTAIN** | Opens / closes the EQ page (held: EQ while pressed) |
 | **Shift + piano key** | Synth preset: C Hoover, D Acid 303, E Screech, F Rave stab, G Dist. bass, A Horn, B Tuned kick, C# Init |
 | **Keyboard** | Plays the synth |
-| **PLAY** | Start / stop the TR-909 sequencer |
+| **PLAY** | Start / stop the transport (TR-909 + sequencer) |
 | **Shift + PLAY** | Turn the pad grid into the TR-909 (and back) |
 | **REC** | Start / stop recording (downloads a WAV) |
 | **STOP ALL CLIPS** | Stops everything |
+| **Shift + STOP ALL CLIPS** | Turn the pad grid into the 40 scenes (and back) |
 
 **LEDs**: a loaded pad shows its colour, and a playing pad is fully lit or blinks. The mk1 only has three colours (red, green, yellow), so the colour picker shows those three when an mk1 is connected.
 
@@ -114,6 +117,28 @@ Every instrument has its own distortion. The bass drum starts with a "Tube" driv
 | 5 | Patterns 1-8 |
 
 Pressing a SCENE LAUNCH button brings the grid back to the sampler pads.
+
+## Sequencer
+
+One transport for everything: **PLAY** (APC or ▶ on screen) starts the TR-909 and the sequencer together, on the same bar grid as the loops.
+
+- **8 pad tracks**: each one plays a pad from any bank. To assign one, select a pad (Shift + click on it), then click **↺** on the track. Click the track name to play and select it, right-click to clear it. Steps cycle note → accent → off, and each track has a mute.
+- **Synth track (piano roll)**, 2 octaves × 16 steps (▼ ▲ to change octave): click to add a note, drag to set its length, click a note to delete it. It plays with the current synth preset; with the mono presets (Acid 303, Dist. bass), overlapping notes slide.
+- **REC synth**: while playing, what you play on the keyboard is recorded into the synth track, on the grid.
+- **8 patterns**; a change waits for the next bar.
+- **APC**: in the 909 grid (Shift + PLAY), **pad 32** shows the sequencer pad tracks and **pad 31** goes back to the 909. On the tracks page, rows 1-2 are the steps of the selected track, row 3 the 8 tracks (Shift + track = assign the selected pad), then Accent / Clear / Mute, and row 5 the patterns.
+
+## Scenes
+
+40 scenes laid out like the APC grid (1-8 at the bottom). A scene stores:
+- the loops that are playing;
+- the TR-909 and sequencer patterns, and their muted tracks;
+- the mixer levels, pans, sends, mutes and solos;
+- the synth preset, the tempo, and whether the transport is playing.
+
+- **Launch**: click a scene. Everything switches **on the next bar**: new loops start, the others stop, patterns change and the mixer follows.
+- **Save** the current state: Shift + click, or turn on **Save mode**. Right-click clears a scene.
+- **APC**: **Shift + STOP ALL CLIPS** turns the pad grid into the 40 scenes. Pad = launch, Shift + pad = save, Shift + STOP ALL CLIPS again (or a SCENE LAUNCH button) to exit. LEDs: green = stored, red = current, blinking = waiting for the next bar.
 
 ## Mixer
 
@@ -202,7 +227,8 @@ css/style.css         styles
 js/main.js            UI and wiring
 js/apc.js             APC Key 25 detection, MIDI input, LEDs (mk1 + mk2)
 js/audio.js           audio engine: synth, sampler, effects, EQ, tempo
-js/tr909.js           TR-909 emulation and sequencer
+js/tr909.js           TR-909 emulation and sequencer (the clock)
+js/sequencer.js       global sequencer: pad tracks and piano roll
 js/mixer.js           mixer: channels, sends, insert effects
 js/layout.js          magnetic-grid workspace
 js/presets.js         synth presets

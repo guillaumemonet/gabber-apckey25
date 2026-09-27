@@ -11,6 +11,8 @@ GabberKey transforme l'Akai APC Key 25 (mk1 ou mk2) en instrument autonome. Il n
   - quatre **banques hardcore / gabber synthétisées** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, effets et boucles à 190 BPM ;
   - cinq banques d'échantillons **libres de droits (CC0)**.
 - **Émulation TR-909** : les 11 instruments synthétisés en direct, avec une **distorsion par instrument (drive + 5 formes)** sur les potentiomètres et un séquenceur 16 pas (8 patterns) calé sur les boucles.
+- **Séquenceur global** : 8 pistes de pads et un piano roll pour le synthé, avec enregistrement du clavier en direct, sur le même transport que la 909.
+- **Scènes** : 40 instantanés (boucles, patterns, mixeur, preset, tempo) rappelés à la mesure suivante, depuis l'écran ou la grille de l'APC.
 - **Table de mixage** : une voie par outil (pads, synthé, TR-909) avec volume, panoramique, envois delay et reverb, muet / solo, vumètres et jusqu'à 4 effets d'insert (distorsion, filtre, compresseur, reverb).
 - **Espace de travail en grille magnétique** : chaque panneau d'outil se déplace et se redimensionne ; la disposition est sauvegardée.
 - **Synthé polyphonique** au clavier, avec 8 presets gabber : Hoover, Acid 303, Screech, Stab rave, Basse distordue, Horn, Kick accordé…
@@ -64,10 +66,11 @@ L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert
 | **SUSTAIN** | Ouvre / ferme la page EQ (maintenu : EQ le temps de l'appui) |
 | **Maj + touche du piano** | Preset du synthé : do Hoover, ré Acid 303, mi Screech, fa Stab rave, sol Basse dist., la Horn, si Kick accordé, do# Init |
 | **Clavier** | Joue le synthé |
-| **PLAY** | Lancer / arrêter le séquenceur TR-909 |
+| **PLAY** | Lancer / arrêter le transport (TR-909 + séquenceur) |
 | **Maj + PLAY** | Transformer la grille de pads en TR-909 (et revenir) |
 | **REC** | Démarrer / arrêter l'enregistrement (télécharge un WAV) |
 | **STOP ALL CLIPS** | Coupe tout |
+| **Maj + STOP ALL CLIPS** | Transformer la grille de pads en 40 scènes (et revenir) |
 
 **LEDs** : un pad chargé prend sa couleur, et un son en cours est allumé à fond ou clignote. Le mk1 n'a que trois couleurs (rouge, vert, jaune), donc le sélecteur de couleur n'affiche que celles-là quand un mk1 est branché.
 
@@ -114,6 +117,28 @@ Chaque instrument a sa propre distorsion. La grosse caisse démarre avec une sat
 | 5 | Patterns 1 à 8 |
 
 Un appui sur un bouton SCENE LAUNCH ramène la grille aux pads du sampler.
+
+## Séquenceur
+
+Un seul transport pour tout : **PLAY** (APC, ou ▶ à l'écran) lance ensemble la TR-909 et le séquenceur, sur la même grille de mesures que les boucles.
+
+- **8 pistes de pads** : chacune joue un pad de n'importe quelle banque. Pour en assigner un, choisis un pad (Maj + clic dessus), puis clique sur **↺** sur la piste. Un clic sur le nom de la piste la joue et la sélectionne, un clic droit la vide. Les pas passent de note à accent puis à silence, et chaque piste a un bouton muet.
+- **Piste synthé (piano roll)**, 2 octaves × 16 pas (▼ ▲ pour changer d'octave) : clic pour ajouter une note, glisser pour régler sa longueur, clic sur une note pour la supprimer. Elle joue avec le preset du synthé en cours ; avec les presets mono (Acid 303, Basse dist.), les notes qui se chevauchent glissent.
+- **REC synthé** : pendant la lecture, ce que tu joues au clavier s'enregistre dans la piste synthé, calé sur la grille.
+- **8 patterns** ; un changement attend la mesure suivante.
+- **APC** : dans la grille 909 (Maj + PLAY), le **pad 32** affiche les pistes de pads du séquenceur et le **pad 31** revient à la 909. Sur la page des pistes, les rangées 1-2 sont les pas de la piste choisie, la rangée 3 les 8 pistes (Maj + piste = assigner le pad choisi), puis Accent / Effacer / Muet, et la rangée 5 les patterns.
+
+## Scènes
+
+40 scènes disposées comme la grille de l'APC (1-8 en bas). Une scène mémorise :
+- les boucles lancées ;
+- les patterns de la TR-909 et du séquenceur, et leurs pistes muettes ;
+- les niveaux, panoramiques, envois, muets et solos de la table de mixage ;
+- le preset du synthé, le tempo, et l'état lecture ou arrêt.
+
+- **Lancer** : clic sur une scène. Tout bascule **à la mesure suivante** : les nouvelles boucles démarrent, les autres s'arrêtent, les patterns changent et le mixeur suit.
+- **Enregistrer** l'état actuel : Maj + clic, ou active le **Mode enregistrement**. Un clic droit efface une scène.
+- **APC** : **Maj + STOP ALL CLIPS** transforme la grille de pads en 40 scènes. Pad = lancer, Maj + pad = enregistrer, Maj + STOP ALL CLIPS à nouveau (ou un bouton SCENE LAUNCH) pour revenir. LEDs : vert = enregistrée, rouge = en cours, clignotant = en attente de la mesure suivante.
 
 ## Table de mixage
 
@@ -202,7 +227,8 @@ css/style.css         styles
 js/main.js            interface et liaisons
 js/apc.js             détection de l'APC Key 25, lecture MIDI, LEDs (mk1 + mk2)
 js/audio.js           moteur audio : synthé, sampler, effets, EQ, tempo
-js/tr909.js           émulation TR-909 et séquenceur
+js/tr909.js           émulation TR-909 et séquenceur (l'horloge)
+js/sequencer.js       séquenceur global : pistes de pads et piano roll
 js/mixer.js           table de mixage : voies, envois, effets d'insert
 js/layout.js          espace de travail en grille magnétique
 js/presets.js         presets du synthé
