@@ -266,7 +266,7 @@ export class Engine {
 
   // `when` : instant (horloge audio) de départ, pour les notes programmées par la timeline.
   // `patch` : { cfg, values } d'un autre preset que celui en cours (blocs de nappes de la timeline).
-  makeVoice(f, velocity, fromFreq, when, patch) {
+  makeVoice(f, velocity, fromFreq, when, patch, out) {
     const { ctx } = this;
     const c = patch ? { ...DEFAULT_VOICE, ...patch.cfg } : this.voiceCfg;
     const p = patch ? { ...this.values, ...patch.values } : this.values;
@@ -346,7 +346,7 @@ export class Engine {
       lfos.push(lfo);
     }
 
-    filter.connect(amp).connect(this.synthIn);
+    filter.connect(amp).connect(out ?? this.synthIn);   // out : chaîne d'effets d'une piste de la timeline
     for (const o of oscs) o.osc.start(t);
     for (const l of lfos) l.start(t);
     return { oscs, lfos, filter, amp, vibGain, freq: f, patched: !!patch, release: p.release };
@@ -374,10 +374,10 @@ export class Engine {
 
   // `when` : instant de départ (séquenceur) ; `key` : identifiant de la voix (le séquenceur
   // utilise ses propres clés pour ne pas couper les notes jouées à la main).
-  noteOn(note, velocity, when, key = note, patch) {
+  noteOn(note, velocity, when, key = note, patch, out) {
     if (patch) {   // preset propre au bloc : toujours polyphonique
       this.noteOff(note, true, when, key);
-      this.voices.set(key, this.makeVoice(midiToFreq(note + (patch.cfg.octave ?? DEFAULT_VOICE.octave)), velocity, undefined, when, patch));
+      this.voices.set(key, this.makeVoice(midiToFreq(note + (patch.cfg.octave ?? DEFAULT_VOICE.octave)), velocity, undefined, when, patch, out));
       return;
     }
     const f = midiToFreq(note + this.voiceCfg.octave);
@@ -389,7 +389,7 @@ export class Engine {
       return;
     }
     this.noteOff(note, true, when, key);
-    this.voices.set(key, this.makeVoice(f, velocity, undefined, when));
+    this.voices.set(key, this.makeVoice(f, velocity, undefined, when, undefined, out));
   }
 
   noteOff(note, immediate = false, when, key = note) {
@@ -564,7 +564,7 @@ export class Engine {
     const rSend = ctx.createGain();
     rSend.gain.value = this.padValue(pad, 'rSend');
 
-    src.connect(filter).connect(amp).connect(pan).connect(this.padOut(pad) ?? this.padBus);
+    src.connect(filter).connect(amp).connect(pan).connect(opts.out ?? this.padOut(pad) ?? this.padBus);   // out : chaîne d'effets d'une piste
     pan.connect(dSend).connect(this.delayIn);
     pan.connect(rSend).connect(this.reverbIn);
 

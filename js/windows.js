@@ -28,25 +28,68 @@ export class WindowManager {
     this.onChange = onChange;
     this.onToggle = onToggle;
     this.z = 10;
+    this.active = null;         // fenêtre active (au premier plan)
+    this.onActive = () => {};
     this.els = Object.fromEntries(WINDOWS.map(id => [id, document.querySelector(`[data-win="${id}"]`)]).filter(([, el]) => el));
     for (const [id, el] of Object.entries(this.els)) this.bind(id, el);
     window.addEventListener('resize', () => this.applyAll());
     this.applyAll();
+    this.pickActive();
   }
 
   get st() { return this.getState(); }
   isOpen(id) { return !!this.st[id]?.open; }
 
   toggle(id, open = !this.isOpen(id)) {
+    if (open === this.isOpen(id)) { if (open) this.bring(id); return; }
     this.st[id].open = open;
     if (!open && this.helpId === id) this.closeHelp();
-    this.apply(id);
-    if (open) this.bring(id);
+    const el = this.els[id];
+    clearTimeout(el._animTimer);
+    el.classList.remove('win-in', 'win-out');
+    if (open) {
+      this.apply(id);
+      this.bring(id);
+      this.animate(el, 'win-in');
+    } else {
+      // Transition 3D de fermeture : la fenêtre reste affichée le temps de se replier.
+      el.classList.add('win-out');
+      el._animTimer = setTimeout(() => { el.classList.remove('win-out'); this.apply(id); }, this.reduced() ? 0 : 240);
+      if (this.active === id) this.pickActive();
+    }
     this.onToggle(id, open);
     this.onChange();
   }
 
-  bring(id) { this.els[id].style.zIndex = ++this.z; }
+  reduced() { return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches; }
+
+  animate(el, cls) {
+    if (this.reduced()) return;
+    el.classList.remove(cls);
+    void el.offsetWidth;   // relance l'animation
+    el.classList.add(cls);
+    el._animTimer = setTimeout(() => el.classList.remove(cls), 420);
+  }
+
+  // Fenêtre au premier plan = fenêtre active : bien visible (et, plus tard, celle que pilotent les commandes MIDI).
+  bring(id) {
+    this.els[id].style.zIndex = ++this.z;
+    this.setActive(id);
+  }
+
+  setActive(id) {
+    if (this.active === id) return;
+    this.active = id;
+    for (const [k, el] of Object.entries(this.els)) el.classList.toggle('active', k === id);
+    this.onActive(id);
+  }
+
+  // Après une fermeture : la fenêtre ouverte la plus en avant devient active.
+  pickActive() {
+    const open = Object.entries(this.els).filter(([k]) => this.isOpen(k));
+    open.sort((a, b) => (+b[1].style.zIndex || 0) - (+a[1].style.zIndex || 0));
+    this.setActive(open[0]?.[0] ?? null);
+  }
 
   applyAll() { for (const id of Object.keys(this.els)) this.apply(id); }
 

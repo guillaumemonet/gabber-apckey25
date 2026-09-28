@@ -17,6 +17,7 @@ import { PROGRESSIONS, parseProgression, voiceChords, bassNote } from './chords.
 import { Sidechain, SC_SOURCES, SC_DUCKED, defaultScState, mergeScState } from './sidechain.js';
 import { History } from './history.js';
 import { makeZip } from './zip.js';
+import { FX_TYPES as TFX_TYPES, FX_BANK, FX_FAMILY_COLORS, fxDefaults, bankName } from './trackfx.js';
 import { KICK_PARAMS, KICK_PRESETS, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
 import { Decks, DECK_IDS, DECK_KNOBS, deckKnobDefs, defaultDecksState, mergeDecksState, guessBpm, vinylTurns, rateFromSpin } from './decks.js';
 import { Acid303, ACID_PATTERNS, ACID_ROWS, ACID_BASE, ACID_PARAMS, acidKnobDefs, acidFmt, acidSteps, defaultAcidState, mergeAcidState, randomPattern } from './acid.js';
@@ -1562,12 +1563,16 @@ function buildTl() {
     const lane = document.createElement('div');
     lane.className = 'tl-lane';
     lane.dataset.track = i;
+    const fxLane = document.createElement('div');
+    fxLane.className = 'tl-fxlane';
+    fxLane.title = t('tfx.laneTitle');
+    lane.appendChild(fxLane);
     // Clic dans une case vide : pose le dernier son choisi dans la bibliothèque.
     lane.addEventListener('pointerdown', e => {
-      if (e.target !== lane || e.button !== 0) return;
+      if ((e.target !== lane && !e.target.classList.contains('tl-fxlane')) || e.button !== 0) return;
       if (!libSelected) { toast(t('tl.noItem'), 3000); return; }
       const target = tlTarget(e);
-      if (target) tlPlaceItem(libSelected, target.track, target.beat);
+      if (target) (libSelected.kind === 'fx' ? tlPlaceFx : tlPlaceItem)(libSelected, target.track, target.beat);
     });
     grid.append(head, lane);
   }
@@ -1576,7 +1581,10 @@ function buildTl() {
   line.id = 'tl-playhead';
   grid.appendChild(line);
   window.addEventListener('keydown', e => {
-    if ((e.key === 'Delete' || e.key === 'Backspace') && tlSel && !['INPUT', 'SELECT'].includes(e.target.tagName)) tlDelete(tlSel.track, tlSel.clip);
+    if ((e.key === 'Delete' || e.key === 'Backspace') && tlSel && !['INPUT', 'SELECT'].includes(e.target.tagName)) {
+      if (tlSel.fx) tlDeleteFx(tlSel.track, tlSel.fx); else tlDelete(tlSel.track, tlSel.clip);
+    }
+    if (e.key === 'Escape') closeFxEditor();
   });
   timeline.onStop = () => { renderTl(); renderLeds(); };
   const scroll = $('#tl-scroll');
@@ -1622,6 +1630,12 @@ function renderTl() {
     lane.classList.toggle('muted', st.tracks[i].mute);
     lane.querySelectorAll('.tl-clip').forEach(c => c.remove());
     for (const clip of st.tracks[i].clips) lane.appendChild(clipEl(i, clip));
+    const fxLane = lane.querySelector('.tl-fxlane');
+    fxLane.innerHTML = '';
+    const { rows, count } = fxRows(st.tracks[i].fx);
+    fxLane.style.height = `${count * FX_ROW}px`;
+    lane.style.height = `${38 + count * FX_ROW}px`;
+    for (const b of st.tracks[i].fx) fxLane.appendChild(fxEl(i, b, rows.get(b)));
   });
 }
 
@@ -1825,7 +1839,7 @@ async function loadDemo() {
   timeline.stop(true);
   setBpm(demo.bpm);
   const find = (bank, sound) => libManifest.banks.find(b => b.name === bank)?.pads.find(p => p?.name === sound);
-  const tracks = state.tl.tracks.map(() => ({ mute: false, clips: [] }));
+  const tracks = state.tl.tracks.map(() => ({ mute: false, clips: [], fx: [] }));
   const pending = [];
   demo.tracks.slice(0, tracks.length).forEach((list, i) => {
     for (const e of list) {
@@ -1886,7 +1900,7 @@ function buildLibrary() {
 function renderLibrary() {
   const list = $('#lib-list');
   if (!list || !kit) return;
-  const items = libraryItems({ manifest: libManifest, kit, banks: state.banks, tl: state.tl, userSounds: state.userSounds });
+  const items = [...libraryItems({ manifest: libManifest, kit, banks: state.banks, tl: state.tl, userSounds: state.userSounds }), ...fxItems()];
   const counts = Object.fromEntries(LIB_CATS.map(c => [c.id, items.filter(i => i.cat === c.id).length]));
   $('#lib-cats').innerHTML = '';
   for (const c of LIB_CATS) {
@@ -1904,8 +1918,10 @@ function renderLibrary() {
     const row = document.createElement('div');
     row.className = 'lib-item' + (libSelected?.sampleId === item.sampleId ? ' selected' : '');
     row.dataset.id = item.sampleId;
-    row.style.setProperty('--c', PALETTE[uiColor(catColor(item.cat))]);
-    row.innerHTML = `<i></i><span>${item.name}</span><small>${item.loop ? t('lib.bars', { n: item.bars || '↻' }) : t('lib.oneshot')}</small>`;
+    row.style.setProperty('--c', item.kind === 'fx' ? fxColor(item) : PALETTE[uiColor(catColor(item.cat))]);
+    const small = item.kind === 'fx' ? t(`tfx.family.${item.family}`) : item.loop ? t('lib.bars', { n: item.bars || '↻' }) : t('lib.oneshot');
+    row.innerHTML = `<i></i><span>${item.name}</span><small>${small}</small>`;
+    if (item.kind === 'fx') row.title = t('tfx.libTitle');
     row.addEventListener('pointerdown', e => startLibDrag(e, item));
     if (item.own) { row.title = t('lib.ownTitle'); row.addEventListener('contextmenu', e => { e.preventDefault(); removeUserSound(item); }); }
     list.appendChild(row);
@@ -1942,9 +1958,9 @@ function startLibDrag(e, item) {
     const deckEl = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.deck');
     for (const d of document.querySelectorAll('.deck.dragover')) if (d !== deckEl) d.classList.remove('dragover');
     deckEl?.classList.add('dragover');
-    target = deckEl ? { deck: deckEl.dataset.deck } : tlTarget(ev);
+    target = deckEl && item.kind !== 'fx' ? { deck: deckEl.dataset.deck } : tlTarget(ev);
     if (target && !target.deck) {
-      const bars = item.loop && item.bars ? item.bars : 1;
+      const bars = item.kind === 'fx' ? item.len / BEATS_PER_BAR : item.loop && item.bars ? item.bars : 1;
       Object.assign(drop.style, { left: `${target.beat * beatPx()}px`, width: `${bars * state.tl.zoom}px` });
       target.lane.appendChild(drop);
     } else drop.remove();
@@ -1955,10 +1971,10 @@ function startLibDrag(e, item) {
     drop.remove();
     ghost?.remove();
     libSelected = item;
-    if (!ghost) { previewSample(item); renderLibrary(); return; }
+    if (!ghost) { if (item.kind !== 'fx') previewSample(item); renderLibrary(); return; }
     for (const d of document.querySelectorAll('.deck.dragover')) d.classList.remove('dragover');
     if (target?.deck) loadDeck(target.deck, item);
-    else if (target) tlPlaceItem(item, target.track, target.beat);
+    else if (target) (item.kind === 'fx' ? tlPlaceFx : tlPlaceItem)(item, target.track, target.beat);
     renderLibrary();
   };
   window.addEventListener('pointermove', onMove);
@@ -2612,7 +2628,7 @@ function renderSidechain() {
 // ---------- Annuler / rétablir (timeline) ----------
 
 // Instantané de la timeline : pistes (muets et blocs) et longueur. La position de lecture n'en fait pas partie.
-const tlSnapshot = () => JSON.stringify({ bars: state.tl.bars, tracks: state.tl.tracks.map(tr => ({ mute: tr.mute, clips: tr.clips })) });
+const tlSnapshot = () => JSON.stringify({ bars: state.tl.bars, tracks: state.tl.tracks.map(tr => ({ mute: tr.mute, clips: tr.clips, fx: tr.fx })) });
 
 function initHistory() {
   tlHistory = new History(tlSnapshot, snap => {
@@ -3364,6 +3380,183 @@ function renderDecks() {
     }
   }
   $('#deck-xfade').value = state.decks.xfade;
+}
+
+// ---------- Effets de piste (timeline) ----------
+
+const FX_ROW = 16;            // hauteur d'une ligne d'effets (px)
+const fxColor = b => PALETTE[uiColor(FX_FAMILY_COLORS[TFX_TYPES[b.fx]?.family] ?? 49)];
+
+// Éléments de la banque d'effets, pour la bibliothèque.
+const fxItems = () => FX_BANK.map(b => ({ kind: 'fx', sampleId: `fx:${b.id}`, name: bankName(b), cat: 'tlfx', fx: b.fx, p: b.p ?? {}, len: b.len, family: TFX_TYPES[b.fx].family }));
+
+function tlPlaceFx(item, track, beat) {
+  const block = { id: crypto.randomUUID(), fx: item.fx, start: beat, len: item.len, p: { ...fxDefaults(item.fx), ...item.p }, name: item.name };
+  state.tl.tracks[track].fx.push(block);
+  growSong(block);
+  tlSel = { track, fx: block };
+  renderTl();
+  save();
+}
+
+function tlDeleteFx(track, block) {
+  const list = state.tl.tracks[track].fx;
+  list.splice(list.indexOf(block), 1);
+  if (tlSel?.fx === block) tlSel = null;
+  closeFxEditor();
+  renderTl();
+  save();
+}
+
+// Lignes d'effets d'une piste : les blocs qui se chevauchent s'empilent.
+function fxRows(blocks) {
+  const ends = [];
+  const rows = new Map();
+  for (const b of [...blocks].sort((a, c) => a.start - c.start)) {
+    let r = ends.findIndex(e => e <= b.start + 1e-6);
+    if (r < 0) { r = ends.length; ends.push(0); }
+    ends[r] = b.start + b.len;
+    rows.set(b, r);
+  }
+  return { rows, count: Math.max(1, ends.length) };
+}
+
+function fxEl(track, block, row) {
+  const bp = beatPx();
+  const el = document.createElement('div');
+  el.className = 'tl-fx' + (tlSel?.fx === block ? ' selected' : '');
+  el.style.left = `${block.start * bp}px`;
+  el.style.width = `${Math.max(6, block.len * bp - 1)}px`;
+  el.style.top = `${row * FX_ROW + 1}px`;
+  el.style.setProperty('--c', fxColor(block));
+  el.title = `${block.name} — ${t('tfx.clipTitle')}`;
+  const label = document.createElement('span');
+  label.textContent = block.name;
+  const grip = document.createElement('div');
+  grip.className = 'tl-grip';
+  el.append(label, grip);
+  el.addEventListener('contextmenu', e => { e.preventDefault(); tlDeleteFx(track, block); });
+  el.addEventListener('dblclick', e => { e.stopPropagation(); openFxEditor(track, block, el); });
+  el.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    e.stopPropagation();
+    const resizing = e.target === grip;
+    let target = block;
+    let where = track;
+    if (e.altKey && !resizing) {
+      target = { ...block, id: crypto.randomUUID(), p: { ...block.p } };
+      state.tl.tracks[track].fx.push(target);
+    }
+    tlSel = { track: where, fx: target };
+    const startX = e.clientX;
+    const origStart = target.start;
+    const origLen = target.len;
+    let moved = target !== block;
+    const onMove = ev => {
+      const dx = (ev.clientX - startX) / beatPx();
+      if (resizing) {
+        const len = Math.max(1, ev.shiftKey ? Math.round(origLen + dx) : Math.max(1, Math.round((origLen + dx) / BEATS_PER_BAR) * BEATS_PER_BAR || 1));
+        if (len === target.len) return;
+        target.len = len;
+      } else {
+        const start = Math.max(0, snapBeat(origStart + dx, ev.shiftKey));
+        const lane = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.tl-lane');
+        const to = lane ? +lane.dataset.track : where;
+        if (start === target.start && to === where) return;
+        target.start = start;
+        if (to !== where) {
+          const from = state.tl.tracks[where].fx;
+          from.splice(from.indexOf(target), 1);
+          state.tl.tracks[to].fx.push(target);
+          where = to;
+          tlSel = { track: where, fx: target };
+        }
+      }
+      moved = true;
+      renderTl();
+    };
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      if (moved) { growSong(target); save(); }
+      renderTl();
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  });
+  return el;
+}
+
+// Réglages d'un bloc d'effet (double-clic) : petite fenêtre posée sous le bloc.
+let fxEditing = null;
+function openFxEditor(track, block, anchor) {
+  closeFxEditor();
+  const def = TFX_TYPES[block.fx];
+  const box = document.createElement('div');
+  box.id = 'fx-editor';
+  box.className = 'fx-editor';
+  box.innerHTML = `<div class="fx-editor-head"><b></b><button class="win-close" title="${t('win.close')}">✕</button></div><div class="fx-editor-body"></div>`;
+  box.querySelector('b').textContent = block.name;
+  box.querySelector('b').style.color = fxColor(block);
+  box.querySelector('.win-close').addEventListener('click', closeFxEditor);
+  const body = box.querySelector('.fx-editor-body');
+  const params = Object.entries(def.params);
+  if (!params.length) body.innerHTML = `<p class="hint">${t('tfx.noParams')}</p>`;
+  for (const [k, [kind, , a, b, step]] of params) {
+    const row = document.createElement('label');
+    row.className = 'fx-param';
+    const name = document.createElement('span');
+    name.textContent = t(`tfxp.${k}`);
+    row.appendChild(name);
+    if (kind === 'select') {
+      const sel = document.createElement('select');
+      for (const v of a) sel.add(new Option(fxOptionLabel(k, v), v));
+      sel.value = block.p[k];
+      sel.addEventListener('change', () => { block.p[k] = typeof a[0] === 'number' ? +sel.value : sel.value; save(); });
+      row.appendChild(sel);
+    } else {
+      const inp = document.createElement('input');
+      Object.assign(inp, { type: 'range', min: a, max: b, step, value: block.p[k] });
+      const val = document.createElement('em');
+      const show = () => { val.textContent = fxValueLabel(k, block.p[k]); };
+      inp.addEventListener('input', () => { block.p[k] = +inp.value; show(); });
+      inp.addEventListener('change', save);
+      show();
+      row.append(inp, val);
+    }
+    body.appendChild(row);
+  }
+  document.body.appendChild(box);
+  const r = anchor.getBoundingClientRect();
+  const w = box.offsetWidth, h = box.offsetHeight;
+  box.style.left = `${Math.max(8, Math.min(window.innerWidth - w - 8, r.left))}px`;
+  box.style.top = `${r.bottom + h + 8 < window.innerHeight ? r.bottom + 6 : Math.max(8, r.top - h - 6)}px`;
+  fxEditing = { track, block, box };
+  setTimeout(() => window.addEventListener('pointerdown', fxOutside, true), 0);
+}
+
+function fxOutside(e) { if (fxEditing && !fxEditing.box.contains(e.target)) closeFxEditor(); }
+function closeFxEditor() {
+  window.removeEventListener('pointerdown', fxOutside, true);
+  fxEditing?.box.remove();
+  fxEditing = null;
+}
+
+function fxOptionLabel(k, v) {
+  if (k === 'pattern') return t(`pcf.${v}`);
+  if (k === 'mode') return v.toUpperCase();
+  if (k === 'div') return v === 6 ? '1/8 .' : `1/${v}`;
+  if (k === 'bars') return t('tfx.barsN', { n: v });
+  if (k === 'dir') return t(`tfx.dir.${v}`);
+  return String(v);
+}
+
+function fxValueLabel(k, v) {
+  if (['to', 'lo', 'hi', 'freq'].includes(k)) return v >= 1000 ? `${(v / 1000).toFixed(1)} kHz` : `${Math.round(v)} Hz`;
+  if (k === 'dec') return `${Math.round(v * 1000)} ms`;
+  if (['radius', 'distance', 'height'].includes(k)) return `${v} m`;
+  if (['reso', 'q'].includes(k)) return v.toFixed(1);
+  return `${Math.round(v * 100)}%`;
 }
 
 // ---------- Effets de performance ----------

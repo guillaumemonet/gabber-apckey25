@@ -145,6 +145,25 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
 - **Place**: drag a sound onto a track. It snaps to the start of the bar (hold **Shift** to place it on a beat). Clicking an empty cell places the last sound picked.
 - **Edit blocks**: drag a block to move it (to another bar or track), drag its **right edge** to lengthen or shorten it (a loop repeats to fill the block), **Alt + drag** copies it, **double-click** listens to it, **right-click** or **Delete** removes it. Each track has a mute.
 - **Undo / redo**: **↶ / ↷** in the toolbar, or **Ctrl+Z** / **Ctrl+Shift+Z** (or **Ctrl+Y**). Every change to the timeline can be undone (placed, moved, lengthened or deleted blocks, generated pads, recordings, demo loading…), up to 100 steps.
+
+### Track effects
+
+Each track has two parts: the **sounds** on top, and a thin **effects line** underneath. Drag an effect from the **Track FX** category of the library onto a track: it acts on **everything the track plays** (audio blocks, synth notes and chords, pad hits) **for the length of the block**, in time with the tempo. Effects add up: a fade in and a PCF at the same time both apply; overlapping effect blocks stack on several lines.
+
+- **Edit** an effect block like a sound block: drag it (Alt = copy), drag its right edge to change its length, right-click or **Delete** to remove it, **double-click** to open its settings.
+- **The effects bank** (30 effects, each with its own settings):
+
+| Family | Effects |
+|---|---|
+| Volume | Fade in, Fade out, Swell, Gate 1/8 and 1/16, Mute |
+| Filter | High-pass rise, Low-pass close, Wobble 1/4 and 1/8, **PCF** 1/8, 1/16, offbeat, gallop, 3-3-2, band-pass |
+| Space | Reverb throw, Delay throw (the echoes keep going after the block), Auto-pan |
+| Time | Stutter 1/8, 1/16, 1/32, Tape stop |
+| Saturation | Drive rise, Bitcrush rise |
+| 3D | 3D orbit, 3D fly-by, 3D zoom in / out, 3D spiral (binaural: best with headphones) |
+
+- **PCF** is a rhythmic filter: low-pass (LP) or band-pass (BP), whose envelope restarts on each active step of a 16-step **pattern** (1/8, 1/16, 1/4, offbeat, gallop, 3-3-2, roll), with **Frequency**, **Q**, **Amount** and **Decay**.
+- Everything is scheduled on the audio clock: effects stay in time, are undone with Ctrl+Z, and are included in the WAV export and the stems.
 - **Record by playing**: choose what to record, arm a track (●), set the playhead (click the ruler), then **● Rec** (or REC on the APC). The timeline plays (in a loop if Loop is on) and:
   - **Pads**: every pad hit becomes a block of that pad, where you hit it (snapped to the 16th note). The block replays the pad with its settings.
   - **Synth**: every note becomes a note block that **grows while you hold the key**; it replays with the current synth preset.
@@ -225,6 +244,7 @@ At the top of the mixer window. When it is **On**, every kick ducks the **synth*
 
 The bar under the header opens and closes the plugins: **Pads**, **Pad editor**, **TR-909**, **Synth** (keyboard and presets), **Knobs**, **Performance**, **Mixer**, **Scenes** and **MIDI monitor**. Each one opens in a window above the timeline:
 - Each window has a title bar: the **title** on the left, **?** and **✕** on the right.
+- The **active window** (in front) is highlighted; windows open and close with a 3D transition.
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.
 - **?** opens the **help** for the window's content, next to it (**?** again, ✕ or Esc closes it).
 - **✕** closes it; the windows you use are remembered with their position.
@@ -312,7 +332,7 @@ The interface follows the browser language: French if the browser is set to Fren
 
 ## Roadmap
 
-Everything planned so far is done (undo / redo, fast export, TB-303, kick designer, turntables). Ideas being considered next:
+Coming next: a **patch page** to wire tools and **effect boxes** freely (everything is wired to the master by default), and **several instances** of the TB-303 and TR-909, all in sync. Ideas being considered after that:
 
 - **MIDI learn**, to use other controllers (APC mini, APC40, any MIDI keyboard) and assign any button or knob;
 - an **online version**, playable without installing anything;
@@ -370,6 +390,7 @@ js/kickdesign.js      kick designer
 js/decks.js           turntables (two decks, crossfader)
 js/deck-worklet.js    variable-speed player for scratching
 js/timeline.js        timeline: tracks, blocks, playback
+js/trackfx.js         track effects (effects bank, PCF, 3D)
 js/mixer.js           mixer: channels, sends, insert effects
 js/sidechain.js       sidechain (kicks duck the synth and melodic sounds)
 js/library.js         sound library (categories)

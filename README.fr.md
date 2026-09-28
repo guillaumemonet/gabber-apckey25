@@ -145,6 +145,25 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
 - **Poser** : glisse un son sur une piste. Il se cale au début de la mesure (garde **Maj** enfoncée pour le poser sur un temps). Un clic dans une case vide pose le dernier son choisi.
 - **Modifier les blocs** : glisse un bloc pour le déplacer (vers une autre mesure ou une autre piste), tire son **bord droit** pour l'allonger ou le raccourcir (une boucle se répète pour remplir le bloc), **Alt + glisser** le copie, un **double-clic** l'écoute, un **clic droit** ou **Suppr** le retire. Chaque piste a un bouton muet.
 - **Annuler / rétablir** : **↶ / ↷** dans la barre, ou **Ctrl+Z** / **Ctrl+Maj+Z** (ou **Ctrl+Y**). Toute modification de la timeline peut être annulée (blocs posés, déplacés, allongés ou supprimés, nappes générées, enregistrements, chargement de la démo…), jusqu'à 100 étapes.
+
+### Effets de piste
+
+Chaque piste a deux parties : les **sons** en haut, et une fine **ligne d'effets** en dessous. Glisse un effet de la catégorie **Effets de piste** de la bibliothèque sur une piste : il agit sur **tout ce que joue la piste** (blocs audio, notes et accords du synthé, coups de pads) **pendant la durée du bloc**, calé sur le tempo. Les effets se cumulent : un fondu d'entrée et un PCF en même temps s'appliquent tous les deux ; les blocs d'effet qui se chevauchent s'empilent sur plusieurs lignes.
+
+- **Modifier** un bloc d'effet comme un bloc de son : le glisser (Alt = copie), tirer son bord droit pour changer sa longueur, clic droit ou **Suppr** pour le retirer, **double-clic** pour ouvrir ses réglages.
+- **La banque d'effets** (30 effets, chacun avec ses réglages) :
+
+| Famille | Effets |
+|---|---|
+| Volume | Fondu d'entrée, Fondu de sortie, Montée de volume, Gate 1/8 et 1/16, Coupure |
+| Filtre | Montée passe-haut, Fermeture passe-bas, Wobble 1/4 et 1/8, **PCF** 1/8, 1/16, contretemps, galop, 3-3-2, passe-bande |
+| Espace | Lancer de reverb, Lancer de delay (les échos continuent après le bloc), Auto-pan |
+| Temps | Stutter 1/8, 1/16, 1/32, Tape stop |
+| Saturation | Montée de distorsion, Montée de bitcrush |
+| 3D | Orbite 3D, Passage 3D, Zoom avant / arrière 3D, Spirale 3D (binaural : idéal au casque) |
+
+- Le **PCF** est un filtre rythmique : passe-bas (LP) ou passe-bande (BP), dont l'enveloppe repart à chaque pas actif d'un **motif** de 16 pas (1/8, 1/16, 1/4, contretemps, galop, 3-3-2, roulement), avec **Fréquence**, **Q**, **Quantité** et **Déclin**.
+- Tout est programmé sur l'horloge audio : les effets restent calés, s'annulent avec Ctrl+Z, et sont inclus dans l'export WAV et les stems.
 - **Enregistrer en jouant** : choisis ce qu'on enregistre, arme une piste (●), place la tête de lecture (clic sur la règle), puis **● Rec** (ou REC sur l'APC). La timeline joue (en boucle si Boucle est activé) et :
   - **Pads** : chaque coup de pad devient un bloc de ce pad, là où tu l'as frappé (calé à la double-croche). Le bloc rejoue le pad avec ses réglages.
   - **Synthé** : chaque note devient un bloc de note qui **s'allonge tant que tu tiens la touche** ; il rejoue avec le preset du synthé en cours.
@@ -225,6 +244,7 @@ En haut de la fenêtre de la table de mixage. Quand il est **Activé**, chaque k
 
 La barre sous l'en-tête ouvre et ferme les plugins : **Pads**, **Éditeur de pad**, **TR-909**, **Synthé** (clavier et presets), **Potards**, **Performance**, **Mixeur**, **Scènes** et **Moniteur MIDI**. Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
 - Chaque fenêtre a une barre de titre : le **titre** à gauche, **?** et **✕** à droite.
+- La **fenêtre active** (au premier plan) est mise en valeur ; les fenêtres s'ouvrent et se ferment avec une transition 3D.
 - **Déplace**-la par sa barre de titre, **redimensionne**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.
 - **?** ouvre l'**aide** du contenu de la fenêtre, à côté d'elle (**?** à nouveau, ✕ ou Échap la ferme).
 - **✕** la ferme ; les fenêtres utilisées sont mémorisées avec leur position.
@@ -312,7 +332,7 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 
 ## Feuille de route
 
-Tout ce qui était prévu est fait (annuler / rétablir, export rapide, TB-303, designer de kick, platines). Idées à l'étude pour la suite :
+Prochaine étape : une **page de câblage** pour relier librement les outils et des **boîtes à effets** (tout est câblé sur le master par défaut), et **plusieurs exemplaires** de la TB-303 et de la TR-909, tous synchronisés. Idées à l'étude ensuite :
 
 - le **MIDI learn**, pour utiliser d'autres contrôleurs (APC mini, APC40, n'importe quel clavier MIDI) et assigner n'importe quel bouton ou potard ;
 - une **version en ligne**, jouable sans rien installer ;
@@ -370,6 +390,7 @@ js/kickdesign.js      designer de kick
 js/decks.js           platines (deux decks, crossfader)
 js/deck-worklet.js    lecteur à vitesse variable pour le scratch
 js/timeline.js        timeline : pistes, blocs, lecture
+js/trackfx.js         effets de piste (banque d'effets, PCF, 3D)
 js/mixer.js           table de mixage : voies, envois, effets d'insert
 js/sidechain.js       sidechain (les kicks font baisser le synthé et les sons mélodiques)
 js/library.js         bibliothèque de sons (catégories)

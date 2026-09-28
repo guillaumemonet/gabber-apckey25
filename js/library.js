@@ -12,6 +12,7 @@ export const LIB_CATS = [
   { id: 'pad', color: 37 },
   { id: 'voice', color: 13 },
   { id: 'fx', color: 3 },
+  { id: 'tlfx', color: 49 },   // effets de piste de la timeline (js/trackfx.js)
   { id: 'mine', color: 21 },
   { id: 'rec', color: 53 },
 ];

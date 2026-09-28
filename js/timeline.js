@@ -7,6 +7,8 @@
 // { type: 'note', note, vel } rejoue une note du synthé (preset en cours) pendant `len` temps ;
 // avec `notes` (accord) et `preset`, le bloc joue plusieurs notes avec son propre preset (générateur de nappes).
 
+import { TrackChain, cleanFx } from './trackfx.js';
+
 export const TL_TRACKS = 16;
 export const BEATS_PER_BAR = 4;
 
@@ -18,7 +20,7 @@ export function defaultTlState() {
     playhead: 0,        // en temps (noires)
     source: 'pads',     // outil enregistré : pads, synth (blocs posés en jouant), tr (audio)
     armed: 0,           // piste qui reçoit l'enregistrement
-    tracks: Array.from({ length: TL_TRACKS }, () => ({ mute: false, clips: [] })),
+    tracks: Array.from({ length: TL_TRACKS }, () => ({ mute: false, clips: [], fx: [] })),   // fx : blocs d'effet de la piste (js/trackfx.js)
   };
 }
 
@@ -29,7 +31,11 @@ export function mergeTlState(saved) {
   base.bars = Math.max(base.bars, 16);
   if (!['pads', 'synth', 'tr'].includes(base.source)) base.source = 'pads';
   if (Array.isArray(saved.tracks)) {
-    base.tracks = base.tracks.map((tr, i) => ({ mute: !!saved.tracks[i]?.mute, clips: Array.isArray(saved.tracks[i]?.clips) ? saved.tracks[i].clips : [] }));
+    base.tracks = base.tracks.map((tr, i) => ({
+      mute: !!saved.tracks[i]?.mute,
+      clips: Array.isArray(saved.tracks[i]?.clips) ? saved.tracks[i].clips : [],
+      fx: Array.isArray(saved.tracks[i]?.fx) ? saved.tracks[i].fx.map(cleanFx).filter(Boolean) : [],
+    }));
   }
   return base;
 }
@@ -61,6 +67,9 @@ export class Timeline {
     this.getPatch = () => undefined;   // preset d'un bloc -> { cfg, values } ; branché par l'application
     this.offs = [];             // fins de notes programmées : { note, key, time }
     this.padHits = new Set();   // voix de pads programmées (coupées à l'arrêt)
+    this.chains = new Map();    // piste -> Map(destination -> TrackChain) : effets de piste
+    this.cycleChains = new Set();
+    this.cycle = null;          // cycle en cours de programmation : { time, beat, len, bd }
   }
 
   get st() { return this.getState(); }
@@ -94,8 +103,10 @@ export class Timeline {
     if (this.cycles.length > 3) this.cycles.shift();
     const bd = this.beatDur;
     const endTime = time + (len - beat) * bd;
-    for (const track of st.tracks) {
-      if (track.mute) continue;
+    this.cycle = { time, beat, len, bd, until: st.loop && !this.recording ? len : Infinity };
+    this.cycleChains.clear();
+    st.tracks.forEach((track, ti) => {
+      if (track.mute) return;
       for (const clip of track.clips) {
         if (clip.type === 'pad' || clip.type === 'note') {
           // Un coup à moitié passé n'est pas rejoué.
@@ -105,7 +116,7 @@ export class Timeline {
             const pad = this.getPad(clip.bank, clip.pad);
             const key = this.padKey(clip.bank, clip.pad);
             if (pad?.buffer) {
-              this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1 });
+              this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1, out: this.trackIn(ti, this.engine.padOut(pad) ?? this.engine.padBus) });
               this.padHits.add(key);
               if (this.isKickPad(pad)) this.onKick(when);
             }
@@ -114,7 +125,7 @@ export class Timeline {
             const patch = clip.preset ? this.getPatch(clip.preset) : undefined;
             notes.forEach((note, k) => {
               const key = k ? `tl:${clip.id}:${k}` : `tl:${clip.id}`;
-              this.engine.noteOn(note, clip.vel ?? 0.85, when, key, patch);
+              this.engine.noteOn(note, clip.vel ?? 0.85, when, key, patch, this.trackIn(ti, this.engine.synthIn));
               this.offs.push({ note, key, time: when + clip.len * bd - 0.005 });
             });
           }
@@ -133,7 +144,12 @@ export class Timeline {
         if (clip.loop) { src.loop = true; src.loopStart = 0; src.loopEnd = buf.duration; }
         const gain = this.ctx.createGain();
         const level = clip.gain ?? 1;
-        src.connect(gain).connect(this.duckOutput && this.isDucked(clip) ? this.duckOutput : this.output);
+        src.connect(gain);
+        // Un son mono est centré ici (même loi que le panoramique du mixeur) : son niveau ne change pas
+        // quand un effet de piste stéréo (3D, auto-pan…) fait passer la chaîne de la piste en stéréo.
+        let node = gain;
+        if (buf.numberOfChannels === 1) { node = this.ctx.createStereoPanner(); gain.connect(node); }
+        node.connect(this.trackIn(ti, this.duckOutput && this.isDucked(clip) ? this.duckOutput : this.output));
         const when = time + Math.max(0, clip.start - beat) * bd;
         let stopAt = time + (end - beat) * bd;
         if (st.loop && !this.recording) stopAt = Math.min(stopAt, endTime);
@@ -146,12 +162,35 @@ export class Timeline {
         src.onended = () => { this.sources = this.sources.filter(s => s.src !== src); };
         this.sources.push({ src, gain });
       }
-    }
+    });
     clearTimeout(this.timer);
     if (this.recording) return;   // l'enregistrement continue au-delà de la fin
     const lead = (endTime - this.ctx.currentTime - 0.25) * 1000;
     if (st.loop) this.timer = setTimeout(() => { if (this.playing) this.scheduleCycle(endTime, 0); }, Math.max(0, lead));
     else this.timer = setTimeout(() => this.stop(), Math.max(0, (endTime - this.ctx.currentTime) * 1000));
+  }
+
+  // Entrée de la piste `ti` vers la destination `dest` : sa chaîne d'effets si elle en a, sinon la destination.
+  // Une chaîne vue pour la première fois dans le cycle reçoit la programmation de ses blocs d'effet.
+  trackIn(ti, dest) {
+    const blocks = this.st.tracks[ti]?.fx;
+    if (!blocks?.length || !dest) return dest;
+    if (!this.chains.has(ti)) this.chains.set(ti, new Map());
+    const m = this.chains.get(ti);
+    let chain = m.get(dest);
+    if (!chain) { chain = new TrackChain(this.ctx, this.engine, dest); m.set(dest, chain); }
+    if (!this.cycleChains.has(chain)) {
+      this.cycleChains.add(chain);
+      chain.sync(blocks);
+      const { time, beat, bd, until } = this.cycle;
+      for (const b of blocks) {
+        const s = Math.max(b.start, beat);
+        const e = Math.min(b.start + b.len, until);
+        if (e <= s) continue;
+        chain.play(b, time + (s - beat) * bd, time + (e - beat) * bd, bd);
+      }
+    }
+    return chain.input;
   }
 
   // Kicks d'un bloc audio entre le temps `beat` (joué à l'instant `time`) et `until` (en temps de la timeline).
@@ -200,6 +239,7 @@ export class Timeline {
       src.stop(t + 0.05);
     }
     this.sources = [];
+    for (const m of this.chains.values()) for (const c of m.values()) c.reset();
     this.onHalt();
     const was = this.playing;
     this.playing = false;
