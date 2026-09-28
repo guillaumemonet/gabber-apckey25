@@ -4174,6 +4174,736 @@
      ]
     }
    ]
+  },
+  {
+   "name": "Melodies",
+   "pads": [
+    {
+     "file": "bank13/01.flac",
+     "name": "Hoover anthem",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/02.flac",
+     "name": "Hoover dark",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/03.flac",
+     "name": "Screech theme",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/04.flac",
+     "name": "Screech gallop",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/05.flac",
+     "name": "Horn theme",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/06.flac",
+     "name": "Dark lead run",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/07.flac",
+     "name": "Mentasm theme",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/08.flac",
+     "name": "Acid line",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/09.flac",
+     "name": "Piano theme",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/10.flac",
+     "name": "Piano chords",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/11.flac",
+     "name": "String theme",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/12.flac",
+     "name": "Staccato run",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/13.flac",
+     "name": "Bells theme",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/14.flac",
+     "name": "Choir theme",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/15.flac",
+     "name": "Pluck arp",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/16.flac",
+     "name": "Supersaw theme",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/17.flac",
+     "name": "Hoover hook",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank13/18.flac",
+     "name": "Screech hook",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank13/19.flac",
+     "name": "Stab hook",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank13/20.flac",
+     "name": "Piano hook",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank13/21.flac",
+     "name": "Pluck hook",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank13/22.flac",
+     "name": "Dark lead hook",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank13/23.flac",
+     "name": "Horn hook",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank13/24.flac",
+     "name": "Bells hook",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "bank13/25.flac",
+     "name": "Epic pads",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/26.flac",
+     "name": "String pads dark",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/27.flac",
+     "name": "Stab chords",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/28.flac",
+     "name": "Choir pads",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/29.flac",
+     "name": "Arp epic",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/30.flac",
+     "name": "Arp dark",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/31.flac",
+     "name": "Offbeat bass line",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/32.flac",
+     "name": "Reese line",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/33.flac",
+     "name": "Theme epic",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/34.flac",
+     "name": "Theme dark",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/35.flac",
+     "name": "Theme andalusian",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/36.flac",
+     "name": "Theme euphoric",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/37.flac",
+     "name": "Theme piano",
+     "color": 21,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/38.flac",
+     "name": "Theme horn",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/39.flac",
+     "name": "Theme bells",
+     "color": 21,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "bank13/40.flac",
+     "name": "Theme acid",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    }
+   ]
+  },
+  {
+   "name": "Hardstyle melodies",
+   "pads": [
+    {
+     "file": "bank14/01.flac",
+     "name": "Euphoric theme 1",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/02.flac",
+     "name": "Euphoric theme 2",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/03.flac",
+     "name": "Euphoric theme 3",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/04.flac",
+     "name": "Euphoric theme 4",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/05.flac",
+     "name": "Euphoric gallop",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/06.flac",
+     "name": "Euphoric offbeat",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/07.flac",
+     "name": "Euphoric hook",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 2
+    },
+    {
+     "file": "bank14/08.flac",
+     "name": "Euphoric run",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/09.flac",
+     "name": "Raw screech theme",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/10.flac",
+     "name": "Raw screech gallop",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/11.flac",
+     "name": "Raw screech hook",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 2
+    },
+    {
+     "file": "bank14/12.flac",
+     "name": "Raw screech long",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/13.flac",
+     "name": "Raw lead run",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/14.flac",
+     "name": "Raw lead hook",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 2
+    },
+    {
+     "file": "bank14/15.flac",
+     "name": "Raw hoover theme",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/16.flac",
+     "name": "Raw stab hook",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 150,
+     "bars": 2
+    },
+    {
+     "file": "bank14/17.flac",
+     "name": "Pluck theme",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/18.flac",
+     "name": "Pluck run",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/19.flac",
+     "name": "Pluck arp",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/20.flac",
+     "name": "Piano intro",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/21.flac",
+     "name": "Piano theme",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/22.flac",
+     "name": "Bells intro",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/23.flac",
+     "name": "Choir theme",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/24.flac",
+     "name": "String theme",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/25.flac",
+     "name": "Euphoric chords",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/26.flac",
+     "name": "Epic chords",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/27.flac",
+     "name": "Stab chords",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/28.flac",
+     "name": "Piano chords",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/29.flac",
+     "name": "Choir pads",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/30.flac",
+     "name": "String pads",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/31.flac",
+     "name": "Reverse bass line",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/32.flac",
+     "name": "Reverse bass epic",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/33.flac",
+     "name": "Anthem 1",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/34.flac",
+     "name": "Anthem 2",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/35.flac",
+     "name": "Anthem 3",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/36.flac",
+     "name": "Raw anthem",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/37.flac",
+     "name": "Raw anthem 2",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/38.flac",
+     "name": "Pluck anthem",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/39.flac",
+     "name": "Piano anthem",
+     "color": 21,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank14/40.flac",
+     "name": "Hoover anthem",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    }
+   ]
   }
  ]
 }

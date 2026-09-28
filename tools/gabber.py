@@ -806,7 +806,8 @@ def build(bpm=190):
           for nm, n in zip(['F', 'G', 'G#', 'A#', 'C', 'C#', 'D#', 'F+'], [65, 67, 68, 70, 72, 73, 75, 77])],
     ]
     return [('Gabber', bank1), ('Gabber 2', bank2), ('Hardcore', build_hardcore(bpm)), ('Oldschool', build_oldschool(bpm)),
-            ('Mainstream', build_mainstream(bpm)), ('New wave', build_newwave(bpm)), ('Hardstyle', build_hardstyle(150), 150)]
+            ('Mainstream', build_mainstream(bpm)), ('New wave', build_newwave(bpm)), ('Hardstyle', build_hardstyle(150), 150),
+            ('Melodies', build_melodies(bpm)), ('Hardstyle melodies', build_hardstyle_melodies(150), 150)]
 
 
 def build_oldschool(bpm=190):
@@ -1447,3 +1448,296 @@ def build_hardstyle(bpm=150):
         ('Full drop', GREEN, LOOP, mix(revbass_prog, np.tile(claps, 4) * 0.8, np.tile(offhat, 4) * 0.6, lead4 * 0.55, pads * 0.3), 4),
     ]
     return bank
+
+
+# ---------------------------------------------------------------- mélodies (compositeur + deux banques)
+# Un petit compositeur : un motif rythmique typique, décliné sur chaque accord d'une suite en visant les notes
+# de l'accord sur les temps forts, avec une cadence sur la tonique. Chaque mélodie a sa graine : reproductible.
+
+MINOR_PCS = [5, 7, 8, 10, 0, 1, 3]            # fa mineur : fa sol lab sib do réb mib
+CHORD_NOTES = {'Fm': [65, 68, 72], 'Db': [61, 65, 68], 'Eb': [63, 67, 70], 'Cm': [60, 63, 67], 'Ab': [60, 63, 68],
+               'Bbm': [61, 65, 70], 'C': [60, 64, 67], 'Gdim': [62, 65, 68]}
+PROGS = {'epic': ['Fm', 'Db', 'Eb', 'Cm'], 'euphoric': ['Fm', 'Db', 'Ab', 'Eb'], 'dark': ['Fm', 'Bbm', 'Db', 'C'], 'andalusian': ['Fm', 'Eb', 'Db', 'C']}
+ROOT_NOTE = {'Fm': 41, 'Db': 37, 'Eb': 39, 'Cm': 36, 'Ab': 44, 'Bbm': 46, 'C': 36, 'Gdim': 43}
+# Rythmes d'une mesure : (pas de double-croche, durée en pas).
+RHYTHMS = {
+    'eighths': [(k, 2) for k in range(0, 16, 2)],
+    'gabber': [(0, 3), (3, 3), (6, 2), (8, 3), (11, 3), (14, 2)],
+    'anthem': [(0, 4), (4, 2), (6, 2), (8, 4), (12, 2), (14, 2)],
+    'offbeat': [(2, 2), (6, 2), (10, 2), (14, 2)],
+    'gallop': [(0, 1), (1, 2), (3, 1), (4, 1), (5, 2), (7, 1), (8, 1), (9, 2), (11, 1), (12, 1), (13, 2), (15, 1)],
+    'sixteenths': [(k, 1) for k in range(16)],
+    'long': [(0, 6), (6, 2), (8, 6), (14, 2)],
+    'hook': [(0, 2), (2, 1), (3, 3), (6, 2), (8, 2), (10, 1), (11, 3), (14, 2)],
+    'dotted': [(0, 3), (3, 3), (6, 3), (9, 3), (12, 4)],
+}
+
+
+def chord_pcs(name):
+    return [n % 12 for n in CHORD_NOTES[name]]
+
+
+def scale_pcs(name):
+    # Sur l'accord de do majeur (mineur harmonique), le mib devient mi.
+    return [4 if (name == 'C' and pc == 3) else pc for pc in MINOR_PCS]
+
+
+def nearest(n, pcs, prefer=0):
+    for d in (0, prefer or -1, -(prefer or -1), 1, -1, 2, -2, 3, -3):
+        if (n + d) % 12 in pcs:
+            return n + d
+    return n
+
+
+def scale_step(n, k, pcs):
+    """Déplace la note de k degrés de la gamme."""
+    ring = sorted(set(pcs))
+    n = nearest(n, pcs)
+    for _ in range(abs(k)):
+        d = 1 if k > 0 else -1
+        n += d
+        while n % 12 not in ring:
+            n += d
+    return n
+
+
+def compose(seed, prog, rhythm, lo=64, hi=84, bars=None, cadence=True):
+    """Mélodie sur une suite d'accords (une mesure par accord) : liste de (pas, note, durée en pas)."""
+    r = np.random.default_rng(seed)
+    chords = PROGS[prog] if isinstance(prog, str) else prog
+    if bars:
+        chords = chords[:bars]
+    rh = RHYTHMS[rhythm]
+    contour = [0] + list(r.choice([-2, -1, 1, 2, 0, 3, -3], size=len(rh) - 1, p=[.16, .26, .24, .14, .08, .06, .06]))
+    cur = int(r.choice([t for t in CHORD_NOTES[chords[0]] + [n + 12 for n in CHORD_NOTES[chords[0]]] if lo <= t <= hi] or [72]))
+    out = []
+    for b, name in enumerate(chords):
+        pcs, tones = scale_pcs(name), chord_pcs(name)
+        flip = -1 if b == 2 else 1   # 3e mesure : le motif est renversé (question / réponse)
+        for i, (st, du) in enumerate(rh):
+            if i == 0 and b > 0:
+                cur = nearest(cur, tones)
+            elif i > 0:
+                cur = scale_step(cur, int(contour[i]) * flip, pcs)
+            if st in (0, 8):
+                cur = nearest(cur, tones)
+            while cur > hi: cur -= 12
+            while cur < lo: cur += 12
+            out.append([b * 16 + st, cur, du])
+    if cadence and out:
+        # Cadence : la dernière note devient la tonique (ou la quinte) et tient jusqu'à la fin.
+        last = out[-1]
+        target = 65 if abs(last[1] - 65) <= abs(last[1] - 77) else 77
+        if chords[-1] in ('C', 'Eb'):
+            target = 72 if lo <= 72 <= hi else target   # sur la dominante : on reste sur do
+        while target > hi: target -= 12
+        while target < lo: target += 12
+        last[1] = target
+        last[2] = len(chords) * 16 - last[0]
+    return [tuple(x) for x in out]
+
+
+def arpeggio(prog, pattern=(0, 1, 2, 1), octave=12, per_bar=16):
+    """Arpège des notes de chaque accord en doubles-croches."""
+    out = []
+    for b, name in enumerate(PROGS[prog]):
+        notes = CHORD_NOTES[name] + [CHORD_NOTES[name][0] + 12]
+        for k in range(per_bar):
+            out.append((b * 16 + k, notes[pattern[k % len(pattern)]] + octave - 12, 1))
+    return out
+
+
+def _instrument(kind, bpm):
+    """Fabrique d'un instrument : (note, durée en s) -> signal, avec cache des notes déjà calculées."""
+    cache = {}
+    make = {
+        'hoover': lambda n, d: hoover(n, d, bend=False),
+        'screech': lambda n, d: screech(n, max(d, 0.14), rate=bpm / 20),   # notes très courtes : l'enveloppe a besoin d'un minimum
+        'rawscreech': lambda n, d: raw_screech(n, max(d, 0.14), rate=bpm / 16),
+        'darklead': lambda n, d: dark_lead(n, max(d, 0.1)),
+        'supersaw': lambda n, d: supersaw([n], d, attack=0.005, release=0.12, cutoff=7000, verb=0.18),
+        'pluck': lambda n, d: supersaw([n], max(d, 0.12), release=0.12, verb=0.15, pluck=True),
+        'piano': lambda n, d: rave_piano([n], max(d, 0.6), verb=0.2),
+        'bells': lambda n, d: bell([n], max(d, 0.9), verb=0.25),
+        'strings': lambda n, d: strings([n], d, attack=0.08, release=0.25, bright=4200, verb=0.25),
+        'staccato': lambda n, d: staccato([n], min(d, 0.18), verb=0.15),
+        'acid': lambda n, d: acid(n - 12, d, accent=0.8),
+        'horn': lambda n, d: horn((n - 12, n - 5, n), max(d, 0.35)),
+        'mentasm': lambda n, d: mentasm([n - 12, n], d),
+        'choir': lambda n, d: choir([n], d, attack=0.05, release=0.3, verb=0.3),
+        'stab': lambda n, d: stab([n, n + 3 if (n + 3) % 12 in MINOR_PCS else n + 4, n + 7], min(d, 0.35), verb=0.2),
+    }[kind]
+
+    def play(n, d):
+        key = (n, round(d, 3))
+        if key not in cache:
+            cache[key] = make(n, d)
+        return cache[key]
+    return play
+
+
+def melody_loop(bpm, notes, kind, bars, legato=0.95, gain=0.9, choke=True):
+    step = step_len(bpm)
+    inst = _instrument(kind, bpm)
+    return normalize(render(bpm, bars, [(st, inst(n, du * step * legato), gain) for st, n, du in notes], choke=choke))
+
+
+def chords_loop(bpm, prog, kind='pad', rhythm=None):
+    """Accords de la suite : nappe tenue (supersaw, cordes, chœur) ou coups rythmés (stabs, piano)."""
+    step = step_len(bpm)
+    names = PROGS[prog]
+    ev = []
+    for b, c in enumerate(names):
+        notes = [n - 12 for n in CHORD_NOTES[c]]
+        if kind == 'pad':
+            ev.append((b * 16, supersaw(notes, step * 16 - 0.05, attack=0.15, release=0.3, cutoff=3200, verb=0.4), 0.8))
+        elif kind == 'strings':
+            ev.append((b * 16, strings(notes, dur=step * 16, attack=0.2, release=0.5), 0.9))
+        elif kind == 'choir':
+            ev.append((b * 16, choir(notes, dur=step * 16, attack=0.25, release=0.5), 0.9))
+        elif kind == 'piano':
+            for st in (0, 3, 6, 10, 12):
+                ev.append((b * 16 + st, rave_piano(notes, step * 3, verb=0.15), 0.9))
+        else:   # stabs
+            for st in (rhythm or (2, 6, 10, 14)):
+                ev.append((b * 16 + st, stab(notes, dur=0.28, verb=0.15), 0.85))
+    return normalize(render(bpm, len(names), ev, choke=kind in ('pad', 'strings', 'choir')))
+
+
+def bass_line(bpm, prog, kind='offbeat'):
+    step = step_len(bpm)
+    ev = []
+    for b, c in enumerate(PROGS[prog]):
+        r = ROOT_NOTE[c]
+        if kind == 'reese':
+            ev.append((b * 16, reese(r, step * 16), 0.9))
+        elif kind == 'reverse':
+            for st in (1, 5, 9, 13):
+                ev.append((b * 16 + st, reverse_bass(r, step * 3), 0.9))
+        else:
+            for st in (2, 6, 10, 14):
+                ev.append((b * 16 + st, hc_bass(r, step * 1.8), 0.9))
+    return normalize(render(bpm, len(PROGS[prog]), ev, choke=True))
+
+
+def build_melodies(bpm=190):
+    """Mélodies hardcore / gabber : thèmes, hooks, accords et thèmes complets (sans batterie), en fa mineur."""
+    reseed('Melodies')
+    MAGENTA, PINK, VIOLET, CYAN, BLUE, GREEN = 53, 57, 49, 37, 41, 21
+    LOOP = 2
+    M = lambda seed, prog, rh, kind, lo=64, hi=84, bars=None, legato=0.95: melody_loop(bpm, compose(seed, prog, rh, lo, hi, bars), kind, bars or 4, legato)
+    themes = [
+        # rangée 1 : thèmes gabber (leads)
+        ('Hoover anthem', MAGENTA, M(101, 'epic', 'anthem', 'hoover')),
+        ('Hoover dark', MAGENTA, M(102, 'dark', 'gabber', 'hoover')),
+        ('Screech theme', MAGENTA, M(103, 'andalusian', 'hook', 'screech', 70, 86)),
+        ('Screech gallop', MAGENTA, M(104, 'epic', 'gallop', 'screech', 70, 86, legato=0.8)),
+        ('Horn theme', MAGENTA, M(105, 'euphoric', 'long', 'horn')),
+        ('Dark lead run', MAGENTA, M(106, 'dark', 'sixteenths', 'darklead', 60, 79, legato=0.85)),
+        ('Mentasm theme', PINK, M(107, 'andalusian', 'anthem', 'mentasm')),
+        ('Acid line', MAGENTA, M(108, 'epic', 'sixteenths', 'acid', 60, 76, legato=0.7)),
+        # rangée 2 : thèmes émotionnels (claviers, cordes, chœur)
+        ('Piano theme', PINK, M(109, 'epic', 'anthem', 'piano')),
+        ('Piano chords', PINK, chords_loop(bpm, 'epic', 'piano')),
+        ('String theme', VIOLET, M(110, 'andalusian', 'long', 'strings', 60, 80)),
+        ('Staccato run', VIOLET, M(111, 'epic', 'eighths', 'staccato')),
+        ('Bells theme', PINK, M(112, 'dark', 'hook', 'bells', 67, 86)),
+        ('Choir theme', CYAN, M(113, 'euphoric', 'long', 'choir', 60, 79)),
+        ('Pluck arp', PINK, melody_loop(bpm, arpeggio('euphoric'), 'pluck', 4, 0.9, choke=False)),
+        ('Supersaw theme', MAGENTA, M(114, 'epic', 'dotted', 'supersaw')),
+        # rangée 3 : hooks de 2 mesures
+        ('Hoover hook', MAGENTA, M(115, 'epic', 'hook', 'hoover', bars=2)),
+        ('Screech hook', MAGENTA, M(116, 'dark', 'gabber', 'screech', 70, 86, bars=2)),
+        ('Stab hook', PINK, M(117, 'epic', 'gabber', 'stab', bars=2)),
+        ('Piano hook', PINK, M(118, 'andalusian', 'hook', 'piano', bars=2)),
+        ('Pluck hook', PINK, M(119, 'euphoric', 'sixteenths', 'pluck', bars=2, legato=0.9)),
+        ('Dark lead hook', MAGENTA, M(120, 'dark', 'dotted', 'darklead', 60, 79, bars=2)),
+        ('Horn hook', MAGENTA, M(121, 'epic', 'offbeat', 'horn', bars=2)),
+        ('Bells hook', PINK, M(122, 'andalusian', 'eighths', 'bells', 67, 86, bars=2)),
+        # rangée 4 : accords, arpèges et basses à superposer
+        ('Epic pads', VIOLET, chords_loop(bpm, 'epic', 'pad')),
+        ('String pads dark', VIOLET, chords_loop(bpm, 'dark', 'strings')),
+        ('Stab chords', PINK, chords_loop(bpm, 'epic', 'stab', (0, 3, 6, 8, 11, 14))),
+        ('Choir pads', CYAN, chords_loop(bpm, 'andalusian', 'choir')),
+        ('Arp epic', PINK, melody_loop(bpm, arpeggio('epic', (0, 1, 2, 3, 2, 1)), 'pluck', 4, 0.9, choke=False)),
+        ('Arp dark', PINK, melody_loop(bpm, arpeggio('dark', (0, 2, 1, 3)), 'staccato', 4, 0.9, choke=False)),
+        ('Offbeat bass line', BLUE, bass_line(bpm, 'epic')),
+        ('Reese line', BLUE, bass_line(bpm, 'dark', 'reese')),
+    ]
+    # rangée 5 : thèmes complets (mélodie + accords + basse), prêts à poser sur un beat
+    full = [
+        ('Theme epic', ('epic', 201, 'anthem', 'hoover', 'pad', 'offbeat')),
+        ('Theme dark', ('dark', 202, 'gabber', 'screech', 'strings', 'reese')),
+        ('Theme andalusian', ('andalusian', 203, 'hook', 'darklead', 'choir', 'offbeat')),
+        ('Theme euphoric', ('euphoric', 204, 'dotted', 'supersaw', 'pad', 'offbeat')),
+        ('Theme piano', ('epic', 205, 'anthem', 'piano', 'strings', 'offbeat')),
+        ('Theme horn', ('euphoric', 206, 'long', 'horn', 'pad', 'reese')),
+        ('Theme bells', ('dark', 207, 'hook', 'bells', 'choir', 'offbeat')),
+        ('Theme acid', ('andalusian', 208, 'sixteenths', 'acid', 'strings', 'offbeat')),
+    ]
+    for name, (prog, seed, rh, kind, pad, bass) in full:
+        lo, hi = (70, 86) if kind == 'screech' else (60, 78) if kind == 'acid' else (64, 84)
+        mel = melody_loop(bpm, compose(seed, prog, rh, lo, hi), kind, 4, 0.8 if kind == 'acid' else 0.95)
+        themes.append((name, GREEN, mix(mel, chords_loop(bpm, prog, pad) * 0.55, bass_line(bpm, prog, bass) * 0.7)))
+    return [(name, color, LOOP, sig, 4 if len(sig) > 3 * 240 / bpm * SR else 2) for name, color, sig in themes]
+
+
+def build_hardstyle_melodies(bpm=150):
+    """Mélodies hardstyle / rawstyle (150 BPM) : leads euphoriques, screeches raw, plucks, accords, thèmes complets."""
+    reseed('Hardstyle melodies')
+    MAGENTA, PINK, VIOLET, CYAN, BLUE, GREEN = 53, 57, 49, 37, 41, 21
+    LOOP = 2
+    M = lambda seed, prog, rh, kind, lo=64, hi=84, bars=None, legato=0.95: melody_loop(bpm, compose(seed, prog, rh, lo, hi, bars), kind, bars or 4, legato)
+    themes = [
+        # rangée 1 : leads euphoriques
+        ('Euphoric theme 1', MAGENTA, M(301, 'euphoric', 'anthem', 'supersaw')),
+        ('Euphoric theme 2', MAGENTA, M(302, 'epic', 'dotted', 'supersaw')),
+        ('Euphoric theme 3', MAGENTA, M(303, 'andalusian', 'long', 'supersaw')),
+        ('Euphoric theme 4', MAGENTA, M(304, 'euphoric', 'hook', 'supersaw')),
+        ('Euphoric gallop', MAGENTA, M(305, 'epic', 'gallop', 'supersaw', legato=0.85)),
+        ('Euphoric offbeat', MAGENTA, M(306, 'euphoric', 'offbeat', 'supersaw')),
+        ('Euphoric hook', MAGENTA, M(307, 'epic', 'gabber', 'supersaw', bars=2)),
+        ('Euphoric run', MAGENTA, M(308, 'andalusian', 'sixteenths', 'supersaw', legato=0.85)),
+        # rangée 2 : screeches raw et leads sombres
+        ('Raw screech theme', MAGENTA, M(309, 'dark', 'hook', 'rawscreech', 70, 86)),
+        ('Raw screech gallop', MAGENTA, M(310, 'epic', 'gallop', 'rawscreech', 70, 86, legato=0.8)),
+        ('Raw screech hook', MAGENTA, M(311, 'dark', 'gabber', 'rawscreech', 70, 86, bars=2)),
+        ('Raw screech long', MAGENTA, M(312, 'andalusian', 'long', 'rawscreech', 70, 86)),
+        ('Raw lead run', MAGENTA, M(313, 'dark', 'sixteenths', 'darklead', 60, 79, legato=0.85)),
+        ('Raw lead hook', MAGENTA, M(314, 'epic', 'dotted', 'darklead', 60, 79, bars=2)),
+        ('Raw hoover theme', MAGENTA, M(315, 'dark', 'anthem', 'hoover')),
+        ('Raw stab hook', PINK, M(316, 'dark', 'gabber', 'stab', bars=2)),
+        # rangée 3 : plucks, piano, cloches, chœur
+        ('Pluck theme', PINK, M(317, 'euphoric', 'hook', 'pluck', legato=0.9)),
+        ('Pluck run', PINK, M(318, 'epic', 'sixteenths', 'pluck', legato=0.9)),
+        ('Pluck arp', PINK, melody_loop(bpm, arpeggio('euphoric', (0, 1, 2, 3, 2, 1, 0, 2)), 'pluck', 4, 0.9, choke=False)),
+        ('Piano intro', PINK, M(319, 'euphoric', 'long', 'piano')),
+        ('Piano theme', PINK, M(320, 'epic', 'anthem', 'piano')),
+        ('Bells intro', PINK, M(321, 'andalusian', 'hook', 'bells', 67, 86)),
+        ('Choir theme', CYAN, M(322, 'euphoric', 'long', 'choir', 60, 79)),
+        ('String theme', VIOLET, M(323, 'epic', 'long', 'strings', 60, 80)),
+        # rangée 4 : accords, arpèges, basses
+        ('Euphoric chords', VIOLET, chords_loop(bpm, 'euphoric', 'pad')),
+        ('Epic chords', VIOLET, chords_loop(bpm, 'epic', 'pad')),
+        ('Stab chords', PINK, chords_loop(bpm, 'euphoric', 'stab', (0, 3, 6, 10, 12))),
+        ('Piano chords', PINK, chords_loop(bpm, 'euphoric', 'piano')),
+        ('Choir pads', CYAN, chords_loop(bpm, 'euphoric', 'choir')),
+        ('String pads', VIOLET, chords_loop(bpm, 'andalusian', 'strings')),
+        ('Reverse bass line', BLUE, bass_line(bpm, 'euphoric', 'reverse')),
+        ('Reverse bass epic', BLUE, bass_line(bpm, 'epic', 'reverse')),
+    ]
+    full = [
+        ('Anthem 1', ('euphoric', 401, 'anthem', 'supersaw', 'pad', 'reverse')),
+        ('Anthem 2', ('epic', 402, 'dotted', 'supersaw', 'pad', 'reverse')),
+        ('Anthem 3', ('andalusian', 403, 'hook', 'supersaw', 'choir', 'reverse')),
+        ('Raw anthem', ('dark', 404, 'gallop', 'rawscreech', 'strings', 'reverse')),
+        ('Raw anthem 2', ('epic', 405, 'gabber', 'rawscreech', 'pad', 'reverse')),
+        ('Pluck anthem', ('euphoric', 406, 'sixteenths', 'pluck', 'pad', 'reverse')),
+        ('Piano anthem', ('epic', 407, 'anthem', 'piano', 'strings', 'reverse')),
+        ('Hoover anthem', ('dark', 408, 'anthem', 'hoover', 'pad', 'reverse')),
+    ]
+    for name, (prog, seed, rh, kind, pad, bass) in full:
+        lo, hi = (70, 86) if kind == 'rawscreech' else (64, 84)
+        mel = melody_loop(bpm, compose(seed, prog, rh, lo, hi), kind, 4, 0.85 if kind in ('pluck', 'rawscreech') else 0.95)
+        themes.append((name, GREEN, mix(mel, chords_loop(bpm, prog, pad) * 0.5, bass_line(bpm, prog, bass) * 0.75)))
+    return [(name, color, LOOP, sig, 4 if len(sig) > 3 * 240 / bpm * SR else 2) for name, color, sig in themes]

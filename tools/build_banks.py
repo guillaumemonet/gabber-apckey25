@@ -248,6 +248,8 @@ ROW_CATS = {
     'Mainstream': ['kick', 'drums', 'lead', 'voice', 'drums'],
     'New wave': ['kick', 'kick', 'lead', 'fx', 'drums'],
     'Hardstyle': ['kick', 'drums', 'lead', 'fx', 'drums'],
+    'Melodies': ['lead', 'keys', 'lead', 'pad', 'lead'],
+    'Hardstyle melodies': ['lead', 'lead', 'keys', 'pad', 'lead'],
 }
 
 
@@ -260,7 +262,7 @@ def categorize(bank, row, name, mode):
         return 'voice'
     if has('hoover', 'screech', 'acid', 'arp', 'horn', 'lead', 'highkey', 'supersaw', 'pluck'):
         return 'lead'
-    if has('stab', 'piano', 'mentasm', 'belgian', 'rave ', 'guit', 'horror bell', 'bell chord', 'bell melody'):
+    if has('stab', 'piano', 'mentasm', 'belgian', 'rave ', 'guit', 'horror bell', 'bell chord', 'bell melody', 'bells'):
         return 'keys'
     if has('string', 'pad', 'drone', 'staccato', 'orchestra'):
         return 'pad'
@@ -334,7 +336,7 @@ def main():
         '# Credits\n\nBanks 2-6 use samples from Sonic Pi (https://github.com/sonic-pi-net/sonic-pi, etc/samples),\n'
         'dedicated to the public domain (CC0) by their authors on freesound.org, Arovane and The Black Dog.\n'
         'They were processed (normalisation, trimming, tempo matching) by tools/build_banks.py.\n\n'
-        'The Gabber, Hardcore, Oldschool, Mainstream, New wave and Hardstyle banks are fully synthesised by tools/gabber.py (no external samples).\n',
+        'The Gabber, Hardcore, Oldschool, Mainstream, New wave, Hardstyle and melody banks are fully synthesised by tools/gabber.py (no external samples).\n',
         encoding='utf-8')
     total = sum(p is not None for bank in manifest['banks'] for p in bank['pads'])
     print(f'\n{total} sounds written to {OUT}')
