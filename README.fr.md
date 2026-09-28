@@ -16,6 +16,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Sampler 40 pads** avec 15 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de tes propres sons ;
   - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
   - **Designer de kick** : fabrique ton propre kick distordu avec 12 potards et 8 presets, puis envoie-le sur un pad ou dans la bibliothèque ;
+  - **Platines** : deux decks avec disques à scratcher (en avant et en arrière), sync, cue, égaliseur, filtre DJ et crossfader ;
   - **Basse acid façon TB-303** : séquenceur 16 pas avec accent et slide, filtre résonant à enveloppe, distorsion, saisie au clavier de l'APC, calée sur la 909 ;
   - **Synthé en couches** au clavier : 35 presets en 10 familles (cordes, nappes, chœurs, supersaw, hoovers, leads, basses, stabs, claviers, effets) avec ensemble, largeur stéréo, vibrato et 8 potards d'expression, mode accords et arpégiateur calé sur le tempo ;
   - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres, jusqu'à 4 effets d'insert, et un **sidechain** déclenché par les kicks ;
@@ -23,7 +24,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 - **Enregistrement WAV** de ta session et **export / import de kits**.
 - Interface en **français ou en anglais**, selon la langue du navigateur.
 
-> 🚧 **GabberKey est en constante évolution.** De nouvelles fonctions arrivent régulièrement, et plein d'autres sont en route : des **platines** (vinyles à scratcher et à mixer)… et bien plus encore. Mets une étoile ou suis le dépôt pour voir ce qui arrive (voir la [feuille de route](#feuille-de-route)) !
+> 🚧 **GabberKey est en constante évolution.** De nouvelles fonctions arrivent régulièrement, et plein d'autres sont en route : le MIDI learn pour d'autres contrôleurs, une version en ligne… et bien plus encore. Mets une étoile ou suis le dépôt pour voir ce qui arrive (voir la [feuille de route](#feuille-de-route)) !
 
 ---
 
@@ -32,6 +33,10 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 | Synthé et générateur de nappes | TR-909 | Table de mixage et sidechain |
 |---|---|---|
 | [![Fenêtre Synthé : familles, presets, potards d'expression, accords, arpégiateur et générateur de nappes](docs/screenshots/synth-fr.png)](docs/screenshots/synth-fr.png) | [![Fenêtre TR-909 : séquenceur 16 pas et potards avec distorsion par instrument](docs/screenshots/tr-fr.png)](docs/screenshots/tr-fr.png) | [![Fenêtre Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](docs/screenshots/mixer-fr.png)](docs/screenshots/mixer-fr.png) |
+
+| TB-303 | Designer de kick | Platines |
+|---|---|---|
+| [![Fenêtre TB-303 : grille avec accents et slides, potards](docs/screenshots/acid-fr.png)](docs/screenshots/acid-fr.png) | [![Designer de kick : presets, 12 potards et forme d'onde](docs/screenshots/kick-fr.png)](docs/screenshots/kick-fr.png) | [![Platines : deux decks avec disques à scratcher, égaliseur, filtre et crossfader](docs/screenshots/decks-fr.png)](docs/screenshots/decks-fr.png) |
 
 ## Prérequis
 
@@ -69,14 +74,14 @@ L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert
 | **Boutons de piste 1 / 2 / 3 / 4** | Page des potards : Synthé / Effets / Pad sélectionné / EQ |
 | **Boutons de piste 5 / 6 / 7 / 8** (maintenus) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filtre ↓ |
 | **Maj + piste 5 / 6 / 7 / 8** | Roll 1/4 · Tape-stop · Filtre ↑ · Pump (marche/arrêt) |
-| **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K5 TB-303, K8 master) |
+| **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K5 TB-303, K6 Platines, K8 master) |
 | **Potards K1-K8** | Paramètres de la page active (Maj = réglage fin) |
 | **SUSTAIN** | Ouvre / ferme la page EQ (maintenu : EQ le temps de l'appui) |
 | **Maj + touche blanche** | Preset de la famille du synthé (do = 1er, ré = 2e…) · **Maj + do# / ré#** = famille précédente / suivante · **Maj + fa# / sol# / la#** = type d'accord / arpège oui-non / vitesse de l'arpège |
 | **Clavier** | Joue le synthé |
 | **PLAY** | Lancer / arrêter la timeline (la TR-909 a son propre ▶ dans sa fenêtre) |
 | **Maj + PLAY** | Transformer la grille de pads en TR-909 (et revenir) |
-| **REC** | Enregistrer l'outil choisi dans la piste armée de la timeline (et arrêter) · **Maj + REC** = page de potards TB-303 |
+| **REC** | Enregistrer l'outil choisi dans la piste armée de la timeline (et arrêter) · **Maj + REC** = page de potards TB-303, deux fois = platines |
 | **STOP ALL CLIPS** | Coupe tout |
 | **Maj + STOP ALL CLIPS** | Transformer la grille de pads en 40 scènes (et revenir) |
 
@@ -144,7 +149,7 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
   - **Pads** : chaque coup de pad devient un bloc de ce pad, là où tu l'as frappé (calé à la double-croche). Le bloc rejoue le pad avec ses réglages.
   - **Synthé** : chaque note devient un bloc de note qui **s'allonge tant que tu tiens la touche** ; il rejoue avec le preset du synthé en cours.
   - Les blocs apparaissent en direct pendant que tu joues. Si la piste armée est occupée à ce moment-là, le bloc va sur la piste libre suivante. Avec Boucle, tu peux ajouter des coups à chaque passage.
-  - **TR-909** / **TB-303** : l'instrument démarre calé sur les mesures de la timeline et s'enregistre en audio dans un bloc (aussi rangé dans la bibliothèque, rubrique Enregistrements).
+  - **TR-909** / **TB-303** / **Platines** : l'instrument démarre calé sur les mesures de la timeline et s'enregistre en audio dans un bloc (aussi rangé dans la bibliothèque, rubrique Enregistrements).
   - **■ Arrêter rec** (ou REC à nouveau) termine l'enregistrement.
 - **Lire** : ▶ (ou PLAY sur l'APC) joue depuis la tête de lecture ; la vue suit la tête de lecture. Les boucles faites à un autre tempo suivent le tempo global. La timeline a sa propre voie dans la table de mixage.
 
@@ -169,6 +174,17 @@ Fabrique ton propre kick gabber / hardcore, calculé par le navigateur en quelqu
 - **Attaque** : **Clic** (bruit) et **Attaque** (couche courte et percutante).
 - **Écoute auto** joue le kick à chaque potard relâché ; la forme d'onde et la longueur s'affichent.
 - **→ Pad** le met sur le pad sélectionné, **→ Bibliothèque** l'ajoute à la catégorie **Kicks** de la bibliothèque (à glisser sur la timeline ; clic droit dessus pour le retirer), **⤓ WAV** le télécharge. Tes kicks déclenchent le sidechain comme les autres.
+
+## Platines
+
+Deux decks pour mixer et scratcher n'importe quel son : boucles de la bibliothèque, tes enregistrements, tes propres fichiers audio.
+
+- **Charger** : glisse un son de la bibliothèque (ou un fichier audio) sur un deck, ou clique sur un son de la bibliothèque puis sur **Charger**.
+- **▶ / ❚❚** lecture / pause. **Cue** : en lecture, retour au point de cue et pause ; à l'arrêt, place le point de cue. Clic sur la forme d'onde pour s'y rendre.
+- **Sync** : le deck suit le tempo global (quand le tempo du son est connu : boucles de la bibliothèque, ou deviné pour les longs fichiers), continue de le suivre quand tu changes le tempo, et démarre à la mesure suivante. Sans Sync, le curseur **Pitch** change la vitesse de ±8 %.
+- **Scratch** : tiens le disque à la souris et bouge-le, en avant ou en arrière ; relâche-le pour qu'il reparte. Le son est lu par un processeur audio dédié : il joue vraiment à l'envers et suit la main.
+- Pour chaque deck : **Volume**, **Basses**, **Médiums**, **Aigus** (tout à gauche = coupé) et un **Filtre** DJ (à gauche = passe-bas, à droite = passe-haut) ; un **crossfader** à puissance constante entre A et B.
+- Sur l'APC, **Maj + REC** deux fois ouvre la page de potards des platines (K1-K3 = volume, basses, filtre du deck A ; K4-K6 = deck B ; K7 = crossfader ; K8 = master). Les platines ont leur voie de mixage (K6 sur les pages mixeur) et peuvent être enregistrées dans la timeline (source Platines).
 
 ## Scènes
 
@@ -296,9 +312,11 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 
 ## Feuille de route
 
-Ce qui arrive ensuite, dans cet ordre :
+Tout ce qui était prévu est fait (annuler / rétablir, export rapide, TB-303, designer de kick, platines). Idées à l'étude pour la suite :
 
-1. **Platines** : deux decks avec pitch, sync, cue, crossfader et scratch.
+- le **MIDI learn**, pour utiliser d'autres contrôleurs (APC mini, APC40, n'importe quel clavier MIDI) et assigner n'importe quel bouton ou potard ;
+- une **version en ligne**, jouable sans rien installer ;
+- l'**automation** des potards dans la timeline, des **rampes de tempo**, un générateur de **structure de morceau**.
 
 Les idées et suggestions sont les bienvenues dans les [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 
@@ -349,6 +367,8 @@ js/audio.js           moteur audio : synthé, sampler, effets, EQ, tempo
 js/tr909.js           émulation TR-909 et séquenceur
 js/acid.js            basse acid façon TB-303
 js/kickdesign.js      designer de kick
+js/decks.js           platines (deux decks, crossfader)
+js/deck-worklet.js    lecteur à vitesse variable pour le scratch
 js/timeline.js        timeline : pistes, blocs, lecture
 js/mixer.js           table de mixage : voies, envois, effets d'insert
 js/sidechain.js       sidechain (les kicks font baisser le synthé et les sons mélodiques)

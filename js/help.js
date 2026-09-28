@@ -52,6 +52,16 @@ const HELP = {
         <li><b>Auto-listen</b> plays the kick each time you release a knob. The waveform and the length are shown below the knobs.</li>
         <li><b>→ Pad</b> puts it on the selected pad, <b>→ Library</b> adds it to the Kicks category of the library (drag it onto the timeline; right-click it there to remove it), <b>⤓ WAV</b> downloads it.</li>
       </ul>`,
+    decks: `
+      <p>Two turntables to mix and scratch any sound: library loops, your recordings, your own files.</p>
+      <ul>
+        <li><b>Load</b>: drag a sound from the library (or an audio file) onto a deck, or click a sound in the library then <b>Load</b>.</li>
+        <li><b>▶ / ❚❚</b> play / pause. <b>Cue</b>: while playing, back to the cue point and pause; when stopped, sets the cue point. Click the waveform to jump.</li>
+        <li><b>Sync</b>: the deck follows the global tempo (when the sound's tempo is known: library loops, or guessed for long files) and starts on the next bar. Without Sync, the <b>Pitch</b> slider changes the speed by ±8 % (double-click = 0).</li>
+        <li><b>Scratch</b>: hold the record with the mouse and move it, forwards or backwards; release it to let it play again.</li>
+        <li><b>Volume, Bass, Mid, Treble</b> (all the way left = cut) and <b>Filter</b> (left = low-pass, right = high-pass) per deck, and the <b>crossfader</b> between A and B.</li>
+        <li>On the APC: <b>Shift + REC</b> twice opens the turntable knob page (A volume, A bass, A filter, B volume, B bass, B filter, crossfader, master). The decks have their own mixer channel (K6) and can be recorded into the timeline (source Decks).</li>
+      </ul>`,
     piano: `
       <p>The keyboard synth: 35 presets in 10 families, 8 expression knobs, chord mode, arpeggiator and pad generator.</p>
       <ul>
@@ -86,7 +96,7 @@ const HELP = {
       <ul>
         <li>Each channel: insert effects (<b>+ FX</b>, up to 4: distortion, filter, compressor, reverb), reverb and delay sends, pan, fader, <b>M</b>ute, <b>S</b>olo, meter. Double-click = reset.</li>
         <li><b>Sidechain</b> (top): every kick ducks the synth and the melodic sounds (bass, pads, leads, keys, voices), which come back up smoothly. Triggered by <b>the kicks</b> (909, kick pads and blocks, kicks of the GabberKey loops) or on <b>every beat</b> (for other loops). Depth, release, targets; the meter shows the ducking.</li>
-        <li>APC: Shift + track 1 / 2 / 3 / 4 = volumes / pans / delay / reverb (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K5 TB-303, K8 master).</li>
+        <li>APC: Shift + track 1 / 2 / 3 / 4 = volumes / pans / delay / reverb (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K5 TB-303, K6 Decks, K8 master).</li>
       </ul>`,
     scenes: `
       <p>40 snapshots of the session, laid out like the APC grid.</p>
@@ -152,6 +162,16 @@ const HELP = {
         <li><b>Écoute auto</b> joue le kick à chaque potard relâché. La forme d'onde et la longueur s'affichent sous les potards.</li>
         <li><b>→ Pad</b> le met sur le pad sélectionné, <b>→ Bibliothèque</b> l'ajoute à la catégorie Kicks de la bibliothèque (à glisser sur la timeline ; clic droit dessus pour le retirer), <b>⤓ WAV</b> le télécharge.</li>
       </ul>`,
+    decks: `
+      <p>Deux platines pour mixer et scratcher n'importe quel son : boucles de la bibliothèque, tes enregistrements, tes propres fichiers.</p>
+      <ul>
+        <li><b>Charger</b> : glisse un son de la bibliothèque (ou un fichier audio) sur un deck, ou clique sur un son de la bibliothèque puis sur <b>Charger</b>.</li>
+        <li><b>▶ / ❚❚</b> lecture / pause. <b>Cue</b> : en lecture, retour au point de cue et pause ; à l'arrêt, place le point de cue. Clic sur la forme d'onde pour s'y rendre.</li>
+        <li><b>Sync</b> : le deck suit le tempo global (quand le tempo du son est connu : boucles de la bibliothèque, ou deviné pour les longs fichiers) et démarre à la mesure suivante. Sans Sync, le curseur <b>Pitch</b> change la vitesse de ±8 % (double-clic = 0).</li>
+        <li><b>Scratch</b> : tiens le disque à la souris et bouge-le, en avant ou en arrière ; relâche-le pour qu'il reparte.</li>
+        <li><b>Volume, Basses, Médiums, Aigus</b> (tout à gauche = coupé) et <b>Filtre</b> (à gauche = passe-bas, à droite = passe-haut) pour chaque deck, et le <b>crossfader</b> entre A et B.</li>
+        <li>Sur l'APC : <b>Maj + REC</b> deux fois ouvre la page de potards des platines (volume A, basses A, filtre A, volume B, basses B, filtre B, crossfader, master). Les platines ont leur voie de mixage (K6) et peuvent être enregistrées dans la timeline (source Platines).</li>
+      </ul>`,
     piano: `
       <p>Le synthé du clavier : 35 presets en 10 familles, 8 potards d'expression, mode accords, arpégiateur et générateur de nappes.</p>
       <ul>
@@ -186,7 +206,7 @@ const HELP = {
       <ul>
         <li>Chaque voie : effets d'insert (<b>+ FX</b>, jusqu'à 4 : distorsion, filtre, compresseur, reverb), envois reverb et delay, panoramique, fader, <b>M</b>uet, <b>S</b>olo, vumètre. Double-clic = remise à zéro.</li>
         <li><b>Sidechain</b> (en haut) : chaque kick fait baisser le synthé et les sons mélodiques (basses, nappes, leads, claviers, voix), qui remontent en douceur. Déclenché par <b>les kicks</b> (909, pads et blocs de kick, kicks des boucles GabberKey) ou à <b>chaque temps</b> (pour les autres boucles). Profondeur, relâche, cibles ; le témoin montre la baisse.</li>
-        <li>APC : Maj + piste 1 / 2 / 3 / 4 = volumes / panos / delay / reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K5 TB-303, K8 master).</li>
+        <li>APC : Maj + piste 1 / 2 / 3 / 4 = volumes / panos / delay / reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K5 TB-303, K6 Platines, K8 master).</li>
       </ul>`,
     scenes: `
       <p>40 instantanés de la session, disposés comme la grille de l'APC.</p>

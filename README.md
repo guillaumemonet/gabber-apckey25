@@ -16,6 +16,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **40-pad sampler** with 15 banks, pad LEDs synced to the screen, and drag & drop of your own sounds;
   - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
   - **Kick designer**: build your own distorted kick from 12 knobs and 8 presets, then send it to a pad or the library;
+  - **Turntables**: two decks with scratchable records (forwards and backwards), sync, cue, EQ, DJ filter and crossfader;
   - **TB-303-style acid bass line**: 16-step sequencer with accent and slide, resonant filter with envelope, distortion, step entry from the APC keyboard, in sync with the 909;
   - **Layered synth** on the keyboard: 35 presets in 10 families (strings, pads, choirs, supersaw, hoovers, leads, basses, stabs, keys, FX) with ensemble, stereo width, vibrato and 8 expression knobs, chord mode and a tempo-synced arpeggiator;
   - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters, up to 4 insert effects, and a **sidechain** triggered by the kicks;
@@ -23,7 +24,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 - **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
 
-> 🚧 **GabberKey is constantly evolving.** New features land regularly, and plenty more is on the way: **turntables** (vinyl decks to scratch and mix)… and much more. Star or watch the repository to follow what's coming (see the [roadmap](#roadmap))!
+> 🚧 **GabberKey is constantly evolving.** New features land regularly, and plenty more is on the way: MIDI learn for other controllers, an online version… and much more. Star or watch the repository to follow what's coming (see the [roadmap](#roadmap))!
 
 ---
 
@@ -32,6 +33,10 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 | Synth and pad generator | TR-909 | Mixer and sidechain |
 |---|---|---|
 | [![Synth window: families, presets, expression knobs, chords, arpeggiator and pad generator](docs/screenshots/synth-en.png)](docs/screenshots/synth-en.png) | [![TR-909 window: 16-step sequencer and knobs with per-instrument distortion](docs/screenshots/tr-en.png)](docs/screenshots/tr-en.png) | [![Mixer window: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png) |
+
+| TB-303 | Kick designer | Turntables |
+|---|---|---|
+| [![TB-303 window: piano-roll grid with accents and slides, knobs](docs/screenshots/acid-en.png)](docs/screenshots/acid-en.png) | [![Kick designer: presets, 12 knobs and waveform](docs/screenshots/kick-en.png)](docs/screenshots/kick-en.png) | [![Turntables: two decks with scratchable records, EQ, filter and crossfader](docs/screenshots/decks-en.png)](docs/screenshots/decks-en.png) |
 
 ## Requirements
 
@@ -69,14 +74,14 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 | **Track buttons 1 / 2 / 3 / 4** | Knob page: Synth / Effects / Selected pad / EQ |
 | **Track buttons 5 / 6 / 7 / 8** (hold) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filter down |
 | **Shift + track 5 / 6 / 7 / 8** | Roll 1/4 · Tape stop · Filter up · Pump (on/off) |
-| **Shift + track 1 / 2 / 3 / 4** | Mixer knob page: volumes / pans / delay sends / reverb sends (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K5 TB-303, K8 master) |
+| **Shift + track 1 / 2 / 3 / 4** | Mixer knob page: volumes / pans / delay sends / reverb sends (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K5 TB-303, K6 Decks, K8 master) |
 | **Knobs K1-K8** | Parameters of the current page (Shift = fine tuning) |
 | **SUSTAIN** | Opens / closes the EQ page (held: EQ while pressed) |
 | **Shift + white key** | Preset of the current synth family (C = 1st, D = 2nd…) · **Shift + C# / D#** = previous / next family · **Shift + F# / G# / A#** = chord type / arpeggio on-off / arpeggio speed |
 | **Keyboard** | Plays the synth |
 | **PLAY** | Start / stop the timeline (the TR-909 has its own ▶ in its window) |
 | **Shift + PLAY** | Turn the pad grid into the TR-909 (and back) |
-| **REC** | Record the chosen tool into the armed timeline track (and stop) · **Shift + REC** = TB-303 knob page |
+| **REC** | Record the chosen tool into the armed timeline track (and stop) · **Shift + REC** = TB-303 knob page, twice = turntables |
 | **STOP ALL CLIPS** | Stops everything |
 | **Shift + STOP ALL CLIPS** | Turn the pad grid into the 40 scenes (and back) |
 
@@ -144,7 +149,7 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
   - **Pads**: every pad hit becomes a block of that pad, where you hit it (snapped to the 16th note). The block replays the pad with its settings.
   - **Synth**: every note becomes a note block that **grows while you hold the key**; it replays with the current synth preset.
   - Blocks appear live as you play. If the armed track is taken at that moment, the block goes to the next free track. With Loop on, you can add hits on every pass.
-  - **TR-909** / **TB-303**: the instrument starts on the timeline's bars and is recorded as audio into a block (also listed in the library under Recordings).
+  - **TR-909** / **TB-303** / **Decks**: the instrument starts on the timeline's bars and is recorded as audio into a block (also listed in the library under Recordings).
   - **■ Stop rec** (or REC again) ends the recording.
 - **Play**: ▶ (or PLAY on the APC) plays from the playhead; the view follows the playhead. Loops recorded at another tempo follow the global tempo. The timeline has its own channel in the mixer.
 
@@ -169,6 +174,17 @@ Build your own gabber / hardcore kick, computed by the browser in a few millisec
 - **Attack**: **Click** (noise) and **Attack** (short punchy layer).
 - **Auto-listen** plays the kick each time you release a knob; the waveform and the length are shown.
 - **→ Pad** puts it on the selected pad, **→ Library** adds it to the **Kicks** category of the library (drag it onto the timeline; right-click it there to remove it), **⤓ WAV** downloads it. Your kicks trigger the sidechain like any other kick.
+
+## Turntables
+
+Two decks to mix and scratch any sound: library loops, your recordings, your own audio files.
+
+- **Load**: drag a sound from the library (or an audio file) onto a deck, or click a sound in the library then **Load**.
+- **▶ / ❚❚** play / pause. **Cue**: while playing, back to the cue point and pause; when stopped, sets the cue point. Click the waveform to jump.
+- **Sync**: the deck follows the global tempo (when the sound's tempo is known: library loops, or guessed for long files), keeps following it when you change the tempo, and starts on the next bar. Without Sync, the **Pitch** slider changes the speed by ±8 %.
+- **Scratch**: hold the record with the mouse and move it, forwards or backwards; release it to let it play again. The sound is read by a dedicated audio processor, so it really plays backwards and follows the hand.
+- Per deck: **Volume**, **Bass**, **Mid**, **Treble** (all the way left = cut) and a DJ **Filter** (left = low-pass, right = high-pass); a constant-power **crossfader** between A and B.
+- On the APC, **Shift + REC** twice opens the turntable knob page (K1-K3 = deck A volume, bass, filter; K4-K6 = deck B; K7 = crossfader; K8 = master). The decks have their own mixer channel (K6 on the mixer pages) and can be recorded into the timeline (source Decks).
 
 ## Scenes
 
@@ -296,9 +312,11 @@ The interface follows the browser language: French if the browser is set to Fren
 
 ## Roadmap
 
-What is coming next, in this order:
+Everything planned so far is done (undo / redo, fast export, TB-303, kick designer, turntables). Ideas being considered next:
 
-1. **Turntables**: two decks with pitch, sync, cue, crossfader and scratching.
+- **MIDI learn**, to use other controllers (APC mini, APC40, any MIDI keyboard) and assign any button or knob;
+- an **online version**, playable without installing anything;
+- **automation** of the knobs in the timeline, **tempo ramps**, a **song structure** generator.
 
 Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 
@@ -349,6 +367,8 @@ js/audio.js           audio engine: synth, sampler, effects, EQ, tempo
 js/tr909.js           TR-909 emulation and sequencer
 js/acid.js            TB-303-style acid bass line
 js/kickdesign.js      kick designer
+js/decks.js           turntables (two decks, crossfader)
+js/deck-worklet.js    variable-speed player for scratching
 js/timeline.js        timeline: tracks, blocks, playback
 js/mixer.js           mixer: channels, sends, insert effects
 js/sidechain.js       sidechain (kicks duck the synth and melodic sounds)

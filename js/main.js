@@ -18,16 +18,17 @@ import { Sidechain, SC_SOURCES, SC_DUCKED, defaultScState, mergeScState } from '
 import { History } from './history.js';
 import { makeZip } from './zip.js';
 import { KICK_PARAMS, KICK_PRESETS, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
+import { Decks, DECK_IDS, DECK_KNOBS, deckKnobDefs, defaultDecksState, mergeDecksState, guessBpm, vinylTurns, rateFromSpin } from './decks.js';
 import { Acid303, ACID_PATTERNS, ACID_ROWS, ACID_BASE, ACID_PARAMS, acidKnobDefs, acidFmt, acidSteps, defaultAcidState, mergeAcidState, randomPattern } from './acid.js';
 
 translatePage();
 
 const BANKS = 15;   // SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = banques 6-10, une 2e fois = 11-15
 const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (EQ aussi via SUSTAIN)
-const UI_PAGES = [...PAGE_ORDER, 'tr', 'acid', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
+const UI_PAGES = [...PAGE_ORDER, 'tr', 'acid', 'decks', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory, acid;
+let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory, acid, decks;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -49,6 +50,7 @@ const state = {
   sc: defaultScState(),               // sidechain : les kicks font respirer synthé, nappes et basses
   acid: defaultAcidState(),           // TB-303 : réglages et patterns
   kick: defaultKickState(),           // designer de kick
+  decks: defaultDecksState(),         // platines : sons chargés et réglages des deux decks
   userSounds: [],                     // sons créés dans l'application (kicks du designer) : { sampleId, name, cat }
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
@@ -99,6 +101,9 @@ async function start() {
   sidechain.loopKicks = padLoopKicks;
   acid = new Acid303(engine, () => state.acid);
   acid.out.connect(sidechain.acid).connect(mixer.input('acid'));
+  await Decks.load(engine.ctx);
+  decks = new Decks(engine, () => state.decks);
+  decks.out.connect(mixer.input('decks'));
   drum.setDestinations(Object.fromEntries(['bd', 'snare', 'toms', 'hats', 'cym'].map(g => [g, mixer.input('tr')])));
   timeline = new Timeline(engine, () => state.tl, clipBuffer, mixer.input('tl'));
   timeline.getPad = (b, i) => state.banks[b]?.[i];
@@ -130,6 +135,7 @@ async function start() {
   buildTr();
   buildAcid();
   buildKick();
+  buildDecks();
   buildMixer();
   buildSidechain();
   buildTl();
@@ -197,6 +203,7 @@ async function restore() {
     state.sc = mergeScState(saved.sc);
     state.acid = mergeAcidState(saved.acid);
     state.kick = mergeKickState(saved.kick);
+    state.decks = mergeDecksState(saved.decks);
     state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
@@ -282,6 +289,7 @@ function save() {
       sc: state.sc,
       acid: state.acid,
       kick: state.kick,
+      decks: state.decks,
       userSounds: state.userSounds,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
@@ -329,6 +337,7 @@ function setPage(page) {
 function panic() {
   drum.stop();
   acid.stop();
+  decks.stopAll();
   engine.stopAllPads();
   performer.allOff();
   engine.allNotesOff();
@@ -356,6 +365,7 @@ function knobDefs() {
   }
   if (state.page === 'synth') return synthKnobDefs();
   if (state.page === 'acid') return acidKnobDefs();
+  if (state.page === 'decks') return [...deckKnobDefs(), masterDef()];
   return state.page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[state.page].params;
 }
 function knobTarget(def) {
@@ -364,6 +374,7 @@ function knobTarget(def) {
   if (mixField(state.page)) return state.globals;   // K8 = volume général
   if (state.page === 'pad') return currentPad()?.p;
   if (def.acid) return state.acid.params;
+  if (def.deck) return def.deck === 'x' ? state.decks : state.decks[def.deck];
   if (state.page === 'tr') return def.group === 'global' ? state.tr.globals : state.tr.params[state.tr.sel];
   return state.globals;
 }
@@ -394,6 +405,9 @@ function turnKnob(index, { delta, value }) {
   } else if (def.acid) {
     acid.update();
     renderAcidKnobs();
+  } else if (def.deck) {
+    decks.update();
+    renderDecks();
   } else {
     engine.set(def.id, toValue(def, target[def.id]));
   }
@@ -504,7 +518,7 @@ function bindController() {
     }
     else if (name.startsWith('track')) setPage((shiftHeld ? MIX_PAGES : PAGE_ORDER)[+name.slice(5) - 1]);
     else if (name === 'stopAll') { if (shiftHeld) toggleSceneMode(); else panic(); }
-    else if (name === 'record') { if (shiftHeld) setPage(state.page === 'acid' ? 'synth' : 'acid'); else tlRecToggle(); }
+    else if (name === 'record') { if (shiftHeld) setPage(state.page === 'acid' ? 'decks' : state.page === 'decks' ? 'synth' : 'acid'); else tlRecToggle(); }
   });
 
   apc.addEventListener('knob', ({ detail }) => turnKnob(detail.index, detail));
@@ -822,7 +836,7 @@ function buildPages() {
   UI_PAGES.forEach((page, k) => {
     const btn = document.createElement('button');
     btn.textContent = PAGES[page]?.label ?? t(`page.${page}`);
-    btn.title = page === 'tr' ? t('tr.pageTitle') : page === 'acid' ? t('acid.pageTitle')
+    btn.title = page === 'tr' ? t('tr.pageTitle') : page === 'acid' ? t('acid.pageTitle') : page === 'decks' ? t('deck.pageTitle')
       : mixField(page) ? t('mix.pageTitle', { n: MIX_FIELDS.indexOf(mixField(page)) + 1 })
       : t('page.title', { n: k + 1 });
     btn.addEventListener('click', () => setPage(page));
@@ -1006,6 +1020,7 @@ function setBpm(bpm) {
   if (!bpm) return;
   state.bpm = bpm;
   engine.setBpm(bpm);
+  if (decks) { decks.update(); renderDecks(); }   // les decks synchronisés suivent le tempo
   $('#bpm').value = Math.round(bpm * 10) / 10;
   save();
 }
@@ -1358,7 +1373,7 @@ function renderTrHead() {
 // ---------- Timeline (écran principal, façon eJay) ----------
 
 // Pads et synthé : blocs posés en jouant ; TR-909 : enregistrement audio.
-const TL_SOURCES = ['pads', 'synth', 'tr', 'acid'];
+const TL_SOURCES = ['pads', 'synth', 'tr', 'acid', 'decks'];
 const bufferCache = new Map();   // sampleId -> AudioBuffer des blocs
 const peaksCache = new Map();    // sampleId -> crêtes pour dessiner la forme d'onde
 let tlRecorder = null;
@@ -1407,7 +1422,7 @@ function tlSourceNode(source) {
 async function tlStartRec() {
   if (timeline.playing) timeline.stop(true);
   const source = state.tl.source;
-  if (source !== 'tr' && source !== 'acid') {
+  if (!['tr', 'acid', 'decks'].includes(source)) {
     // Pads / synthé : on joue la timeline (en boucle si activée) et chaque coup devient un bloc.
     tlRec = { mode: 'events', source, open: new Map(), dirty: false };
     timeline.play(Math.round(state.tl.playhead));
@@ -1924,8 +1939,11 @@ function startLibDrag(e, item) {
     }
     ghost.style.left = `${ev.clientX + 12}px`;
     ghost.style.top = `${ev.clientY + 8}px`;
-    target = tlTarget(ev);
-    if (target) {
+    const deckEl = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.deck');
+    for (const d of document.querySelectorAll('.deck.dragover')) if (d !== deckEl) d.classList.remove('dragover');
+    deckEl?.classList.add('dragover');
+    target = deckEl ? { deck: deckEl.dataset.deck } : tlTarget(ev);
+    if (target && !target.deck) {
       const bars = item.loop && item.bars ? item.bars : 1;
       Object.assign(drop.style, { left: `${target.beat * beatPx()}px`, width: `${bars * state.tl.zoom}px` });
       target.lane.appendChild(drop);
@@ -1938,7 +1956,9 @@ function startLibDrag(e, item) {
     ghost?.remove();
     libSelected = item;
     if (!ghost) { previewSample(item); renderLibrary(); return; }
-    if (target) tlPlaceItem(item, target.track, target.beat);
+    for (const d of document.querySelectorAll('.deck.dragover')) d.classList.remove('dragover');
+    if (target?.deck) loadDeck(target.deck, item);
+    else if (target) tlPlaceItem(item, target.track, target.beat);
     renderLibrary();
   };
   window.addEventListener('pointermove', onMove);
@@ -1966,6 +1986,7 @@ function renderPluginBar() {
 function onWindowToggle(id, open) {
   renderPluginBar();
   if (open && id === 'piano') buildPiano();
+  if (open && id === 'decks') requestAnimationFrame(() => DECK_IDS.forEach(drawDeckWave));   // à la bonne largeur
 }
 
 // ---------- Scènes ----------
@@ -2635,7 +2656,7 @@ function renderUndo() {
 // Enregistrements (sons « rec: ») qui ne servent plus à aucun bloc ni pad : effacés au démarrage.
 // (Pas à la suppression d'un bloc : « Annuler » doit pouvoir le faire revenir.)
 async function cleanRecordings() {
-  const used = new Set([...state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)), ...state.banks.flat().map(p => p?.sampleId)]);
+  const used = new Set([...state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)), ...state.banks.flat().map(p => p?.sampleId), ...DECK_IDS.map(id => state.decks[id].sampleId)]);
   const ids = await store.listSampleIds().catch(() => []);
   for (const id of ids) if (typeof id === 'string' && id.startsWith('rec:') && !used.has(id)) store.deleteSample(id).catch(() => {});
 }
@@ -3109,6 +3130,240 @@ function renderKick() {
   $('#kick-auto').classList.toggle('active', state.kick.auto);
   $('#kick-to-pad').title = t('kick.toPad.title', { n: state.selected + 1, bank: state.bank + 1 });
   renderKickKnobs();
+}
+
+// ---------- Platines ----------
+
+const deckEls = {};
+
+// Charge un son (élément de la bibliothèque) sur un deck.
+async function loadDeck(id, item) {
+  const buffer = await ensureBuffer(item.sampleId);
+  if (!buffer) { toast(t('lib.loadFail'), 3000); return; }
+  const s = state.decks[id];
+  const deck = decks.decks[id];
+  if (deck.playing) deck.pause();
+  Object.assign(s, { sampleId: item.sampleId, name: item.name, bpm: guessBpm(buffer.duration, item.loop ? item.bpm : 0, state.bpm), cue: 0, loop: !!item.loop || buffer.duration > 8 });
+  deck.setBuffer(buffer);
+  deck.update();
+  drawDeckWave(id);
+  renderDecks();
+  save();
+  toast(t('deck.loaded', { name: item.name, deck: id }));
+}
+
+// Fichier audio glissé sur un deck : gardé comme son de l'utilisateur (il rejoint aussi la bibliothèque).
+async function loadDeckFile(id, file) {
+  if (!file || !file.type.startsWith('audio/') && !/\.(wav|mp3|ogg|flac|aiff?|m4a)$/i.test(file.name)) return;
+  const data = await file.arrayBuffer();
+  let buffer;
+  try { buffer = await engine.ctx.decodeAudioData(data.slice(0)); } catch { alert(t('editor.unreadable', { name: file.name })); return; }
+  const sampleId = `user:${crypto.randomUUID()}`;
+  const name = file.name.replace(/\.[^.]+$/, '').slice(0, 32);
+  await store.saveSample(sampleId, { name, data });
+  bufferCache.set(sampleId, buffer);
+  state.userSounds.push({ sampleId, name, cat: guessCat(name) });
+  renderLibrary();
+  await loadDeck(id, { sampleId, name, loop: buffer.duration > 8, bpm: 0 });
+}
+
+function buildDecks() {
+  decks.busy = () => timeline.playing;
+  decks.onChange = () => renderDecks();
+  for (const id of DECK_IDS) {
+    const el = document.querySelector(`.deck[data-deck="${id}"]`);
+    el.innerHTML = `
+      <div class="deck-head"><b class="deck-id">${id}</b><span class="deck-name"></span><span class="deck-bpm hint"></span></div>
+      <canvas class="deck-wave" height="44" title="${t('deck.waveTitle')}"></canvas>
+      <div class="deck-body">
+        <canvas class="deck-vinyl" width="150" height="150" title="${t('deck.vinylTitle')}"></canvas>
+        <div class="deck-side">
+          <div class="deck-buttons">
+            <button class="deck-play primary"></button>
+            <button class="deck-cue" title="${t('deck.cueTitle')}">Cue</button>
+            <button class="deck-sync" title="${t('deck.syncTitle')}">Sync</button>
+            <button class="deck-loop">${t('deck.loop')}</button>
+            <button class="deck-load" title="${t('deck.load.title')}">${t('deck.load')}</button>
+          </div>
+          <label class="deck-pitch"><span>${t('deck.pitch')}</span><input type="range" min="-0.08" max="0.08" step="0.001"><em></em></label>
+          <div class="mini-knobs deck-knobs"></div>
+        </div>
+      </div>`;
+    const els = deckEls[id] = {
+      el, name: el.querySelector('.deck-name'), bpm: el.querySelector('.deck-bpm'), wave: el.querySelector('.deck-wave'), vinyl: el.querySelector('.deck-vinyl'),
+      play: el.querySelector('.deck-play'), cue: el.querySelector('.deck-cue'), sync: el.querySelector('.deck-sync'), loop: el.querySelector('.deck-loop'),
+      load: el.querySelector('.deck-load'), pitch: el.querySelector('.deck-pitch input'), pitchLabel: el.querySelector('.deck-pitch em'), knobs: [], angle: 0,
+    };
+    const deck = decks.decks[id];
+    const s = () => state.decks[id];
+    els.play.addEventListener('click', () => { if (deck.playing) deck.pause(); else deck.play(); });
+    els.cue.addEventListener('click', () => { deck.cue(); save(); });
+    els.sync.addEventListener('click', () => { s().sync = !s().sync; deck.update(); renderDecks(); save(); });
+    els.loop.addEventListener('click', () => { s().loop = !s().loop; deck.update(); renderDecks(); save(); });
+    els.load.addEventListener('click', () => { if (libSelected) loadDeck(id, libSelected); else toast(t('deck.pickFirst'), 3000); });
+    els.pitch.addEventListener('input', () => { s().pitch = +els.pitch.value; deck.update(); renderDecks(); save(); });
+    els.pitch.addEventListener('dblclick', () => { s().pitch = 0; deck.update(); renderDecks(); save(); });
+    // Forme d'onde : un clic place la lecture (ou le cue à l'arrêt).
+    els.wave.addEventListener('pointerdown', e => {
+      if (!deck.buffer) return;
+      const r = els.wave.getBoundingClientRect();
+      deck.seek((e.clientX - r.left) / r.width * deck.duration);
+      if (!deck.playing) s().cue = deck.pos;
+      renderDecks();
+    });
+    // Vinyle : la souris tient le disque ; sa vitesse de rotation donne la vitesse de lecture (à l'envers aussi).
+    let last = null, idle;
+    const angleAt = e => { const r = els.vinyl.getBoundingClientRect(); return Math.atan2(e.clientY - r.top - r.height / 2, e.clientX - r.left - r.width / 2); };
+    els.vinyl.addEventListener('pointerdown', e => {
+      if (!deck.buffer) return;
+      try { els.vinyl.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ }
+      last = { a: angleAt(e), t: performance.now() };
+      deck.scratchStart();
+    });
+    els.vinyl.addEventListener('pointermove', e => {
+      if (!last) return;
+      const a = angleAt(e);
+      const now = performance.now();
+      let da = a - last.a;
+      if (da > Math.PI) da -= 2 * Math.PI;
+      if (da < -Math.PI) da += 2 * Math.PI;
+      const dt = Math.max(1, now - last.t) / 1000;
+      deck.scratchMove(rateFromSpin(da / (2 * Math.PI) / dt));
+      els.angle += da;
+      last = { a, t: now };
+      clearTimeout(idle);
+      idle = setTimeout(() => deck.scratchMove(0), 60);   // main immobile : le disque s'arrête
+    });
+    const release = () => { if (!last) return; last = null; clearTimeout(idle); deck.scratchEnd(); };
+    els.vinyl.addEventListener('pointerup', release);
+    els.vinyl.addEventListener('pointercancel', release);
+    // Glisser un fichier audio sur le deck.
+    el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('dragover'); });
+    el.addEventListener('dragleave', () => el.classList.remove('dragover'));
+    el.addEventListener('drop', e => { e.preventDefault(); el.classList.remove('dragover'); loadDeckFile(id, e.dataTransfer.files[0]); });
+    // Potards : volume, basses, médiums, aigus, filtre.
+    DECK_KNOBS.forEach(k => {
+      const knob = document.createElement('div');
+      knob.className = 'knob';
+      knob.innerHTML = `
+        <svg viewBox="0 0 80 80">
+          <path class="track" d="${arcPath(1)}" fill="none" stroke-width="8" stroke-linecap="round"/>
+          <path class="arc" fill="none" stroke-width="8" stroke-linecap="round"/>
+        </svg>
+        <div class="value"></div><div class="label">${t(`deck.k.${k}`)}</div>`;
+      const turn = pos => { s()[k] = Math.min(1, Math.max(0, pos)); deck.update(); renderDecks(); if (state.page === 'decks') renderKnobs(); save(); };
+      let y = null;
+      knob.addEventListener('pointerdown', e => { y = e.clientY; try { knob.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } });
+      knob.addEventListener('pointermove', e => { if (y === null || Math.abs(y - e.clientY) < 2) return; turn(s()[k] + (y - e.clientY) * 0.005 * (e.shiftKey ? 0.25 : 1)); y = e.clientY; });
+      knob.addEventListener('pointerup', () => { y = null; });
+      knob.addEventListener('wheel', e => { e.preventDefault(); turn(s()[k] + (e.deltaY < 0 ? 0.02 : -0.02)); }, { passive: false });
+      knob.addEventListener('dblclick', () => turn(k === 'vol' ? 0.8 : 0.5));
+      el.querySelector('.deck-knobs').appendChild(knob);
+      els.knobs.push([k, knob]);
+    });
+  }
+  const xf = $('#deck-xfade');
+  xf.addEventListener('input', () => { state.decks.xfade = +xf.value; decks.update(); if (state.page === 'decks') renderKnobs(); save(); });
+  xf.addEventListener('dblclick', () => { state.decks.xfade = 0.5; decks.update(); renderDecks(); save(); });
+  // Sons déjà chargés (sauvegarde) : remis sur les decks, à l'arrêt.
+  for (const id of DECK_IDS) {
+    const sid = state.decks[id].sampleId;
+    if (sid) ensureBuffer(sid).then(buf => { if (buf) { decks.decks[id].setBuffer(buf); decks.decks[id].update(); drawDeckWave(id); renderDecks(); } });
+  }
+  renderDecks();
+  (function frame() {
+    if (wm?.isOpen('decks')) for (const id of DECK_IDS) drawDeck(id);
+    requestAnimationFrame(frame);
+  })();
+}
+
+// Forme d'onde complète du son (dessinée une fois au chargement).
+const deckWaves = {};
+function drawDeckWave(id) {
+  const deck = decks.decks[id];
+  const cv = deckEls[id].wave;
+  const w = cv.width = Math.max(200, cv.clientWidth * devicePixelRatio);
+  const h = cv.height = 44 * devicePixelRatio;
+  const off = document.createElement('canvas');
+  off.width = w; off.height = h;
+  const g = off.getContext('2d');
+  if (deck.buffer) {
+    const data = deck.buffer.getChannelData(0);
+    const step = data.length / w;
+    g.fillStyle = id === 'A' ? PALETTE[37] : PALETTE[53];
+    for (let x = 0; x < w; x++) {
+      let peak = 0;
+      for (let i = Math.floor(x * step); i < Math.floor((x + 1) * step); i += 4) peak = Math.max(peak, Math.abs(data[i]));
+      g.fillRect(x, (1 - peak) * h / 2, 1, Math.max(1, peak * h));
+    }
+  }
+  deckWaves[id] = off;
+}
+
+function drawDeck(id) {
+  const deck = decks.decks[id];
+  const els = deckEls[id];
+  // Position : interpolée entre deux rapports du lecteur.
+  const pos = deck.pos;
+  const cv = els.wave;
+  const g = cv.getContext('2d');
+  g.clearRect(0, 0, cv.width, cv.height);
+  if (deckWaves[id]) g.drawImage(deckWaves[id], 0, 0);
+  if (deck.buffer) {
+    const x = pos / deck.duration * cv.width;
+    const cx = state.decks[id].cue / deck.duration * cv.width;
+    g.fillStyle = '#ffd23f';
+    g.fillRect(cx - 1, 0, 2, cv.height);
+    g.fillStyle = '#fff';
+    g.fillRect(x - 1, 0, 3, cv.height);
+  }
+  // Vinyle : tourne avec la position du son (33 ⅓ tours/min).
+  const v = els.vinyl;
+  const vg = v.getContext('2d');
+  const r = v.width / 2;
+  const a = vinylTurns(pos) * 2 * Math.PI;
+  vg.clearRect(0, 0, v.width, v.height);
+  vg.save();
+  vg.translate(r, r);
+  vg.fillStyle = '#0b0b0e';
+  vg.beginPath(); vg.arc(0, 0, r - 2, 0, 2 * Math.PI); vg.fill();
+  vg.strokeStyle = '#1d1d24';
+  for (let k = 20; k < r - 6; k += 5) { vg.beginPath(); vg.arc(0, 0, k, 0, 2 * Math.PI); vg.stroke(); }
+  vg.rotate(a);
+  vg.fillStyle = id === 'A' ? PALETTE[37] : PALETTE[53];
+  vg.beginPath(); vg.arc(0, 0, r * 0.3, 0, 2 * Math.PI); vg.fill();
+  vg.fillStyle = '#fff';
+  vg.fillRect(-2, -r + 6, 4, r * 0.4);   // repère sur le disque
+  vg.fillStyle = '#0b0b0e';
+  vg.beginPath(); vg.arc(0, 0, 4, 0, 2 * Math.PI); vg.fill();
+  vg.restore();
+}
+
+function renderDecks() {
+  if (!deckEls.A) return;
+  for (const id of DECK_IDS) {
+    const s = state.decks[id];
+    const deck = decks.decks[id];
+    const els = deckEls[id];
+    els.name.textContent = s.name || t('deck.empty');
+    els.name.classList.toggle('hint', !s.name);
+    const rate = deck.baseRate();
+    els.bpm.textContent = s.bpm ? `${Math.round(s.bpm * rate * 10) / 10} BPM` : t('deck.bpmUnknown');
+    els.play.textContent = deck.playing ? '❚❚' : '▶';
+    els.play.classList.toggle('active', deck.playing);
+    els.sync.classList.toggle('active', s.sync);
+    els.sync.disabled = !s.bpm;
+    els.loop.classList.toggle('active', s.loop);
+    els.pitch.value = s.pitch;
+    els.pitch.disabled = s.sync && !!s.bpm;
+    els.pitchLabel.textContent = s.sync && s.bpm ? `${rate >= 1 ? '+' : ''}${((rate - 1) * 100).toFixed(1)}%` : `${s.pitch >= 0 ? '+' : ''}${(s.pitch * 100).toFixed(1)}%`;
+    for (const [k, knob] of els.knobs) {
+      const p = s[k];
+      knob.querySelector('.arc').setAttribute('d', p > 0.001 ? arcPath(p) : '');
+      knob.querySelector('.value').textContent = k === 'vol' ? `${Math.round(p * 100)}%` : k === 'filter' ? (Math.abs(p - 0.5) < 0.02 ? '—' : p < 0.5 ? 'LP' : 'HP') : p < 0.02 ? 'kill' : `${p > 0.5 ? '+' : ''}${Math.round((p - 0.5) * 24)}`;
+    }
+  }
+  $('#deck-xfade').value = state.decks.xfade;
 }
 
 // ---------- Effets de performance ----------
