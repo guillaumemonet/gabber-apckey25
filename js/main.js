@@ -15,6 +15,7 @@ import { t, soundName, translatePage } from './i18n.js';
 import { Performer, CHORD_MODES, ARP_MODES, ARP_RATES, defaultPlayState, mergePlayState } from './performer.js';
 import { PROGRESSIONS, parseProgression, voiceChords, bassNote } from './chords.js';
 import { Sidechain, SC_SOURCES, SC_DUCKED, defaultScState, mergeScState } from './sidechain.js';
+import { History } from './history.js';
 
 translatePage();
 
@@ -23,7 +24,7 @@ const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (E
 const UI_PAGES = [...PAGE_ORDER, 'tr', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain;
+let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -107,6 +108,7 @@ async function start() {
   performer.onNote = (note, vel, on) => tlRecordNote(note, on, vel);
   performer.onNoteAt = tlRecordArpNote;
   await loadTlBuffers();
+  cleanRecordings();
   bindTempo();
 
   buildPads();
@@ -121,6 +123,7 @@ async function start() {
   buildMixer();
   buildSidechain();
   buildTl();
+  initHistory();
   buildGen();
   buildScenes();
   bindKits();
@@ -245,6 +248,7 @@ async function importLibrary() {
 
 let saveTimer;
 function save() {
+  if (!tlRec) tlHistory?.commit();
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     store.saveState({
@@ -1465,12 +1469,8 @@ async function tlPlaceItem(item, track, beat) {
 function tlDelete(track, clip) {
   const list = state.tl.tracks[track].clips;
   list.splice(list.indexOf(clip), 1);
-  // Un enregistrement qui n'est plus utilisé nulle part est effacé de la sauvegarde.
-  if (clip.sampleId?.startsWith('rec:') && !state.tl.tracks.some(tr => tr.clips.some(c => c.sampleId === clip.sampleId))) {
-    store.deleteSample(clip.sampleId).catch(() => {});
-    bufferCache.delete(clip.sampleId);
-    renderLibrary();
-  }
+  // Un enregistrement qui ne sert plus reste stocké jusqu'au prochain démarrage (voir cleanRecordings) : « Annuler » peut le ramener.
+  if (clip.sampleId?.startsWith('rec:')) renderLibrary();
   if (tlSel?.clip === clip) tlSel = null;
   renderTl();
   save();
@@ -1796,8 +1796,7 @@ async function loadDemo() {
   });
   await loadBuffers(pending.map(c => c.sampleId));
   for (const clip of pending) if (clip.len === null) clip.len = Math.max(1, Math.ceil(timeline.naturalBeats(clip) - 0.05));
-  // Les enregistrements remplacés ne servent plus : on les efface de la sauvegarde.
-  for (const c of state.tl.tracks.flatMap(tr => tr.clips)) if (c.sampleId?.startsWith('rec:')) store.deleteSample(c.sampleId).catch(() => {});
+  // Les enregistrements remplacés restent stockés jusqu'au prochain démarrage : « Annuler » peut ramener l'ancienne timeline.
   state.tl.tracks = tracks;
   state.tl.bars = demo.bars;
   state.tl.playhead = 0;
@@ -2551,6 +2550,58 @@ function renderSidechain() {
     el.value = s[el.dataset.sc];
     el.nextElementSibling.textContent = el.dataset.sc === 'depth' ? `${Math.round(s.depth * 100)}%` : `${Math.round(s.release * 1000)} ms`;
   }
+}
+
+// ---------- Annuler / rétablir (timeline) ----------
+
+// Instantané de la timeline : pistes (muets et blocs) et longueur. La position de lecture n'en fait pas partie.
+const tlSnapshot = () => JSON.stringify({ bars: state.tl.bars, tracks: state.tl.tracks.map(tr => ({ mute: tr.mute, clips: tr.clips })) });
+
+function initHistory() {
+  tlHistory = new History(tlSnapshot, snap => {
+    const s = JSON.parse(snap);
+    state.tl.bars = s.bars;
+    s.tracks.forEach((tr, i) => { if (state.tl.tracks[i]) Object.assign(state.tl.tracks[i], tr); });
+    tlSel = null;
+    loadTlBuffers().then(renderTl);
+    renderTl();
+    renderLibrary();
+    save();
+  });
+  tlHistory.onChange = renderUndo;
+  $('#tl-undo').addEventListener('click', tlUndo);
+  $('#tl-redo').addEventListener('click', tlRedo);
+  // Ctrl+Z = annuler, Ctrl+Maj+Z ou Ctrl+Y = rétablir (sauf dans un champ de texte, qui garde les siens).
+  window.addEventListener('keydown', e => {
+    if (!(e.ctrlKey || e.metaKey) || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    const k = e.key.toLowerCase();
+    if (k === 'z' && !e.shiftKey) { e.preventDefault(); tlUndo(); }
+    else if ((k === 'z' && e.shiftKey) || k === 'y') { e.preventDefault(); tlRedo(); }
+  });
+  renderUndo();
+}
+
+function tlUndo() {
+  if (tlRec) return;   // pas pendant un enregistrement
+  if (tlHistory.undo()) toast(t('tl.undone'));
+}
+
+function tlRedo() {
+  if (tlRec) return;
+  if (tlHistory.redo()) toast(t('tl.redone'));
+}
+
+function renderUndo() {
+  $('#tl-undo').disabled = !tlHistory?.canUndo;
+  $('#tl-redo').disabled = !tlHistory?.canRedo;
+}
+
+// Enregistrements (sons « rec: ») qui ne servent plus à aucun bloc ni pad : effacés au démarrage.
+// (Pas à la suppression d'un bloc : « Annuler » doit pouvoir le faire revenir.)
+async function cleanRecordings() {
+  const used = new Set([...state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)), ...state.banks.flat().map(p => p?.sampleId)]);
+  const ids = await store.listSampleIds().catch(() => []);
+  for (const id of ids) if (typeof id === 'string' && id.startsWith('rec:') && !used.has(id)) store.deleteSample(id).catch(() => {});
 }
 
 // ---------- Effets de performance ----------

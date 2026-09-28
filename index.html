@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=23">
+  <link rel="stylesheet" href="css/style.css?v=24">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -53,6 +53,7 @@
         <button id="tl-rec"></button>
         <label class="tl-src"><span data-i18n="tl.source"></span><select id="tl-source"></select></label>
         <button id="tl-loop" data-i18n="tl.loop"></button>
+        <span class="tl-bars"><button id="tl-undo" data-i18n-title="tl.undo" data-i18n-aria="tl.undo">↶</button><button id="tl-redo" data-i18n-title="tl.redo" data-i18n-aria="tl.redo">↷</button></span>
         <span class="tl-bars"><button id="tl-zoom-out" data-i18n-title="tl.zoomOut">−</button><span data-i18n="tl.zoom"></span><button id="tl-zoom-in" data-i18n-title="tl.zoomIn">+</button></span>
         <span class="tl-bars"><button id="tl-less">−</button><span id="tl-bars"></span><button id="tl-more">+</button></span>
         <button id="tl-demo" data-i18n="tl.demo" data-i18n-title="tl.demo.title"></button>
@@ -188,28 +189,29 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/apc.js": "./js/apc.js?v=23",
-      "./js/audio.js": "./js/audio.js?v=23",
-      "./js/chords.js": "./js/chords.js?v=23",
-      "./js/help.js": "./js/help.js?v=23",
-      "./js/i18n.js": "./js/i18n.js?v=23",
-      "./js/kit.js": "./js/kit.js?v=23",
-      "./js/kits.js": "./js/kits.js?v=23",
-      "./js/library.js": "./js/library.js?v=23",
-      "./js/main.js": "./js/main.js?v=23",
-      "./js/mixer.js": "./js/mixer.js?v=23",
-      "./js/params.js": "./js/params.js?v=23",
-      "./js/performer.js": "./js/performer.js?v=23",
-      "./js/presets.js": "./js/presets.js?v=23",
-      "./js/sidechain.js": "./js/sidechain.js?v=23",
-      "./js/recorder.js": "./js/recorder.js?v=23",
-      "./js/timeline.js": "./js/timeline.js?v=23",
-      "./js/storage.js": "./js/storage.js?v=23",
-      "./js/tr909.js": "./js/tr909.js?v=23",
-      "./js/windows.js": "./js/windows.js?v=23"
+      "./js/apc.js": "./js/apc.js?v=24",
+      "./js/audio.js": "./js/audio.js?v=24",
+      "./js/chords.js": "./js/chords.js?v=24",
+      "./js/help.js": "./js/help.js?v=24",
+      "./js/history.js": "./js/history.js?v=24",
+      "./js/i18n.js": "./js/i18n.js?v=24",
+      "./js/kit.js": "./js/kit.js?v=24",
+      "./js/kits.js": "./js/kits.js?v=24",
+      "./js/library.js": "./js/library.js?v=24",
+      "./js/main.js": "./js/main.js?v=24",
+      "./js/mixer.js": "./js/mixer.js?v=24",
+      "./js/params.js": "./js/params.js?v=24",
+      "./js/performer.js": "./js/performer.js?v=24",
+      "./js/presets.js": "./js/presets.js?v=24",
+      "./js/sidechain.js": "./js/sidechain.js?v=24",
+      "./js/recorder.js": "./js/recorder.js?v=24",
+      "./js/timeline.js": "./js/timeline.js?v=24",
+      "./js/storage.js": "./js/storage.js?v=24",
+      "./js/tr909.js": "./js/tr909.js?v=24",
+      "./js/windows.js": "./js/windows.js?v=24"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=23"></script>
+  <script type="module" src="js/main.js?v=24"></script>
 </body>
 </html>

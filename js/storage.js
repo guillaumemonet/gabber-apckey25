@@ -31,6 +31,7 @@ export const saveState = state => tx('state', 'readwrite', s => s.put(state, 'ma
 export const loadSample = id => tx('samples', 'readonly', s => s.get(id));
 export const saveSample = (id, sample) => tx('samples', 'readwrite', s => s.put(sample, id));
 export const deleteSample = id => tx('samples', 'readwrite', s => s.delete(id));
+export const listSampleIds = () => tx('samples', 'readonly', s => s.getAllKeys());
 export const clearAll = () => Promise.all([
   tx('state', 'readwrite', s => s.clear()),
   tx('samples', 'readwrite', s => s.clear()),

@@ -343,6 +343,8 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .gen-chips button { padding: 3px 8px; font-size: 11px; }
 #gen-btn { margin-bottom: 8px; }
 #gen-btn.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
+#tl-undo, #tl-redo { font-size: 15px; padding: 2px 9px; }
+#tl-undo:disabled, #tl-redo:disabled { opacity: .35; cursor: default; }
 #tl-loop.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
 
 /* Fenêtres des plugins */
