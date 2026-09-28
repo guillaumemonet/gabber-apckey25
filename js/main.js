@@ -16,6 +16,8 @@ import { Performer, CHORD_MODES, ARP_MODES, ARP_RATES, defaultPlayState, mergePl
 import { PROGRESSIONS, parseProgression, voiceChords, bassNote } from './chords.js';
 import { Sidechain, SC_SOURCES, SC_DUCKED, defaultScState, mergeScState } from './sidechain.js';
 import { History } from './history.js';
+import { SHAPES } from './tr909.js';
+import { Patch, BOX_TYPES, BOX_ORDER, SOURCE_COLORS, boxDefaults, defaultPatch, mergePatch, wouldLoop } from './patch.js';
 import { makeZip } from './zip.js';
 import { FX_TYPES as TFX_TYPES, FX_BANK, FX_FAMILY_COLORS, fxDefaults, bankName } from './trackfx.js';
 import { KICK_PARAMS, KICK_PRESETS, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
@@ -29,7 +31,7 @@ const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (E
 const UI_PAGES = [...PAGE_ORDER, 'tr', 'acid', 'decks', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory, acid, decks;
+let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory, acid, decks, patch;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -52,6 +54,7 @@ const state = {
   acid: defaultAcidState(),           // TB-303 : réglages et patterns
   kick: defaultKickState(),           // designer de kick
   decks: defaultDecksState(),         // platines : sons chargés et réglages des deux decks
+  patch: defaultPatch(),              // câblage : boîtes à effets et câbles (tout sur le master par défaut)
   userSounds: [],                     // sons créés dans l'application (kicks du designer) : { sampleId, name, cat }
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
@@ -105,6 +108,7 @@ async function start() {
   await Decks.load(engine.ctx);
   decks = new Decks(engine, () => state.decks);
   decks.out.connect(mixer.input('decks'));
+  patch = new Patch(engine, mixer, () => state.patch);   // sorties des voies -> master ou boîtes à effets
   drum.setDestinations(Object.fromEntries(['bd', 'snare', 'toms', 'hats', 'cym'].map(g => [g, mixer.input('tr')])));
   timeline = new Timeline(engine, () => state.tl, clipBuffer, mixer.input('tl'));
   timeline.getPad = (b, i) => state.banks[b]?.[i];
@@ -137,6 +141,7 @@ async function start() {
   buildAcid();
   buildKick();
   buildDecks();
+  buildPatch();
   buildMixer();
   buildSidechain();
   buildTl();
@@ -205,6 +210,7 @@ async function restore() {
     state.acid = mergeAcidState(saved.acid);
     state.kick = mergeKickState(saved.kick);
     state.decks = mergeDecksState(saved.decks);
+    state.patch = mergePatch(saved.patch);
     state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
@@ -291,6 +297,7 @@ function save() {
       acid: state.acid,
       kick: state.kick,
       decks: state.decks,
+      patch: state.patch,
       userSounds: state.userSounds,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
@@ -1022,6 +1029,7 @@ function setBpm(bpm) {
   state.bpm = bpm;
   engine.setBpm(bpm);
   if (decks) { decks.update(); renderDecks(); }   // les decks synchronisés suivent le tempo
+  patch?.tempoChanged();   // delays et LFO des boîtes calés sur le tempo
   $('#bpm').value = Math.round(bpm * 10) / 10;
   save();
 }
@@ -1074,6 +1082,7 @@ function buildMixer() {
     el.className = 'strip';
     el.innerHTML = `
       <div class="strip-name">${t(`mix.ch.${id}`)}</div>
+      <div class="strip-dest" title="${t('patch.destTitle')}"></div>
       <div class="fx-list"></div>
       <select class="fx-add"><option value="">${t('mix.addFx')}</option>${fxOptions}</select>
       ${['reverb', 'delay', 'pan'].map(f => `<label class="send"><span>${t(`mix.${f}`)}</span><input type="range" min="0" max="1" step="0.01" data-field="${f}"><em></em></label>`).join('')}
@@ -1145,6 +1154,7 @@ function renderStrip(id) {
 function renderMixer() {
   if (!stripEls.master) return;
   for (const id of CHANNELS) renderStrip(id);
+  if (patch) renderMixerDest();
   stripEls.master.querySelector('input').value = state.globals.master;
   stripEls.master.querySelector('.db').textContent = masterDef().fmt(toValue(masterDef(), state.globals.master));
 }
@@ -2003,6 +2013,7 @@ function onWindowToggle(id, open) {
   renderPluginBar();
   if (open && id === 'piano') buildPiano();
   if (open && id === 'decks') requestAnimationFrame(() => DECK_IDS.forEach(drawDeckWave));   // à la bonne largeur
+  if (open && id === 'patch') requestAnimationFrame(renderPatch);
 }
 
 // ---------- Scènes ----------
@@ -2705,6 +2716,7 @@ async function renderSong(onlyTrack = null) {
   const m = new Mixer(e, () => state.mix);
   e.padBus.disconnect();
   e.padBus.connect(m.input('pads'));
+  const pt = new Patch(e, m, () => state.patch, false);   // même câblage que le son en direct
   const sc = new Sidechain(e, () => state.sc);
   clearInterval(sc.timer);   // tout est programmé d'avance ci-dessous
   e.pumpGain.disconnect();
@@ -2726,6 +2738,7 @@ async function renderSong(onlyTrack = null) {
   tl.cycles = [{ time: EXPORT_LEAD, beat: 0 }];
   tl.scheduleCycle(EXPORT_LEAD, 0);
   tl.flush(Infinity);
+  pt.scheduleAll(EXPORT_LEAD, EXPORT_LEAD + endBeat * bd + EXPORT_TAIL);
   if (state.sc.on && state.sc.source === 'beat') for (let b = 0; b < endBeat; b++) sc.duck(EXPORT_LEAD + b * bd);
   await new Promise(r => setTimeout(r, 30));   // réponses impulsionnelles des réverbes (créées juste après)
   const buf = await octx.startRendering();
@@ -3488,21 +3501,25 @@ function fxEl(track, block, row) {
 }
 
 // Réglages d'un bloc d'effet (double-clic) : petite fenêtre posée sous le bloc.
-let fxEditing = null;
 function openFxEditor(track, block, anchor) {
+  openParamEditor({ title: block.name, color: fxColor(block), params: TFX_TYPES[block.fx].params, values: block.p, anchor, onEnd: save });
+}
+
+// Petite fenêtre de réglages posée sous un élément : listes et curseurs d'après la description des réglages.
+let fxEditing = null;
+function openParamEditor({ title, color, params, values, anchor, onInput = () => {}, onEnd = () => {} }) {
   closeFxEditor();
-  const def = TFX_TYPES[block.fx];
   const box = document.createElement('div');
   box.id = 'fx-editor';
   box.className = 'fx-editor';
   box.innerHTML = `<div class="fx-editor-head"><b></b><button class="win-close" title="${t('win.close')}">✕</button></div><div class="fx-editor-body"></div>`;
-  box.querySelector('b').textContent = block.name;
-  box.querySelector('b').style.color = fxColor(block);
+  box.querySelector('b').textContent = title;
+  box.querySelector('b').style.color = color;
   box.querySelector('.win-close').addEventListener('click', closeFxEditor);
   const body = box.querySelector('.fx-editor-body');
-  const params = Object.entries(def.params);
-  if (!params.length) body.innerHTML = `<p class="hint">${t('tfx.noParams')}</p>`;
-  for (const [k, [kind, , a, b, step]] of params) {
+  const list = Object.entries(params);
+  if (!list.length) body.innerHTML = `<p class="hint">${t('tfx.noParams')}</p>`;
+  for (const [k, [kind, , a, b, step]] of list) {
     const row = document.createElement('label');
     row.className = 'fx-param';
     const name = document.createElement('span');
@@ -3511,16 +3528,16 @@ function openFxEditor(track, block, anchor) {
     if (kind === 'select') {
       const sel = document.createElement('select');
       for (const v of a) sel.add(new Option(fxOptionLabel(k, v), v));
-      sel.value = block.p[k];
-      sel.addEventListener('change', () => { block.p[k] = typeof a[0] === 'number' ? +sel.value : sel.value; save(); });
+      sel.value = values[k];
+      sel.addEventListener('change', () => { values[k] = typeof a[0] === 'number' ? +sel.value : sel.value; onInput(k); onEnd(); });
       row.appendChild(sel);
     } else {
       const inp = document.createElement('input');
-      Object.assign(inp, { type: 'range', min: a, max: b, step, value: block.p[k] });
+      Object.assign(inp, { type: 'range', min: a, max: b, step, value: values[k] });
       const val = document.createElement('em');
-      const show = () => { val.textContent = fxValueLabel(k, block.p[k]); };
-      inp.addEventListener('input', () => { block.p[k] = +inp.value; show(); });
-      inp.addEventListener('change', save);
+      const show = () => { val.textContent = fxValueLabel(k, values[k]); };
+      inp.addEventListener('input', () => { values[k] = +inp.value; show(); onInput(k); });
+      inp.addEventListener('change', onEnd);
       show();
       row.append(inp, val);
     }
@@ -3531,7 +3548,7 @@ function openFxEditor(track, block, anchor) {
   const w = box.offsetWidth, h = box.offsetHeight;
   box.style.left = `${Math.max(8, Math.min(window.innerWidth - w - 8, r.left))}px`;
   box.style.top = `${r.bottom + h + 8 < window.innerHeight ? r.bottom + 6 : Math.max(8, r.top - h - 6)}px`;
-  fxEditing = { track, block, box };
+  fxEditing = { box };
   setTimeout(() => window.addEventListener('pointerdown', fxOutside, true), 0);
 }
 
@@ -3545,18 +3562,231 @@ function closeFxEditor() {
 function fxOptionLabel(k, v) {
   if (k === 'pattern') return t(`pcf.${v}`);
   if (k === 'mode') return v.toUpperCase();
-  if (k === 'div') return v === 6 ? '1/8 .' : `1/${v}`;
+  if (k === 'div') return v === 6 ? '1/8 .' : v === 3 ? '1/4 T' : `1/${v}`;
   if (k === 'bars') return t('tfx.barsN', { n: v });
   if (k === 'dir') return t(`tfx.dir.${v}`);
+  if (k === 'shape') return t('tr.shapes')[SHAPES.indexOf(v)] ?? v;
+  if (k === 'lfo') return v ? t('box.lfoN', { n: v }) : t('box.off');
   return String(v);
 }
 
 function fxValueLabel(k, v) {
-  if (['to', 'lo', 'hi', 'freq'].includes(k)) return v >= 1000 ? `${(v / 1000).toFixed(1)} kHz` : `${Math.round(v)} Hz`;
+  if (['to', 'lo', 'hi', 'freq', 'cutoff', 'tone'].includes(k)) return v >= 1000 ? `${(v / 1000).toFixed(1)} kHz` : `${Math.round(v)} Hz`;
+  if (k === 'threshold' || k === 'makeup') return `${v} dB`;
+  if (k === 'ratio') return `${v}:1`;
+  if (k === 'bits') return `${v} bits`;
+  if (k === 'size') return `${v} s`;
   if (k === 'dec') return `${Math.round(v * 1000)} ms`;
   if (['radius', 'distance', 'height'].includes(k)) return `${v} m`;
   if (['reso', 'q'].includes(k)) return v.toFixed(1);
   return `${Math.round(v * 100)}%`;
+}
+
+// ---------- Page de câblage ----------
+
+const NODE_W = 156;
+const boxLabel = b => b.name || t(`box.${b.type}`);
+
+function patchNodes() {
+  return [
+    ...CHANNELS.map(id => ({ id, kind: 'src', name: t(`mix.ch.${id}`), color: PALETTE[SOURCE_COLORS[id]] })),
+    ...state.patch.boxes.map(b => ({ id: b.id, kind: 'box', name: boxLabel(b), color: PALETTE[BOX_TYPES[b.type].color], box: b })),
+    { id: 'master', kind: 'master', name: t('patch.master'), color: '#ffffff' },
+  ];
+}
+
+function nodePos(n, i) {
+  const saved = state.patch.pos[n.id];
+  if (saved) return saved;
+  const canvas = $('#patch-canvas');
+  if (n.kind === 'src') return { x: 16, y: 16 + CHANNELS.indexOf(n.id) * 72 };
+  if (n.kind === 'master') return { x: Math.max(560, (canvas?.clientWidth || 900) - NODE_W - 24), y: 170 };
+  const k = state.patch.boxes.indexOf(n.box);
+  return { x: 230 + (k % 3) * 180, y: 20 + Math.floor(k / 3) * 110 };
+}
+
+function buildPatch() {
+  const bar = $('#patch-add');
+  for (const type of BOX_ORDER) {
+    const b = document.createElement('button');
+    b.textContent = `+ ${t(`box.${type}`)}`;
+    b.title = t(`box.${type}.title`);
+    b.style.setProperty('--c', PALETTE[BOX_TYPES[type].color]);
+    b.addEventListener('click', () => addBox(type));
+    bar.appendChild(b);
+  }
+  $('#patch-reset').addEventListener('click', () => {
+    if (!confirm(t('patch.resetConfirm'))) return;
+    state.patch.links = CHANNELS.map(id => ({ from: id, to: 'master' }));
+    patchChanged();
+  });
+  renderPatch();
+}
+
+function addBox(type) {
+  const n = state.patch.boxes.filter(b => b.type === type).length + 1;
+  const box = { id: `box:${crypto.randomUUID()}`, type, p: boxDefaults(type), name: `${t(`box.${type}`)} ${n}` };
+  state.patch.boxes.push(box);
+  patchChanged();
+  toast(t('patch.added', { name: box.name }));
+}
+
+function removeBox(box) {
+  state.patch.boxes = state.patch.boxes.filter(b => b !== box);
+  state.patch.links = state.patch.links.filter(l => l.from !== box.id && l.to !== box.id);
+  delete state.patch.pos[box.id];
+  closeFxEditor();
+  patchChanged();
+}
+
+function addLink(from, to) {
+  const links = state.patch.links;
+  if (links.some(l => l.from === from && l.to === to)) return;
+  if (wouldLoop(links, from, to)) { toast(t('patch.loop'), 3000); return; }
+  links.push({ from, to });
+  patchChanged();
+}
+
+function patchChanged() {
+  patch.rebuild();
+  renderPatch();
+  renderMixerDest();
+  save();
+}
+
+function renderPatch() {
+  const canvas = $('#patch-canvas');
+  if (!canvas) return;
+  canvas.querySelectorAll('.patch-node').forEach(n => n.remove());
+  patchNodes().forEach((n, i) => {
+    const pos = nodePos(n, i);
+    const el = document.createElement('div');
+    el.className = `patch-node ${n.kind}`;
+    el.dataset.node = n.id;
+    el.style.left = `${pos.x}px`;
+    el.style.top = `${pos.y}px`;
+    el.style.setProperty('--c', n.color);
+    const sub = n.kind === 'src' ? t('patch.srcSub') : n.kind === 'master' ? t('patch.masterSub') : t('box.hint');
+    el.innerHTML = `
+      ${n.kind !== 'src' ? `<span class="jack in" data-node="${n.id}" title="${t('patch.in')}"></span>` : ''}
+      <div class="patch-head"><b></b>${n.kind === 'box' ? `<button class="patch-del" title="${t('patch.remove')}">✕</button>` : ''}</div>
+      <div class="patch-sub"></div>
+      ${n.kind !== 'master' ? `<span class="jack out" data-node="${n.id}" title="${t('patch.out')}"></span>` : ''}`;
+    el.querySelector('b').textContent = n.name;
+    el.querySelector('.patch-sub').textContent = n.kind === 'box' ? `${t(`box.${n.box.type}`)} · ${sub}` : sub;
+    el.querySelector('.patch-del')?.addEventListener('click', e => { e.stopPropagation(); removeBox(n.box); });
+    if (n.kind === 'box') {
+      el.addEventListener('dblclick', () => openParamEditor({
+        title: boxLabel(n.box), color: n.color, params: BOX_TYPES[n.box.type].params, values: n.box.p, anchor: el,
+        onInput: () => patch.update(n.box.id), onEnd: save,
+      }));
+    }
+    // Déplacer le bloc par son titre.
+    el.querySelector('.patch-head').addEventListener('pointerdown', e => {
+      if (e.button !== 0 || e.target.closest('button')) return;
+      e.preventDefault();
+      const sx = e.clientX, sy = e.clientY, ox = pos.x, oy = pos.y;
+      const move = ev => {
+        const p = { x: Math.max(0, ox + ev.clientX - sx), y: Math.max(0, oy + ev.clientY - sy) };
+        state.patch.pos[n.id] = p;
+        el.style.left = `${p.x}px`;
+        el.style.top = `${p.y}px`;
+        drawWires();
+      };
+      const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); save(); };
+      window.addEventListener('pointermove', move);
+      window.addEventListener('pointerup', up);
+    });
+    // Tirer un câble depuis la sortie.
+    el.querySelector('.jack.out')?.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const temp = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      temp.setAttribute('class', 'wire temp');
+      temp.style.stroke = n.color;
+      $('#patch-wires').appendChild(temp);
+      const from = jackCenter(el.querySelector('.jack.out'));
+      const move = ev => { const c = canvasPoint(ev); temp.setAttribute('d', wirePath(from, c)); highlightJack(ev); };
+      const up = ev => {
+        window.removeEventListener('pointermove', move);
+        window.removeEventListener('pointerup', up);
+        temp.remove();
+        highlightJack(null);
+        const target = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.jack.in, .patch-node:not(.src)');
+        const to = target?.dataset.node;
+        if (to && to !== n.id) addLink(n.id, to);
+      };
+      move(e);
+      window.addEventListener('pointermove', move);
+      window.addEventListener('pointerup', up);
+    });
+    canvas.appendChild(el);
+  });
+  drawWires();
+}
+
+function highlightJack(ev) {
+  for (const j of document.querySelectorAll('.jack.in.hot')) j.classList.remove('hot');
+  if (!ev) return;
+  const node = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.patch-node:not(.src)');
+  node?.querySelector('.jack.in')?.classList.add('hot');
+}
+
+function canvasPoint(ev) {
+  const c = $('#patch-canvas');
+  const r = c.getBoundingClientRect();
+  return { x: ev.clientX - r.left + c.scrollLeft, y: ev.clientY - r.top + c.scrollTop };
+}
+
+// Centre d'une prise, en coordonnées du plan de câblage (d'après la mise en page, insensible aux transitions 3D).
+function jackCenter(j) {
+  const node = j.offsetParent;
+  if (!node) return null;   // fenêtre fermée : pas de mise en page
+  return { x: node.offsetLeft + j.offsetLeft + j.offsetWidth / 2, y: node.offsetTop + j.offsetTop + j.offsetHeight / 2 };
+}
+
+const wirePath = (a, b) => {
+  const dx = Math.max(40, Math.abs(b.x - a.x) * 0.5);
+  return `M ${a.x} ${a.y} C ${a.x + dx} ${a.y}, ${b.x - dx} ${b.y}, ${b.x} ${b.y}`;
+};
+
+// Câbles : courbes colorées de la couleur de la source ; un clic sur un câble le retire.
+function drawWires() {
+  const svg = $('#patch-wires');
+  const canvas = $('#patch-canvas');
+  if (!svg || !canvas) return;
+  svg.setAttribute('width', canvas.scrollWidth);
+  svg.setAttribute('height', canvas.scrollHeight);
+  svg.querySelectorAll('.wire:not(.temp)').forEach(w => w.remove());
+  for (const l of state.patch.links) {
+    const a = canvas.querySelector(`.jack.out[data-node="${l.from}"]`);
+    const z = canvas.querySelector(`.jack.in[data-node="${l.to}"]`);
+    const pa = a && jackCenter(a), pz = z && jackCenter(z);
+    if (!pa || !pz) continue;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('class', 'wire');
+    path.setAttribute('d', wirePath(pa, pz));
+    path.style.stroke = canvas.querySelector(`.patch-node[data-node="${l.from}"]`)?.style.getPropertyValue('--c') || '#fff';
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    title.textContent = t('patch.wireTitle');
+    path.appendChild(title);
+    path.addEventListener('click', () => {
+      state.patch.links = state.patch.links.filter(x => x !== l);
+      patchChanged();
+    });
+    svg.appendChild(path);
+  }
+}
+
+// Sous le nom de chaque voie du mixeur : où elle est câblée.
+function renderMixerDest() {
+  for (const id of CHANNELS) {
+    const el = stripEls[id]?.querySelector('.strip-dest');
+    if (!el) continue;
+    const to = state.patch.links.filter(l => l.from === id).map(l => (l.to === 'master' ? t('patch.master') : boxLabel(state.patch.boxes.find(b => b.id === l.to) ?? {})));
+    el.textContent = to.length ? `→ ${to.join(', ')}` : t('patch.unplugged');
+    el.classList.toggle('off', !to.length);
+  }
 }
 
 // ---------- Effets de performance ----------

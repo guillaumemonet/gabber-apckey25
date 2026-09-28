@@ -206,6 +206,31 @@ main {
 footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 20px 24px; }
 
 /* --- TR-909 --- */
+/* Page de câblage */
+.patch-area .win-body { display: flex; flex-direction: column; }
+.patch-add { display: flex; flex-wrap: wrap; gap: 4px; }
+.patch-add button { padding: 3px 9px; font-size: 12px; border-color: color-mix(in srgb, var(--c) 60%, var(--line)); }
+.patch-canvas { position: relative; flex: 1; min-height: 460px; overflow: auto; border: 1px solid var(--line); border-radius: 8px;
+  background: radial-gradient(circle, #24252c 1px, transparent 1px) 0 0 / 22px 22px, var(--bg); }
+.patch-wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.patch-wires .wire { fill: none; stroke-width: 3; stroke-linecap: round; opacity: .85; pointer-events: stroke; cursor: pointer; filter: drop-shadow(0 0 3px rgba(0, 0, 0, .8)); }
+.patch-wires .wire:hover { stroke-width: 5; opacity: 1; stroke-dasharray: 6 4; }
+.patch-wires .wire.temp { stroke-dasharray: 5 5; pointer-events: none; }
+.patch-node { --c: #fff; position: absolute; width: 156px; min-height: 52px; padding: 6px 10px; border-radius: 8px; background: var(--panel-2, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--c) 70%, var(--line)); box-shadow: 0 6px 18px rgba(0, 0, 0, .5), inset 3px 0 0 var(--c); user-select: none; }
+.patch-node.master { width: 130px; border-width: 2px; }
+.patch-head { display: flex; align-items: center; gap: 6px; cursor: grab; }
+.patch-head b { flex: 1; min-width: 0; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--c); }
+.patch-node.master .patch-head b { color: var(--text); }
+.patch-del { padding: 0 6px; font-size: 11px; line-height: 18px; }
+.patch-sub { font-size: 10px; color: var(--muted); margin-top: 3px; }
+.patch-node.box { cursor: pointer; }
+.jack { position: absolute; top: 50%; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; background: #0b0b0e; border: 3px solid var(--c); z-index: 2; }
+.jack.out { right: -8px; cursor: crosshair; }
+.jack.in { left: -8px; }
+.jack.in.hot { box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 45%, transparent); background: var(--c); }
+.strip-dest { font-size: 10px; color: var(--muted); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: -4px 0 4px; }
+.strip-dest.off { color: #ff6b6b; }
 /* Platines */
 .decks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .deck { border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }

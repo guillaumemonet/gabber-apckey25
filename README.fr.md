@@ -20,6 +20,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Basse acid façon TB-303** : séquenceur 16 pas avec accent et slide, filtre résonant à enveloppe, distorsion, saisie au clavier de l'APC, calée sur la 909 ;
   - **Synthé en couches** au clavier : 35 presets en 10 familles (cordes, nappes, chœurs, supersaw, hoovers, leads, basses, stabs, claviers, effets) avec ensemble, largeur stéréo, vibrato et 8 potards d'expression, mode accords et arpégiateur calé sur le tempo ;
   - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres, jusqu'à 4 effets d'insert, et un **sidechain** déclenché par les kicks ;
+  - **Câblage** : relie librement les outils et des **boîtes à effets** (distorsion, PCF, filtre, delay, reverb, compresseur, bitcrusher), tout calé sur le tempo ;
   - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **moniteur MIDI**.
 - **Enregistrement WAV** de ta session et **export / import de kits**.
 - Interface en **français ou en anglais**, selon la langue du navigateur.
@@ -240,6 +241,17 @@ En haut de la fenêtre de la table de mixage. Quand il est **Activé**, chaque k
 - **Baisse** : choisis le synthé, les sons mélodiques, ou les deux. Le témoin montre la baisse en temps réel.
 - La baisse est programmée à l'instant exact de chaque kick (sur l'horloge audio), et non détectée après coup : aucun retard, et elle reste calée à n'importe quel tempo.
 
+## Câblage
+
+La fenêtre **Câblage** relie librement les outils et des **boîtes à effets**, comme un rack de matériel. Par défaut, chaque outil va directement au master : rien ne change tant que tu n'y touches pas.
+
+[![Fenêtre Câblage : les outils à gauche, les boîtes à effets au milieu, le master à droite](docs/screenshots/patch-fr.png)](docs/screenshots/patch-fr.png)
+
+- À gauche, un bloc par **outil** : pads, synthé, TR-909, timeline, TB-303, platines. Chaque outil garde sa **voie de mixage** (volume, pano, muet, solo, effets d'insert, envois) ; le câblage décide où va cette voie. À droite, le **Master**.
+- **Boîtes à effets** : **Distorsion** (drive, les 5 formes de la 909, tonalité, mélange), **PCF** (filtre rythmique LP / BP relancé par un motif de 16 pas, toujours calé sur la grille du tempo), **Filtre** (LP, HP ou BP avec un LFO calé sur le tempo), **Delay** (en valeurs de note : 1/4, 1/8, 1/8 pointée, 1/16, noire de triolet), **Reverb**, **Compresseur**, **Bitcrusher**. Double-clic sur une boîte pour ses réglages, ✕ la retire.
+- **Câbler** : tire depuis une sortie (prise de droite) vers une boîte ou vers le master. Une sortie peut aller à plusieurs endroits, une boîte peut recevoir plusieurs sources, et les boîtes peuvent s'enchaîner. Un câble qui créerait une boucle est refusé. **Clic sur un câble** pour le débrancher. Un outil qui ne va nulle part est muet : le mixeur indique où va chaque voie, sous son nom.
+- **Tout sur le master** recâble chaque outil directement sur le master. L'export WAV rapide et les stems reconstruisent exactement le même câblage.
+
 ## Fenêtres des plugins
 
 La barre sous l'en-tête ouvre et ferme les plugins : **Pads**, **Éditeur de pad**, **TR-909**, **Synthé** (clavier et presets), **Potards**, **Performance**, **Mixeur**, **Scènes** et **Moniteur MIDI**. Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
@@ -332,7 +344,7 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 
 ## Feuille de route
 
-Prochaine étape : une **page de câblage** pour relier librement les outils et des **boîtes à effets** (tout est câblé sur le master par défaut), et **plusieurs exemplaires** de la TB-303 et de la TR-909, tous synchronisés. Idées à l'étude ensuite :
+Prochaine étape : **plusieurs exemplaires** de la TB-303 et de la TR-909 (chacun câblé où tu veux dans la fenêtre Câblage, tous synchronisés), et un élément MIDI associé à chaque fenêtre. Idées à l'étude ensuite :
 
 - le **MIDI learn**, pour utiliser d'autres contrôleurs (APC mini, APC40, n'importe quel clavier MIDI) et assigner n'importe quel bouton ou potard ;
 - une **version en ligne**, jouable sans rien installer ;
@@ -392,6 +404,7 @@ js/deck-worklet.js    lecteur à vitesse variable pour le scratch
 js/timeline.js        timeline : pistes, blocs, lecture
 js/trackfx.js         effets de piste (banque d'effets, PCF, 3D)
 js/mixer.js           table de mixage : voies, envois, effets d'insert
+js/patch.js           câblage : boîtes à effets et câbles
 js/sidechain.js       sidechain (les kicks font baisser le synthé et les sons mélodiques)
 js/library.js         bibliothèque de sons (catégories)
 js/windows.js         fenêtres des plugins

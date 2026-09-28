@@ -20,6 +20,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **TB-303-style acid bass line**: 16-step sequencer with accent and slide, resonant filter with envelope, distortion, step entry from the APC keyboard, in sync with the 909;
   - **Layered synth** on the keyboard: 35 presets in 10 families (strings, pads, choirs, supersaw, hoovers, leads, basses, stabs, keys, FX) with ensemble, stereo width, vibrato and 8 expression knobs, chord mode and a tempo-synced arpeggiator;
   - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters, up to 4 insert effects, and a **sidechain** triggered by the kicks;
+  - **Patch**: wire the tools and **effect boxes** (distortion, PCF, filter, delay, reverb, compressor, bitcrusher) freely, everything in sync with the tempo;
   - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **MIDI monitor**.
 - **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
@@ -240,6 +241,17 @@ At the top of the mixer window. When it is **On**, every kick ducks the **synth*
 - **Ducks**: choose the synth, the melodic sounds, or both. The meter shows the ducking in real time.
 - The ducking is scheduled at the exact time of each kick (on the audio clock), not detected afterwards: no delay, and it stays in time at any tempo.
 
+## Patch
+
+The **Patch** window wires the tools and **effect boxes** freely, like a rack of hardware. By default every tool goes straight to the master: nothing changes until you touch it.
+
+[![Patch window: tools on the left, effect boxes in the middle, the master on the right](docs/screenshots/patch-en.png)](docs/screenshots/patch-en.png)
+
+- On the left, one block per **tool**: pads, synth, TR-909, timeline, TB-303, turntables. Each tool keeps its **mixer channel** (volume, pan, mute, solo, insert effects, sends); the patch decides where that channel goes. On the right, the **Master**.
+- **Effect boxes**: **Distortion** (drive, the 909's 5 shapes, tone, mix), **PCF** (rhythmic LP / BP filter restarted by a 16-step pattern, always on the tempo grid), **Filter** (LP, HP or BP with a tempo-synced LFO), **Delay** (in note values: 1/4, 1/8, dotted 1/8, 1/16, quarter-note triplet), **Reverb**, **Compressor**, **Bitcrusher**. Double-click a box for its settings, ✕ removes it.
+- **Wire**: drag from an output (right-hand socket) onto a box or the master. An output can feed several destinations, a box can receive several sources, and boxes can be chained. A cable that would create a loop is refused. **Click a cable** to unplug it. A tool that goes nowhere is silent: the mixer shows where each channel goes, under its name.
+- **All to master** wires every tool straight to the master again. The fast WAV export and the stems rebuild exactly the same wiring.
+
 ## Plugin windows
 
 The bar under the header opens and closes the plugins: **Pads**, **Pad editor**, **TR-909**, **Synth** (keyboard and presets), **Knobs**, **Performance**, **Mixer**, **Scenes** and **MIDI monitor**. Each one opens in a window above the timeline:
@@ -332,7 +344,7 @@ The interface follows the browser language: French if the browser is set to Fren
 
 ## Roadmap
 
-Coming next: a **patch page** to wire tools and **effect boxes** freely (everything is wired to the master by default), and **several instances** of the TB-303 and TR-909, all in sync. Ideas being considered after that:
+Coming next: **several instances** of the TB-303 and TR-909 (each one wired where you want in the Patch window, all in sync), and a MIDI element attached to each window. Ideas being considered after that:
 
 - **MIDI learn**, to use other controllers (APC mini, APC40, any MIDI keyboard) and assign any button or knob;
 - an **online version**, playable without installing anything;
@@ -392,6 +404,7 @@ js/deck-worklet.js    variable-speed player for scratching
 js/timeline.js        timeline: tracks, blocks, playback
 js/trackfx.js         track effects (effects bank, PCF, 3D)
 js/mixer.js           mixer: channels, sends, insert effects
+js/patch.js           patch: effect boxes and cables
 js/sidechain.js       sidechain (kicks duck the synth and melodic sounds)
 js/library.js         sound library (categories)
 js/windows.js         plugin windows

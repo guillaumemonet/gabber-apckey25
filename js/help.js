@@ -62,6 +62,16 @@ const HELP = {
         <li><b>Volume, Bass, Mid, Treble</b> (all the way left = cut) and <b>Filter</b> (left = low-pass, right = high-pass) per deck, and the <b>crossfader</b> between A and B.</li>
         <li>On the APC: <b>Shift + REC</b> twice opens the turntable knob page (A volume, A bass, A filter, B volume, B bass, B filter, crossfader, master). The decks have their own mixer channel (K6) and can be recorded into the timeline (source Decks).</li>
       </ul>`,
+    patch: `
+      <p>Wire the tools and effect boxes freely. By default every tool goes straight to the master: nothing changes until you touch it.</p>
+      <ul>
+        <li>On the left, one block per <b>tool</b> (its mixer channel: pads, synth, TR-909, timeline, TB-303, turntables). On the right, the <b>Master</b>.</li>
+        <li><b>+ Distortion, + PCF, + Filter, + Delay, + Reverb, + Compressor, + Bitcrusher</b> add an <b>effect box</b>. Double-click a box to open its settings; ✕ removes it.</li>
+        <li><b>Wire</b>: drag from an output (right-hand socket) to a box or to the master. An output can feed several destinations, and a box can receive several sources (they are mixed). A cable that would create a loop is refused.</li>
+        <li><b>Unplug</b>: click a cable. A tool that goes nowhere is silent (the mixer shows it in red under its name).</li>
+        <li>The <b>PCF</b> box follows the tempo grid all the time, the <b>Delay</b> and the <b>Filter</b> LFO are set in note values: everything stays in sync. The WAV export rebuilds exactly the same wiring.</li>
+        <li><b>All to master</b> wires every tool straight to the master again.</li>
+      </ul>`,
     piano: `
       <p>The keyboard synth: 35 presets in 10 families, 8 expression knobs, chord mode, arpeggiator and pad generator.</p>
       <ul>
@@ -171,6 +181,16 @@ const HELP = {
         <li><b>Scratch</b> : tiens le disque à la souris et bouge-le, en avant ou en arrière ; relâche-le pour qu'il reparte.</li>
         <li><b>Volume, Basses, Médiums, Aigus</b> (tout à gauche = coupé) et <b>Filtre</b> (à gauche = passe-bas, à droite = passe-haut) pour chaque deck, et le <b>crossfader</b> entre A et B.</li>
         <li>Sur l'APC : <b>Maj + REC</b> deux fois ouvre la page de potards des platines (volume A, basses A, filtre A, volume B, basses B, filtre B, crossfader, master). Les platines ont leur voie de mixage (K6) et peuvent être enregistrées dans la timeline (source Platines).</li>
+      </ul>`,
+    patch: `
+      <p>Relie librement les outils et des boîtes à effets. Par défaut, chaque outil va directement au master : rien ne change tant que tu n'y touches pas.</p>
+      <ul>
+        <li>À gauche, un bloc par <b>outil</b> (sa voie de mixage : pads, synthé, TR-909, timeline, TB-303, platines). À droite, le <b>Master</b>.</li>
+        <li><b>+ Distorsion, + PCF, + Filtre, + Delay, + Reverb, + Compresseur, + Bitcrusher</b> ajoutent une <b>boîte à effet</b>. Double-clic sur une boîte pour ses réglages ; ✕ la retire.</li>
+        <li><b>Câbler</b> : tire depuis une sortie (prise de droite) vers une boîte ou vers le master. Une sortie peut aller à plusieurs endroits, et une boîte peut recevoir plusieurs sources (elles sont mélangées). Un câble qui créerait une boucle est refusé.</li>
+        <li><b>Débrancher</b> : clic sur un câble. Un outil qui ne va nulle part est muet (le mixeur l'indique en rouge sous son nom).</li>
+        <li>La boîte <b>PCF</b> suit en permanence la grille du tempo, le <b>Delay</b> et le LFO du <b>Filtre</b> se règlent en valeurs de note : tout reste calé. L'export WAV reconstruit exactement le même câblage.</li>
+        <li><b>Tout sur le master</b> recâble chaque outil directement sur le master.</li>
       </ul>`,
     piano: `
       <p>Le synthé du clavier : 35 presets en 10 familles, 8 potards d'expression, mode accords, arpégiateur et générateur de nappes.</p>

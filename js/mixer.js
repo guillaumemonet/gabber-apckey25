@@ -58,7 +58,7 @@ export function mixKnobDefs(field) {
   }));
 }
 
-function impulse(ctx, seconds) {
+export function impulse(ctx, seconds) {
   const len = Math.max(1, Math.floor(ctx.sampleRate * seconds));
   const buf = ctx.createBuffer(2, len, ctx.sampleRate);
   for (let c = 0; c < 2; c++) {
@@ -144,7 +144,8 @@ class Strip {
     this.meter.fftSize = 256;
     this.data = new Float32Array(this.meter.fftSize);
     this.fx = [];
-    this.pan.connect(this.fader).connect(this.mute).connect(engine.master);
+    this.out = ctx.createGain();   // sortie de la voie : reliée par la page de câblage (master par défaut, voir js/patch.js)
+    this.pan.connect(this.fader).connect(this.mute).connect(this.out);
     this.mute.connect(this.dSend).connect(engine.delayIn);
     this.mute.connect(this.rSend).connect(engine.reverbIn);
     this.mute.connect(this.meter);
