@@ -31,13 +31,13 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 
 ## Screenshots
 
-| Synth and pad generator | TR-909 | Mixer and sidechain |
-|---|---|---|
-| [![Synth window: families, presets, expression knobs, chords, arpeggiator and pad generator](docs/screenshots/synth-en.png)](docs/screenshots/synth-en.png) | [![TR-909 window: 16-step sequencer and knobs with per-instrument distortion](docs/screenshots/tr-en.png)](docs/screenshots/tr-en.png) | [![Mixer window: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png) |
-
-| TB-303 | Kick designer | Turntables |
-|---|---|---|
-| [![TB-303 window: piano-roll grid with accents and slides, knobs](docs/screenshots/acid-en.png)](docs/screenshots/acid-en.png) | [![Kick designer: presets, 12 knobs and waveform](docs/screenshots/kick-en.png)](docs/screenshots/kick-en.png) | [![Turntables: two decks with scratchable records, EQ, filter and crossfader](docs/screenshots/decks-en.png)](docs/screenshots/decks-en.png) |
+| | |
+|---|---|
+| **Sampler pads and pad editor**<br>[![The 40 pads of the Hardstyle bank and the pad editor](docs/screenshots/pads-en.png)](docs/screenshots/pads-en.png) | **Synth and pad generator**<br>[![Synth window: families, presets, expression knobs, chords, arpeggiator and pad generator](docs/screenshots/synth-en.png)](docs/screenshots/synth-en.png) |
+| **TR-909**<br>[![TR-909 window: 16-step sequencer, and the knobs with per-instrument distortion](docs/screenshots/tr-en.png)](docs/screenshots/tr-en.png) | **TB-303**<br>[![TB-303 window: grid with octaves, accents and slides, and its knobs](docs/screenshots/acid-en.png)](docs/screenshots/acid-en.png) |
+| **Kick designer**<br>[![Kick designer: presets, 12 knobs and the waveform](docs/screenshots/kick-en.png)](docs/screenshots/kick-en.png) | **Turntables**<br>[![Turntables: two decks with scratchable records, EQ, filter and crossfader](docs/screenshots/decks-en.png)](docs/screenshots/decks-en.png) |
+| **Mixer and sidechain**<br>[![Mixer: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png) | **Patch**<br>[![Patch window: tools on the left, effect boxes in the middle, the master on the right](docs/screenshots/patch-en.png)](docs/screenshots/patch-en.png) |
+| **Track effects**<br>[![Timeline with an effects line under each track, the Effects tab of the library and the settings of a PCF](docs/screenshots/tlfx-en.png)](docs/screenshots/tlfx-en.png) | **Scenes and knobs**<br>[![Scenes window with stored scenes, and the knob pages](docs/screenshots/scenes-en.png)](docs/screenshots/scenes-en.png) |
 
 ## Requirements
 
@@ -92,6 +92,8 @@ Everything can also be done with the mouse. On the computer keyboard, the middle
 
 ## Banks
 
+[![The 40 pads of the Hardstyle bank and the pad editor](docs/screenshots/pads-en.png)](docs/screenshots/pads-en.png)
+
 | Bank | Content |
 |---|---|
 | 1 | Starter kit, synthesised in the browser |
@@ -113,6 +115,8 @@ Everything can also be done with the mouse. On the computer keyboard, the middle
 To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. The **✎ pencil** that appears when the mouse is over a pad opens the **pad editor** on it: name, LED colour, playback mode (**One-shot**, **Hold** or **Loop**) and the pad's **8 knobs** (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs.
 
 ## TR-909
+
+[![TR-909 window: 16-step sequencer, and the knobs with per-instrument distortion](docs/screenshots/tr-en.png)](docs/screenshots/tr-en.png)
 
 A Roland TR-909 emulation with its 11 instruments (bass drum, snare, 3 toms, rim shot, clap, closed / open hi-hat, crash, ride). Each one is synthesised live, like the analogue circuits of the original.
 
@@ -152,6 +156,8 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
 
 ### Track effects
 
+[![Timeline with an effects line under each track, the Effects tab of the library and the settings of a PCF](docs/screenshots/tlfx-en.png)](docs/screenshots/tlfx-en.png)
+
 Each track has two parts: the **sounds** on top, and a thin **effects line** underneath. Drag an effect from the **Track FX** category of the library onto a track: it acts on **everything the track plays** (audio blocks, synth notes and chords, pad hits) **for the length of the block**, in time with the tempo. Effects add up: a fade in and a PCF at the same time both apply; overlapping effect blocks stack on several lines.
 
 - **Edit** an effect block like a sound block: drag it (Alt = copy), drag its right edge to change its length, right-click or **Delete** to remove it, **double-click** to open its settings.
@@ -178,6 +184,8 @@ Each track has two parts: the **sounds** on top, and a thin **effects line** und
 
 ## TB-303
 
+[![TB-303 window: grid with octaves, accents and slides, and its knobs](docs/screenshots/acid-en.png)](docs/screenshots/acid-en.png)
+
 An acid bass line in the style of the Roland TB-303, synthesised live: oscillator (saw or square), resonant 24 dB low-pass filter driven by an envelope, accent, slide, then distortion with the 909's 5 shapes.
 
 - **Grid**: 16 steps (16th notes) × one octave from F to high F. Click a cell to place a note, again for a rest. The **Oct + / Oct −** rows shift a step by an octave, **Accent** makes it louder with a snappier filter, **Slide** glides into the next note without retriggering the envelope (the famous "squelch").
@@ -188,6 +196,8 @@ An acid bass line in the style of the Roland TB-303, synthesised live: oscillato
 - The 303 has its own **mixer channel** (K5 on the mixer knob pages), is ducked by the **sidechain** with the melodic sounds, is stored in **scenes** (pattern and transport), and can be **recorded** into the timeline as audio (choose TB-303 as the source).
 
 ## Kick designer
+
+[![Kick designer: presets, 12 knobs and the waveform](docs/screenshots/kick-en.png)](docs/screenshots/kick-en.png)
 
 Build your own gabber / hardcore kick, computed by the browser in a few milliseconds from 12 knobs:
 
@@ -200,6 +210,8 @@ Build your own gabber / hardcore kick, computed by the browser in a few millisec
 
 ## Turntables
 
+[![Turntables: two decks with scratchable records, EQ, filter and crossfader](docs/screenshots/decks-en.png)](docs/screenshots/decks-en.png)
+
 Two decks to mix and scratch any sound: library loops, your recordings, your own audio files.
 
 - **Load**: drag a sound from the library (or an audio file) onto a deck, or click a sound in the library then **Load**.
@@ -210,6 +222,8 @@ Two decks to mix and scratch any sound: library loops, your recordings, your own
 - On the APC, **Shift + REC** twice opens the turntable knob page (K1-K3 = deck A volume, bass, filter; K4-K6 = deck B; K7 = crossfader; K8 = master). The decks have their own mixer channel (K6 on the mixer pages) and can be recorded into the timeline (source Decks).
 
 ## Scenes
+
+[![Scenes window with stored scenes, and the knob pages](docs/screenshots/scenes-en.png)](docs/screenshots/scenes-en.png)
 
 40 scenes laid out like the APC grid (1-8 at the bottom). A scene stores:
 - the loops that are playing;
@@ -222,6 +236,8 @@ Two decks to mix and scratch any sound: library loops, your recordings, your own
 - **APC**: **Shift + STOP ALL CLIPS** turns the pad grid into the 40 scenes. Pad = launch, Shift + pad = save, Shift + STOP ALL CLIPS again (or a SCENE LAUNCH button) to exit. LEDs: green = stored, red = current, blinking = waiting for the next bar.
 
 ## Mixer
+
+[![Mixer: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png)
 
 One channel per tool: **Pads**, **Synth**, **TR-909** and **Timeline**, then the master (performance effects, master EQ and limiter). The level of each sound stays in its tool (pad volume, 909 instrument levels); the mixer balances the tools.
 
@@ -266,6 +282,8 @@ The bar under the header opens and closes the plugins: **Pads**, **Pad editor**,
 - **Reset windows** (header) puts them back in their default place and size.
 
 ## Synth
+
+[![Synth window: families, presets, expression knobs, chords, arpeggiator and pad generator](docs/screenshots/synth-en.png)](docs/screenshots/synth-en.png)
 
 The keyboard plays a layered synth built for hardcore: every preset stacks up to 3 **layers** of oscillators (saw, square, triangle, sine or pulse, each with its own unison, octave and level), with **formants** (string body resonance, "a" / "o" choir vowels), a stereo **ensemble**, unison spread across the stereo field, and a vibrato that comes in after a moment.
 
@@ -347,11 +365,19 @@ The interface follows the browser language: French if the browser is set to Fren
 
 ## Roadmap
 
-Coming next: **several instances** of the TB-303 and TR-909 (each one wired where you want in the Patch window, all in sync), and a MIDI element attached to each window. Ideas being considered after that:
+What is planned, in this order:
 
-- **MIDI learn**, to use other controllers (APC mini, APC40, any MIDI keyboard) and assign any button or knob;
-- an **online version**, playable without installing anything;
-- **automation** of the knobs in the timeline, **tempo ramps**, a **song structure** generator.
+1. **Piano roll**: edit the notes of the synth blocks (recorded, chords, arpeggios, pad generator): pitch, length, velocity, copy / paste, quantize.
+2. **Oscillator synth**: an analogue-style synth to build your own sounds: 3 oscillators (saw, pulse with width, triangle, sine; octave, semitone, fine tune, level), noise, **FM** and ring modulation, low-pass / high-pass / band-pass filter (12 or 24 dB, cutoff, resonance, envelope, key tracking, drive), 2 ADSR envelopes, a tempo-synced LFO (pitch, filter, pulse width, volume), polyphonic / mono / legato with glide, unison, a dozen presets (hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, synced wobble, laser) and your own presets. The APC keyboard plays the synth of the active window.
+3. **Step sequencer for any sound**: program the pads (kicks, claps, shouts from the banks…) on a 16-step grid.
+4. **Time-stretching that keeps the pitch**: loops follow the tempo without changing key (today a 150 BPM loop played at 190 goes up by 4 semitones).
+5. **Vocal sampler and vocoder**: record with the microphone, chop, pitch and formant, robotic gabber vocoder.
+6. **Build-up designer**: riser, noise sweep, snare roll and sub drop, set to a number of bars.
+7. **Mastering chain**: multiband compressor, stereo width, limiter and a LUFS meter on the master.
+
+Then: **several instances** of the TB-303 and TR-909 (each one wired where you want in the Patch window, all in sync), and a **MIDI element attached to each window**.
+
+Other ideas kept for later: a **break slicer** (a break cut into 16 slices on the pads), a **lead designer** (hoover, screech), a **TR-808**, an **audio input** to resample anything onto a pad, a **metronome**, a **spectrum analyser / oscilloscope** window, **MIDI learn** for other controllers, timeline **markers, sections, loop region and tempo ramps**, recording a tool into the timeline **after** its effect boxes, and an **online version** playable without installing anything.
 
 Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 

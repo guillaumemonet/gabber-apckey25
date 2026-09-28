@@ -31,13 +31,13 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 
 ## Captures d'écran
 
-| Synthé et générateur de nappes | TR-909 | Table de mixage et sidechain |
-|---|---|---|
-| [![Fenêtre Synthé : familles, presets, potards d'expression, accords, arpégiateur et générateur de nappes](docs/screenshots/synth-fr.png)](docs/screenshots/synth-fr.png) | [![Fenêtre TR-909 : séquenceur 16 pas et potards avec distorsion par instrument](docs/screenshots/tr-fr.png)](docs/screenshots/tr-fr.png) | [![Fenêtre Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](docs/screenshots/mixer-fr.png)](docs/screenshots/mixer-fr.png) |
-
-| TB-303 | Designer de kick | Platines |
-|---|---|---|
-| [![Fenêtre TB-303 : grille avec accents et slides, potards](docs/screenshots/acid-fr.png)](docs/screenshots/acid-fr.png) | [![Designer de kick : presets, 12 potards et forme d'onde](docs/screenshots/kick-fr.png)](docs/screenshots/kick-fr.png) | [![Platines : deux decks avec disques à scratcher, égaliseur, filtre et crossfader](docs/screenshots/decks-fr.png)](docs/screenshots/decks-fr.png) |
+| | |
+|---|---|
+| **Pads du sampler et éditeur de pad**<br>[![Les 40 pads de la banque Hardstyle et l'éditeur de pad](docs/screenshots/pads-fr.png)](docs/screenshots/pads-fr.png) | **Synthé et générateur de nappes**<br>[![Fenêtre Synthé : familles, presets, potards d'expression, accords, arpégiateur et générateur de nappes](docs/screenshots/synth-fr.png)](docs/screenshots/synth-fr.png) |
+| **TR-909**<br>[![Fenêtre TR-909 : séquenceur 16 pas, et les potards avec la distorsion par instrument](docs/screenshots/tr-fr.png)](docs/screenshots/tr-fr.png) | **TB-303**<br>[![Fenêtre TB-303 : grille avec octaves, accents et slides, et ses potards](docs/screenshots/acid-fr.png)](docs/screenshots/acid-fr.png) |
+| **Designer de kick**<br>[![Designer de kick : presets, 12 potards et la forme d'onde](docs/screenshots/kick-fr.png)](docs/screenshots/kick-fr.png) | **Platines**<br>[![Platines : deux decks avec disques à scratcher, égaliseur, filtre et crossfader](docs/screenshots/decks-fr.png)](docs/screenshots/decks-fr.png) |
+| **Table de mixage et sidechain**<br>[![Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](docs/screenshots/mixer-fr.png)](docs/screenshots/mixer-fr.png) | **Câblage**<br>[![Fenêtre Câblage : les outils à gauche, les boîtes à effets au milieu, le master à droite](docs/screenshots/patch-fr.png)](docs/screenshots/patch-fr.png) |
+| **Effets de piste**<br>[![Timeline avec une ligne d'effets sous chaque piste, l'onglet Effets de la bibliothèque et les réglages d'un PCF](docs/screenshots/tlfx-fr.png)](docs/screenshots/tlfx-fr.png) | **Scènes et potards**<br>[![Fenêtre Scènes avec des scènes enregistrées, et les pages de potards](docs/screenshots/scenes-fr.png)](docs/screenshots/scenes-fr.png) |
 
 ## Prérequis
 
@@ -92,6 +92,8 @@ Tout se fait aussi à la souris. Sur le clavier de l'ordinateur, la rangée du m
 
 ## Banques
 
+[![Les 40 pads de la banque Hardstyle et l'éditeur de pad](docs/screenshots/pads-fr.png)](docs/screenshots/pads-fr.png)
+
 | Banque | Contenu |
 |---|---|
 | 1 | Kit de départ, synthétisé dans le navigateur |
@@ -113,6 +115,8 @@ Tout se fait aussi à la souris. Sur le clavier de l'ordinateur, la rangée du m
 Pour charger ton propre son, glisse un fichier audio (WAV, MP3, FLAC, OGG…) sur un pad ou sur l'éditeur, ou utilise **Charger un son…**. Le **crayon ✎**, qui apparaît au survol d'un pad, ouvre l'**éditeur de pad** sur ce pad : nom, couleur de la LED, mode de lecture (**One-shot**, **Maintien** ou **Boucle**) et les **8 potards** du pad (volume, hauteur, panoramique, filtre, début, delay, reverb, mode), aussi sur les potards de l'APC.
 
 ## TR-909
+
+[![Fenêtre TR-909 : séquenceur 16 pas, et les potards avec la distorsion par instrument](docs/screenshots/tr-fr.png)](docs/screenshots/tr-fr.png)
 
 Une émulation de la Roland TR-909 avec ses 11 instruments : grosse caisse, caisse claire, 3 toms, rim shot, clap, charley fermé et ouvert, crash, ride. Chacun est synthétisé en direct, comme les circuits analogiques de la machine d'origine.
 
@@ -152,6 +156,8 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
 
 ### Effets de piste
 
+[![Timeline avec une ligne d'effets sous chaque piste, l'onglet Effets de la bibliothèque et les réglages d'un PCF](docs/screenshots/tlfx-fr.png)](docs/screenshots/tlfx-fr.png)
+
 Chaque piste a deux parties : les **sons** en haut, et une fine **ligne d'effets** en dessous. Glisse un effet de la catégorie **Effets de piste** de la bibliothèque sur une piste : il agit sur **tout ce que joue la piste** (blocs audio, notes et accords du synthé, coups de pads) **pendant la durée du bloc**, calé sur le tempo. Les effets se cumulent : un fondu d'entrée et un PCF en même temps s'appliquent tous les deux ; les blocs d'effet qui se chevauchent s'empilent sur plusieurs lignes.
 
 - **Modifier** un bloc d'effet comme un bloc de son : le glisser (Alt = copie), tirer son bord droit pour changer sa longueur, clic droit ou **Suppr** pour le retirer, **double-clic** pour ouvrir ses réglages.
@@ -178,6 +184,8 @@ Chaque piste a deux parties : les **sons** en haut, et une fine **ligne d'effets
 
 ## TB-303
 
+[![Fenêtre TB-303 : grille avec octaves, accents et slides, et ses potards](docs/screenshots/acid-fr.png)](docs/screenshots/acid-fr.png)
+
 Une ligne de basse acid façon Roland TB-303, synthétisée en direct : oscillateur (scie ou carré), filtre passe-bas 24 dB résonant piloté par une enveloppe, accent, slide, puis distorsion avec les 5 formes de la 909.
 
 - **Grille** : 16 pas (doubles-croches) × une octave de fa à fa aigu. Clic sur une case pour poser une note, un second clic pour un silence. Les lignes **Oct + / Oct −** décalent un pas d'une octave, **Accent** le rend plus fort avec un filtre plus claquant, **Slide** glisse vers la note suivante sans relancer l'enveloppe (le fameux « squelch »).
@@ -188,6 +196,8 @@ Une ligne de basse acid façon Roland TB-303, synthétisée en direct : oscillat
 - La 303 a sa propre **voie de mixage** (K5 sur les pages de potards du mixeur), est baissée par le **sidechain** avec les sons mélodiques, est gardée dans les **scènes** (pattern et marche) et peut être **enregistrée** en audio dans la timeline (source TB-303).
 
 ## Designer de kick
+
+[![Designer de kick : presets, 12 potards et la forme d'onde](docs/screenshots/kick-fr.png)](docs/screenshots/kick-fr.png)
 
 Fabrique ton propre kick gabber / hardcore, calculé par le navigateur en quelques millisecondes à partir de 12 potards :
 
@@ -200,6 +210,8 @@ Fabrique ton propre kick gabber / hardcore, calculé par le navigateur en quelqu
 
 ## Platines
 
+[![Platines : deux decks avec disques à scratcher, égaliseur, filtre et crossfader](docs/screenshots/decks-fr.png)](docs/screenshots/decks-fr.png)
+
 Deux decks pour mixer et scratcher n'importe quel son : boucles de la bibliothèque, tes enregistrements, tes propres fichiers audio.
 
 - **Charger** : glisse un son de la bibliothèque (ou un fichier audio) sur un deck, ou clique sur un son de la bibliothèque puis sur **Charger**.
@@ -210,6 +222,8 @@ Deux decks pour mixer et scratcher n'importe quel son : boucles de la bibliothè
 - Sur l'APC, **Maj + REC** deux fois ouvre la page de potards des platines (K1-K3 = volume, basses, filtre du deck A ; K4-K6 = deck B ; K7 = crossfader ; K8 = master). Les platines ont leur voie de mixage (K6 sur les pages mixeur) et peuvent être enregistrées dans la timeline (source Platines).
 
 ## Scènes
+
+[![Fenêtre Scènes avec des scènes enregistrées, et les pages de potards](docs/screenshots/scenes-fr.png)](docs/screenshots/scenes-fr.png)
 
 40 scènes disposées comme la grille de l'APC (1-8 en bas). Une scène mémorise :
 - les boucles lancées ;
@@ -222,6 +236,8 @@ Deux decks pour mixer et scratcher n'importe quel son : boucles de la bibliothè
 - **APC** : **Maj + STOP ALL CLIPS** transforme la grille de pads en 40 scènes. Pad = lancer, Maj + pad = enregistrer, Maj + STOP ALL CLIPS à nouveau (ou un bouton SCENE LAUNCH) pour revenir. LEDs : vert = enregistrée, rouge = en cours, clignotant = en attente de la mesure suivante.
 
 ## Table de mixage
+
+[![Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](docs/screenshots/mixer-fr.png)](docs/screenshots/mixer-fr.png)
 
 Une voie par outil : **Pads**, **Synthé**, **TR-909** et **Timeline**, puis le master (effets de performance, égaliseur général et limiteur). Le niveau de chaque son reste dans son outil (volume des pads, niveaux des instruments de la 909) ; la table de mixage équilibre les outils entre eux.
 
@@ -266,6 +282,8 @@ La barre sous l'en-tête ouvre et ferme les plugins : **Pads**, **Éditeur de pa
 - **Réorganiser les fenêtres** (en-tête) les remet à leur place et à leur taille de départ.
 
 ## Synthé
+
+[![Fenêtre Synthé : familles, presets, potards d'expression, accords, arpégiateur et générateur de nappes](docs/screenshots/synth-fr.png)](docs/screenshots/synth-fr.png)
 
 Le clavier joue un synthé en couches pensé pour le hardcore : chaque preset empile jusqu'à 3 **couches** d'oscillateurs (scie, carré, triangle, sinus ou impulsion, chacune avec son unisson, son octave et son niveau), avec des **formants** (résonance de caisse des cordes, voyelles « a » / « o » des chœurs), un **ensemble** stéréo, l'unisson étalé dans la stéréo, et un vibrato qui arrive après un instant.
 
@@ -347,11 +365,19 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 
 ## Feuille de route
 
-Prochaine étape : **plusieurs exemplaires** de la TB-303 et de la TR-909 (chacun câblé où tu veux dans la fenêtre Câblage, tous synchronisés), et un élément MIDI associé à chaque fenêtre. Idées à l'étude ensuite :
+Ce qui est prévu, dans cet ordre :
 
-- le **MIDI learn**, pour utiliser d'autres contrôleurs (APC mini, APC40, n'importe quel clavier MIDI) et assigner n'importe quel bouton ou potard ;
-- une **version en ligne**, jouable sans rien installer ;
-- l'**automation** des potards dans la timeline, des **rampes de tempo**, un générateur de **structure de morceau**.
+1. **Piano roll** : éditer les notes des blocs du synthé (enregistrés, accords, arpèges, générateur de nappes) : hauteur, durée, vélocité, copier / coller, quantification.
+2. **Synthé à oscillateurs** : un synthé façon analogique pour fabriquer ses propres sons : 3 oscillateurs (scie, impulsion à largeur variable, triangle, sinus ; octave, demi-ton, désaccord fin, niveau), bruit, **FM** et modulation en anneau, filtre passe-bas / passe-haut / passe-bande (12 ou 24 dB, coupure, résonance, enveloppe, suivi du clavier, saturation), 2 enveloppes ADSR, un LFO calé sur le tempo (hauteur, filtre, largeur d'impulsion, volume), polyphonique / mono / legato avec glissé, unisson, une douzaine de presets (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble synchronisé, laser) et tes propres presets. Le clavier de l'APC joue le synthé de la fenêtre active.
+3. **Séquenceur de pas pour n'importe quel son** : programmer les pads (kicks, claps, cris des banques…) sur une grille de 16 pas.
+4. **Étirement temporel qui garde la hauteur** : les boucles suivent le tempo sans changer de tonalité (aujourd'hui, une boucle à 150 BPM jouée à 190 monte de 4 demi-tons).
+5. **Sampler de voix et vocoder** : enregistrer au micro, découper, hauteur et formant, vocoder robotique du gabber.
+6. **Designer de montées** : riser, bruit balayé, roulement de caisse claire et chute de sub, calés sur un nombre de mesures.
+7. **Chaîne de mastering** : compresseur multibande, largeur stéréo, limiteur et vumètre en LUFS sur le master.
+
+Ensuite : **plusieurs exemplaires** de la TB-303 et de la TR-909 (chacun câblé où tu veux dans la fenêtre Câblage, tous synchronisés), et un **élément MIDI associé à chaque fenêtre**.
+
+Autres idées gardées pour plus tard : un **découpeur de breaks** (un break coupé en 16 tranches sur les pads), un **designer de lead** (hoover, screech), une **TR-808**, une **entrée audio** pour réenregistrer n'importe quoi sur un pad, un **métronome**, une fenêtre **analyseur de spectre / oscilloscope**, le **MIDI learn** pour d'autres contrôleurs, des **marqueurs, sections, zone de boucle et rampes de tempo** dans la timeline, l'enregistrement d'un outil dans la timeline **après** ses boîtes à effets, et une **version en ligne** jouable sans rien installer.
 
 Les idées et suggestions sont les bienvenues dans les [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 
