@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=25">
+  <link rel="stylesheet" href="css/style.css?v=26">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -141,6 +141,22 @@
       <div id="tr-grid" class="tr-grid"></div>
     </section>
 
+    <section class="window acid-area" data-win="acid">
+      <div class="section-title">
+        <h2>TB-303</h2>
+        <button id="acid-play" class="primary"></button>
+        <div id="acid-patterns" class="segmented"></div>
+        <button id="acid-wave" data-i18n-title="acid.wave.title"></button>
+        <button id="acid-link" data-i18n="acid.link" data-i18n-title="acid.link.title"></button>
+        <button id="acid-rec" data-i18n="acid.rec" data-i18n-title="acid.rec.title"></button>
+        <button id="acid-rest" data-i18n="acid.rest" data-i18n-title="acid.rest.title"></button>
+        <button id="acid-random" data-i18n="acid.random" data-i18n-title="acid.random.title"></button>
+        <button id="acid-clear" data-i18n="acid.clear" data-i18n-title="acid.clear.title"></button>
+      </div>
+      <div id="acid-knobs" class="mini-knobs acid-knobs"></div>
+      <div id="acid-grid" class="acid-grid"></div>
+    </section>
+
     <section class="window scenes-area" data-win="scenes">
       <div class="section-title">
         <h2 data-i18n="scene.title"></h2>
@@ -190,30 +206,31 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/apc.js": "./js/apc.js?v=25",
-      "./js/audio.js": "./js/audio.js?v=25",
-      "./js/chords.js": "./js/chords.js?v=25",
-      "./js/help.js": "./js/help.js?v=25",
-      "./js/history.js": "./js/history.js?v=25",
-      "./js/i18n.js": "./js/i18n.js?v=25",
-      "./js/kit.js": "./js/kit.js?v=25",
-      "./js/kits.js": "./js/kits.js?v=25",
-      "./js/library.js": "./js/library.js?v=25",
-      "./js/main.js": "./js/main.js?v=25",
-      "./js/mixer.js": "./js/mixer.js?v=25",
-      "./js/params.js": "./js/params.js?v=25",
-      "./js/performer.js": "./js/performer.js?v=25",
-      "./js/presets.js": "./js/presets.js?v=25",
-      "./js/sidechain.js": "./js/sidechain.js?v=25",
-      "./js/recorder.js": "./js/recorder.js?v=25",
-      "./js/timeline.js": "./js/timeline.js?v=25",
-      "./js/storage.js": "./js/storage.js?v=25",
-      "./js/tr909.js": "./js/tr909.js?v=25",
-      "./js/windows.js": "./js/windows.js?v=25",
-      "./js/zip.js": "./js/zip.js?v=25"
+      "./js/acid.js": "./js/acid.js?v=26",
+      "./js/apc.js": "./js/apc.js?v=26",
+      "./js/audio.js": "./js/audio.js?v=26",
+      "./js/chords.js": "./js/chords.js?v=26",
+      "./js/help.js": "./js/help.js?v=26",
+      "./js/history.js": "./js/history.js?v=26",
+      "./js/i18n.js": "./js/i18n.js?v=26",
+      "./js/kit.js": "./js/kit.js?v=26",
+      "./js/kits.js": "./js/kits.js?v=26",
+      "./js/library.js": "./js/library.js?v=26",
+      "./js/main.js": "./js/main.js?v=26",
+      "./js/mixer.js": "./js/mixer.js?v=26",
+      "./js/params.js": "./js/params.js?v=26",
+      "./js/performer.js": "./js/performer.js?v=26",
+      "./js/presets.js": "./js/presets.js?v=26",
+      "./js/sidechain.js": "./js/sidechain.js?v=26",
+      "./js/recorder.js": "./js/recorder.js?v=26",
+      "./js/timeline.js": "./js/timeline.js?v=26",
+      "./js/storage.js": "./js/storage.js?v=26",
+      "./js/tr909.js": "./js/tr909.js?v=26",
+      "./js/windows.js": "./js/windows.js?v=26",
+      "./js/zip.js": "./js/zip.js?v=26"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=25"></script>
+  <script type="module" src="js/main.js?v=26"></script>
 </body>
 </html>

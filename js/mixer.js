@@ -4,7 +4,7 @@ import { t } from './i18n.js';
 import { distCurve, SHAPES } from './tr909.js';
 
 // Les niveaux de chaque son restent dans leur outil (volume des pads, niveaux de la 909).
-export const CHANNELS = ['pads', 'synth', 'tr', 'tl'];
+export const CHANNELS = ['pads', 'synth', 'tr', 'tl', 'acid'];   // la TB-303 en dernier : K5 sur les pages mixeur
 export const MIX_FIELDS = ['vol', 'pan', 'delay', 'reverb'];   // pages de potards Maj + piste 1 à 4
 export const MAX_FX = 4;
 

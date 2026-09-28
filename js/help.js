@@ -32,6 +32,16 @@ const HELP = {
         <li><b>APC grid</b> (Shift + PLAY): rows 1-2 = the 16 steps, row 3-4 = instruments, Accent, Clear, Mute, row 5 = patterns. A SCENE LAUNCH button brings the pads back.</li>
         <li>The bass drum also triggers the <b>sidechain</b> (Mixer window).</li>
       </ul>`,
+    acid: `
+      <p>An acid bass line in the style of the TB-303: oscillator, resonant 24 dB low-pass filter driven by an envelope, accent, slide, and distortion.</p>
+      <ul>
+        <li><b>Grid</b>: one column per 16th note, one row per note from F to high F. Click a cell to place a note, click it again for a rest. The <b>Oct + / Oct −</b> rows shift a step by an octave; <b>Accent</b> makes it louder and snappier; <b>Slide</b> glides into the next note without retriggering the envelope.</li>
+        <li><b>Knobs</b>: tune, cutoff, resonance, envelope amount, decay, accent, drive, distortion shape (the 909's 5 shapes), volume. On the APC: <b>Shift + REC</b> opens the TB-303 knob page (K1-K8). Double-click = default value.</li>
+        <li><b>Patterns 1-8</b> (4 ready-made lines in F minor). A change waits for the next bar. <b>Random</b> writes a new line in F minor, <b>Clear</b> empties the pattern.</li>
+        <li><b>Follow 909</b>: the 303 plays on the TR-909's clock (shuffle included); ▶ starts both. Turn it off to play the 303 alone.</li>
+        <li><b>Step entry</b>: play notes on the APC keyboard (or the computer keyboard); each one goes into the selected step and the cursor moves on. A strong hit adds an accent, <b>Rest</b> leaves a step empty. Click a step number to move the cursor.</li>
+        <li>The 303 has its own <b>mixer channel</b> (K5 on the mixer pages), is ducked by the <b>sidechain</b> with the melodic sounds, and can be <b>recorded</b> into the timeline (choose TB-303 as the source).</li>
+      </ul>`,
     piano: `
       <p>The keyboard synth: 35 presets in 10 families, 8 expression knobs, chord mode, arpeggiator and pad generator.</p>
       <ul>
@@ -66,7 +76,7 @@ const HELP = {
       <ul>
         <li>Each channel: insert effects (<b>+ FX</b>, up to 4: distortion, filter, compressor, reverb), reverb and delay sends, pan, fader, <b>M</b>ute, <b>S</b>olo, meter. Double-click = reset.</li>
         <li><b>Sidechain</b> (top): every kick ducks the synth and the melodic sounds (bass, pads, leads, keys, voices), which come back up smoothly. Triggered by <b>the kicks</b> (909, kick pads and blocks, kicks of the GabberKey loops) or on <b>every beat</b> (for other loops). Depth, release, targets; the meter shows the ducking.</li>
-        <li>APC: Shift + track 1 / 2 / 3 / 4 = volumes / pans / delay / reverb (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K8 master).</li>
+        <li>APC: Shift + track 1 / 2 / 3 / 4 = volumes / pans / delay / reverb (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K5 TB-303, K8 master).</li>
       </ul>`,
     scenes: `
       <p>40 snapshots of the session, laid out like the APC grid.</p>
@@ -112,6 +122,16 @@ const HELP = {
         <li><b>Grille de l'APC</b> (Maj + PLAY) : rangées 1-2 = les 16 pas, rangées 3-4 = instruments, Accent, Effacer, Muet, rangée 5 = patterns. Un bouton SCENE LAUNCH ramène les pads.</li>
         <li>La grosse caisse déclenche aussi le <b>sidechain</b> (fenêtre Mixeur).</li>
       </ul>`,
+    acid: `
+      <p>Une ligne de basse acid façon TB-303 : oscillateur, filtre passe-bas 24 dB résonant piloté par une enveloppe, accent, slide et distorsion.</p>
+      <ul>
+        <li><b>Grille</b> : une colonne par double-croche, une ligne par note de fa à fa aigu. Clic sur une case pour poser une note, un second clic pour un silence. Les lignes <b>Oct + / Oct −</b> décalent un pas d'une octave ; <b>Accent</b> le rend plus fort et plus claquant ; <b>Slide</b> glisse vers la note suivante sans relancer l'enveloppe.</li>
+        <li><b>Potards</b> : accord, coupure, résonance, quantité d'enveloppe, déclin, accent, drive, forme de distorsion (les 5 formes de la 909), volume. Sur l'APC : <b>Maj + REC</b> ouvre la page de potards TB-303 (K1-K8). Double-clic = valeur par défaut.</li>
+        <li><b>Patterns 1 à 8</b> (4 lignes toutes prêtes en fa mineur). Un changement attend la mesure suivante. <b>Aléatoire</b> écrit une nouvelle ligne en fa mineur, <b>Effacer</b> vide le pattern.</li>
+        <li><b>Suivre la 909</b> : la 303 joue sur l'horloge de la TR-909 (shuffle compris) ; ▶ lance les deux. Désactive-le pour jouer la 303 seule.</li>
+        <li><b>Saisie</b> : joue les notes au clavier de l'APC (ou de l'ordinateur) ; chacune va dans le pas choisi et le curseur avance. Une frappe forte ajoute un accent, <b>Silence</b> laisse un pas vide. Clic sur un numéro de pas pour déplacer le curseur.</li>
+        <li>La 303 a sa propre <b>voie de mixage</b> (K5 sur les pages mixeur), est baissée par le <b>sidechain</b> avec les sons mélodiques, et peut être <b>enregistrée</b> dans la timeline (source TB-303).</li>
+      </ul>`,
     piano: `
       <p>Le synthé du clavier : 35 presets en 10 familles, 8 potards d'expression, mode accords, arpégiateur et générateur de nappes.</p>
       <ul>
@@ -146,7 +166,7 @@ const HELP = {
       <ul>
         <li>Chaque voie : effets d'insert (<b>+ FX</b>, jusqu'à 4 : distorsion, filtre, compresseur, reverb), envois reverb et delay, panoramique, fader, <b>M</b>uet, <b>S</b>olo, vumètre. Double-clic = remise à zéro.</li>
         <li><b>Sidechain</b> (en haut) : chaque kick fait baisser le synthé et les sons mélodiques (basses, nappes, leads, claviers, voix), qui remontent en douceur. Déclenché par <b>les kicks</b> (909, pads et blocs de kick, kicks des boucles GabberKey) ou à <b>chaque temps</b> (pour les autres boucles). Profondeur, relâche, cibles ; le témoin montre la baisse.</li>
-        <li>APC : Maj + piste 1 / 2 / 3 / 4 = volumes / panos / delay / reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K8 master).</li>
+        <li>APC : Maj + piste 1 / 2 / 3 / 4 = volumes / panos / delay / reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K5 TB-303, K8 master).</li>
       </ul>`,
     scenes: `
       <p>40 instantanés de la session, disposés comme la grille de l'APC.</p>

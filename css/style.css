@@ -206,6 +206,24 @@ main {
 footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 20px 24px; }
 
 /* --- TR-909 --- */
+/* TB-303 */
+.mini-knobs.acid-knobs { grid-template-columns: repeat(9, 1fr); margin-bottom: 12px; }
+.acid-grid { display: grid; grid-template-columns: 56px repeat(16, 1fr); gap: 2px 3px; }
+.acid-head { height: 20px; padding: 0; font-size: 10px; color: var(--muted); background: transparent; border-color: transparent; }
+.acid-head.playing { color: #fff; background: var(--accent); border-color: var(--accent); }
+.acid-head.cursor { outline: 2px solid var(--accent-2); outline-offset: -2px; color: var(--text); }
+.acid-label { font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; color: var(--muted); }
+.acid-label.flag { font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .03em; }
+.acid-cell { height: 16px; padding: 0; border-radius: 3px; background: var(--bg); font-size: 10px; line-height: 1; color: #000; font-weight: 700; }
+.acid-cell.sharp { background: #141418; }
+.acid-cell.beat { box-shadow: inset 2px 0 0 #2a2b33; }
+.acid-cell.on { background: var(--accent-2); border-color: var(--accent-2); }
+.acid-cell.accent { background: #ffd23f; border-color: #ffd23f; }
+.acid-cell.flag { height: 14px; margin-top: 2px; }
+.acid-cell.flag.on { background: var(--accent); border-color: var(--accent); }
+.acid-cell.flag.acc.on { background: #ffd23f; border-color: #ffd23f; }
+.acid-cell.head { outline: 1px solid var(--accent); outline-offset: -1px; }
+#acid-link.active, #acid-rec.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
 .tr-grid { display: grid; grid-template-columns: 56px repeat(16, 1fr); gap: 4px; }
 .tr-name { padding: 4px; font-weight: 700; font-size: 12px; }
 .tr-name.selected { background: var(--accent); border-color: var(--accent); color: #fff; }

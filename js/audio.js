@@ -61,7 +61,7 @@ export class Engine {
     this.onPadState = () => {};
     this.bpm = 120;
     this.origin = null;           // instant (ctx) du temps 1 de la mesure de référence
-    this.seqRunning = false;      // séquenceur TR-909 en marche (voir js/tr909.js)
+    this.seqs = new Set();        // séquenceurs en marche (TR-909, TB-303) : la grille des mesures est occupée
 
     const gain = (v = 1) => { const g = ctx.createGain(); g.gain.value = v; return g; };
     const band = (type, freq, q = 1) => {
@@ -163,6 +163,8 @@ export class Engine {
     this.padBus.connect(this.master);
     this.padOut = () => this.padBus;   // bus de sortie d'un pad (le sidechain en fournit un autre)
   }
+
+  get seqRunning() { return this.seqs.size > 0; }
 
   resume() { return this.ctx.resume(); }
 

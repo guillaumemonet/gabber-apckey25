@@ -311,7 +311,7 @@ export class TR909 {
     }
     this.idx = Math.round((startAt - e.origin) / this.stepDur());
     this.running = true;
-    e.seqRunning = true;
+    e.seqs.add(this);
     this.timer = setInterval(() => this.tick(), 25);
     this.tick();
   }
@@ -319,7 +319,7 @@ export class TR909 {
   stop() {
     if (!this.running) return;
     this.running = false;
-    this.engine.seqRunning = false;
+    this.engine.seqs.delete(this);
     clearInterval(this.timer);
     this.onStop();
     this.onStep(-1);

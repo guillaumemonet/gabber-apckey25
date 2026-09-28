@@ -6,10 +6,10 @@
 import { t } from './i18n.js';
 import { helpHtml } from './help.js';
 
-export const WINDOWS = ['pads', 'editor', 'tr', 'piano', 'knobs', 'perf', 'mix', 'scenes', 'monitor'];
+export const WINDOWS = ['pads', 'editor', 'tr', 'acid', 'piano', 'knobs', 'perf', 'mix', 'scenes', 'monitor'];
 const SNAP = 14;   // distance d'aimantation (px)
 const DEFAULT_SIZE = {
-  pads: [780, null], editor: [360, null], tr: [900, null], piano: [760, null], knobs: [760, null],
+  pads: [780, null], editor: [360, null], tr: [900, null], acid: [920, null], piano: [760, null], knobs: [760, null],
   perf: [760, null], mix: [620, null], scenes: [760, null], monitor: [640, 280],
 };
 

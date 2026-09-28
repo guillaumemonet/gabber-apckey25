@@ -17,15 +17,16 @@ import { PROGRESSIONS, parseProgression, voiceChords, bassNote } from './chords.
 import { Sidechain, SC_SOURCES, SC_DUCKED, defaultScState, mergeScState } from './sidechain.js';
 import { History } from './history.js';
 import { makeZip } from './zip.js';
+import { Acid303, ACID_PATTERNS, ACID_ROWS, ACID_BASE, ACID_PARAMS, acidKnobDefs, acidFmt, acidSteps, defaultAcidState, mergeAcidState, randomPattern } from './acid.js';
 
 translatePage();
 
 const BANKS = 15;   // SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = banques 6-10, une 2e fois = 11-15
 const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (EQ aussi via SUSTAIN)
-const UI_PAGES = [...PAGE_ORDER, 'tr', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
+const UI_PAGES = [...PAGE_ORDER, 'tr', 'acid', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory;
+let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory, acid;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -45,6 +46,7 @@ const state = {
   play: defaultPlayState(),           // jeu du clavier : mode accords, arpégiateur
   gen: null,                          // générateur de nappes (voir defaultGen)
   sc: defaultScState(),               // sidechain : les kicks font respirer synthé, nappes et basses
+  acid: defaultAcidState(),           // TB-303 : réglages et patterns
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -92,6 +94,8 @@ async function start() {
   drum.onKick = time => { sidechain.kick(time); if (tlRec?.source === 'tr') tlRec.kicks.push(time); };
   sidechain.isRunning = () => timeline?.playing || drum.running || [...engine.padVoices.values()].some(v => v.mode === 'loop');
   sidechain.loopKicks = padLoopKicks;
+  acid = new Acid303(engine, () => state.acid);
+  acid.out.connect(sidechain.acid).connect(mixer.input('acid'));
   drum.setDestinations(Object.fromEntries(['bd', 'snare', 'toms', 'hats', 'cym'].map(g => [g, mixer.input('tr')])));
   timeline = new Timeline(engine, () => state.tl, clipBuffer, mixer.input('tl'));
   timeline.getPad = (b, i) => state.banks[b]?.[i];
@@ -121,6 +125,7 @@ async function start() {
   buildPresets();
   buildPerf();
   buildTr();
+  buildAcid();
   buildMixer();
   buildSidechain();
   buildTl();
@@ -186,6 +191,7 @@ async function restore() {
     state.play = mergePlayState(saved.play);
     state.gen = mergeGen(saved.gen);
     state.sc = mergeScState(saved.sc);
+    state.acid = mergeAcidState(saved.acid);
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
         const s = saved.banks?.[b]?.[i];
@@ -268,6 +274,7 @@ function save() {
       play: state.play,
       gen: state.gen,
       sc: state.sc,
+      acid: state.acid,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
   }, 400);
@@ -312,6 +319,7 @@ function setPage(page) {
 
 function panic() {
   drum.stop();
+  acid.stop();
   engine.stopAllPads();
   performer.allOff();
   engine.allNotesOff();
@@ -338,6 +346,7 @@ function knobDefs() {
     return [...defs, ...new Array(7 - defs.length).fill(null), masterDef()];   // K8 = volume général
   }
   if (state.page === 'synth') return synthKnobDefs();
+  if (state.page === 'acid') return acidKnobDefs();
   return state.page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[state.page].params;
 }
 function knobTarget(def) {
@@ -345,6 +354,7 @@ function knobTarget(def) {
   if (def.ch) return state.mix.channels[def.ch];
   if (mixField(state.page)) return state.globals;   // K8 = volume général
   if (state.page === 'pad') return currentPad()?.p;
+  if (def.acid) return state.acid.params;
   if (state.page === 'tr') return def.group === 'global' ? state.tr.globals : state.tr.params[state.tr.sel];
   return state.globals;
 }
@@ -372,6 +382,9 @@ function turnKnob(index, { delta, value }) {
     if (def.id === 'mode') { renderPad(state.selected); renderEditor(); }
   } else if (state.page === 'tr') {
     if (def.id === 'volume') drum.setVolume(target.volume);
+  } else if (def.acid) {
+    acid.update();
+    renderAcidKnobs();
   } else {
     engine.set(def.id, toValue(def, target[def.id]));
   }
@@ -482,7 +495,7 @@ function bindController() {
     }
     else if (name.startsWith('track')) setPage((shiftHeld ? MIX_PAGES : PAGE_ORDER)[+name.slice(5) - 1]);
     else if (name === 'stopAll') { if (shiftHeld) toggleSceneMode(); else panic(); }
-    else if (name === 'record') tlRecToggle();
+    else if (name === 'record') { if (shiftHeld) setPage(state.page === 'acid' ? 'synth' : 'acid'); else tlRecToggle(); }
   });
 
   apc.addEventListener('knob', ({ detail }) => turnKnob(detail.index, detail));
@@ -490,6 +503,7 @@ function bindController() {
   apc.addEventListener('key', ({ detail: { note, velocity, on } }) => {
     // Maj + touche : choisir un preset au lieu de jouer.
     if (on && shiftHeld && presetKey(note)) return;
+    if (acidKey(note, velocity, on)) return;
     if (on) performer.noteOn(note, velocity); else performer.noteOff(note);
     setPianoKey(note, on);
   });
@@ -799,7 +813,7 @@ function buildPages() {
   UI_PAGES.forEach((page, k) => {
     const btn = document.createElement('button');
     btn.textContent = PAGES[page]?.label ?? t(`page.${page}`);
-    btn.title = page === 'tr' ? t('tr.pageTitle')
+    btn.title = page === 'tr' ? t('tr.pageTitle') : page === 'acid' ? t('acid.pageTitle')
       : mixField(page) ? t('mix.pageTitle', { n: MIX_FIELDS.indexOf(mixField(page)) + 1 })
       : t('page.title', { n: k + 1 });
     btn.addEventListener('click', () => setPage(page));
@@ -920,6 +934,7 @@ function buildPiano() {
 }
 
 function playNote(note, velocity, on) {
+  if (acidKey(note, velocity, on)) return;
   if (on) performer.noteOn(note, velocity); else performer.noteOff(note);
   setPianoKey(note, on);
 }
@@ -1334,7 +1349,7 @@ function renderTrHead() {
 // ---------- Timeline (écran principal, façon eJay) ----------
 
 // Pads et synthé : blocs posés en jouant ; TR-909 : enregistrement audio.
-const TL_SOURCES = ['pads', 'synth', 'tr'];
+const TL_SOURCES = ['pads', 'synth', 'tr', 'acid'];
 const bufferCache = new Map();   // sampleId -> AudioBuffer des blocs
 const peaksCache = new Map();    // sampleId -> crêtes pour dessiner la forme d'onde
 let tlRecorder = null;
@@ -1383,7 +1398,7 @@ function tlSourceNode(source) {
 async function tlStartRec() {
   if (timeline.playing) timeline.stop(true);
   const source = state.tl.source;
-  if (source !== 'tr') {
+  if (source !== 'tr' && source !== 'acid') {
     // Pads / synthé : on joue la timeline (en boucle si activée) et chaque coup devient un bloc.
     tlRec = { mode: 'events', source, open: new Map(), dirty: false };
     timeline.play(Math.round(state.tl.playhead));
@@ -1398,7 +1413,9 @@ async function tlStartRec() {
   const time = timeline.play(beat);
   let startedDrum = false;
   if (source === 'tr' && !drum.running) { drum.start(true); startedDrum = true; }   // la 909 joue calée sur la timeline
-  tlRec = { beat, time, track: state.tl.armed, source, startedDrum, bpm: state.bpm, kicks: [] };
+  let startedAcid = false;
+  if (source === 'acid' && !acid.playing) { if (state.acid.link) { drum.start(true); startedDrum = true; } else acid.start(true); startedAcid = true; }
+  tlRec = { beat, time, track: state.tl.armed, source, startedDrum, startedAcid, bpm: state.bpm, kicks: [] };
   renderTl();
   renderTr();
   renderLeds();
@@ -1422,6 +1439,8 @@ async function tlStopRec() {
   const raw = await tlRecorder.stopRaw();
   timeline.stop(true);
   if (rec.startedDrum) drum.stop();
+  if (rec.startedAcid) acid.stop();
+  renderAcid();
   const sr = raw.sampleRate;
   // Retire ce qui a été capté avant le temps de départ.
   const skip = Math.max(0, Math.round((rec.time - raw.startedAt) * sr));
@@ -1969,6 +1988,7 @@ function captureScene(n) {
     tr: { pattern: drum.queued ?? state.tr.pattern, mutes: { ...state.tr.mutes } },
     loops: [...engine.padVoices].filter(([, v]) => v.mode === 'loop').map(([k]) => k),
     running: drum.running,
+    acid: { pattern: acid.queued ?? state.acid.pattern, running: acid.running },
     mix: Object.fromEntries(CHANNELS.map(id => {
       const { vol, pan, delay, reverb, mute, solo } = state.mix.channels[id];
       return [id, { vol, pan, delay, reverb, mute, solo }];
@@ -2002,6 +2022,7 @@ function launchScene(n) {
     if (pad?.buffer && engine.padMode(pad) === 'loop') engine.playPad(key, pad);   // démarre à la mesure suivante
   }
   if (sc.running && !drum.running) drum.start();
+  if (sc.acid) { acid.selectPattern(sc.acid.pattern); if (sc.acid.running && !acid.playing) acid.start(true); }
   const apply = () => {
     if (queuedScene !== n) return;   // une autre scène a été demandée entre-temps
     state.tr.mutes = { ...sc.tr.mutes };
@@ -2010,6 +2031,8 @@ function launchScene(n) {
     renderMixer();
     if (sc.preset !== undefined && migratePreset(sc.preset) !== state.preset) applyPreset(migratePreset(sc.preset));
     if (!sc.running && drum.running) drum.stop();
+    if (sc.acid && !sc.acid.running && acid.running) acid.stop();
+    renderAcid();
     currentScene = n;
     queuedScene = null;
     renderScenes();
@@ -2701,6 +2724,216 @@ async function exportSong(stems) {
 
 function renderExport() {
   for (const id of ['#tl-export', '#tl-stems']) $(id).disabled = exporting;
+}
+
+// ---------- TB-303 ----------
+
+const acidCells = [];        // acidCells[ligne][pas] ; lignes : notes de fa aigu à fa, puis Oct +, Oct −, Accent, Slide
+const acidHeads = [];
+const ACID_FLAGS = ['up', 'down', 'acc', 'slide'];
+let acidStepRec = false;     // saisie pas à pas au clavier
+let acidCursor = 0;
+const acidPattern = () => state.acid.patterns[state.acid.pattern];
+
+function buildAcid() {
+  acid.onStep = renderAcidHead;
+  acid.onPattern = () => { renderAcid(); save(); };
+  // La 303 peut suivre l'horloge de la 909 (et s'arrêter avec elle).
+  drum.listeners.push((step, time, dur) => acid.onClock(step, time, dur));
+  const prevStop = drum.onStop;
+  drum.onStop = () => { prevStop(); acid.clockStopped(); renderAcid(); };
+  $('#acid-play').addEventListener('click', toggleAcid);
+  $('#acid-wave').addEventListener('click', () => { state.acid.wave = state.acid.wave === 'sawtooth' ? 'square' : 'sawtooth'; acid.update(); renderAcid(); save(); });
+  $('#acid-link').addEventListener('click', () => { state.acid.link = !state.acid.link; if (!state.acid.link) acid.clockStopped(); renderAcid(); save(); });
+  $('#acid-rec').addEventListener('click', () => { acidStepRec = !acidStepRec; acidCursor = 0; renderAcid(); });
+  $('#acid-rest').addEventListener('click', () => acidWrite(null));
+  $('#acid-random').addEventListener('click', () => { state.acid.patterns[state.acid.pattern] = randomPattern(); renderAcid(); save(); });
+  $('#acid-clear').addEventListener('click', () => {
+    state.acid.patterns[state.acid.pattern] = acidPattern().map(() => ({ note: 0, gate: false, acc: false, slide: false, oct: 0 }));
+    renderAcid();
+    save();
+  });
+  for (let k = 0; k < ACID_PATTERNS; k++) {
+    const btn = document.createElement('button');
+    btn.textContent = k + 1;
+    btn.title = t('acid.pattern', { n: k + 1 });
+    btn.addEventListener('click', () => acid.selectPattern(k));
+    $('#acid-patterns').appendChild(btn);
+  }
+  buildAcidKnobs();
+  const grid = $('#acid-grid');
+  // En-tête : numéros des pas (tête de lecture, curseur de saisie).
+  grid.appendChild(document.createElement('span'));
+  for (let s = 0; s < 16; s++) {
+    const h = document.createElement('button');
+    h.className = 'acid-head';
+    h.textContent = s + 1;
+    h.title = t('acid.cursor');
+    h.addEventListener('click', () => { acidCursor = s; renderAcid(); });
+    grid.appendChild(h);
+    acidHeads[s] = h;
+  }
+  const names = t('notes');
+  for (let r = 0; r < ACID_ROWS + ACID_FLAGS.length; r++) {
+    const note = ACID_ROWS - 1 - r;   // fa aigu en haut
+    const isNote = r < ACID_ROWS;
+    const label = document.createElement('span');
+    label.className = 'acid-label' + (isNote ? '' : ' flag');
+    label.textContent = isNote ? names[(ACID_BASE + note) % 12] + (note === ACID_ROWS - 1 ? '′' : '') : t(`acid.f.${ACID_FLAGS[r - ACID_ROWS]}`);
+    grid.appendChild(label);
+    acidCells[r] = [];
+    for (let s = 0; s < 16; s++) {
+      const cell = document.createElement('button');
+      const sharp = isNote && [1, 3, 6, 8, 10].includes((ACID_BASE + note) % 12);
+      cell.className = 'acid-cell' + (s % 4 === 0 ? ' beat' : '') + (sharp ? ' sharp' : '') + (isNote ? '' : ` flag ${ACID_FLAGS[r - ACID_ROWS]}`);
+      cell.addEventListener('click', () => (isNote ? acidToggleNote(s, note) : acidToggleFlag(s, ACID_FLAGS[r - ACID_ROWS])));
+      grid.appendChild(cell);
+      acidCells[r][s] = cell;
+    }
+  }
+  renderAcid();
+}
+
+function acidToggleNote(s, note) {
+  const st = acidPattern()[s];
+  if (st.gate && st.note === note) st.gate = false;
+  else { st.gate = true; st.note = note; acid.preview(st); }
+  renderAcid();
+  save();
+}
+
+function acidToggleFlag(s, flag) {
+  const st = acidPattern()[s];
+  if (flag === 'up') st.oct = st.oct === 1 ? 0 : 1;
+  else if (flag === 'down') st.oct = st.oct === -1 ? 0 : -1;
+  else st[flag] = !st[flag];
+  renderAcid();
+  save();
+}
+
+// Saisie au clavier : la note jouée va dans le pas du curseur, qui avance (silence : bouton « Silence »).
+function acidWrite(midi, velocity = 0.8) {
+  const st = acidPattern()[acidCursor];
+  if (midi === null) {
+    st.gate = false;
+  } else {
+    const i = midi - ACID_BASE;
+    const oct = Math.max(-1, Math.min(1, Math.floor(i / 12)));
+    Object.assign(st, { gate: true, note: ((i % 12) + 12) % 12, oct, acc: velocity > 0.85, slide: false });
+    acid.preview(st);
+  }
+  acidCursor = (acidCursor + 1) % 16;
+  renderAcid();
+  save();
+}
+
+// Touche du clavier (APC ou ordinateur) : true si la saisie de la 303 l'a prise.
+function acidKey(note, velocity, on) {
+  if (!acidStepRec || !wm.isOpen('acid')) return false;
+  if (on) acidWrite(note, velocity);
+  return true;
+}
+
+function toggleAcid() {
+  if (acid.playing) {
+    if (acid.linked) drum.stop(); else acid.stop();
+  } else if (state.acid.link) {
+    drum.start(timeline.playing);   // suit la 909 : les deux démarrent ensemble
+  } else {
+    acid.start(timeline.playing);
+  }
+  renderAcid();
+  renderTr();
+}
+
+const acidKnobEls = [];
+function buildAcidKnobs() {
+  const wrap = $('#acid-knobs');
+  ACID_PARAMS.forEach((id, k) => {
+    const el = document.createElement('div');
+    el.className = 'knob';
+    el.innerHTML = `
+      <svg viewBox="0 0 80 80">
+        <path class="track" d="${arcPath(1)}" fill="none" stroke-width="8" stroke-linecap="round"/>
+        <path class="arc" fill="none" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+      <div class="value"></div><div class="label">${t(`acid.p.${id}`)}</div>`;
+    const turn = pos => {
+      const steps = acidSteps(id);
+      state.acid.params[id] = Math.min(1, Math.max(0, steps ? Math.round(pos * (steps - 1)) / (steps - 1) : pos));
+      acid.update();
+      renderAcidKnobs();
+      if (state.page === 'acid') renderKnobs();
+      save();
+    };
+    let lastY = null;
+    el.addEventListener('pointerdown', e => { lastY = e.clientY; try { el.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } });
+    el.addEventListener('pointermove', e => {
+      if (lastY === null || Math.abs(lastY - e.clientY) < 2) return;
+      const step = acidSteps(id) ? 1 / (acidSteps(id) - 1) / 3 : 0.005;
+      turn(state.acid.params[id] + (lastY - e.clientY) * step * (e.shiftKey ? 0.25 : 1));
+      lastY = e.clientY;
+    });
+    el.addEventListener('pointerup', () => { lastY = null; });
+    el.addEventListener('wheel', e => { e.preventDefault(); turn(state.acid.params[id] + (e.deltaY < 0 ? 0.02 : -0.02)); }, { passive: false });
+    el.addEventListener('dblclick', () => turn(defaultAcidState().params[id]));
+    acidKnobEls[k] = el;
+    wrap.appendChild(el);
+  });
+}
+
+function renderAcidKnobs() {
+  ACID_PARAMS.forEach((id, k) => {
+    const el = acidKnobEls[k];
+    if (!el) return;
+    const p = state.acid.params[id];
+    el.querySelector('.arc').setAttribute('d', p > 0.001 ? arcPath(p) : '');
+    el.querySelector('.value').textContent = acidFmt(id, p);
+  });
+}
+
+function renderAcid() {
+  if (!acidCells.length) return;
+  const play = $('#acid-play');
+  play.textContent = acid.playing ? t('tr.stop') : t('tr.play');
+  play.classList.toggle('active', acid.playing);
+  $('#acid-wave').textContent = state.acid.wave === 'sawtooth' ? t('acid.saw') : t('acid.square');
+  $('#acid-link').classList.toggle('active', state.acid.link);
+  $('#acid-rec').classList.toggle('active', acidStepRec);
+  $('#acid-rest').disabled = !acidStepRec;
+  [...$('#acid-patterns').children].forEach((btn, k) => {
+    btn.classList.toggle('active', k === state.acid.pattern);
+    btn.classList.toggle('queued', k === acid.queued);
+    btn.classList.toggle('used', state.acid.patterns[k].some(s => s.gate));
+  });
+  const pat = acidPattern();
+  for (let s = 0; s < 16; s++) {
+    const st = pat[s];
+    for (let r = 0; r < ACID_ROWS; r++) {
+      const cell = acidCells[r][s];
+      const on = st.gate && st.note === ACID_ROWS - 1 - r;
+      cell.classList.toggle('on', on);
+      cell.classList.toggle('accent', on && st.acc);
+      cell.textContent = on && st.oct ? (st.oct > 0 ? '↑' : '↓') : '';
+    }
+    const flags = { up: st.oct === 1, down: st.oct === -1, acc: st.acc, slide: st.slide };
+    ACID_FLAGS.forEach((f, k) => acidCells[ACID_ROWS + k][s].classList.toggle('on', flags[f]));
+    acidHeads[s].classList.toggle('cursor', acidStepRec && s === acidCursor);
+  }
+  renderAcidKnobs();
+}
+
+let acidHead = -1;
+function renderAcidHead(step) {
+  if (acidHead >= 0) for (const row of acidCells) row[acidHead]?.classList.remove('head');
+  acidHeads[acidHead]?.classList.remove('playing');
+  acidHead = step;
+  if (step >= 0) {
+    for (const row of acidCells) row[step].classList.add('head');
+    acidHeads[step].classList.add('playing');
+  } else {
+    renderAcid();
+  }
 }
 
 // ---------- Effets de performance ----------

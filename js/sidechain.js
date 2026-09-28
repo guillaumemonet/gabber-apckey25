@@ -39,6 +39,7 @@ export class Sidechain {
     this.synth = ctx.createGain();
     this.pads = ctx.createGain();
     this.tl = ctx.createGain();
+    this.acid = ctx.createGain();   // TB-303 : une basse, baissée avec les sons mélodiques
     this.env = ctx.createGain();
     this.shaper = ctx.createWaveShaper();
     this.env.connect(this.shaper);
@@ -48,6 +49,7 @@ export class Sidechain {
     this.shaper.connect(this.sampleAmt);
     this.sampleAmt.connect(this.pads.gain);
     this.sampleAmt.connect(this.tl.gain);
+    this.sampleAmt.connect(this.acid.gain);
     this.pending = new Set();
     this.isRunning = () => false;       // la grille tourne (timeline, 909, boucle) ; branché par l'application
     this.loopKicks = () => [];          // boucles de pads qui contiennent des kicks ; branché par l'application
