@@ -9,8 +9,8 @@
 GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une bibliothèque rangée par catégorie sur des pistes, les blocs se calent à la mesure et tout joue au même tempo. Les autres outils (pads du sampler, TR-909, synthé, table de mixage, effets…) sont des **plugins** qui s'ouvrent dans des fenêtres, et l'Akai APC Key 25 (mk1 ou mk2) les joue en direct. Rien à installer à part un navigateur :
 
 - **Timeline** : 16 pistes en mesures ; glisser, allonger (les boucles se répètent), copier et déplacer des blocs ; joue les pads ou le clavier pendant l'enregistrement et chaque coup ou note tenue devient un bloc, en direct ; la TR-909 s'enregistre en audio.
-- **Bibliothèque de sons** : 438 sons rangés en Kicks, Batterie, Basses, Leads, Stabs / claviers, Nappes / cordes, Voix et Effets, plus tes propres sons et tes enregistrements ; un clic pour écouter, glisser pour poser.
-  - six **banques hardcore / gabber synthétisées** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, kicks et leads mainstream sombres, kicks uptempo modernes à queue brute, supersaws, cris, effets et boucles à 190 BPM ;
+- **Bibliothèque de sons** : 478 sons rangés en Kicks, Batterie, Basses, Leads, Stabs / claviers, Nappes / cordes, Voix et Effets, plus tes propres sons et tes enregistrements ; un clic pour écouter, glisser pour poser.
+  - sept **banques hardcore / gabber / hardstyle synthétisées** (sans doublons) : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, kicks et leads mainstream sombres, kicks uptempo modernes à queue brute, supersaws, cris, effets et boucles à 190 BPM ;
   - cinq banques d'échantillons **libres de droits (CC0)**.
 - **Plugins** dans des fenêtres déplaçables et aimantées :
   - **Sampler 40 pads** avec 15 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de tes propres sons ;
@@ -101,11 +101,12 @@ Tout se fait aussi à la souris. Sur le clavier de l'ordinateur, la rangée du m
 | 5 | Textures et basses |
 | 6 | Tabla et divers |
 | 7 | **Gabber** : 8 kicks (Rotterdam, Early, Terror, Industrial, Frenchcore, Reverse…), percussions, hoovers, stabs, screeches, boucles à 190 BPM |
-| 8 | **Gabber 2** : kicks accordés de do à sol, effets (montée, descente, laser, impact…), 16 boucles, stabs rave |
+| 8 | **Gabber 2** : kicks « doomcore » plus sombres accordés de do à sol, effets (montée, descente, laser, impact…), 16 boucles (frenchcore, half-time, beat doomcore, kicks en triolets, deuxièmes riffs de hoover, de stab et d'acid, montée de caisse claire…), stabs rave |
 | 9 | **Hardcore** : kicks plus durs (terror, uptempo, speedcore, industrial, mainstream…), basses distordues, accords de cordes (Fm, Db, Eb, Cm, Bbm, Ab), staccato et coup d'orchestre, boucles cordes / basse (ostinato, progression, offbeat, roulante, reese, morceau complet de 4 mesures) et boucles de batterie hardcore, le tout à 190 BPM |
 | 10 | **Oldschool** (rave / hardcore début 90) : kicks 909 et 808, kit de breakbeat, pianos rave (Fm, Db, Eb, Cm, Bbm, Ab), stabs Mentasm et belge, chœur « ahh », vox stab, sifflet, sirène d'alerte, break façon Amen et break découpé, riff de piano, arpège rave, morceau oldschool de 4 mesures, le tout à 190 BPM |
 | 11 | **Mainstream** (hardcore mainstream sombre, fa mineur harmonique) : kicks à queue tonale distordue (rageur, sombre, punchy, chute de hauteur, brut, accordés do# et sol#), clap dur et percussions, leads sombres et hurlants, screeches, hoover sombre, cloches « horreur », piano sombre, cris synthétisés (« hey », « oi », « yeah »), chœur et cordes sombres, nappe « horreur », boucles (beat, riff de lead, riff de screech, mélodie de cloches, nappe de breakdown, montée, morceau complet de 4 mesures), le tout à 190 BPM |
 | 12 | **New wave** (hardcore moderne / uptempo) : kicks à longue queue « zaag » (zaag, brut, screech kick, attaque dure, tok, kick-basse), 8 kicks accordés (de fa à fa) pour les mélodies de kicks, lead et accords supersaw (Fm, Db, Ab, Eb), pluck, lead glissé, nappe euphorique, cris, montées, tunnel, bégaiement, boucles (beat uptempo, kick-basse, mélodie de kicks, galop, accords supersaw, mélodie pluck, montée, drop de 4 mesures), le tout à 190 BPM |
+| 13 | **Hardstyle** (hardstyle / rawstyle, **150 BPM**) : kicks hardstyle, raw, screech, euphorique, zaag et punch, kicks accordés do# et sol#, **reverse bass** (fa, do#, ré#, sol#), gros clap, crash chinoise, screeches raw, lead et accord euphoriques, pluck, lead glissé, stab et hoover raw, cris (« hey », « raw », « go »), montée de hauteur, montée, chute de sub profonde, impact, corne de brume, boucles (beat hardstyle, le groove **reverse bass** en contretemps, reverse bass sur une suite d'accords, boucle rawstyle, montée de kicks, riff de screech, mélodie euphorique, drop de 4 mesures) |
 
 Pour charger ton propre son, glisse un fichier audio (WAV, MP3, FLAC, OGG…) sur un pad ou sur l'éditeur, ou utilise **Charger un son…**. Le **crayon ✎**, qui apparaît au survol d'un pad, ouvre l'**éditeur de pad** sur ce pad : nom, couleur de la LED, mode de lecture (**One-shot**, **Maintien** ou **Boucle**) et les **8 potards** du pad (volume, hauteur, panoramique, filtre, début, delay, reverb, mode), aussi sur les potards de l'APC.
 
@@ -142,7 +143,7 @@ Clique sur **Démo** dans la barre de la timeline pour charger le morceau de dé
 
 L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à droite (16 pistes, 32 mesures au départ, − / + pour changer la longueur, zoom, **Boucle**).
 
-- **Bibliothèque** : choisis une catégorie (Kicks, Batterie, Basses, Leads, Stabs / claviers, Nappes / cordes, Voix, Effets, Mes sons, Enregistrements) ou cherche par nom. Un **clic** sur un son l'écoute (et le choisit) ; l'étiquette indique sa longueur en mesures (boucles) ou « 1 coup ».
+- **Bibliothèque** : deux onglets. **Sons** : choisis une catégorie (Kicks, Batterie, Basses, Leads, Stabs / claviers, Nappes / cordes, Voix, Bruitages, Mes sons, Enregistrements). **Effets** : les effets de piste, par famille (Volume, Filtre, Espace, Temps, Saturation, 3D). Ou cherche par nom. Un **clic** sur un son l'écoute (et le choisit) ; l'étiquette indique sa longueur en mesures (boucles) ou « 1 coup ».
 - **Poser** : glisse un son sur une piste. Il se cale au début de la mesure (garde **Maj** enfoncée pour le poser sur un temps). Un clic dans une case vide pose le dernier son choisi.
 - **Modifier les blocs** : glisse un bloc pour le déplacer (vers une autre mesure ou une autre piste), tire son **bord droit** pour l'allonger ou le raccourcir (une boucle se répète pour remplir le bloc), **Alt + glisser** le copie, un **double-clic** l'écoute, un **clic droit** ou **Suppr** le retire. Chaque piste a un bouton muet.
 - **Annuler / rétablir** : **↶ / ↷** dans la barre, ou **Ctrl+Z** / **Ctrl+Maj+Z** (ou **Ctrl+Y**). Toute modification de la timeline peut être annulée (blocs posés, déplacés, allongés ou supprimés, nappes générées, enregistrements, chargement de la démo…), jusqu'à 100 étapes.
@@ -311,7 +312,7 @@ Un bloc d'accord se manipule comme les autres : le déplacer, l'allonger, le cop
 
 ## Tempo et boucles
 
-Le tempo global (en-tête, ou bouton **Tap**) pilote toutes les boucles. Chacune démarre sur la mesure suivante et reste calée quand tu changes le tempo. Pour tes propres boucles, indique leur tempo d'origine dans l'éditeur, ou clique sur **Auto** : le calcul suppose que le fichier dure un nombre entier de mesures. Règle le tempo à 190 pour les banques Gabber, Hardcore, Oldschool, Mainstream et New wave : leurs boucles partagent la même tonalité (fa mineur) et les mêmes longueurs, elles restent donc calées entre elles.
+Le tempo global (en-tête, ou bouton **Tap**) pilote toutes les boucles. Chacune démarre sur la mesure suivante et reste calée quand tu changes le tempo. Pour tes propres boucles, indique leur tempo d'origine dans l'éditeur, ou clique sur **Auto** : le calcul suppose que le fichier dure un nombre entier de mesures. Règle le tempo à 190 pour les banques Gabber, Hardcore, Oldschool, Mainstream et New wave : leurs boucles partagent la même tonalité (fa mineur) et les mêmes longueurs, elles restent donc calées entre elles. La banque **Hardstyle** est faite à **150 BPM**, le tempo du style (ses boucles suivent aussi le tempo global, mais sonnent le plus naturellement à 150).
 
 ## Pages des potentiomètres
 

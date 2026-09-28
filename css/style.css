@@ -348,6 +348,10 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 /* Bibliothèque */
 .lib-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
 .lib-head input { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 6px 9px; user-select: text; }
+.lib-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.lib-tabs button { border: none; border-radius: 0; padding: 6px; font-weight: 600; background: transparent; }
+.lib-tabs button + button { border-left: 1px solid var(--line); }
+.lib-tabs button.active { background: var(--accent-2); color: #000; }
 .lib-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; }
 .lib-cat { --c: #888; display: flex; align-items: center; gap: 6px; padding: 5px 7px; font-size: 12px; text-align: left; }
 .lib-cat i, .lib-item i { width: 10px; height: 10px; border-radius: 3px; background: var(--c); flex: none; }

@@ -247,6 +247,7 @@ ROW_CATS = {
     'Oldschool': ['kick', 'drums', 'keys', 'fx', 'drums'],
     'Mainstream': ['kick', 'drums', 'lead', 'voice', 'drums'],
     'New wave': ['kick', 'kick', 'lead', 'fx', 'drums'],
+    'Hardstyle': ['kick', 'drums', 'lead', 'fx', 'drums'],
 }
 
 
@@ -265,7 +266,7 @@ def categorize(bank, row, name, mode):
         return 'pad'
     if has('bass', 'reese'):
         return 'bass'
-    if has('siren', 'riser', 'downlifter', 'laser', 'impact', 'noise', 'zap', 'scratch', 'whistle', 'air raid', 'crash inv', 'reverse crash', 'breakdown'):
+    if has('siren', 'riser', 'downlifter', 'laser', 'impact', 'noise', 'zap', 'scratch', 'whistle', 'air raid', 'crash inv', 'reverse crash', 'breakdown', 'sub drop', 'uplifter', 'reverse cymbal', 'air horn', 'tape stop'):
         return 'fx'
     return ROW_CATS.get(bank, ['drums'] * 5)[min(row, 4)]
 
@@ -309,7 +310,8 @@ def main():
         manifest['banks'].append({'name': bank_name, 'pads': pads})
 
     # Banques hardcore / gabber générées par synthèse (tools/gabber.py).
-    for bank_name, sounds in gabber.build(args.gabber_bpm):
+    for bank_name, sounds, *bank_bpm in gabber.build(args.gabber_bpm):
+        loop_bpm = bank_bpm[0] if bank_bpm else args.gabber_bpm   # la banque Hardstyle est à 150 BPM
         b = len(manifest['banks'])
         folder = OUT / f'bank{b + 1}'
         folder.mkdir()
@@ -320,7 +322,7 @@ def main():
             sf.write(folder / fname, sig.astype(np.float32), gabber.SR, subtype='PCM_16')
             pad = {'file': f'bank{b + 1}/{fname}', 'name': name, 'color': color, 'mode': mode, 'cat': categorize(bank_name, i // 8, name, mode)}
             if bars:
-                pad.update(bpm=args.gabber_bpm, bars=bars)
+                pad.update(bpm=loop_bpm, bars=bars)
                 kicks = gabber.kicks_of(bank_name, name)
                 if kicks:
                     pad['kicks'] = kicks   # position des kicks (sidechain)
@@ -332,7 +334,7 @@ def main():
         '# Credits\n\nBanks 2-6 use samples from Sonic Pi (https://github.com/sonic-pi-net/sonic-pi, etc/samples),\n'
         'dedicated to the public domain (CC0) by their authors on freesound.org, Arovane and The Black Dog.\n'
         'They were processed (normalisation, trimming, tempo matching) by tools/build_banks.py.\n\n'
-        'The Gabber, Hardcore, Oldschool, Mainstream and New wave banks are fully synthesised by tools/gabber.py (no external samples).\n',
+        'The Gabber, Hardcore, Oldschool, Mainstream, New wave and Hardstyle banks are fully synthesised by tools/gabber.py (no external samples).\n',
         encoding='utf-8')
     total = sum(p is not None for bank in manifest['banks'] for p in bank['pads'])
     print(f'\n{total} sounds written to {OUT}')

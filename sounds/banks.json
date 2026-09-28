@@ -2057,7 +2057,7 @@
     },
     {
      "file": "bank7/23.flac",
-     "name": "Beat + ride",
+     "name": "Doomcore beat",
      "color": 21,
      "mode": 2,
      "cat": "drums",
@@ -2065,29 +2065,24 @@
      "bars": 1,
      "kicks": [
       0,
-      4,
-      8,
-      12
+      8
      ]
     },
     {
      "file": "bank7/24.flac",
-     "name": "Roll full",
+     "name": "Kick triplets",
      "color": 21,
      "mode": 2,
      "cat": "drums",
      "bpm": 190,
      "bars": 1,
      "kicks": [
-      0,
-      2,
-      4,
-      6,
-      8,
-      10,
-      12,
-      14,
-      15
+      0.0,
+      2.6666666666666665,
+      5.333333333333333,
+      8.0,
+      10.666666666666666,
+      13.333333333333334
      ]
     },
     {
@@ -2154,16 +2149,16 @@
     },
     {
      "file": "bank7/29.flac",
-     "name": "Acid only",
+     "name": "Acid 2",
      "color": 41,
      "mode": 2,
      "cat": "lead",
      "bpm": 190,
-     "bars": 1
+     "bars": 2
     },
     {
      "file": "bank7/30.flac",
-     "name": "Hoover only",
+     "name": "Hoover riff 2",
      "color": 41,
      "mode": 2,
      "cat": "lead",
@@ -2172,7 +2167,7 @@
     },
     {
      "file": "bank7/31.flac",
-     "name": "Stabs only",
+     "name": "Stab riff 2",
      "color": 41,
      "mode": 2,
      "cat": "keys",
@@ -2181,74 +2176,12 @@
     },
     {
      "file": "bank7/32.flac",
-     "name": "Build full",
-     "color": 41,
+     "name": "Snare build",
+     "color": 13,
      "mode": 2,
      "cat": "drums",
      "bpm": 190,
-     "bars": 4,
-     "kicks": [
-      0,
-      4,
-      8,
-      12,
-      16,
-      18,
-      20,
-      22,
-      24,
-      26,
-      28,
-      30,
-      32,
-      33,
-      34,
-      35,
-      36,
-      37,
-      38,
-      39,
-      40,
-      41,
-      42,
-      43,
-      44,
-      45,
-      46,
-      47,
-      48.0,
-      48.5,
-      49.0,
-      49.5,
-      50.0,
-      50.5,
-      51.0,
-      51.5,
-      52.0,
-      52.5,
-      53.0,
-      53.5,
-      54.0,
-      54.5,
-      55.0,
-      55.5,
-      56.0,
-      56.5,
-      57.0,
-      57.5,
-      58.0,
-      58.5,
-      59.0,
-      59.5,
-      60.0,
-      60.5,
-      61.0,
-      61.5,
-      62.0,
-      62.5,
-      63.0,
-      63.5
-     ]
+     "bars": 4
     },
     {
      "file": "bank7/33.flac",
@@ -2355,7 +2288,7 @@
     },
     {
      "file": "bank8/07.flac",
-     "name": "Distorted tok",
+     "name": "Dark punch",
      "color": 9,
      "mode": 0,
      "cat": "kick"
@@ -2691,7 +2624,7 @@
     },
     {
      "file": "bank8/38.flac",
-     "name": "Terror + hats",
+     "name": "Terror gallop",
      "color": 21,
      "mode": 2,
      "cat": "drums",
@@ -2699,13 +2632,14 @@
      "bars": 1,
      "kicks": [
       0,
-      2,
+      3,
       4,
-      6,
+      7,
       8,
-      10,
+      11,
       12,
-      14
+      14,
+      15
      ]
     },
     {
@@ -2738,7 +2672,7 @@
     },
     {
      "file": "bank9/02.flac",
-     "name": "909 early",
+     "name": "Kick '91",
      "color": 5,
      "mode": 0,
      "cat": "kick"
@@ -2801,14 +2735,14 @@
     },
     {
      "file": "bank9/11.flac",
-     "name": "Rim",
+     "name": "Cowbell 808",
      "color": 13,
      "mode": 0,
      "cat": "drums"
     },
     {
      "file": "bank9/12.flac",
-     "name": "Ride",
+     "name": "Shaker",
      "color": 13,
      "mode": 0,
      "cat": "drums"
@@ -3179,7 +3113,7 @@
     },
     {
      "file": "bank10/13.flac",
-     "name": "Ride",
+     "name": "Tom hit",
      "color": 13,
      "mode": 0,
      "cat": "drums"
@@ -3193,7 +3127,7 @@
     },
     {
      "file": "bank10/15.flac",
-     "name": "Reverse crash",
+     "name": "Sub drop",
      "color": 3,
      "mode": 0,
      "cat": "fx"
@@ -3334,7 +3268,7 @@
     },
     {
      "file": "bank10/34.flac",
-     "name": "Beat + hats",
+     "name": "Mainstream gallop",
      "color": 21,
      "mode": 2,
      "cat": "drums",
@@ -3342,9 +3276,14 @@
      "bars": 1,
      "kicks": [
       0,
+      3,
       4,
+      7,
       8,
-      12
+      11,
+      12,
+      14,
+      15
      ]
     },
     {
@@ -3502,7 +3441,7 @@
     },
     {
      "file": "bank11/07.flac",
-     "name": "Tok",
+     "name": "Hard tok",
      "color": 9,
      "mode": 0,
      "cat": "kick"
@@ -3649,7 +3588,7 @@
     },
     {
      "file": "bank11/28.flac",
-     "name": "Downlifter",
+     "name": "Tape stop",
      "color": 3,
      "mode": 0,
      "cat": "fx"
@@ -3677,7 +3616,7 @@
     },
     {
      "file": "bank11/32.flac",
-     "name": "Laser",
+     "name": "Pitch riser",
      "color": 3,
      "mode": 0,
      "cat": "fx"
@@ -3823,6 +3762,397 @@
      "mode": 2,
      "cat": "drums",
      "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Hardstyle",
+   "pads": [
+    {
+     "file": "bank12/01.flac",
+     "name": "Hardstyle kick",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank12/02.flac",
+     "name": "Raw kick",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank12/03.flac",
+     "name": "Screech kick",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank12/04.flac",
+     "name": "Euphoric kick",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank12/05.flac",
+     "name": "Zaag raw kick",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank12/06.flac",
+     "name": "Punch kick",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank12/07.flac",
+     "name": "Kick C#",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank12/08.flac",
+     "name": "Kick G#",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "bank12/09.flac",
+     "name": "Reverse bass F",
+     "color": 41,
+     "mode": 0,
+     "cat": "bass"
+    },
+    {
+     "file": "bank12/10.flac",
+     "name": "Reverse bass C#",
+     "color": 41,
+     "mode": 0,
+     "cat": "bass"
+    },
+    {
+     "file": "bank12/11.flac",
+     "name": "Reverse bass D#",
+     "color": 41,
+     "mode": 0,
+     "cat": "bass"
+    },
+    {
+     "file": "bank12/12.flac",
+     "name": "Reverse bass G#",
+     "color": 41,
+     "mode": 0,
+     "cat": "bass"
+    },
+    {
+     "file": "bank12/13.flac",
+     "name": "Hardstyle clap",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank12/14.flac",
+     "name": "Snare hit",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank12/15.flac",
+     "name": "Open hat",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank12/16.flac",
+     "name": "China crash",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "bank12/17.flac",
+     "name": "Raw screech",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank12/18.flac",
+     "name": "Raw screech low",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank12/19.flac",
+     "name": "Euphoric lead",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank12/20.flac",
+     "name": "Euphoric chord",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank12/21.flac",
+     "name": "Hardstyle pluck",
+     "color": 57,
+     "mode": 0,
+     "cat": "lead"
+    },
+    {
+     "file": "bank12/22.flac",
+     "name": "Pitch lead",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank12/23.flac",
+     "name": "Raw stab",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "bank12/24.flac",
+     "name": "Hoover raw",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "bank12/25.flac",
+     "name": "Shout hey",
+     "color": 37,
+     "mode": 0,
+     "cat": "voice"
+    },
+    {
+     "file": "bank12/26.flac",
+     "name": "Shout raw",
+     "color": 37,
+     "mode": 0,
+     "cat": "voice"
+    },
+    {
+     "file": "bank12/27.flac",
+     "name": "Shout go",
+     "color": 37,
+     "mode": 0,
+     "cat": "voice"
+    },
+    {
+     "file": "bank12/28.flac",
+     "name": "Pitch riser",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank12/29.flac",
+     "name": "Uplifter",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank12/30.flac",
+     "name": "Deep sub drop",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank12/31.flac",
+     "name": "Impact",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "bank12/32.flac",
+     "name": "Air horn",
+     "color": 3,
+     "mode": 0,
+     "cat": "lead"
+    },
+    {
+     "file": "bank12/33.flac",
+     "name": "Hardstyle beat",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 150,
+     "bars": 1,
+     "kicks": [
+      0,
+      4,
+      8,
+      12
+     ]
+    },
+    {
+     "file": "bank12/34.flac",
+     "name": "Reverse bass loop",
+     "color": 21,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 150,
+     "bars": 1,
+     "kicks": [
+      0,
+      4,
+      8,
+      12
+     ]
+    },
+    {
+     "file": "bank12/35.flac",
+     "name": "Reverse bass prog",
+     "color": 21,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 150,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "bank12/36.flac",
+     "name": "Rawstyle loop",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 150,
+     "bars": 1,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      14,
+      15
+     ]
+    },
+    {
+     "file": "bank12/37.flac",
+     "name": "Kick build-up",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 150,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      34,
+      36,
+      38,
+      40,
+      42,
+      44,
+      46,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63
+     ]
+    },
+    {
+     "file": "bank12/38.flac",
+     "name": "Screech riff",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 2
+    },
+    {
+     "file": "bank12/39.flac",
+     "name": "Euphoric melody",
+     "color": 49,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "bank12/40.flac",
+     "name": "Full drop",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 150,
      "bars": 4,
      "kicks": [
       0,

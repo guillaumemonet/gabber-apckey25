@@ -223,6 +223,7 @@ async function restore() {
     }
   }
   const added = await importLibrary();
+  refreshLibNames();
   libAdded = firstRun ? [] : added;   // au premier lancement, tout est nouveau : pas de message
 
   // Décodage des fichiers (importés par l'utilisateur ou de la bibliothèque) en parallèle.
@@ -238,6 +239,19 @@ async function restore() {
     if (data) pad.buffer = await engine.ctx.decodeAudioData(data).catch(() => null);
     $('#start-msg').textContent = t('start.loading', { done: ++done, total: pending.length });
   }));
+}
+
+function refreshLibNames() {
+  if (!libManifest) return;
+  const byId = new Map(libManifest.banks.flatMap(b => b.pads.filter(Boolean).map(p => [`lib:${p.file}`, p])));
+  for (const pad of state.banks.flat()) {
+    const p = pad && byId.get(pad.sampleId);
+    if (p) { pad.name = soundName(p.name); pad.bpm = p.bpm || 0; }
+  }
+  for (const clip of state.tl.tracks.flatMap(tr => tr.clips)) {
+    const p = byId.get(clip.sampleId);
+    if (p) { clip.name = soundName(p.name); clip.cat = p.cat; if (clip.bpm) clip.bpm = p.bpm || clip.bpm; }
+  }
 }
 
 // Ajoute les banques de la bibliothèque (tools/build_banks.py) qui ne sont encore nulle part.
@@ -1881,6 +1895,8 @@ async function loadDemo() {
 
 let libManifest = null;
 let libCat = 'kick';
+let libTab = 'sounds';          // onglet de la bibliothèque : sons ou effets de piste
+const libCats = { sounds: 'kick', fx: 'volume' };
 let libQuery = '';
 let libSelected = null;     // dernier son choisi : un clic dans une case vide le pose
 let libPreview = null;      // { src, sampleId }
@@ -1903,23 +1919,33 @@ function previewSample(item) {
 }
 
 function buildLibrary() {
+  for (const b of $('#lib-tabs').children) b.addEventListener('click', () => setLibTab(b.dataset.tab));
   $('#lib-search').addEventListener('input', e => { libQuery = e.target.value.trim().toLowerCase(); renderLibrary(); });
+  renderLibrary();
+}
+
+function setLibTab(tab) {
+  libTab = tab;
+  libCat = libCats[tab];
   renderLibrary();
 }
 
 function renderLibrary() {
   const list = $('#lib-list');
   if (!list || !kit) return;
-  const items = [...libraryItems({ manifest: libManifest, kit, banks: state.banks, tl: state.tl, userSounds: state.userSounds }), ...fxItems()];
-  const counts = Object.fromEntries(LIB_CATS.map(c => [c.id, items.filter(i => i.cat === c.id).length]));
+  // Deux onglets : les sons (par catégorie) et les effets de piste (par famille).
+  const items = libTab === 'fx' ? fxItems() : libraryItems({ manifest: libManifest, kit, banks: state.banks, tl: state.tl, userSounds: state.userSounds });
+  for (const b of $('#lib-tabs').children) b.classList.toggle('active', b.dataset.tab === libTab);
+  const cats = libTab === 'fx' ? FX_FAMILIES.map(id => ({ id, color: FX_FAMILY_COLORS[id], label: t(`tfx.family.${id}`) })) : LIB_CATS.map(c => ({ ...c, label: t(`lib.cat.${c.id}`) }));
+  const counts = Object.fromEntries(cats.map(c => [c.id, items.filter(i => i.cat === c.id).length]));
   $('#lib-cats').innerHTML = '';
-  for (const c of LIB_CATS) {
+  for (const c of cats) {
     if (!counts[c.id] && (c.id === 'mine' || c.id === 'rec')) continue;
     const btn = document.createElement('button');
     btn.className = 'lib-cat' + (c.id === libCat && !libQuery ? ' active' : '');
     btn.style.setProperty('--c', PALETTE[uiColor(c.color)]);
-    btn.innerHTML = `<i></i>${t(`lib.cat.${c.id}`)}<small>${counts[c.id]}</small>`;
-    btn.addEventListener('click', () => { libCat = c.id; libQuery = ''; $('#lib-search').value = ''; renderLibrary(); });
+    btn.innerHTML = `<i></i>${c.label}<small>${counts[c.id]}</small>`;
+    btn.addEventListener('click', () => { libCat = libCats[libTab] = c.id; libQuery = ''; $('#lib-search').value = ''; renderLibrary(); });
     $('#lib-cats').appendChild(btn);
   }
   const shown = libQuery ? items.filter(i => i.name.toLowerCase().includes(libQuery)) : items.filter(i => i.cat === libCat);
@@ -3127,7 +3153,8 @@ async function kickToLibrary() {
   await store.saveSample(sampleId, { name, data: wav });
   bufferCache.set(sampleId, buf);
   state.userSounds.push({ sampleId, name, cat: 'kick' });
-  libCat = 'kick';
+  libTab = 'sounds';
+  libCat = libCats.sounds = 'kick';
   libQuery = '';
   renderLibrary();
   save();
@@ -3401,7 +3428,8 @@ const FX_ROW = 16;            // hauteur d'une ligne d'effets (px)
 const fxColor = b => PALETTE[uiColor(FX_FAMILY_COLORS[TFX_TYPES[b.fx]?.family] ?? 49)];
 
 // Éléments de la banque d'effets, pour la bibliothèque.
-const fxItems = () => FX_BANK.map(b => ({ kind: 'fx', sampleId: `fx:${b.id}`, name: bankName(b), cat: 'tlfx', fx: b.fx, p: b.p ?? {}, len: b.len, family: TFX_TYPES[b.fx].family }));
+const fxItems = () => FX_BANK.map(b => ({ kind: 'fx', sampleId: `fx:${b.id}`, name: bankName(b), cat: TFX_TYPES[b.fx].family, fx: b.fx, p: b.p ?? {}, len: b.len, family: TFX_TYPES[b.fx].family }));
+const FX_FAMILIES = [...new Set(FX_BANK.map(b => TFX_TYPES[b.fx].family))];
 
 function tlPlaceFx(item, track, beat) {
   const block = { id: crypto.randomUUID(), fx: item.fx, start: beat, len: item.len, p: { ...fxDefaults(item.fx), ...item.p }, name: item.name };

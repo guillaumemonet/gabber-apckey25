@@ -9,8 +9,8 @@
 GabberKey is built around a **timeline**: drag sounds from a library sorted by category onto tracks, the blocks snap to the bar and everything plays at the same tempo. The other tools (sampler pads, TR-909, synth, mixer, effects…) are **plugins** that open in windows, and the Akai APC Key 25 (mk1 or mk2) plays them live. Nothing to install except a web browser:
 
 - **Timeline**: 16 tracks in bars; drag, lengthen (loops repeat), copy and move blocks; play the pads or the keyboard while recording and every hit or held note becomes a block, live; record the TR-909 as audio.
-- **Sound library**: 438 sounds sorted into Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices and FX, plus your own sounds and recordings; click to listen, drag to place.
-  - six **synthesised hardcore / gabber banks**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, dark mainstream kicks and leads, modern uptempo kicks with raw tails, supersaws, shouts, FX and loops at 190 BPM;
+- **Sound library**: 478 sounds sorted into Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices and FX, plus your own sounds and recordings; click to listen, drag to place.
+  - seven **synthesised hardcore / gabber / hardstyle banks** (no duplicates): distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, dark mainstream kicks and leads, modern uptempo kicks with raw tails, supersaws, shouts, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
 - **Plugins** in movable, magnetic windows:
   - **40-pad sampler** with 15 banks, pad LEDs synced to the screen, and drag & drop of your own sounds;
@@ -101,11 +101,12 @@ Everything can also be done with the mouse. On the computer keyboard, the middle
 | 5 | Textures & basses |
 | 6 | Tabla & misc. |
 | 7 | **Gabber**: 8 kicks (Rotterdam, Early, Terror, Industrial, Frenchcore, Reverse…), percussion, hoovers, stabs, screeches, loops at 190 BPM |
-| 8 | **Gabber 2**: kicks tuned from C to G, FX (riser, downlifter, laser, impact…), 16 loops, rave stabs |
+| 8 | **Gabber 2**: darker "doomcore" kicks tuned from C to G, FX (riser, downlifter, laser, impact…), 16 loops (frenchcore, half-time, doomcore beat, kick triplets, second hoover, stab and acid riffs, snare build…), rave stabs |
 | 9 | **Hardcore**: harder kicks (terror, uptempo, speedcore, industrial, mainstream…), distorted basses, string chords (Fm, Db, Eb, Cm, Bbm, Ab), staccato and orchestra hit, string / bass loops (ostinato, progression, offbeat, rolling, reese, 4-bar full track) and hardcore drum loops, all at 190 BPM |
 | 10 | **Oldschool** (early 90s rave / hardcore): 909 and 808 kicks, breakbeat kit, rave pianos (Fm, Db, Eb, Cm, Bbm, Ab), Mentasm and Belgian stabs, "ahh" choir, vox stab, whistle, air-raid siren, Amen-style and chopped breaks, piano riff, rave arp, 4-bar oldschool track, all at 190 BPM |
 | 11 | **Mainstream** (dark mainstream hardcore, F harmonic minor): kicks with a distorted tonal tail (angry, dark, punchy, pitch drop, raw, tuned C# and G#), hard clap and percussion, dark and screaming leads, screeches, dark hoover, horror bells, dark piano, synthesised shouts ("hey", "oi", "yeah"), dark choir and strings, horror pad, loops (beat, lead riff, screech riff, bell melody, breakdown pad, build-up, 4-bar full track), all at 190 BPM |
 | 12 | **New wave** (modern hardcore / uptempo): kicks with long raw "zaag" tails (zaag, raw, screech kick, hard punch, tok, kick-bass), 8 tuned kicks (F to F) for kick melodies, supersaw lead and chords (Fm, Db, Ab, Eb), pluck, pitch lead, euphoric pad, shouts, uplifter, tunnel, glitch, loops (uptempo beat, kick-bass, kick melody, gallop, supersaw chords, pluck melody, build-up, 4-bar drop), all at 190 BPM |
+| 13 | **Hardstyle** (hardstyle / rawstyle, **150 BPM**): hardstyle, raw, screech, euphoric, zaag and punch kicks, tuned kicks C# and G#, **reverse basses** (F, C#, D#, G#), big clap, china crash, raw screeches, euphoric lead and chord, pluck, pitch lead, raw stab and hoover, shouts ("hey", "raw", "go"), pitch riser, uplifter, deep sub drop, impact, air horn, loops (hardstyle beat, the offbeat **reverse bass** groove, reverse bass over a chord progression, rawstyle loop, kick build-up, screech riff, euphoric melody, 4-bar drop) |
 
 To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. The **✎ pencil** that appears when the mouse is over a pad opens the **pad editor** on it: name, LED colour, playback mode (**One-shot**, **Hold** or **Loop**) and the pad's **8 knobs** (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs.
 
@@ -142,7 +143,7 @@ Click **Demo** in the timeline toolbar to load the demo song: about one minute a
 
 The main screen: the **sound library** on the left, the **timeline** on the right (16 tracks, 32 bars to start, − / + to change the length, zoom, **Loop**).
 
-- **Library**: pick a category (Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices, FX, My sounds, Recordings) or search by name. **Click** a sound to listen to it (and pick it); the badge shows its length in bars (loops) or "1-shot".
+- **Library**: two tabs. **Sounds**: pick a category (Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices, Sound FX, My sounds, Recordings). **Effects**: the track effects, by family (Volume, Filter, Space, Time, Saturation, 3D). Or search by name. **Click** a sound to listen to it (and pick it); the badge shows its length in bars (loops) or "1-shot".
 - **Place**: drag a sound onto a track. It snaps to the start of the bar (hold **Shift** to place it on a beat). Clicking an empty cell places the last sound picked.
 - **Edit blocks**: drag a block to move it (to another bar or track), drag its **right edge** to lengthen or shorten it (a loop repeats to fill the block), **Alt + drag** copies it, **double-click** listens to it, **right-click** or **Delete** removes it. Each track has a mute.
 - **Undo / redo**: **↶ / ↷** in the toolbar, or **Ctrl+Z** / **Ctrl+Shift+Z** (or **Ctrl+Y**). Every change to the timeline can be undone (placed, moved, lengthened or deleted blocks, generated pads, recordings, demo loading…), up to 100 steps.
@@ -311,7 +312,7 @@ A chord block works like any other block: move it, lengthen it, copy it (Alt), l
 
 ## Tempo and loops
 
-The global tempo (header, or the **Tap** button) drives every loop. Each loop starts on the next bar and stays in sync when you change the tempo. For your own loops, enter their original tempo in the editor, or click **Auto**: this assumes the file lasts a whole number of bars. Set the tempo to 190 for the Gabber, Hardcore, Oldschool, Mainstream and New wave banks: their loops share the same key (F minor) and lengths, so they stay in sync with each other.
+The global tempo (header, or the **Tap** button) drives every loop. Each loop starts on the next bar and stays in sync when you change the tempo. For your own loops, enter their original tempo in the editor, or click **Auto**: this assumes the file lasts a whole number of bars. Set the tempo to 190 for the Gabber, Hardcore, Oldschool, Mainstream and New wave banks: their loops share the same key (F minor) and lengths, so they stay in sync with each other. The **Hardstyle** bank is made at **150 BPM**, the tempo of the style (its loops follow the global tempo too, but sound most natural at 150).
 
 ## Knob pages
 
