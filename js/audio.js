@@ -48,8 +48,9 @@ function driveCurve(amount) {
 }
 
 export class Engine {
-  constructor() {
-    const ctx = this.ctx = new AudioContext({ latencyHint: 'interactive' });
+  // ctx : contexte audio (par défaut celui de la carte son ; un OfflineAudioContext pour l'export rapide).
+  constructor(ctx = new AudioContext({ latencyHint: 'interactive' })) {
+    this.ctx = ctx;
     this.values = {};
     this.voiceCfg = { ...DEFAULT_VOICE };
     this.voices = new Map();      // note -> voix synthé ('mono' pour la voix monophonique)

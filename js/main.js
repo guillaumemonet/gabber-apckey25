@@ -16,6 +16,7 @@ import { Performer, CHORD_MODES, ARP_MODES, ARP_RATES, defaultPlayState, mergePl
 import { PROGRESSIONS, parseProgression, voiceChords, bassNote } from './chords.js';
 import { Sidechain, SC_SOURCES, SC_DUCKED, defaultScState, mergeScState } from './sidechain.js';
 import { History } from './history.js';
+import { makeZip } from './zip.js';
 
 translatePage();
 
@@ -1489,6 +1490,8 @@ function tlTarget(ev) {
 function buildTl() {
   $('#tl-play').addEventListener('click', tlToggle);
   $('#tl-demo').addEventListener('click', loadDemo);
+  $('#tl-export').addEventListener('click', () => exportSong(false));
+  $('#tl-stems').addEventListener('click', () => exportSong(true));
   $('#tl-rec').addEventListener('click', tlRecToggle);
   $('#tl-loop').addEventListener('click', () => { state.tl.loop = !state.tl.loop; renderTl(); save(); });
   $('#tl-less').addEventListener('click', () => { state.tl.bars = Math.max(4, state.tl.bars - 4); renderTl(); save(); });
@@ -2602,6 +2605,102 @@ async function cleanRecordings() {
   const used = new Set([...state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)), ...state.banks.flat().map(p => p?.sampleId)]);
   const ids = await store.listSampleIds().catch(() => []);
   for (const id of ids) if (typeof id === 'string' && id.startsWith('rec:') && !used.has(id)) store.deleteSample(id).catch(() => {});
+}
+
+// ---------- Export rapide (WAV et stems) ----------
+
+// Le morceau est rejoué dans un contexte audio hors temps réel, avec tout le moteur reconstruit à l'identique
+// (synthé, pads, table de mixage et ses effets, sidechain) : le rendu prend quelques secondes au lieu de la durée du morceau.
+const EXPORT_LEAD = 0.1;   // marge de départ (les réglages se posent), retirée du fichier
+const EXPORT_TAIL = 3;     // queue des réverbes et des delays
+
+// Fin du morceau (en temps) : la fin du dernier bloc.
+function songEndBeats() {
+  const len = state.tl.bars * BEATS_PER_BAR;
+  let end = 0;
+  for (const tr of state.tl.tracks) for (const c of tr.clips) if (c.start < len) end = Math.max(end, c.start + timeline.clipBeats(c));
+  return end;
+}
+
+// Rend la timeline (ou une seule piste, pour un stem) et renvoie ses deux canaux.
+async function renderSong(onlyTrack = null) {
+  const bd = 60 / state.bpm;
+  const endBeat = songEndBeats();
+  const sr = engine.ctx.sampleRate;
+  const octx = new OfflineAudioContext(2, Math.ceil((EXPORT_LEAD + endBeat * bd + EXPORT_TAIL) * sr), sr);
+  const e = new Engine(octx);
+  for (const [id, p] of Object.entries(state.globals)) if (globalDef(id)) e.set(id, globalValue(id, p));
+  e.setBpm(state.bpm);
+  e.setVoice(presetById(state.preset).voice);
+  const m = new Mixer(e, () => state.mix);
+  e.padBus.disconnect();
+  e.padBus.connect(m.input('pads'));
+  const sc = new Sidechain(e, () => state.sc);
+  clearInterval(sc.timer);   // tout est programmé d'avance ci-dessous
+  e.pumpGain.disconnect();
+  e.pumpGain.connect(sc.synth).connect(m.input('synth'));
+  sc.pads.connect(e.padBus);
+  sc.tl.connect(m.input('tl'));
+  e.padOut = pad => (isDuckedSound(pad.sampleId, padCat(pad)) ? sc.pads : e.padBus);
+  const tracks = state.tl.tracks.map((tr, i) => ({ ...tr, mute: tr.mute || (onlyTrack !== null && i !== onlyTrack) }));
+  const tlState = { ...state.tl, tracks };
+  const tl = new Timeline(e, () => tlState, clipBuffer, m.input('tl'));
+  Object.assign(tl, {
+    getPad: (b, i) => state.banks[b]?.[i], padKey, getPatch: presetPatch, duckOutput: sc.tl,
+    isDucked: timeline.isDucked, isKickPad: timeline.isKickPad, kicksOf: clipKicks, onKick: time => sc.kick(time),
+  });
+  // Lecture linéaire du début à la fin, sans boucle ; toutes les fins de notes programmées d'un coup.
+  tl.recording = true;
+  tl.playing = true;
+  e.origin = EXPORT_LEAD;
+  tl.cycles = [{ time: EXPORT_LEAD, beat: 0 }];
+  tl.scheduleCycle(EXPORT_LEAD, 0);
+  tl.flush(Infinity);
+  if (state.sc.on && state.sc.source === 'beat') for (let b = 0; b < endBeat; b++) sc.duck(EXPORT_LEAD + b * bd);
+  await new Promise(r => setTimeout(r, 30));   // réponses impulsionnelles des réverbes (créées juste après)
+  const buf = await octx.startRendering();
+  const skip = Math.round(EXPORT_LEAD * sr);
+  return [0, 1].map(c => buf.getChannelData(c).subarray(skip));
+}
+
+let exporting = false;
+async function exportSong(stems) {
+  if (exporting) return;
+  if (!songEndBeats()) { toast(t('export.empty'), 3000); return; }
+  if (tlRec) await tlStopRec();
+  exporting = true;
+  renderExport();
+  const t0 = performance.now();
+  try {
+    const name = `gabberkey-${stamp()}`;
+    if (!stems) {
+      toast(t('export.rendering'), 60000);
+      const chans = await renderSong();
+      download(new Blob([encodeWav(chans, engine.ctx.sampleRate)], { type: 'audio/wav' }), `${name}.wav`);
+    } else {
+      const list = state.tl.tracks.map((tr, i) => i).filter(i => !state.tl.tracks[i].mute && state.tl.tracks[i].clips.length);
+      const files = [];
+      for (const [k, i] of list.entries()) {
+        toast(t('export.stem', { n: k + 1, total: list.length }), 60000);
+        const chans = await renderSong(i);
+        const first = state.tl.tracks[i].clips.reduce((a, c) => (c.start < a.start ? c : a)).name ?? '';
+        const label = `${String(i + 1).padStart(2, '0')} ${t('tl.track', { n: i + 1 })} - ${first}`.replace(/[\\/:*?"<>|]+/g, '_').slice(0, 60);
+        files.push({ name: `${label}.wav`, data: encodeWav(chans, engine.ctx.sampleRate) });
+      }
+      download(makeZip(files), `${name}-stems.zip`);
+    }
+    toast(t('export.done', { s: ((performance.now() - t0) / 1000).toFixed(1) }), 4000);
+  } catch (err) {
+    console.error(err);
+    toast(t('export.fail', { msg: err.message }), 5000);
+  } finally {
+    exporting = false;
+    renderExport();
+  }
+}
+
+function renderExport() {
+  for (const id of ['#tl-export', '#tl-stems']) $(id).disabled = exporting;
 }
 
 // ---------- Effets de performance ----------

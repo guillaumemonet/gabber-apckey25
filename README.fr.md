@@ -259,7 +259,9 @@ Double-clic sur un potard à l'écran pour le remettre à zéro.
 
 ## Enregistrement et kits
 
-- **● REC** dans l'en-tête enregistre la sortie générale. Un second appui télécharge un fichier WAV.
+- **⤓ WAV** (barre de la timeline) exporte le morceau en WAV, **calculé en quelques secondes** au lieu d'être rejoué en temps réel : de la mesure 1 à la fin du dernier bloc, avec le synthé, les pads, la table de mixage, les effets d'insert et le sidechain tels que tu les entends (environ 3 s pour la démo d'une minute).
+- **⤓ Stems** exporte chaque piste non vide dans son propre fichier WAV, sur toute la durée du morceau, le tout dans une archive ZIP, prête à être mixée dans un autre logiciel.
+- **● REC** dans l'en-tête enregistre la sortie générale en direct, y compris ce que tu joues et les effets de performance. Un second appui télécharge un fichier WAV.
 - **Exporter la banque** / **Exporter tout** crée un fichier `.apckit` autonome, avec les sons et les réglages. **Importer…** le recharge : une banque va dans la banque affichée, une session remplace tout.
 
 Tes banques, tes sons et tes réglages sont sauvegardés automatiquement dans le navigateur.
@@ -272,10 +274,9 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 
 Ce qui arrive ensuite, dans cet ordre :
 
-1. **Annuler / rétablir** dans la timeline, et un **export WAV rapide** du morceau (calculé en quelques secondes, avec aussi les pistes séparées / stems).
-2. **Basse acid façon TB-303** : séquenceur de 16 pas avec slide et accent, cutoff, résonance, enveloppe et distorsion.
-3. **Designer de kick** : fabrique ton propre kick gabber (attaque, hauteur et chute de la queue, queue brute « zaag », distorsion, formant) et envoie-le sur un pad ou dans la bibliothèque.
-4. **Platines** : deux decks avec pitch, sync, cue, crossfader et scratch.
+1. **Basse acid façon TB-303** : séquenceur de 16 pas avec slide et accent, cutoff, résonance, enveloppe et distorsion.
+2. **Designer de kick** : fabrique ton propre kick gabber (attaque, hauteur et chute de la queue, queue brute « zaag », distorsion, formant) et envoie-le sur un pad ou dans la bibliothèque.
+3. **Platines** : deux decks avec pitch, sync, cue, crossfader et scratch.
 
 Les idées et suggestions sont les bienvenues dans les [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 
@@ -329,6 +330,8 @@ js/mixer.js           table de mixage : voies, envois, effets d'insert
 js/sidechain.js       sidechain (les kicks font baisser le synthé et les sons mélodiques)
 js/library.js         bibliothèque de sons (catégories)
 js/windows.js         fenêtres des plugins
+js/zip.js             archive ZIP (stems)
+js/history.js         annuler / rétablir
 js/help.js            aide de chaque fenêtre (bouton ?)
 js/presets.js         presets du synthé
 js/performer.js       mode accords et arpégiateur

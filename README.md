@@ -259,7 +259,9 @@ Double-click a knob on screen to reset it.
 
 ## Recording and kits
 
-- **● REC** in the header records the master output. Press it again to download a WAV file.
+- **⤓ WAV** (timeline toolbar) exports the song as a WAV file, **rendered in a few seconds** instead of playing it in real time: from bar 1 to the end of the last block, with the synth, pads, mixer, insert effects and sidechain exactly as you hear them (about 3 s for the one-minute demo).
+- **⤓ Stems** exports each non-empty track as its own full-length WAV file, all in one ZIP archive, ready to be mixed in another program.
+- **● REC** in the header records the master output live, including what you play and the performance effects. Press it again to download a WAV file.
 - **Export bank** / **Export all** creates a self-contained `.apckit` file with the sounds and settings. **Import…** loads it back: a bank goes into the displayed bank, and a session replaces everything.
 
 Your banks, sounds and settings are saved automatically in the browser.
@@ -272,10 +274,9 @@ The interface follows the browser language: French if the browser is set to Fren
 
 What is coming next, in this order:
 
-1. **Undo / redo** in the timeline, and a **fast WAV export** of the song (rendered in a few seconds, plus separate tracks / stems).
-2. **TB-303-style acid bass line**: 16-step sequencer with slide and accent, cutoff, resonance, envelope and distortion.
-3. **Kick designer**: build your own gabber kick (punch, tail pitch and drop, raw "zaag" tail, distortion, formant) and send it to a pad or the library.
-4. **Turntables**: two decks with pitch, sync, cue, crossfader and scratching.
+1. **TB-303-style acid bass line**: 16-step sequencer with slide and accent, cutoff, resonance, envelope and distortion.
+2. **Kick designer**: build your own gabber kick (punch, tail pitch and drop, raw "zaag" tail, distortion, formant) and send it to a pad or the library.
+3. **Turntables**: two decks with pitch, sync, cue, crossfader and scratching.
 
 Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 
@@ -329,6 +330,8 @@ js/mixer.js           mixer: channels, sends, insert effects
 js/sidechain.js       sidechain (kicks duck the synth and melodic sounds)
 js/library.js         sound library (categories)
 js/windows.js         plugin windows
+js/zip.js             ZIP archive (stems)
+js/history.js         undo / redo
 js/help.js            help of each window (? button)
 js/presets.js         synth presets
 js/performer.js       chord mode and arpeggiator
