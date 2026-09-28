@@ -21,7 +21,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 - **Enregistrement WAV** de ta session et **export / import de kits**.
 - Interface en **français ou en anglais**, selon la langue du navigateur.
 
-> 🚧 **GabberKey est en constante évolution.** De nouvelles fonctions arrivent régulièrement, et plein d'autres sont en route : une émulation de **basse acid façon 303**, des **platines** (vinyles à scratcher et à mixer)… et bien plus encore. Mets une étoile ou suis le dépôt pour voir ce qui arrive !
+> 🚧 **GabberKey est en constante évolution.** De nouvelles fonctions arrivent régulièrement, et plein d'autres sont en route : une émulation de **basse acid façon 303**, des **platines** (vinyles à scratcher et à mixer)… et bien plus encore. Mets une étoile ou suis le dépôt pour voir ce qui arrive (voir la [feuille de route](#feuille-de-route)) !
 
 ---
 
@@ -266,6 +266,17 @@ Tes banques, tes sons et tes réglages sont sauvegardés automatiquement dans le
 ## Langue
 
 L'interface suit la langue du navigateur : français si le navigateur est en français, anglais sinon. Pour forcer une langue, ajoute `?lang=fr` ou `?lang=en` à l'adresse.
+
+## Feuille de route
+
+Ce qui arrive ensuite, dans cet ordre :
+
+1. **Annuler / rétablir** dans la timeline, et un **export WAV rapide** du morceau (calculé en quelques secondes, avec aussi les pistes séparées / stems).
+2. **Basse acid façon TB-303** : séquenceur de 16 pas avec slide et accent, cutoff, résonance, enveloppe et distorsion.
+3. **Designer de kick** : fabrique ton propre kick gabber (attaque, hauteur et chute de la queue, queue brute « zaag », distorsion, formant) et envoie-le sur un pad ou dans la bibliothèque.
+4. **Platines** : deux decks avec pitch, sync, cue, crossfader et scratch.
+
+Les idées et suggestions sont les bienvenues dans les [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 
 ## Compatibilité matérielle
 

@@ -21,7 +21,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 - **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
 
-> 🚧 **GabberKey is constantly evolving.** New features land regularly, and plenty more is on the way: a **303-style acid bass line** emulation, **turntables** (vinyl decks to scratch and mix)… and much more. Star or watch the repository to follow what's coming!
+> 🚧 **GabberKey is constantly evolving.** New features land regularly, and plenty more is on the way: a **303-style acid bass line** emulation, **turntables** (vinyl decks to scratch and mix)… and much more. Star or watch the repository to follow what's coming (see the [roadmap](#roadmap))!
 
 ---
 
@@ -266,6 +266,17 @@ Your banks, sounds and settings are saved automatically in the browser.
 ## Language
 
 The interface follows the browser language: French if the browser is set to French, English otherwise. To force a language, add `?lang=en` or `?lang=fr` to the address.
+
+## Roadmap
+
+What is coming next, in this order:
+
+1. **Undo / redo** in the timeline, and a **fast WAV export** of the song (rendered in a few seconds, plus separate tracks / stems).
+2. **TB-303-style acid bass line**: 16-step sequencer with slide and accent, cutoff, resonance, envelope and distortion.
+3. **Kick designer**: build your own gabber kick (punch, tail pitch and drop, raw "zaag" tail, distortion, formant) and send it to a pad or the library.
+4. **Turntables**: two decks with pitch, sync, cue, crossfader and scratching.
+
+Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 
 ## Hardware compatibility
 
