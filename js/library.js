@@ -32,7 +32,8 @@ export function guessCat(name = '') {
 }
 
 // Construit la liste des sons : { sampleId, name, cat, bpm, bars, loop }.
-export function libraryItems({ manifest, kit, banks, tl }) {
+// userSounds : sons créés dans l'application (designer de kick) : { sampleId, name, cat }.
+export function libraryItems({ manifest, kit, banks, tl, userSounds = [] }) {
   const items = new Map();
   const add = item => { if (!items.has(item.sampleId)) items.set(item.sampleId, item); };
   kit?.forEach((s, i) => add({ sampleId: `builtin:${i}`, name: soundName(s.name), cat: guessCat(s.name), bpm: 0, bars: 0, loop: false }));
@@ -42,6 +43,7 @@ export function libraryItems({ manifest, kit, banks, tl }) {
       add({ sampleId: `lib:${p.file}`, name: soundName(p.name), cat: p.cat ?? guessCat(p.name), bpm: p.bpm || 0, bars: p.bars || 0, loop: p.mode === 2 });
     }
   }
+  for (const s of userSounds) add({ sampleId: s.sampleId, name: s.name, cat: s.cat, bpm: 0, bars: 0, loop: false, own: true });
   for (const pad of banks.flat()) {
     if (!pad?.sampleId?.startsWith('user:')) continue;
     add({ sampleId: pad.sampleId, name: pad.name, cat: 'mine', bpm: pad.bpm || 0, bars: 0, loop: !!pad.bpm });

@@ -17,6 +17,7 @@ import { PROGRESSIONS, parseProgression, voiceChords, bassNote } from './chords.
 import { Sidechain, SC_SOURCES, SC_DUCKED, defaultScState, mergeScState } from './sidechain.js';
 import { History } from './history.js';
 import { makeZip } from './zip.js';
+import { KICK_PARAMS, KICK_PRESETS, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
 import { Acid303, ACID_PATTERNS, ACID_ROWS, ACID_BASE, ACID_PARAMS, acidKnobDefs, acidFmt, acidSteps, defaultAcidState, mergeAcidState, randomPattern } from './acid.js';
 
 translatePage();
@@ -47,6 +48,8 @@ const state = {
   gen: null,                          // générateur de nappes (voir defaultGen)
   sc: defaultScState(),               // sidechain : les kicks font respirer synthé, nappes et basses
   acid: defaultAcidState(),           // TB-303 : réglages et patterns
+  kick: defaultKickState(),           // designer de kick
+  userSounds: [],                     // sons créés dans l'application (kicks du designer) : { sampleId, name, cat }
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -126,6 +129,7 @@ async function start() {
   buildPerf();
   buildTr();
   buildAcid();
+  buildKick();
   buildMixer();
   buildSidechain();
   buildTl();
@@ -192,6 +196,8 @@ async function restore() {
     state.gen = mergeGen(saved.gen);
     state.sc = mergeScState(saved.sc);
     state.acid = mergeAcidState(saved.acid);
+    state.kick = mergeKickState(saved.kick);
+    state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
         const s = saved.banks?.[b]?.[i];
@@ -275,6 +281,8 @@ function save() {
       gen: state.gen,
       sc: state.sc,
       acid: state.acid,
+      kick: state.kick,
+      userSounds: state.userSounds,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
   }, 400);
@@ -299,6 +307,7 @@ function selectPad(i) {
   state.selected = i;
   renderPads();
   renderEditor();
+  if (kickKnobEls.length) renderKick();   // info-bulle « → Pad » du designer de kick
   if (state.page === 'pad') renderKnobs();
   renderLeds();
 }
@@ -1379,7 +1388,7 @@ async function loadBuffers(ids) {
     if (data) { const b = await engine.ctx.decodeAudioData(data).catch(() => null); if (b) bufferCache.set(id, b); }
   }));
 }
-const loadTlBuffers = () => loadBuffers(state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)).filter(Boolean));
+const loadTlBuffers = () => loadBuffers([...state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)), ...state.userSounds.map(s => s.sampleId)].filter(Boolean));
 async function ensureBuffer(id) { if (!clipBuffer(id)) await loadBuffers([id]); return clipBuffer(id); }
 
 function tlToggle() {
@@ -1862,7 +1871,7 @@ function buildLibrary() {
 function renderLibrary() {
   const list = $('#lib-list');
   if (!list || !kit) return;
-  const items = libraryItems({ manifest: libManifest, kit, banks: state.banks, tl: state.tl });
+  const items = libraryItems({ manifest: libManifest, kit, banks: state.banks, tl: state.tl, userSounds: state.userSounds });
   const counts = Object.fromEntries(LIB_CATS.map(c => [c.id, items.filter(i => i.cat === c.id).length]));
   $('#lib-cats').innerHTML = '';
   for (const c of LIB_CATS) {
@@ -1883,6 +1892,7 @@ function renderLibrary() {
     row.style.setProperty('--c', PALETTE[uiColor(catColor(item.cat))]);
     row.innerHTML = `<i></i><span>${item.name}</span><small>${item.loop ? t('lib.bars', { n: item.bars || '↻' }) : t('lib.oneshot')}</small>`;
     row.addEventListener('pointerdown', e => startLibDrag(e, item));
+    if (item.own) { row.title = t('lib.ownTitle'); row.addEventListener('contextmenu', e => { e.preventDefault(); removeUserSound(item); }); }
     list.appendChild(row);
   }
   if (!shown.length) list.innerHTML = `<p class="hint">${t('lib.empty')}</p>`;
@@ -2934,6 +2944,171 @@ function renderAcidHead(step) {
   } else {
     renderAcid();
   }
+}
+
+// ---------- Designer de kick ----------
+
+let kickBuffer = null;       // dernier kick calculé (AudioBuffer)
+let kickRenderId = 0;
+const kickKnobEls = [];
+
+function buildKick() {
+  const presets = $('#kick-presets');
+  for (const id of Object.keys(KICK_PRESETS)) {
+    const b = document.createElement('button');
+    b.dataset.preset = id;
+    b.textContent = t(`kick.preset.${id}`);
+    b.addEventListener('click', () => {
+      state.kick.params = { ...kickDefaults(), ...KICK_PRESETS[id] };
+      state.kick.preset = id;
+      kickChanged(true);
+    });
+    presets.appendChild(b);
+  }
+  const wrap = $('#kick-knobs');
+  KICK_PARAMS.forEach((id, k) => {
+    const el = document.createElement('div');
+    el.className = 'knob';
+    el.innerHTML = `
+      <svg viewBox="0 0 80 80">
+        <path class="track" d="${arcPath(1)}" fill="none" stroke-width="8" stroke-linecap="round"/>
+        <path class="arc" fill="none" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+      <div class="value"></div><div class="label">${t(`kick.p.${id}`)}</div>`;
+    el.title = t(`kick.h.${id}`);
+    const turn = (pos, done) => {
+      const steps = kickSteps(id);
+      state.kick.params[id] = Math.min(1, Math.max(0, steps ? Math.round(pos * (steps - 1)) / (steps - 1) : pos));
+      state.kick.preset = null;
+      renderKickKnobs();
+      kickChanged(done);
+    };
+    let lastY = null;
+    el.addEventListener('pointerdown', e => { lastY = e.clientY; try { el.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } });
+    el.addEventListener('pointermove', e => {
+      if (lastY === null || Math.abs(lastY - e.clientY) < 2) return;
+      const step = kickSteps(id) ? 1 / (kickSteps(id) - 1) / 3 : 0.005;
+      turn(state.kick.params[id] + (lastY - e.clientY) * step * (e.shiftKey ? 0.25 : 1), false);
+      lastY = e.clientY;
+    });
+    el.addEventListener('pointerup', () => { if (lastY !== null) kickChanged(true); lastY = null; });
+    el.addEventListener('wheel', e => { e.preventDefault(); turn(state.kick.params[id] + (e.deltaY < 0 ? 0.02 : -0.02), true); }, { passive: false });
+    el.addEventListener('dblclick', () => turn(kickDefaults()[id], true));
+    kickKnobEls[k] = el;
+    wrap.appendChild(el);
+  });
+  $('#kick-play').addEventListener('click', () => playKick());
+  $('#kick-auto').addEventListener('click', () => { state.kick.auto = !state.kick.auto; renderKick(); save(); });
+  $('#kick-to-pad').addEventListener('click', kickToPad);
+  $('#kick-to-lib').addEventListener('click', kickToLibrary);
+  $('#kick-wav').addEventListener('click', async () => {
+    const buf = await kickRender();
+    download(new Blob([encodeWav([buf.getChannelData(0), buf.getChannelData(0)], buf.sampleRate)], { type: 'audio/wav' }), `${kickName().replace(/\s+/g, '-')}.wav`);
+  });
+  renderKick();
+  kickRender();
+}
+
+// Calcule le kick (le dernier demandé gagne) et redessine sa forme d'onde.
+async function kickRender() {
+  const id = ++kickRenderId;
+  const data = await synthKick(state.kick.params, engine.ctx.sampleRate);
+  if (id !== kickRenderId) return kickBuffer;
+  const buf = engine.ctx.createBuffer(1, data.length, engine.ctx.sampleRate);
+  buf.copyToChannel(data, 0);
+  kickBuffer = buf;
+  drawKick(data);
+  return buf;
+}
+
+let kickTimer;
+function kickChanged(play) {
+  clearTimeout(kickTimer);
+  kickTimer = setTimeout(async () => {
+    await kickRender();
+    if (play && state.kick.auto) playKick(false);
+  }, 40);
+  renderKick();
+  save();
+}
+
+async function playKick(fresh = true) {
+  const buf = fresh || !kickBuffer ? await kickRender() : kickBuffer;
+  const src = engine.ctx.createBufferSource();
+  src.buffer = buf;
+  src.connect(engine.padBus);
+  src.start();
+  sidechain.kick();
+}
+
+function drawKick(data) {
+  const cv = $('#kick-wave');
+  const w = cv.width = cv.clientWidth * devicePixelRatio || 600;
+  const h = cv.height = 90 * devicePixelRatio;
+  const g = cv.getContext('2d');
+  g.clearRect(0, 0, w, h);
+  g.fillStyle = PALETTE[5];
+  const step = data.length / w;
+  for (let x = 0; x < w; x++) {
+    let lo = 0, hi = 0;
+    for (let i = Math.floor(x * step); i < Math.floor((x + 1) * step); i++) { lo = Math.min(lo, data[i]); hi = Math.max(hi, data[i]); }
+    g.fillRect(x, (1 - hi) * h / 2, 1, Math.max(1, (hi - lo) * h / 2));
+  }
+  $('#kick-len').textContent = `${Math.round(data.length / engine.ctx.sampleRate * 1000)} ms`;
+}
+
+const kickName = () => `Kick ${state.kick.preset ? t(`kick.preset.${state.kick.preset}`) : t('kick.custom')}`;
+
+// Le kick devient le son du pad sélectionné (banque affichée).
+async function kickToPad() {
+  const buf = await kickRender();
+  const wav = encodeWav([buf.getChannelData(0), buf.getChannelData(0)], buf.sampleRate);
+  await loadFileIntoPad(new File([wav], `${kickName()}.wav`, { type: 'audio/wav' }), state.selected);
+  toast(t('kick.toPadDone', { n: state.selected + 1, bank: state.bank + 1 }), 3000);
+}
+
+// Le kick rejoint la bibliothèque (catégorie Kicks) : on peut le glisser sur la timeline.
+async function kickToLibrary() {
+  const buf = await kickRender();
+  const wav = encodeWav([buf.getChannelData(0), buf.getChannelData(0)], buf.sampleRate);
+  const sampleId = `user:${crypto.randomUUID()}`;
+  const same = state.userSounds.filter(s => s.name.startsWith(kickName())).length;
+  const name = same ? `${kickName()} ${same + 1}` : kickName();
+  await store.saveSample(sampleId, { name, data: wav });
+  bufferCache.set(sampleId, buf);
+  state.userSounds.push({ sampleId, name, cat: 'kick' });
+  libCat = 'kick';
+  libQuery = '';
+  renderLibrary();
+  save();
+  toast(t('kick.toLibDone', { name }), 3000);
+}
+
+// Retire un son créé dans l'application de la bibliothèque (s'il ne sert plus nulle part, son fichier est effacé).
+function removeUserSound(item) {
+  if (!confirm(t('lib.removeConfirm', { name: item.name }))) return;
+  state.userSounds = state.userSounds.filter(s => s.sampleId !== item.sampleId);
+  const used = state.tl.tracks.some(tr => tr.clips.some(c => c.sampleId === item.sampleId)) || state.banks.flat().some(p => p?.sampleId === item.sampleId);
+  if (!used) { store.deleteSample(item.sampleId).catch(() => {}); bufferCache.delete(item.sampleId); }
+  renderLibrary();
+  save();
+}
+
+function renderKickKnobs() {
+  KICK_PARAMS.forEach((id, k) => {
+    const el = kickKnobEls[k];
+    if (!el) return;
+    const p = state.kick.params[id];
+    el.querySelector('.arc').setAttribute('d', p > 0.001 ? arcPath(p) : '');
+    el.querySelector('.value').textContent = kickFmt(id, p);
+  });
+}
+
+function renderKick() {
+  for (const b of $('#kick-presets').children) b.classList.toggle('active', b.dataset.preset === state.kick.preset);
+  $('#kick-auto').classList.toggle('active', state.kick.auto);
+  $('#kick-to-pad').title = t('kick.toPad.title', { n: state.selected + 1, bank: state.bank + 1 });
+  renderKickKnobs();
 }
 
 // ---------- Effets de performance ----------

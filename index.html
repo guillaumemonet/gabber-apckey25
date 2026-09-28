@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=26">
+  <link rel="stylesheet" href="css/style.css?v=27">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -157,6 +157,23 @@
       <div id="acid-grid" class="acid-grid"></div>
     </section>
 
+    <section class="window kick-area" data-win="kick">
+      <div class="section-title">
+        <h2 data-i18n="kick.title"></h2>
+      </div>
+      <div id="kick-presets" class="preset-list"></div>
+      <div id="kick-knobs" class="mini-knobs kick-knobs"></div>
+      <div class="kick-wave-wrap"><canvas id="kick-wave" height="90"></canvas><span id="kick-len" class="hint"></span></div>
+      <div class="row kick-actions">
+        <button id="kick-play" class="primary" data-i18n="kick.play"></button>
+        <button id="kick-auto" data-i18n="kick.auto" data-i18n-title="kick.auto.title"></button>
+        <span class="spacer"></span>
+        <button id="kick-to-pad" data-i18n="kick.toPad"></button>
+        <button id="kick-to-lib" data-i18n="kick.toLib" data-i18n-title="kick.toLib.title"></button>
+        <button id="kick-wav" data-i18n="kick.wav" data-i18n-title="kick.wav.title"></button>
+      </div>
+    </section>
+
     <section class="window scenes-area" data-win="scenes">
       <div class="section-title">
         <h2 data-i18n="scene.title"></h2>
@@ -206,31 +223,32 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/acid.js": "./js/acid.js?v=26",
-      "./js/apc.js": "./js/apc.js?v=26",
-      "./js/audio.js": "./js/audio.js?v=26",
-      "./js/chords.js": "./js/chords.js?v=26",
-      "./js/help.js": "./js/help.js?v=26",
-      "./js/history.js": "./js/history.js?v=26",
-      "./js/i18n.js": "./js/i18n.js?v=26",
-      "./js/kit.js": "./js/kit.js?v=26",
-      "./js/kits.js": "./js/kits.js?v=26",
-      "./js/library.js": "./js/library.js?v=26",
-      "./js/main.js": "./js/main.js?v=26",
-      "./js/mixer.js": "./js/mixer.js?v=26",
-      "./js/params.js": "./js/params.js?v=26",
-      "./js/performer.js": "./js/performer.js?v=26",
-      "./js/presets.js": "./js/presets.js?v=26",
-      "./js/sidechain.js": "./js/sidechain.js?v=26",
-      "./js/recorder.js": "./js/recorder.js?v=26",
-      "./js/timeline.js": "./js/timeline.js?v=26",
-      "./js/storage.js": "./js/storage.js?v=26",
-      "./js/tr909.js": "./js/tr909.js?v=26",
-      "./js/windows.js": "./js/windows.js?v=26",
-      "./js/zip.js": "./js/zip.js?v=26"
+      "./js/acid.js": "./js/acid.js?v=27",
+      "./js/apc.js": "./js/apc.js?v=27",
+      "./js/audio.js": "./js/audio.js?v=27",
+      "./js/chords.js": "./js/chords.js?v=27",
+      "./js/help.js": "./js/help.js?v=27",
+      "./js/history.js": "./js/history.js?v=27",
+      "./js/i18n.js": "./js/i18n.js?v=27",
+      "./js/kickdesign.js": "./js/kickdesign.js?v=27",
+      "./js/kit.js": "./js/kit.js?v=27",
+      "./js/kits.js": "./js/kits.js?v=27",
+      "./js/library.js": "./js/library.js?v=27",
+      "./js/main.js": "./js/main.js?v=27",
+      "./js/mixer.js": "./js/mixer.js?v=27",
+      "./js/params.js": "./js/params.js?v=27",
+      "./js/performer.js": "./js/performer.js?v=27",
+      "./js/presets.js": "./js/presets.js?v=27",
+      "./js/sidechain.js": "./js/sidechain.js?v=27",
+      "./js/recorder.js": "./js/recorder.js?v=27",
+      "./js/timeline.js": "./js/timeline.js?v=27",
+      "./js/storage.js": "./js/storage.js?v=27",
+      "./js/tr909.js": "./js/tr909.js?v=27",
+      "./js/windows.js": "./js/windows.js?v=27",
+      "./js/zip.js": "./js/zip.js?v=27"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=26"></script>
+  <script type="module" src="js/main.js?v=27"></script>
 </body>
 </html>

@@ -42,6 +42,16 @@ const HELP = {
         <li><b>Step entry</b>: play notes on the APC keyboard (or the computer keyboard); each one goes into the selected step and the cursor moves on. A strong hit adds an accent, <b>Rest</b> leaves a step empty. Click a step number to move the cursor.</li>
         <li>The 303 has its own <b>mixer channel</b> (K5 on the mixer pages), is ducked by the <b>sidechain</b> with the melodic sounds, and can be <b>recorded</b> into the timeline (choose TB-303 as the source).</li>
       </ul>`,
+    kick: `
+      <p>Build your own gabber / hardcore kick, computed in a few milliseconds, then use it anywhere.</p>
+      <ul>
+        <li><b>Presets</b>: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore. Start from one, then shape it.</li>
+        <li><b>Tail</b>: <b>Tune</b> (note of the tail, F = the key of the banks), <b>Punch</b> and <b>Sweep</b> (how high the pitch starts and how fast it drops), <b>Tail drop</b> (how far it keeps falling), <b>Length</b>, <b>Zaag</b> (sawtooth for a raw, buzzing tail).</li>
+        <li><b>Distortion</b>: <b>Drive</b> and <b>Shape</b> (the 909's 5 shapes), then <b>Formant</b> and <b>Bite</b>, which make the tail "talk".</li>
+        <li><b>Attack</b>: <b>Click</b> (noise) and <b>Attack</b> (short punchy layer).</li>
+        <li><b>Auto-listen</b> plays the kick each time you release a knob. The waveform and the length are shown below the knobs.</li>
+        <li><b>→ Pad</b> puts it on the selected pad, <b>→ Library</b> adds it to the Kicks category of the library (drag it onto the timeline; right-click it there to remove it), <b>⤓ WAV</b> downloads it.</li>
+      </ul>`,
     piano: `
       <p>The keyboard synth: 35 presets in 10 families, 8 expression knobs, chord mode, arpeggiator and pad generator.</p>
       <ul>
@@ -131,6 +141,16 @@ const HELP = {
         <li><b>Suivre la 909</b> : la 303 joue sur l'horloge de la TR-909 (shuffle compris) ; ▶ lance les deux. Désactive-le pour jouer la 303 seule.</li>
         <li><b>Saisie</b> : joue les notes au clavier de l'APC (ou de l'ordinateur) ; chacune va dans le pas choisi et le curseur avance. Une frappe forte ajoute un accent, <b>Silence</b> laisse un pas vide. Clic sur un numéro de pas pour déplacer le curseur.</li>
         <li>La 303 a sa propre <b>voie de mixage</b> (K5 sur les pages mixeur), est baissée par le <b>sidechain</b> avec les sons mélodiques, et peut être <b>enregistrée</b> dans la timeline (source TB-303).</li>
+      </ul>`,
+    kick: `
+      <p>Fabrique ton propre kick gabber / hardcore, calculé en quelques millisecondes, puis utilise-le partout.</p>
+      <ul>
+        <li><b>Presets</b> : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore. Pars de l'un d'eux, puis sculpte-le.</li>
+        <li><b>Queue</b> : <b>Note</b> (fa = la tonalité des banques), <b>Punch</b> et <b>Chute</b> (de combien la hauteur part haut et à quelle vitesse elle tombe), <b>Plongée</b> (de combien elle continue de descendre), <b>Longueur</b>, <b>Zaag</b> (scie pour une queue brute qui bourdonne).</li>
+        <li><b>Distorsion</b> : <b>Drive</b> et <b>Forme</b> (les 5 formes de la 909), puis <b>Formant</b> et <b>Mordant</b>, qui font « parler » la queue.</li>
+        <li><b>Attaque</b> : <b>Clic</b> (bruit) et <b>Attaque</b> (couche courte et percutante).</li>
+        <li><b>Écoute auto</b> joue le kick à chaque potard relâché. La forme d'onde et la longueur s'affichent sous les potards.</li>
+        <li><b>→ Pad</b> le met sur le pad sélectionné, <b>→ Bibliothèque</b> l'ajoute à la catégorie Kicks de la bibliothèque (à glisser sur la timeline ; clic droit dessus pour le retirer), <b>⤓ WAV</b> le télécharge.</li>
       </ul>`,
     piano: `
       <p>Le synthé du clavier : 35 presets en 10 familles, 8 potards d'expression, mode accords, arpégiateur et générateur de nappes.</p>

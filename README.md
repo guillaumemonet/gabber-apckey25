@@ -15,6 +15,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 - **Plugins** in movable, magnetic windows:
   - **40-pad sampler** with 15 banks, pad LEDs synced to the screen, and drag & drop of your own sounds;
   - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
+  - **Kick designer**: build your own distorted kick from 12 knobs and 8 presets, then send it to a pad or the library;
   - **TB-303-style acid bass line**: 16-step sequencer with accent and slide, resonant filter with envelope, distortion, step entry from the APC keyboard, in sync with the 909;
   - **Layered synth** on the keyboard: 35 presets in 10 families (strings, pads, choirs, supersaw, hoovers, leads, basses, stabs, keys, FX) with ensemble, stereo width, vibrato and 8 expression knobs, chord mode and a tempo-synced arpeggiator;
   - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters, up to 4 insert effects, and a **sidechain** triggered by the kicks;
@@ -22,7 +23,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 - **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
 
-> 🚧 **GabberKey is constantly evolving.** New features land regularly, and plenty more is on the way: a **kick designer**, **turntables** (vinyl decks to scratch and mix)… and much more. Star or watch the repository to follow what's coming (see the [roadmap](#roadmap))!
+> 🚧 **GabberKey is constantly evolving.** New features land regularly, and plenty more is on the way: **turntables** (vinyl decks to scratch and mix)… and much more. Star or watch the repository to follow what's coming (see the [roadmap](#roadmap))!
 
 ---
 
@@ -158,6 +159,17 @@ An acid bass line in the style of the Roland TB-303, synthesised live: oscillato
 - **Step entry**: turn on **Step entry** and play the line on the APC keyboard (or the computer keyboard). Each note goes into the selected step and the cursor moves on; a strong hit adds an accent, **Rest** leaves a step empty, clicking a step number moves the cursor.
 - The 303 has its own **mixer channel** (K5 on the mixer knob pages), is ducked by the **sidechain** with the melodic sounds, is stored in **scenes** (pattern and transport), and can be **recorded** into the timeline as audio (choose TB-303 as the source).
 
+## Kick designer
+
+Build your own gabber / hardcore kick, computed by the browser in a few milliseconds from 12 knobs:
+
+- **Presets**: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore.
+- **Tail**: **Tune** (note of the tail, in tune with the banks), **Punch** and **Sweep** (how high the pitch starts and how fast it drops), **Tail drop** (how far it keeps falling), **Length**, **Zaag** (sawtooth for the raw, buzzing tail of uptempo kicks).
+- **Distortion**: **Drive** and **Shape** (the 909's 5 shapes), then **Formant** and **Bite**, which make the tail "talk".
+- **Attack**: **Click** (noise) and **Attack** (short punchy layer).
+- **Auto-listen** plays the kick each time you release a knob; the waveform and the length are shown.
+- **→ Pad** puts it on the selected pad, **→ Library** adds it to the **Kicks** category of the library (drag it onto the timeline; right-click it there to remove it), **⤓ WAV** downloads it. Your kicks trigger the sidechain like any other kick.
+
 ## Scenes
 
 40 scenes laid out like the APC grid (1-8 at the bottom). A scene stores:
@@ -286,8 +298,7 @@ The interface follows the browser language: French if the browser is set to Fren
 
 What is coming next, in this order:
 
-1. **Kick designer**: build your own gabber kick (punch, tail pitch and drop, raw "zaag" tail, distortion, formant) and send it to a pad or the library.
-2. **Turntables**: two decks with pitch, sync, cue, crossfader and scratching.
+1. **Turntables**: two decks with pitch, sync, cue, crossfader and scratching.
 
 Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 
@@ -337,6 +348,7 @@ js/apc.js             APC Key 25 detection, MIDI input, LEDs (mk1 + mk2)
 js/audio.js           audio engine: synth, sampler, effects, EQ, tempo
 js/tr909.js           TR-909 emulation and sequencer
 js/acid.js            TB-303-style acid bass line
+js/kickdesign.js      kick designer
 js/timeline.js        timeline: tracks, blocks, playback
 js/mixer.js           mixer: channels, sends, insert effects
 js/sidechain.js       sidechain (kicks duck the synth and melodic sounds)

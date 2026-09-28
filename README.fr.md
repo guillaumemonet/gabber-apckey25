@@ -15,6 +15,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 - **Plugins** dans des fenêtres déplaçables et aimantées :
   - **Sampler 40 pads** avec 15 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de tes propres sons ;
   - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
+  - **Designer de kick** : fabrique ton propre kick distordu avec 12 potards et 8 presets, puis envoie-le sur un pad ou dans la bibliothèque ;
   - **Basse acid façon TB-303** : séquenceur 16 pas avec accent et slide, filtre résonant à enveloppe, distorsion, saisie au clavier de l'APC, calée sur la 909 ;
   - **Synthé en couches** au clavier : 35 presets en 10 familles (cordes, nappes, chœurs, supersaw, hoovers, leads, basses, stabs, claviers, effets) avec ensemble, largeur stéréo, vibrato et 8 potards d'expression, mode accords et arpégiateur calé sur le tempo ;
   - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres, jusqu'à 4 effets d'insert, et un **sidechain** déclenché par les kicks ;
@@ -22,7 +23,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 - **Enregistrement WAV** de ta session et **export / import de kits**.
 - Interface en **français ou en anglais**, selon la langue du navigateur.
 
-> 🚧 **GabberKey est en constante évolution.** De nouvelles fonctions arrivent régulièrement, et plein d'autres sont en route : un **designer de kick**, des **platines** (vinyles à scratcher et à mixer)… et bien plus encore. Mets une étoile ou suis le dépôt pour voir ce qui arrive (voir la [feuille de route](#feuille-de-route)) !
+> 🚧 **GabberKey est en constante évolution.** De nouvelles fonctions arrivent régulièrement, et plein d'autres sont en route : des **platines** (vinyles à scratcher et à mixer)… et bien plus encore. Mets une étoile ou suis le dépôt pour voir ce qui arrive (voir la [feuille de route](#feuille-de-route)) !
 
 ---
 
@@ -158,6 +159,17 @@ Une ligne de basse acid façon Roland TB-303, synthétisée en direct : oscillat
 - **Saisie** : active **Saisie** et joue la ligne au clavier de l'APC (ou de l'ordinateur). Chaque note va dans le pas choisi et le curseur avance ; une frappe forte ajoute un accent, **Silence** laisse un pas vide, un clic sur un numéro de pas déplace le curseur.
 - La 303 a sa propre **voie de mixage** (K5 sur les pages de potards du mixeur), est baissée par le **sidechain** avec les sons mélodiques, est gardée dans les **scènes** (pattern et marche) et peut être **enregistrée** en audio dans la timeline (source TB-303).
 
+## Designer de kick
+
+Fabrique ton propre kick gabber / hardcore, calculé par le navigateur en quelques millisecondes à partir de 12 potards :
+
+- **Presets** : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore.
+- **Queue** : **Note** (accordée avec les banques), **Punch** et **Chute** (de combien la hauteur part haut et à quelle vitesse elle tombe), **Plongée** (de combien elle continue de descendre), **Longueur**, **Zaag** (scie pour la queue brute et bourdonnante des kicks uptempo).
+- **Distorsion** : **Drive** et **Forme** (les 5 formes de la 909), puis **Formant** et **Mordant**, qui font « parler » la queue.
+- **Attaque** : **Clic** (bruit) et **Attaque** (couche courte et percutante).
+- **Écoute auto** joue le kick à chaque potard relâché ; la forme d'onde et la longueur s'affichent.
+- **→ Pad** le met sur le pad sélectionné, **→ Bibliothèque** l'ajoute à la catégorie **Kicks** de la bibliothèque (à glisser sur la timeline ; clic droit dessus pour le retirer), **⤓ WAV** le télécharge. Tes kicks déclenchent le sidechain comme les autres.
+
 ## Scènes
 
 40 scènes disposées comme la grille de l'APC (1-8 en bas). Une scène mémorise :
@@ -286,8 +298,7 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 
 Ce qui arrive ensuite, dans cet ordre :
 
-1. **Designer de kick** : fabrique ton propre kick gabber (attaque, hauteur et chute de la queue, queue brute « zaag », distorsion, formant) et envoie-le sur un pad ou dans la bibliothèque.
-2. **Platines** : deux decks avec pitch, sync, cue, crossfader et scratch.
+1. **Platines** : deux decks avec pitch, sync, cue, crossfader et scratch.
 
 Les idées et suggestions sont les bienvenues dans les [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 
@@ -337,6 +348,7 @@ js/apc.js             détection de l'APC Key 25, lecture MIDI, LEDs (mk1 + mk2)
 js/audio.js           moteur audio : synthé, sampler, effets, EQ, tempo
 js/tr909.js           émulation TR-909 et séquenceur
 js/acid.js            basse acid façon TB-303
+js/kickdesign.js      designer de kick
 js/timeline.js        timeline : pistes, blocs, lecture
 js/mixer.js           table de mixage : voies, envois, effets d'insert
 js/sidechain.js       sidechain (les kicks font baisser le synthé et les sons mélodiques)
