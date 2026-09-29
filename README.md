@@ -37,7 +37,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 | **TR-909**<br>[![TR-909 window: 16-step sequencer, and the knobs with per-instrument distortion](docs/screenshots/tr-en.png)](docs/screenshots/tr-en.png) | **TB-303**<br>[![TB-303 window: grid with octaves, accents and slides, and its knobs](docs/screenshots/acid-en.png)](docs/screenshots/acid-en.png) |
 | **Kick designer**<br>[![Kick designer: presets, 12 knobs and the waveform](docs/screenshots/kick-en.png)](docs/screenshots/kick-en.png) | **Turntables**<br>[![Turntables: two decks with scratchable records, EQ, filter and crossfader](docs/screenshots/decks-en.png)](docs/screenshots/decks-en.png) |
 | **Mixer and sidechain**<br>[![Mixer: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png) | **Patch**<br>[![Patch window: tools on the left, effect boxes in the middle, the master on the right](docs/screenshots/patch-en.png)](docs/screenshots/patch-en.png) |
-| **Track effects**<br>[![Timeline with an effects line under each track, the Effects tab of the library and the settings of a PCF](docs/screenshots/tlfx-en.png)](docs/screenshots/tlfx-en.png) | **Scenes and knobs**<br>[![Scenes window with stored scenes, and the knob pages](docs/screenshots/scenes-en.png)](docs/screenshots/scenes-en.png) |
+| **Track effects**<br>[![Timeline with an effects line under each track, the Effects tab of the library and the settings of a PCF](docs/screenshots/tlfx-en.png)](docs/screenshots/tlfx-en.png) | **Scenes and performance**<br>[![Scenes window with stored scenes, and the performance effects](docs/screenshots/scenes-en.png)](docs/screenshots/scenes-en.png) |
 
 ## Requirements
 
@@ -76,7 +76,7 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 | **Track buttons 5 / 6 / 7 / 8** (hold) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filter down |
 | **Shift + track 5 / 6 / 7 / 8** | Roll 1/4 · Tape stop · Filter up · Pump (on/off) |
 | **Shift + track 1 / 2 / 3 / 4** | Mixer knob page: volumes / pans / delay sends / reverb sends (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K5 TB-303, K6 Decks, K8 master) |
-| **Knobs K1-K8** | Parameters of the current page (Shift = fine tuning) |
+| **Knobs K1-K8** | Parameters of the current page, which follows the active window (Shift = fine tuning) |
 | **SUSTAIN** | Opens / closes the EQ page (held: EQ while pressed) |
 | **Shift + white key** | Preset of the current synth family (C = 1st, D = 2nd…) · **Shift + C# / D#** = previous / next family · **Shift + F# / G# / A#** = chord type / arpeggio on-off / arpeggio speed |
 | **Keyboard** | Plays the synth |
@@ -120,7 +120,7 @@ To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or 
 
 A Roland TR-909 emulation with its 11 instruments (bass drum, snare, 3 toms, rim shot, clap, closed / open hi-hat, crash, ride). Each one is synthesised live, like the analogue circuits of the original.
 
-**Knobs** (TR-909 page of the Knobs plugin, also opened by Shift + PLAY):
+**Knobs** (under the grid of the TR-909 window; also on the APC knobs when the window is active, or with Shift + PLAY):
 
 | K1-K4 | K5 | K6 | K7 | K8 |
 |---|---|---|---|---|
@@ -223,7 +223,7 @@ Two decks to mix and scratch any sound: library loops, your recordings, your own
 
 ## Scenes
 
-[![Scenes window with stored scenes, and the knob pages](docs/screenshots/scenes-en.png)](docs/screenshots/scenes-en.png)
+[![Scenes window with stored scenes, and the performance effects](docs/screenshots/scenes-en.png)](docs/screenshots/scenes-en.png)
 
 40 scenes laid out like the APC grid (1-8 at the bottom). A scene stores:
 - the loops that are playing;
@@ -273,7 +273,7 @@ The **Patch** window wires the tools and **effect boxes** freely, like a rack of
 
 ## Plugin windows
 
-The bar under the header opens and closes the plugins: **Pads**, **Pad editor**, **TR-909**, **Synth** (keyboard and presets), **Knobs**, **Performance**, **Mixer**, **Scenes** and **MIDI monitor**. Each one opens in a window above the timeline:
+The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Decks), **Tools** (Pad editor, Kick designer), **Studio** (Mixer, Patch, Scenes, Performance) and **System** (MIDI monitor). Each one opens in a window above the timeline:
 - Each window has a title bar: the **title** on the left, **?** and **✕** on the right.
 - The **active window** (in front) is highlighted; windows open and close with a 3D transition.
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.
@@ -334,12 +334,21 @@ A chord block works like any other block: move it, lengthen it, copy it (Alt), l
 
 The global tempo (header, or the **Tap** button) drives every loop. Each loop starts on the next bar and stays in sync when you change the tempo. For your own loops, enter their original tempo in the editor, or click **Auto**: this assumes the file lasts a whole number of bars. Set the tempo to 190 for the Gabber, Hardcore, Oldschool, Mainstream and New wave banks: their loops share the same key (F minor) and lengths, so they stay in sync with each other. The **Hardstyle** and **Hardstyle melodies** banks are made at **150 BPM**, the tempo of the style (their loops follow the global tempo too, but sound most natural at 150).
 
-## Knob pages
+## Knobs
 
+There is no global knob window: **each instrument has its knobs in its own window** (synth, pad editor, TR-909 under its grid, TB-303, turntables, kick designer), and the mixer has a **Master** section (master EQ, global effects and volumes).
+
+The 8 knobs of the APC (K1-K8) control one **page** at a time:
+- the page **follows the active window**: click the TB-303 and K1-K8 control the TB-303, click the TR-909 and they control the selected 909 instrument, and so on (synth, turntables, pad editor, mixer);
+- the **APC knobs** menu in the header shows the current page and lets you choose it;
+- the APC track buttons also change it (1-4 = Synth / Effects / Pad / EQ, Shift + 1-4 = mixer pages, Shift + REC = TB-303 then turntables, Shift + PLAY = TR-909, SUSTAIN = EQ).
+
+The group of knobs driven by the APC is outlined on screen and tagged "APC K1-K8". The pages:
 - **Synth**: the 8 expression knobs of the current synth family (see Synth)
-- **Effects**: delay time / feedback / send, reverb send / size, drive, pads volume, master volume
-- **Pad**: volume, pitch, pan, filter, start point, delay and reverb sends, and playback mode of the selected pad
-- **EQ**: low 100 Hz, low-mid 350 Hz, mid 1.2 kHz, high-mid 3.5 kHz, high 9 kHz (±15 dB), low-pass, high-pass, output gain
+- **Effects**: delay time / feedback / send, reverb send / size, synth volume, pads volume, master volume (Master section of the mixer)
+- **Pad**: volume, pitch, pan, filter, start point, delay and reverb sends, and playback mode of the selected pad (pad editor)
+- **EQ**: low 100 Hz, low-mid 350 Hz, mid 1.2 kHz, high-mid 3.5 kHz, high 9 kHz (±15 dB), low-pass, high-pass, output gain (Master section of the mixer)
+- **TR-909**, **TB-303**, **Decks** and the four **mixer** pages.
 
 Double-click a knob on screen to reset it.
 

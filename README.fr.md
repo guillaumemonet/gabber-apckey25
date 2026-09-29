@@ -37,7 +37,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 | **TR-909**<br>[![Fenêtre TR-909 : séquenceur 16 pas, et les potards avec la distorsion par instrument](docs/screenshots/tr-fr.png)](docs/screenshots/tr-fr.png) | **TB-303**<br>[![Fenêtre TB-303 : grille avec octaves, accents et slides, et ses potards](docs/screenshots/acid-fr.png)](docs/screenshots/acid-fr.png) |
 | **Designer de kick**<br>[![Designer de kick : presets, 12 potards et la forme d'onde](docs/screenshots/kick-fr.png)](docs/screenshots/kick-fr.png) | **Platines**<br>[![Platines : deux decks avec disques à scratcher, égaliseur, filtre et crossfader](docs/screenshots/decks-fr.png)](docs/screenshots/decks-fr.png) |
 | **Table de mixage et sidechain**<br>[![Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](docs/screenshots/mixer-fr.png)](docs/screenshots/mixer-fr.png) | **Câblage**<br>[![Fenêtre Câblage : les outils à gauche, les boîtes à effets au milieu, le master à droite](docs/screenshots/patch-fr.png)](docs/screenshots/patch-fr.png) |
-| **Effets de piste**<br>[![Timeline avec une ligne d'effets sous chaque piste, l'onglet Effets de la bibliothèque et les réglages d'un PCF](docs/screenshots/tlfx-fr.png)](docs/screenshots/tlfx-fr.png) | **Scènes et potards**<br>[![Fenêtre Scènes avec des scènes enregistrées, et les pages de potards](docs/screenshots/scenes-fr.png)](docs/screenshots/scenes-fr.png) |
+| **Effets de piste**<br>[![Timeline avec une ligne d'effets sous chaque piste, l'onglet Effets de la bibliothèque et les réglages d'un PCF](docs/screenshots/tlfx-fr.png)](docs/screenshots/tlfx-fr.png) | **Scènes et performance**<br>[![Fenêtre Scènes avec des scènes enregistrées, et les effets de performance](docs/screenshots/scenes-fr.png)](docs/screenshots/scenes-fr.png) |
 
 ## Prérequis
 
@@ -76,7 +76,7 @@ L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert
 | **Boutons de piste 5 / 6 / 7 / 8** (maintenus) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filtre ↓ |
 | **Maj + piste 5 / 6 / 7 / 8** | Roll 1/4 · Tape-stop · Filtre ↑ · Pump (marche/arrêt) |
 | **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K5 TB-303, K6 Platines, K8 master) |
-| **Potards K1-K8** | Paramètres de la page active (Maj = réglage fin) |
+| **Potards K1-K8** | Paramètres de la page en cours, qui suit la fenêtre active (Maj = réglage fin) |
 | **SUSTAIN** | Ouvre / ferme la page EQ (maintenu : EQ le temps de l'appui) |
 | **Maj + touche blanche** | Preset de la famille du synthé (do = 1er, ré = 2e…) · **Maj + do# / ré#** = famille précédente / suivante · **Maj + fa# / sol# / la#** = type d'accord / arpège oui-non / vitesse de l'arpège |
 | **Clavier** | Joue le synthé |
@@ -120,7 +120,7 @@ Pour charger ton propre son, glisse un fichier audio (WAV, MP3, FLAC, OGG…) su
 
 Une émulation de la Roland TR-909 avec ses 11 instruments : grosse caisse, caisse claire, 3 toms, rim shot, clap, charley fermé et ouvert, crash, ride. Chacun est synthétisé en direct, comme les circuits analogiques de la machine d'origine.
 
-**Potentiomètres** (page TR-909 du plugin Potards, aussi ouverte par Maj + PLAY) :
+**Potentiomètres** (sous la grille de la fenêtre TR-909 ; aussi sur les potards de l'APC quand la fenêtre est active, ou avec Maj + PLAY) :
 
 | K1-K4 | K5 | K6 | K7 | K8 |
 |---|---|---|---|---|
@@ -223,7 +223,7 @@ Deux decks pour mixer et scratcher n'importe quel son : boucles de la bibliothè
 
 ## Scènes
 
-[![Fenêtre Scènes avec des scènes enregistrées, et les pages de potards](docs/screenshots/scenes-fr.png)](docs/screenshots/scenes-fr.png)
+[![Fenêtre Scènes avec des scènes enregistrées, et les effets de performance](docs/screenshots/scenes-fr.png)](docs/screenshots/scenes-fr.png)
 
 40 scènes disposées comme la grille de l'APC (1-8 en bas). Une scène mémorise :
 - les boucles lancées ;
@@ -273,7 +273,7 @@ La fenêtre **Câblage** relie librement les outils et des **boîtes à effets**
 
 ## Fenêtres des plugins
 
-La barre sous l'en-tête ouvre et ferme les plugins : **Pads**, **Éditeur de pad**, **TR-909**, **Synthé** (clavier et presets), **Potards**, **Performance**, **Mixeur**, **Scènes** et **Moniteur MIDI**. Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
+La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Platines), **Outils** (Éditeur de pad, Designer de kick), **Studio** (Mixeur, Câblage, Scènes, Performance) et **Système** (Moniteur MIDI). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
 - Chaque fenêtre a une barre de titre : le **titre** à gauche, **?** et **✕** à droite.
 - La **fenêtre active** (au premier plan) est mise en valeur ; les fenêtres s'ouvrent et se ferment avec une transition 3D.
 - **Déplace**-la par sa barre de titre, **redimensionne**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.
@@ -334,12 +334,21 @@ Un bloc d'accord se manipule comme les autres : le déplacer, l'allonger, le cop
 
 Le tempo global (en-tête, ou bouton **Tap**) pilote toutes les boucles. Chacune démarre sur la mesure suivante et reste calée quand tu changes le tempo. Pour tes propres boucles, indique leur tempo d'origine dans l'éditeur, ou clique sur **Auto** : le calcul suppose que le fichier dure un nombre entier de mesures. Règle le tempo à 190 pour les banques Gabber, Hardcore, Oldschool, Mainstream et New wave : leurs boucles partagent la même tonalité (fa mineur) et les mêmes longueurs, elles restent donc calées entre elles. Les banques **Hardstyle** et **Mélodies hardstyle** sont faites à **150 BPM**, le tempo du style (leurs boucles suivent aussi le tempo global, mais sonnent le plus naturellement à 150).
 
-## Pages des potentiomètres
+## Potentiomètres
 
+Il n'y a pas de fenêtre de potards globale : **chaque instrument a ses potards dans sa propre fenêtre** (synthé, éditeur de pad, TR-909 sous sa grille, TB-303, platines, designer de kick), et la table de mixage a une section **Master** (EQ du master, effets globaux et volumes).
+
+Les 8 potards de l'APC (K1-K8) pilotent une **page** à la fois :
+- la page **suit la fenêtre active** : clic sur la TB-303 et K1-K8 pilotent la TB-303, clic sur la TR-909 et ils pilotent l'instrument choisi de la 909, et ainsi de suite (synthé, platines, éditeur de pad, mixeur) ;
+- le menu **Potards APC** de l'en-tête affiche la page en cours et permet de la choisir ;
+- les boutons de piste de l'APC la changent aussi (1-4 = Synthé / Effets / Pad / EQ, Maj + 1-4 = pages du mixeur, Maj + REC = TB-303 puis platines, Maj + PLAY = TR-909, SUSTAIN = EQ).
+
+Le groupe de potards piloté par l'APC est entouré à l'écran, avec l'étiquette « APC K1-K8 ». Les pages :
 - **Synthé** : les 8 potards d'expression de la famille du synthé (voir Synthé)
-- **Effets** : temps, répétitions et envoi du delay, envoi et taille de la reverb, saturation, volume des pads, volume général
-- **Pad** : volume, hauteur, panoramique, filtre, point de départ, envois delay et reverb, et mode de lecture du pad sélectionné
-- **EQ** : grave 100 Hz, bas-médium 350 Hz, médium 1,2 kHz, haut-médium 3,5 kHz, aigu 9 kHz (±15 dB), passe-bas, passe-haut, gain de sortie
+- **Effets** : temps, répétitions et envoi du delay, envoi et taille de la reverb, volume du synthé, volume des pads, volume général (section Master du mixeur)
+- **Pad** : volume, hauteur, panoramique, filtre, point de départ, envois delay et reverb, et mode de lecture du pad sélectionné (éditeur de pad)
+- **EQ** : grave 100 Hz, bas-médium 350 Hz, médium 1,2 kHz, haut-médium 3,5 kHz, aigu 9 kHz (±15 dB), passe-bas, passe-haut, gain de sortie (section Master du mixeur)
+- **TR-909**, **TB-303**, **Platines** et les quatre pages du **mixeur**.
 
 Double-clic sur un potard à l'écran pour le remettre à zéro.
 

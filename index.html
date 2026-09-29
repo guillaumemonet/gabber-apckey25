@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=34">
+  <link rel="stylesheet" href="css/style.css?v=36">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -22,6 +22,7 @@
     <div class="brand">Gabber<span>Key</span></div>
     <div id="status" class="status off"><span class="dot"></span><span id="status-text" data-i18n="status.none"></span></div>
     <canvas id="meter" width="160" height="10" data-i18n-aria="meter.aria"></canvas>
+    <label class="apc-page" data-i18n-title="apc.page.title"><span data-i18n="apc.page"></span><select id="apc-page"></select></label>
     <div class="spacer"></div>
     <label class="tempo" data-i18n-title="tempo.title">
       <input id="bpm" type="number" min="40" max="240" step="1" value="120"> BPM
@@ -116,15 +117,6 @@
       </div>
     </aside>
 
-    <section class="window knobs-area" data-win="knobs">
-      <div class="section-title">
-        <h2 data-i18n="knobs.title"></h2>
-        <div id="pages" class="segmented" data-i18n-aria="pages.aria"></div>
-        <span class="hint" data-i18n="knobs.hint"></span>
-      </div>
-      <div id="knobs" class="knobs"></div>
-    </section>
-
     <section class="window perf-area" data-win="perf">
       <div class="section-title">
         <h2 data-i18n="perf.title"></h2>
@@ -143,6 +135,7 @@
         <span class="hint" data-i18n="tr.hint"></span>
       </div>
       <div id="tr-grid" class="tr-grid"></div>
+      <div id="tr-knobs" class="mini-knobs row-knobs tr-knobs"></div>
     </section>
 
     <section class="window acid-area" data-win="acid">
@@ -216,6 +209,10 @@
       </div>
       <div id="sidechain" class="sidechain"></div>
       <div id="mixer" class="mixer"></div>
+      <div class="mix-master">
+        <div class="mm-group"><span data-i18n="mix.masterEq"></span><div id="master-eq" class="mini-knobs row-knobs"></div></div>
+        <div class="mm-group"><span data-i18n="mix.masterFx"></span><div id="master-fx" class="mini-knobs row-knobs"></div></div>
+      </div>
     </section>
 
     <section class="window piano-area" data-win="piano">
@@ -248,35 +245,35 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/acid.js": "./js/acid.js?v=34",
-      "./js/apc.js": "./js/apc.js?v=34",
-      "./js/audio.js": "./js/audio.js?v=34",
-      "./js/decks.js": "./js/decks.js?v=34",
-      "./js/chords.js": "./js/chords.js?v=34",
-      "./js/help.js": "./js/help.js?v=34",
-      "./js/history.js": "./js/history.js?v=34",
-      "./js/i18n.js": "./js/i18n.js?v=34",
-      "./js/kickdesign.js": "./js/kickdesign.js?v=34",
-      "./js/kit.js": "./js/kit.js?v=34",
-      "./js/kits.js": "./js/kits.js?v=34",
-      "./js/library.js": "./js/library.js?v=34",
-      "./js/main.js": "./js/main.js?v=34",
-      "./js/mixer.js": "./js/mixer.js?v=34",
-      "./js/params.js": "./js/params.js?v=34",
-      "./js/patch.js": "./js/patch.js?v=34",
-      "./js/performer.js": "./js/performer.js?v=34",
-      "./js/presets.js": "./js/presets.js?v=34",
-      "./js/sidechain.js": "./js/sidechain.js?v=34",
-      "./js/recorder.js": "./js/recorder.js?v=34",
-      "./js/timeline.js": "./js/timeline.js?v=34",
-      "./js/storage.js": "./js/storage.js?v=34",
-      "./js/tr909.js": "./js/tr909.js?v=34",
-      "./js/trackfx.js": "./js/trackfx.js?v=34",
-      "./js/windows.js": "./js/windows.js?v=34",
-      "./js/zip.js": "./js/zip.js?v=34"
+      "./js/acid.js": "./js/acid.js?v=36",
+      "./js/apc.js": "./js/apc.js?v=36",
+      "./js/audio.js": "./js/audio.js?v=36",
+      "./js/decks.js": "./js/decks.js?v=36",
+      "./js/chords.js": "./js/chords.js?v=36",
+      "./js/help.js": "./js/help.js?v=36",
+      "./js/history.js": "./js/history.js?v=36",
+      "./js/i18n.js": "./js/i18n.js?v=36",
+      "./js/kickdesign.js": "./js/kickdesign.js?v=36",
+      "./js/kit.js": "./js/kit.js?v=36",
+      "./js/kits.js": "./js/kits.js?v=36",
+      "./js/library.js": "./js/library.js?v=36",
+      "./js/main.js": "./js/main.js?v=36",
+      "./js/mixer.js": "./js/mixer.js?v=36",
+      "./js/params.js": "./js/params.js?v=36",
+      "./js/patch.js": "./js/patch.js?v=36",
+      "./js/performer.js": "./js/performer.js?v=36",
+      "./js/presets.js": "./js/presets.js?v=36",
+      "./js/sidechain.js": "./js/sidechain.js?v=36",
+      "./js/recorder.js": "./js/recorder.js?v=36",
+      "./js/timeline.js": "./js/timeline.js?v=36",
+      "./js/storage.js": "./js/storage.js?v=36",
+      "./js/tr909.js": "./js/tr909.js?v=36",
+      "./js/trackfx.js": "./js/trackfx.js?v=36",
+      "./js/windows.js": "./js/windows.js?v=36",
+      "./js/zip.js": "./js/zip.js?v=36"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=34"></script>
+  <script type="module" src="js/main.js?v=36"></script>
 </body>
 </html>

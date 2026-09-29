@@ -28,7 +28,7 @@ const HELP = {
         <li><b>Click a step</b>: note → accent → off. <b>Click an instrument name</b> to play and select it.</li>
         <li><b>Patterns 1-8</b> (4 presets: gabber, rave, breakbeat, kick roll). A change waits for the next bar.</li>
         <li><b>Accent</b>: how much louder the accented steps are.</li>
-        <li><b>Knobs</b> (TR-909 page of the Knobs window): K1-K4 = parameters of the selected instrument, K5 = <b>drive</b>, K6 = distortion <b>shape</b> (soft, hard, tube, fold, crush), K7 = shuffle, K8 = 909 volume.</li>
+        <li><b>Knobs</b> (under the grid, also on the APC knobs K1-K8 when this window is active): K1-K4 = parameters of the selected instrument, K5 = <b>drive</b>, K6 = distortion <b>shape</b> (soft, hard, tube, fold, crush), K7 = shuffle, K8 = 909 volume.</li>
         <li><b>APC grid</b> (Shift + PLAY): rows 1-2 = the 16 steps, row 3-4 = instruments, Accent, Clear, Mute, row 5 = patterns. A SCENE LAUNCH button brings the pads back.</li>
         <li>The bass drum also triggers the <b>sidechain</b> (Mixer window).</li>
       </ul>`,
@@ -106,6 +106,7 @@ const HELP = {
       <ul>
         <li>Each channel: insert effects (<b>+ FX</b>, up to 4: distortion, filter, compressor, reverb), reverb and delay sends, pan, fader, <b>M</b>ute, <b>S</b>olo, meter. Double-click = reset.</li>
         <li><b>Sidechain</b> (top): every kick ducks the synth and the melodic sounds (bass, pads, leads, keys, voices), which come back up smoothly. Triggered by <b>the kicks</b> (909, kick pads and blocks, kicks of the GabberKey loops) or on <b>every beat</b> (for other loops). Depth, release, targets; the meter shows the ducking.</li>
+        <li><b>Master</b> (bottom): master EQ (5 bands, low-pass, high-pass, gain) and global effects and volumes (delay time and feedback, reverb size, sends and volumes of the synth and pads, master volume).</li>
         <li>APC: Shift + track 1 / 2 / 3 / 4 = volumes / pans / delay / reverb (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K5 TB-303, K6 Decks, K8 master).</li>
       </ul>`,
     scenes: `
@@ -148,7 +149,7 @@ const HELP = {
         <li><b>Clic sur un pas</b> : note → accent → silence. <b>Clic sur le nom d'un instrument</b> pour le jouer et le choisir.</li>
         <li><b>Patterns 1 à 8</b> (4 préréglés : gabber, rave, breakbeat, roulement de kick). Un changement attend la mesure suivante.</li>
         <li><b>Accent</b> : de combien les pas accentués sont plus forts.</li>
-        <li><b>Potards</b> (page TR-909 de la fenêtre Potards) : K1-K4 = paramètres de l'instrument choisi, K5 = <b>drive</b>, K6 = <b>forme</b> de distorsion (douce, dure, lampe, repli, crush), K7 = shuffle, K8 = volume 909.</li>
+        <li><b>Potards</b> (sous la grille, aussi sur les potards K1-K8 de l'APC quand cette fenêtre est active) : K1-K4 = paramètres de l'instrument choisi, K5 = <b>drive</b>, K6 = <b>forme</b> de distorsion (douce, dure, lampe, repli, crush), K7 = shuffle, K8 = volume 909.</li>
         <li><b>Grille de l'APC</b> (Maj + PLAY) : rangées 1-2 = les 16 pas, rangées 3-4 = instruments, Accent, Effacer, Muet, rangée 5 = patterns. Un bouton SCENE LAUNCH ramène les pads.</li>
         <li>La grosse caisse déclenche aussi le <b>sidechain</b> (fenêtre Mixeur).</li>
       </ul>`,
@@ -226,6 +227,7 @@ const HELP = {
       <ul>
         <li>Chaque voie : effets d'insert (<b>+ FX</b>, jusqu'à 4 : distorsion, filtre, compresseur, reverb), envois reverb et delay, panoramique, fader, <b>M</b>uet, <b>S</b>olo, vumètre. Double-clic = remise à zéro.</li>
         <li><b>Sidechain</b> (en haut) : chaque kick fait baisser le synthé et les sons mélodiques (basses, nappes, leads, claviers, voix), qui remontent en douceur. Déclenché par <b>les kicks</b> (909, pads et blocs de kick, kicks des boucles GabberKey) ou à <b>chaque temps</b> (pour les autres boucles). Profondeur, relâche, cibles ; le témoin montre la baisse.</li>
+        <li><b>Master</b> (en bas) : l'EQ du master (5 bandes, passe-bas, passe-haut, gain) et les effets globaux et volumes (temps et répétitions du delay, taille de la reverb, envois et volumes du synthé et des pads, volume général).</li>
         <li>APC : Maj + piste 1 / 2 / 3 / 4 = volumes / panos / delay / reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K5 TB-303, K6 Platines, K8 master).</li>
       </ul>`,
     scenes: `

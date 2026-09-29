@@ -341,6 +341,20 @@ body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 footer { padding: 4px 20px 8px; }
 .plugins { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 20px; background: var(--panel); border-bottom: 1px solid var(--line); }
 .plugins button { padding: 5px 12px; }
+.plugin-group { display: flex; align-items: center; gap: 6px; padding-right: 10px; margin-right: 4px; border-right: 1px solid var(--line); }
+.plugin-group:last-child { border-right: none; }
+.plugin-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-right: 2px; }
+.apc-page { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.apc-page select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
+.mini-knobs.row-knobs { grid-template-columns: repeat(8, 1fr); }
+.tr-knobs { margin-top: 12px; }
+.mix-master { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+.mm-group { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px 8px; }
+.mm-group > span { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 4px; }
+@media (max-width: 1100px) { .mix-master { grid-template-columns: 1fr; } }
+/* Groupe de potards piloté par les potards de l'APC */
+.apc-live { position: relative; outline: 2px dashed color-mix(in srgb, var(--accent-2) 80%, transparent); outline-offset: 4px; border-radius: 6px; }
+.apc-live::after { content: 'APC K1-K8'; position: absolute; top: -12px; right: 4px; padding: 0 5px; font-size: 9px; font-weight: 700; letter-spacing: .05em; color: #000; background: var(--accent-2); border-radius: 4px; }
 .plugins button.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; font-weight: 600; }
 main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 12px; padding: 12px 16px; max-width: none; margin: 0; }
 .library, .tl-area { display: flex; flex-direction: column; min-height: 0; padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }

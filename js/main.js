@@ -132,8 +132,10 @@ async function start() {
   buildPads();
   buildBanks();
   buildEditor();
-  buildPages();
-  buildKnobs();
+  buildApcPage();
+  buildKnobRow($('#tr-knobs'), 'tr');
+  buildKnobRow($('#master-eq'), 'eq');
+  buildKnobRow($('#master-fx'), 'fx');
   buildPiano();
   buildPresets();
   buildPerf();
@@ -153,6 +155,8 @@ async function start() {
   drawMeter();
   renderAll();
   wm = new WindowManager(() => state.windows, save, onWindowToggle);
+  wm.onActive = id => { const page = pageForWindow(id); if (page && page !== state.page) setPage(page); };
+  renderPages();
   $('#layout-reset').addEventListener('click', () => wm.reset());
   buildPluginBar();
   buildLibrary();
@@ -379,33 +383,33 @@ function onPadState(key, isPlaying, mode) {
   renderLeds();
 }
 
-// Potards de la page active : définitions et objet qui stocke leurs positions.
-function knobDefs() {
-  if (mixField(state.page)) {
-    const defs = mixKnobDefs(mixField(state.page));
+// Potards d'une page (par défaut celle que pilotent les potards de l'APC) : définitions et objet qui stocke leurs positions.
+function knobDefs(page = state.page) {
+  if (mixField(page)) {
+    const defs = mixKnobDefs(mixField(page));
     return [...defs, ...new Array(7 - defs.length).fill(null), masterDef()];   // K8 = volume général
   }
-  if (state.page === 'synth') return synthKnobDefs();
-  if (state.page === 'acid') return acidKnobDefs();
-  if (state.page === 'decks') return [...deckKnobDefs(), masterDef()];
-  return state.page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[state.page].params;
+  if (page === 'synth') return synthKnobDefs();
+  if (page === 'acid') return acidKnobDefs();
+  if (page === 'decks') return [...deckKnobDefs(), masterDef()];
+  return page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[page].params;
 }
-function knobTarget(def) {
+function knobTarget(def, page = state.page) {
   if (!def) return null;
   if (def.ch) return state.mix.channels[def.ch];
-  if (mixField(state.page)) return state.globals;   // K8 = volume général
-  if (state.page === 'pad') return currentPad()?.p;
+  if (mixField(page)) return state.globals;   // K8 = volume général
+  if (page === 'pad') return currentPad()?.p;
   if (def.acid) return state.acid.params;
   if (def.deck) return def.deck === 'x' ? state.decks : state.decks[def.deck];
-  if (state.page === 'tr') return def.group === 'global' ? state.tr.globals : state.tr.params[state.tr.sel];
+  if (page === 'tr') return def.group === 'global' ? state.tr.globals : state.tr.params[state.tr.sel];
   return state.globals;
 }
 
 // Tourne un potard : delta relatif (mk2, souris) ou position absolue (mk1).
-function turnKnob(index, { delta, value }) {
-  const def = knobDefs()[index];
+function turnKnob(index, { delta, value }, page = state.page) {
+  const def = knobDefs(page)[index];
   const pad = currentPad();
-  const target = knobTarget(def);
+  const target = knobTarget(def, page);
   if (!def || !target) return;
 
   if (value !== undefined) {
@@ -418,11 +422,11 @@ function turnKnob(index, { delta, value }) {
   if (def.ch) {
     mixer.update();
     renderStrip(def.ch);
-  } else if (state.page === 'pad') {
+  } else if (page === 'pad') {
     engine.updatePadVoice(padKey(state.bank, state.selected), pad);
     renderEditorKnobs();
     if (def.id === 'mode') { renderPad(state.selected); renderEditor(); }
-  } else if (state.page === 'tr') {
+  } else if (page === 'tr') {
     if (def.id === 'volume') drum.setVolume(target.volume);
   } else if (def.acid) {
     acid.update();
@@ -434,8 +438,8 @@ function turnKnob(index, { delta, value }) {
     engine.set(def.id, toValue(def, target[def.id]));
   }
   if (def.id === 'master') renderMixer();
-  if (state.page === 'synth') renderSynthKnobs();
-  renderKnob(index, true);
+  if (page === 'synth') renderSynthKnobs();
+  flashKnob(page, index);
   save();
 }
 
@@ -852,22 +856,34 @@ function openPadEditor(i) {
 }
 
 // ---------- Interface : potentiomètres ----------
+// Pas de fenêtre de potards globale : chaque instrument a les siens dans sa fenêtre. Les potards de l'APC pilotent
+// une page (choisie dans l'en-tête, par les boutons de piste, ou automatiquement : celle de la fenêtre active).
 
-function buildPages() {
-  const wrap = $('#pages');
-  UI_PAGES.forEach((page, k) => {
-    const btn = document.createElement('button');
-    btn.textContent = PAGES[page]?.label ?? t(`page.${page}`);
-    btn.title = page === 'tr' ? t('tr.pageTitle') : page === 'acid' ? t('acid.pageTitle') : page === 'decks' ? t('deck.pageTitle')
-      : mixField(page) ? t('mix.pageTitle', { n: MIX_FIELDS.indexOf(mixField(page)) + 1 })
-      : t('page.title', { n: k + 1 });
-    btn.addEventListener('click', () => setPage(page));
-    wrap.appendChild(btn);
-  });
+const pageLabel = page => PAGES[page]?.label ?? t(`page.${page}`);
+
+// Sélecteur de la page des potards de l'APC, dans l'en-tête.
+function buildApcPage() {
+  const sel = $('#apc-page');
+  for (const page of UI_PAGES) sel.add(new Option(pageLabel(page), page));
+  sel.addEventListener('change', () => setPage(sel.value));
 }
 
+// Groupe de potards d'une fenêtre qui correspond à une page (entouré quand l'APC le pilote).
+const PAGE_GROUP = { synth: '#synth-knobs', pad: '#ed-knobs', acid: '#acid-knobs', decks: '.decks', tr: '#tr-knobs', eq: '#master-eq', fx: '#master-fx' };
+const pageGroup = page => (mixField(page) ? '#mixer' : PAGE_GROUP[page]);
+
 function renderPages() {
-  [...$('#pages').children].forEach((btn, k) => btn.classList.toggle('active', UI_PAGES[k] === state.page));
+  const sel = $('#apc-page');
+  if (sel) sel.value = state.page;
+  for (const el of document.querySelectorAll('.apc-live')) el.classList.remove('apc-live');
+  const g = pageGroup(state.page);
+  if (g) document.querySelector(g)?.classList.add('apc-live');
+}
+
+// Fenêtre active -> page des potards de l'APC (les autres fenêtres ne changent rien).
+function pageForWindow(id) {
+  if (id === 'mix') return mixField(state.page) || ['eq', 'fx'].includes(state.page) ? null : 'mix_vol';
+  return { piano: 'synth', tr: 'tr', acid: 'acid', decks: 'decks', editor: 'pad', pads: 'pad' }[id] ?? null;
 }
 
 const ARC = 270;
@@ -880,9 +896,10 @@ function arcPath(p) {
   return `M ${pt(a0)} A ${r} ${r} 0 ${large} 1 ${pt(a1)}`;
 }
 
-const knobEls = [];
-function buildKnobs() {
-  const wrap = $('#knobs');
+// Une rangée de 8 potards liée à une page (numérotés K1-K8 comme sur l'APC).
+const knobRows = {};   // page -> éléments
+function buildKnobRow(wrap, page) {
+  const els = [];
   for (let k = 0; k < 8; k++) {
     const el = document.createElement('div');
     el.className = 'knob';
@@ -901,46 +918,63 @@ function buildKnobs() {
       if (Math.abs(dy) < 2) return;
       lastY = e.clientY;
       shiftHeld = e.shiftKey;
-      turnKnob(k, { delta: dy / 2 });
+      turnKnob(k, { delta: dy / 2 }, page);
     });
     el.addEventListener('pointerup', () => { lastY = null; shiftHeld = false; });
-    el.addEventListener('wheel', e => { e.preventDefault(); turnKnob(k, { delta: e.deltaY < 0 ? 2 : -2 }); }, { passive: false });
+    el.addEventListener('wheel', e => { e.preventDefault(); turnKnob(k, { delta: e.deltaY < 0 ? 2 : -2 }, page); }, { passive: false });
     el.addEventListener('dblclick', () => {
-      const def = knobDefs()[k];
-      if (!knobTarget(def)) return;
-      turnKnob(k, { value: toPos(def, def.def) });
+      const def = knobDefs(page)[k];
+      if (!knobTarget(def, page)) return;
+      turnKnob(k, { value: toPos(def, def.def) }, page);
     });
-    knobEls[k] = el;
+    els.push(el);
     wrap.appendChild(el);
   }
+  knobRows[page] = els;
+  renderKnobRow(page);
 }
 
-const flashTimers = [];
-function renderKnob(k, flash = false) {
-  const def = knobDefs()[k];
-  const el = knobEls[k];
-  if (!def) {   // potard inutilisé sur cette page
-    el.querySelector('.arc').setAttribute('d', '');
-    el.querySelector('.label').textContent = '';
-    el.querySelector('.value').textContent = '';
-    el.style.opacity = 0.25;
-    return;
-  }
-  const target = knobTarget(def);
-  const p = target ? target[def.id] : 0;
-  el.querySelector('.arc').setAttribute('d', p > 0.001 ? arcPath(p) : '');
-  el.querySelector('.label').textContent = def.label;
-  el.querySelector('.value').textContent = target ? def.fmt(toValue(def, p)) : '—';
-  el.style.opacity = target ? 1 : 0.4;
-  if (flash) {
-    el.classList.add('flash');
-    clearTimeout(flashTimers[k]);
-    flashTimers[k] = setTimeout(() => el.classList.remove('flash'), 250);
-  }
-  if (state.page === 'pad' && def.id === 'start') drawWave(currentPad());
+function renderKnobRow(page) {
+  const els = knobRows[page];
+  if (!els) return;
+  const defs = knobDefs(page);
+  els.forEach((el, k) => {
+    const def = defs[k];
+    if (!def) {   // potard inutilisé sur cette page
+      el.querySelector('.arc').setAttribute('d', '');
+      el.querySelector('.label').textContent = '';
+      el.querySelector('.value').textContent = '';
+      el.style.opacity = 0.25;
+      return;
+    }
+    const target = knobTarget(def, page);
+    const p = target ? target[def.id] : 0;
+    el.querySelector('.arc').setAttribute('d', p > 0.001 ? arcPath(p) : '');
+    el.querySelector('.label').textContent = def.label;
+    el.querySelector('.value').textContent = target ? def.fmt(toValue(def, p)) : '—';
+    el.style.opacity = target ? 1 : 0.4;
+  });
 }
 
-function renderKnobs() { for (let k = 0; k < 8; k++) renderKnob(k); }
+// Le potard tourné s'allume un instant (dans la rangée de sa page, s'il y en a une).
+const flashTimers = {};
+function flashKnob(page, k) {
+  renderKnobRow(page);
+  const el = knobRows[page]?.[k];
+  if (!el) return;
+  el.classList.add('flash');
+  clearTimeout(flashTimers[`${page}${k}`]);
+  flashTimers[`${page}${k}`] = setTimeout(() => el.classList.remove('flash'), 250);
+}
+
+function renderKnobs() {
+  for (const page of Object.keys(knobRows)) renderKnobRow(page);
+  if (state.page === 'synth') renderSynthKnobs();
+  if (state.page === 'pad') renderEditorKnobs();
+  if (state.page === 'acid') renderAcidKnobs();
+  if (state.page === 'decks') renderDecks();
+  if (mixField(state.page)) renderMixer();
+}
 
 // ---------- Interface : piano ----------
 
@@ -1263,7 +1297,7 @@ function toggleTrMode(on = !trMode) {
 function selectTrInstr(id) {
   state.tr.sel = id;
   renderTr();
-  if (state.page === 'tr') renderKnobs();
+  renderKnobs();
   renderLeds();
   save();
 }
@@ -2019,20 +2053,37 @@ function startLibDrag(e, item) {
 
 // ---------- Fenêtres des plugins ----------
 
+// Barre des plugins rangée en groupes : instruments, outils, studio, système.
+const PLUGIN_GROUPS = [
+  ['instruments', ['pads', 'tr', 'acid', 'piano', 'decks']],
+  ['tools', ['editor', 'kick']],
+  ['studio', ['mix', 'patch', 'scenes', 'perf']],
+  ['system', ['monitor']],
+];
+
 function buildPluginBar() {
   const nav = $('#plugins');
-  for (const id of WINDOWS) {
-    const btn = document.createElement('button');
-    btn.dataset.plugin = id;
-    btn.textContent = t(`win.${id}`);
-    btn.addEventListener('click', () => wm.toggle(id));
-    nav.appendChild(btn);
+  for (const [group, ids] of PLUGIN_GROUPS) {
+    const g = document.createElement('div');
+    g.className = 'plugin-group';
+    const label = document.createElement('span');
+    label.className = 'plugin-group-label';
+    label.textContent = t(`plugins.group.${group}`);
+    g.appendChild(label);
+    for (const id of ids.filter(i => WINDOWS.includes(i))) {
+      const btn = document.createElement('button');
+      btn.dataset.plugin = id;
+      btn.textContent = t(`win.${id}`);
+      btn.addEventListener('click', () => wm.toggle(id));
+      g.appendChild(btn);
+    }
+    nav.appendChild(g);
   }
   renderPluginBar();
 }
 
 function renderPluginBar() {
-  for (const btn of $('#plugins').children) btn.classList.toggle('active', wm.isOpen(btn.dataset.plugin));
+  for (const btn of $('#plugins').querySelectorAll('button[data-plugin]')) btn.classList.toggle('active', wm.isOpen(btn.dataset.plugin));
 }
 
 function onWindowToggle(id, open) {
