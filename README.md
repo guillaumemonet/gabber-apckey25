@@ -8,13 +8,14 @@
 
 GabberKey is built around a **timeline**: drag sounds from a library sorted by category onto tracks, the blocks snap to the bar and everything plays at the same tempo. The other tools (sampler pads, TR-909, synth, mixer, effects…) are **plugins** that open in windows, and the Akai APC Key 25 (mk1 or mk2) plays them live. Nothing to install except a web browser:
 
-- **Timeline**: 16 tracks in bars; drag, lengthen (loops repeat), copy and move blocks; play the pads or the keyboard while recording and every hit or held note becomes a block, live; record the TR-909 as audio.
+- **Timeline**: 16 tracks in bars; drag, lengthen (loops repeat), copy and move blocks; play the pads or the keyboard while recording and every hit becomes a block, live, and the synth notes one note block; edit the notes in a **piano roll**; record the TR-909 as audio.
 - **Sound library**: 558 sounds sorted into Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices and FX, plus your own sounds and recordings; click to listen, drag to place.
   - nine **synthesised hardcore / gabber / hardstyle banks** (no duplicates), including two banks of **80 melodies**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, dark mainstream kicks and leads, modern uptempo kicks with raw tails, supersaws, shouts, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
 - **Plugins** in movable, magnetic windows:
   - **40-pad sampler** with 15 banks, pad LEDs synced to the screen, and drag & drop of your own sounds;
   - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
+  - **Piano roll**: edit the notes of the synth blocks (pitch, length, velocity, copy / paste, quantize, step input from the APC keyboard);
   - **Kick designer**: build your own distorted kick from 12 knobs and 8 presets, then send it to a pad or the library;
   - **Turntables**: two decks with scratchable records (forwards and backwards), sync, cue, EQ, DJ filter and crossfader;
   - **TB-303-style acid bass line**: 16-step sequencer with accent and slide, resonant filter with envelope, distortion, step entry from the APC keyboard, in sync with the 909;
@@ -38,6 +39,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 | **Kick designer**<br>[![Kick designer: presets, 12 knobs and the waveform](docs/screenshots/kick-en.png)](docs/screenshots/kick-en.png) | **Turntables**<br>[![Turntables: two decks with scratchable records, EQ, filter and crossfader](docs/screenshots/decks-en.png)](docs/screenshots/decks-en.png) |
 | **Mixer and sidechain**<br>[![Mixer: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png) | **Patch**<br>[![Patch window: tools on the left, effect boxes in the middle, the master on the right](docs/screenshots/patch-en.png)](docs/screenshots/patch-en.png) |
 | **Track effects**<br>[![Timeline with an effects line under each track, the Effects tab of the library and the settings of a PCF](docs/screenshots/tlfx-en.png)](docs/screenshots/tlfx-en.png) | **Scenes and performance**<br>[![Scenes window with stored scenes, and the performance effects](docs/screenshots/scenes-en.png)](docs/screenshots/scenes-en.png) |
+| **Piano roll**<br>[![Piano roll: a hardstyle lead melody over two bars, with its chords and the velocity lane](docs/screenshots/roll-en.png)](docs/screenshots/roll-en.png) | |
 
 ## Requirements
 
@@ -151,7 +153,7 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
 
 - **Library**: two tabs. **Sounds**: pick a category (Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices, Sound FX, My sounds, Recordings). **Effects**: the track effects, by family (Volume, Filter, Space, Time, Saturation, 3D). Or search by name. **Click** a sound to listen to it (and pick it); the badge shows its length in bars (loops) or "1-shot".
 - **Place**: drag a sound onto a track. It snaps to the start of the bar (hold **Shift** to place it on a beat). Clicking an empty cell places the last sound picked.
-- **Edit blocks**: drag a block to move it (to another bar or track), drag its **right edge** to lengthen or shorten it (a loop repeats to fill the block), **Alt + drag** copies it, **double-click** listens to it, **right-click** or **Delete** removes it. Each track has a mute.
+- **Edit blocks**: drag a block to move it (to another bar or track), drag its **right edge** to lengthen or shorten it (a loop repeats to fill the block), **Alt + drag** copies it, **double-click** listens to it (a note block opens in the **piano roll**), **right-click** or **Delete** removes it. Each track has a mute.
 - **Undo / redo**: **↶ / ↷** in the toolbar, or **Ctrl+Z** / **Ctrl+Shift+Z** (or **Ctrl+Y**). Every change to the timeline can be undone (placed, moved, lengthened or deleted blocks, generated pads, recordings, demo loading…), up to 100 steps.
 
 ### Track effects
@@ -176,11 +178,27 @@ Each track has two parts: the **sounds** on top, and a thin **effects line** und
 - Everything is scheduled on the audio clock: effects stay in time, are undone with Ctrl+Z, and are included in the WAV export and the stems.
 - **Record by playing**: choose what to record, arm a track (●), set the playhead (click the ruler), then **● Rec** (or REC on the APC). The timeline plays (in a loop if Loop is on) and:
   - **Pads**: every pad hit becomes a block of that pad, where you hit it (snapped to the 16th note). The block replays the pad with its settings.
-  - **Synth**: every note becomes a note block that **grows while you hold the key**; it replays with the current synth preset.
+  - **Synth**: every note appears live and **grows while you hold the key**; when the recording stops, the notes of the take become **one note block** (from bar to bar), which replays with the current synth preset and opens in the piano roll.
   - Blocks appear live as you play. If the armed track is taken at that moment, the block goes to the next free track. With Loop on, you can add hits on every pass.
   - **TR-909** / **TB-303** / **Decks**: the instrument starts on the timeline's bars and is recorded as audio into a block (also listed in the library under Recordings).
   - **■ Stop rec** (or REC again) ends the recording.
 - **Play**: ▶ (or PLAY on the APC) plays from the playhead; the view follows the playhead. Loops recorded at another tempo follow the global tempo. The timeline has its own channel in the mixer.
+
+## Piano roll
+
+[![Piano roll: a hardstyle lead melody over two bars, with its chords, the velocity lane and the toolbar](docs/screenshots/roll-en.png)](docs/screenshots/roll-en.png)
+
+Edits the notes of a **note block** of the timeline (synth recordings, generated pads, chords, arpeggios, or a new block).
+
+- **Open a block**: double-click a note block on the timeline (while the window is open, a click is enough), or **+ New block** (1 bar at the playhead, on the armed track). A **synth recording becomes a single note block**, ready to edit.
+- **Draw**: click an empty spot to add a note (drag to set its length), drag a note to move it (**Alt** = copy), drag its right edge for its length, **right-click** to erase. **Shift + drag** selects a group.
+- **Keys**: Delete, Ctrl+A / C / X / V (paste at the green cursor, set by clicking the ruler), **Ctrl+D** duplicates after itself, ↑ / ↓ transpose (Shift = octave), ← / → move by one grid step (Shift = one bar), **Q** quantizes, **Space** listens, Ctrl+Z undoes.
+- **Velocity**: drag in the bottom lane.
+- **Grid** from 1/4 to 1/32, with triplets; **Quantize** snaps the start and end of the notes. The rows of the F minor scale (the key of the banks) are tinted.
+- **Length** −/+ sets the length of the **pattern**: on the timeline the block repeats it over its whole length (drag its right edge), like a loop. Notes drawn after the end lengthen the pattern.
+- **Sound**: each block can have its own synth preset, or play the sound currently on the keyboard. **Merge** gathers the neighbouring note blocks of the track (same sound) into one.
+- **Step input**: the notes played on the APC keyboard (or the computer keyboard) go in at the cursor, chords included, and the cursor moves on by one grid step.
+- **▶ Listen** loops the pattern alone; while the timeline plays, the playhead is shown in the piano roll too.
 
 ## TB-303
 
@@ -273,7 +291,7 @@ The **Patch** window wires the tools and **effect boxes** freely, like a rack of
 
 ## Plugin windows
 
-The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Decks), **Tools** (Pad editor, Kick designer), **Studio** (Mixer, Patch, Scenes, Performance) and **System** (MIDI monitor). Each one opens in a window above the timeline:
+The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer), **Studio** (Mixer, Patch, Scenes, Performance) and **System** (MIDI monitor). Each one opens in a window above the timeline:
 - Each window has a title bar: the **title** on the left, **?** and **✕** on the right.
 - The **active window** (in front) is highlighted; windows open and close with a 3D transition.
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.
@@ -376,13 +394,12 @@ The interface follows the browser language: French if the browser is set to Fren
 
 What is planned, in this order:
 
-1. **Piano roll**: edit the notes of the synth blocks (recorded, chords, arpeggios, pad generator): pitch, length, velocity, copy / paste, quantize.
-2. **Oscillator synth**: an analogue-style synth to build your own sounds: 3 oscillators (saw, pulse with width, triangle, sine; octave, semitone, fine tune, level), noise, **FM** and ring modulation, low-pass / high-pass / band-pass filter (12 or 24 dB, cutoff, resonance, envelope, key tracking, drive), 2 ADSR envelopes, a tempo-synced LFO (pitch, filter, pulse width, volume), polyphonic / mono / legato with glide, unison, a dozen presets (hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, synced wobble, laser) and your own presets. The APC keyboard plays the synth of the active window.
-3. **Step sequencer for any sound**: program the pads (kicks, claps, shouts from the banks…) on a 16-step grid.
-4. **Time-stretching that keeps the pitch**: loops follow the tempo without changing key (today a 150 BPM loop played at 190 goes up by 4 semitones).
-5. **Vocal sampler and vocoder**: record with the microphone, chop, pitch and formant, robotic gabber vocoder.
-6. **Build-up designer**: riser, noise sweep, snare roll and sub drop, set to a number of bars.
-7. **Mastering chain**: multiband compressor, stereo width, limiter and a LUFS meter on the master.
+1. **Oscillator synth**: an analogue-style synth to build your own sounds: 3 oscillators (saw, pulse with width, triangle, sine; octave, semitone, fine tune, level), noise, **FM** and ring modulation, low-pass / high-pass / band-pass filter (12 or 24 dB, cutoff, resonance, envelope, key tracking, drive), 2 ADSR envelopes, a tempo-synced LFO (pitch, filter, pulse width, volume), polyphonic / mono / legato with glide, unison, a dozen presets (hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, synced wobble, laser) and your own presets. The APC keyboard plays the synth of the active window.
+2. **Step sequencer for any sound**: program the pads (kicks, claps, shouts from the banks…) on a 16-step grid.
+3. **Time-stretching that keeps the pitch**: loops follow the tempo without changing key (today a 150 BPM loop played at 190 goes up by 4 semitones).
+4. **Vocal sampler and vocoder**: record with the microphone, chop, pitch and formant, robotic gabber vocoder.
+5. **Build-up designer**: riser, noise sweep, snare roll and sub drop, set to a number of bars.
+6. **Mastering chain**: multiband compressor, stereo width, limiter and a LUFS meter on the master.
 
 Then: **several instances** of the TB-303 and TR-909 (each one wired where you want in the Patch window, all in sync), and a **MIDI element attached to each window**.
 
@@ -451,6 +468,8 @@ js/history.js         undo / redo
 js/help.js            help of each window (? button)
 js/presets.js         synth presets
 js/performer.js       chord mode and arpeggiator
+js/pianoroll.js       piano roll
+js/notes.js           note blocks (patterns, merge, quantize)
 js/chords.js          chord progressions (pad generator)
 js/params.js          knob parameters
 js/i18n.js            English / French translations

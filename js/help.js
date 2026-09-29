@@ -43,6 +43,18 @@ const HELP = {
         <li><b>Step entry</b>: play notes on the APC keyboard (or the computer keyboard); each one goes into the selected step and the cursor moves on. A strong hit adds an accent, <b>Rest</b> leaves a step empty. Click a step number to move the cursor.</li>
         <li>The 303 has its own <b>mixer channel</b> (K5 on the mixer pages), is ducked by the <b>sidechain</b> with the melodic sounds, and can be <b>recorded</b> into the timeline (choose TB-303 as the source).</li>
       </ul>`,
+    roll: `
+      <p>Edit the notes of a note block of the timeline: pitch, start, length and velocity.</p>
+      <ul>
+        <li><b>Open a block</b>: double-click a note block on the timeline (while this window is open, a click is enough), or <b>+ New block</b> (1 bar at the playhead, on the armed track). A synth recording becomes a single note block.</li>
+        <li><b>Notes</b>: click an empty spot to add a note (drag to set its length), drag a note to move it (<b>Alt</b> = copy), drag its right edge to change its length, <b>right-click</b> (or right-drag) to erase. <b>Shift + drag</b> selects a group, Shift + click adds a note to the selection.</li>
+        <li><b>Keys</b>: Delete, Ctrl+A / C / X / V (paste at the green cursor, set by clicking the ruler), Ctrl+D (duplicate after itself), ↑ / ↓ transpose (Shift = octave), ← / → move by one grid step (Shift = one bar), Q quantize, Space = listen, Ctrl+Z = undo.</li>
+        <li><b>Velocity</b>: drag in the bottom lane (only the selected notes if there is a selection).</li>
+        <li><b>Grid</b> from 1/4 to 1/32 (and triplets); <b>Quantize</b> snaps the start and end of the notes. Rows of the F minor scale (the key of the banks) are tinted.</li>
+        <li><b>Length</b> −/+: length of the pattern. The block repeats it over its whole length on the timeline (drag its right edge there). Notes drawn after the end lengthen the pattern.</li>
+        <li><b>Sound</b>: a synth preset of its own, or the sound currently played on the keyboard. <b>Merge</b> gathers the neighbouring note blocks of the track (same sound) into this one.</li>
+        <li><b>Step input</b>: the notes you play on the APC keyboard (or the computer keyboard) go in at the cursor (chords too), which moves on by one grid step.</li>
+      </ul>`,
     kick: `
       <p>Build your own gabber / hardcore kick, computed in a few milliseconds, then use it anywhere.</p>
       <ul>
@@ -164,6 +176,18 @@ const HELP = {
         <li><b>Suivre la 909</b> : la 303 joue sur l'horloge de la TR-909 (shuffle compris) ; ▶ lance les deux. Désactive-le pour jouer la 303 seule.</li>
         <li><b>Saisie</b> : joue les notes au clavier de l'APC (ou de l'ordinateur) ; chacune va dans le pas choisi et le curseur avance. Une frappe forte ajoute un accent, <b>Silence</b> laisse un pas vide. Clic sur un numéro de pas pour déplacer le curseur.</li>
         <li>La 303 a sa propre <b>voie de mixage</b> (K5 sur les pages mixeur), est baissée par le <b>sidechain</b> avec les sons mélodiques, et peut être <b>enregistrée</b> dans la timeline (source TB-303).</li>
+      </ul>`,
+    roll: `
+      <p>Édite les notes d'un bloc de notes de la timeline : hauteur, début, durée et vélocité.</p>
+      <ul>
+        <li><b>Ouvrir un bloc</b> : double-clic sur un bloc de notes de la timeline (quand cette fenêtre est ouverte, un clic suffit), ou <b>+ Nouveau bloc</b> (1 mesure à la tête de lecture, sur la piste armée). Un enregistrement du synthé devient un seul bloc de notes.</li>
+        <li><b>Notes</b> : clic dans le vide pour poser une note (glisser pour sa durée), glisser une note pour la déplacer (<b>Alt</b> = copie), glisser son bord droit pour sa durée, <b>clic droit</b> (ou glisser en clic droit) pour effacer. <b>Maj + glisser</b> sélectionne un groupe, Maj + clic ajoute une note à la sélection.</li>
+        <li><b>Touches</b> : Suppr, Ctrl+A / C / X / V (collage au curseur vert, placé d'un clic sur la règle), Ctrl+D (duplique à la suite), ↑ / ↓ transposent (Maj = octave), ← / → déplacent d'une case (Maj = une mesure), Q quantifie, Espace = écouter, Ctrl+Z = annuler.</li>
+        <li><b>Vélocité</b> : glisser dans la bande du bas (seulement les notes sélectionnées s'il y a une sélection).</li>
+        <li><b>Grille</b> de 1/4 à 1/32 (et triolets) ; <b>Quantifier</b> cale le début et la fin des notes. Les lignes de la gamme de fa mineur (la tonalité des banques) sont teintées.</li>
+        <li><b>Longueur</b> −/+ : longueur du motif. Le bloc le répète sur toute sa longueur dans la timeline (tirer son bord droit). Des notes posées après la fin allongent le motif.</li>
+        <li><b>Son</b> : un preset du synthé rien qu'à lui, ou le son joué en ce moment au clavier. <b>Regrouper</b> rassemble dans ce bloc les blocs de notes voisins de la piste (même son).</li>
+        <li><b>Pas à pas</b> : les notes jouées au clavier de l'APC (ou de l'ordinateur) sont posées au curseur (accords compris), qui avance d'une case.</li>
       </ul>`,
     kick: `
       <p>Fabrique ton propre kick gabber / hardcore, calculé en quelques millisecondes, puis utilise-le partout.</p>

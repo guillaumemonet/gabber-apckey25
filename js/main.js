@@ -22,6 +22,8 @@ import { makeZip } from './zip.js';
 import { FX_TYPES as TFX_TYPES, FX_BANK, FX_FAMILY_COLORS, fxDefaults, bankName } from './trackfx.js';
 import { KICK_PARAMS, KICK_PRESETS, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
 import { Decks, DECK_IDS, DECK_KNOBS, deckKnobDefs, defaultDecksState, mergeDecksState, guessBpm, vinylTurns, rateFromSpin } from './decks.js';
+import { PianoRoll, ROLL_GRIDS, PAT_LENGTHS } from './pianoroll.js';
+import { clipEvents, patLen, toSeq, mergeNotes } from './notes.js';
 import { Acid303, ACID_PATTERNS, ACID_ROWS, ACID_BASE, ACID_PARAMS, acidKnobDefs, acidFmt, acidSteps, defaultAcidState, mergeAcidState, randomPattern } from './acid.js';
 
 translatePage();
@@ -56,6 +58,7 @@ const state = {
   decks: defaultDecksState(),         // platines : sons chargés et réglages des deux decks
   patch: defaultPatch(),              // câblage : boîtes à effets et câbles (tout sur le master par défaut)
   userSounds: [],                     // sons créés dans l'application (kicks du designer) : { sampleId, name, cat }
+  roll: defaultRoll(),                // piano roll : bloc édité, grille, saisie pas à pas
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -148,6 +151,7 @@ async function start() {
   buildMixer();
   buildSidechain();
   buildTl();
+  buildRoll();
   initHistory();
   buildGen();
   buildScenes();
@@ -216,6 +220,7 @@ async function restore() {
     state.kick = mergeKickState(saved.kick);
     state.decks = mergeDecksState(saved.decks);
     state.patch = mergePatch(saved.patch);
+    state.roll = mergeRoll(saved.roll);
     state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
@@ -318,6 +323,7 @@ function save() {
       decks: state.decks,
       patch: state.patch,
       userSounds: state.userSounds,
+      roll: state.roll,
       banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
     }).catch(err => console.warn('Save failed', err));
   }, 400);
@@ -1024,6 +1030,7 @@ function buildPiano() {
 
 function playNote(note, velocity, on) {
   if (acidKey(note, velocity, on)) return;
+  rollKey(note, velocity, on);
   if (on) performer.noteOn(note, velocity); else performer.noteOff(note);
   setPianoKey(note, on);
 }
@@ -1493,7 +1500,7 @@ async function tlStartRec() {
   const source = state.tl.source;
   if (!['tr', 'acid', 'decks'].includes(source)) {
     // Pads / synthé : on joue la timeline (en boucle si activée) et chaque coup devient un bloc.
-    tlRec = { mode: 'events', source, open: new Map(), dirty: false };
+    tlRec = { mode: 'events', source, open: new Map(), notes: [], dirty: false };
     timeline.play(Math.round(state.tl.playhead));
     renderTl();
     renderLeds();
@@ -1521,6 +1528,7 @@ async function tlStopRec() {
     for (const clip of rec.open.values()) growHeldNote(clip);
     tlRec = null;
     timeline.stop(true);
+    mergeTake(rec.notes);
     for (const tr of state.tl.tracks) for (const c of tr.clips) growSong(c);
     save();
     renderTl();
@@ -1649,7 +1657,7 @@ function buildTl() {
   line.id = 'tl-playhead';
   grid.appendChild(line);
   window.addEventListener('keydown', e => {
-    if ((e.key === 'Delete' || e.key === 'Backspace') && tlSel && !['INPUT', 'SELECT'].includes(e.target.tagName)) {
+    if ((e.key === 'Delete' || e.key === 'Backspace') && tlSel && wm?.active !== 'roll' && !['INPUT', 'SELECT'].includes(e.target.tagName)) {
       if (tlSel.fx) tlDeleteFx(tlSel.track, tlSel.fx); else tlDelete(tlSel.track, tlSel.clip);
     }
     if (e.key === 'Escape') closeFxEditor();
@@ -1705,6 +1713,7 @@ function renderTl() {
     lane.style.height = `${38 + count * FX_ROW}px`;
     for (const b of st.tracks[i].fx) fxLane.appendChild(fxEl(i, b, rows.get(b)));
   });
+  if (pianoRoll) renderRollBar();
 }
 
 function peaks(sampleId) {
@@ -1729,7 +1738,7 @@ function drawClip(cv, clip) {
   const w = cv.width = Math.max(1, Math.floor(cv.clientWidth));
   const h = cv.height = Math.max(1, Math.floor(cv.clientHeight));
   const g = cv.getContext('2d');
-  if (clip.type === 'note') return;
+  if (clip.type === 'note') { drawNoteClip(g, clip, w, h); return; }
   const p = peaks(clip.sampleId);
   if (!p) return;
   const natural = timeline.naturalBeats(clip) * beatPx();
@@ -1763,13 +1772,7 @@ function clipEl(track, clip) {
   requestAnimationFrame(() => drawClip(cv, clip));
   el.addEventListener('contextmenu', e => { e.preventDefault(); tlDelete(track, clip); });
   el.addEventListener('dblclick', () => {
-    if (clip.type === 'note') {
-      const patch = clip.preset ? presetPatch(clip.preset) : undefined;
-      (clip.notes ?? [clip.note]).forEach((n, k) => {
-        engine.noteOn(n, clip.vel ?? 0.85, undefined, `preview:${k}`, patch);
-        setTimeout(() => engine.noteOff(n, false, undefined, `preview:${k}`), clip.preset ? 600 : 250);
-      });
-    }
+    if (clip.type === 'note') openRoll(clip, true);
     else if (clip.type === 'pad' && state.banks[clip.bank]?.[clip.pad]) engine.playPad(padKey(clip.bank, clip.pad), state.banks[clip.bank][clip.pad], { oneShot: true });
     else previewSample({ sampleId: clip.sampleId, name: clip.name });
   });
@@ -1817,6 +1820,7 @@ function clipEl(track, clip) {
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
       if (moved) { growSong(target); save(); }
+      else if (target.type === 'note' && wm.isOpen('roll') && state.roll.clip !== target.id) openRoll(target, false);
       renderTl();
     };
     window.addEventListener('pointermove', onMove);
@@ -1866,6 +1870,7 @@ function tlRecordNote(note, on, velocity = 0.85) {
     const start = recPosition();
     const clip = { id: crypto.randomUUID(), type: 'note', note, vel: velocity, name: noteLabel(note), color: catColor('lead'), cat: 'lead', start, len: REC_GRID, loop: false };
     state.tl.tracks[freeTrack(start, REC_GRID)].clips.push(clip);
+    tlRec.notes.push(clip);
     tlRec.open.set(note, clip);   // s'allonge tant que la touche est tenue
   } else {
     const clip = tlRec.open.get(note);
@@ -1886,6 +1891,7 @@ function tlRecordArpNote(note, vel, when, dur) {
   const len = Math.max(ARP_GRID, Math.round(dur / timeline.beatDur / ARP_GRID) * ARP_GRID);
   const clip = { id: crypto.randomUUID(), type: 'note', note, vel, name: noteLabel(note), color: catColor('lead'), cat: 'lead', start, len, loop: false };
   state.tl.tracks[freeTrack(start, len)].clips.push(clip);
+  tlRec.notes.push(clip);
   tlRec.dirty = true;
 }
 
@@ -1895,6 +1901,293 @@ function growHeldNote(clip) {
   clip.len = Math.max(REC_GRID, snapRec(end - clip.start));
 }
 
+
+// ---------- Piano pianoRoll ----------
+
+// Le piano pianoRoll édite un bloc de notes de la timeline (retrouvé par son identifiant, y compris après « Annuler »).
+function defaultRoll() { return { clip: null, grid: 0.25, step: false }; }
+function mergeRoll(saved) {
+  const r = defaultRoll();
+  if (typeof saved?.clip === 'string') r.clip = saved.clip;
+  if (ROLL_GRIDS.some(g => Math.abs(g - saved?.grid) < 1e-6)) r.grid = saved.grid;
+  r.step = !!saved?.step;
+  return r;
+}
+
+let pianoRoll = null;
+let rollPlay = null;   // écoute du motif seul, en boucle : { t0, next, n, offs, timer, bpm }
+const ROLL_GRID_LABELS = ['1/4', '1/8', '1/16', '1/32', '1/8T', '1/16T'];
+
+function rollFind() {
+  const id = state.roll.clip;
+  if (!id) return null;
+  for (let i = 0; i < state.tl.tracks.length; i++) {
+    const clip = state.tl.tracks[i].clips.find(c => c.id === id);
+    if (clip) return clip.type === 'note' ? { track: i, clip } : null;
+  }
+  return null;
+}
+const rollPatch = () => { const c = rollFind()?.clip; return c?.preset ? presetPatch(c.preset) : undefined; };
+
+// Ouvre un bloc de notes dans le piano pianoRoll (un ancien bloc passe au format du piano pianoRoll sans changer ce qu'il joue).
+function openRoll(clip, show) {
+  if (clip.type !== 'note') return;
+  const fresh = !clip.seq;
+  toSeq(clip);
+  if (state.roll.clip !== clip.id) rollStop();
+  state.roll.clip = clip.id;
+  if (show) wm.toggle('roll', true);
+  requestAnimationFrame(() => pianoRoll.fit());
+  renderRollBar();
+  if (fresh) save();
+}
+
+function buildRoll() {
+  pianoRoll = new PianoRoll($('#roll-canvas'), {
+    clip: () => rollFind()?.clip ?? null,
+    changed: () => { const f = rollFind(); if (f) growSong(f.clip); renderTl(); save(); },
+    noteOn: (n, v) => engine.noteOn(n, v, undefined, `roll:${n}`, rollPatch()),
+    noteOff: n => engine.noteOff(n, false, undefined, `roll:${n}`),
+    playhead: rollPlayhead,
+    color: () => { const c = rollFind()?.clip; return PALETTE[uiColor(c?.color ?? catColor('lead'))]; },
+    noteName: noteLabel,
+  });
+  pianoRoll.grid = state.roll.grid;
+  $('#roll-play').addEventListener('click', () => (rollPlay ? rollStop() : rollStart()));
+  $('#roll-new').addEventListener('click', rollNew);
+  $('#roll-merge').addEventListener('click', rollMerge);
+  $('#roll-quant').addEventListener('click', () => pianoRoll.quantize());
+  $('#roll-step').addEventListener('click', () => { state.roll.step = !state.roll.step; renderRollBar(); save(); });
+  $('#roll-shorter').addEventListener('click', () => rollLength(-1));
+  $('#roll-longer').addEventListener('click', () => rollLength(1));
+  const grid = $('#roll-grid');
+  ROLL_GRIDS.forEach((g, i) => grid.add(new Option(ROLL_GRID_LABELS[i], i)));
+  grid.addEventListener('change', () => { pianoRoll.grid = state.roll.grid = ROLL_GRIDS[+grid.value]; pianoRoll.draw(); save(); });
+  const preset = $('#roll-preset');
+  preset.add(new Option(t('roll.currentSound'), ''));
+  for (const f of FAMILIES) {
+    const grp = document.createElement('optgroup');
+    grp.label = t(`family.${f}`);
+    for (const p of PRESETS.filter(p => p.family === f)) grp.appendChild(new Option(p.name, p.id));
+    preset.appendChild(grp);
+  }
+  preset.addEventListener('change', () => {
+    const f = rollFind();
+    if (!f) return;
+    if (preset.value) f.clip.preset = preset.value; else delete f.clip.preset;
+    renderTl();
+    save();
+  });
+  const name = $('#roll-name');
+  name.addEventListener('input', () => { const f = rollFind(); if (f) { f.clip.name = name.value || t('roll.clipName'); renderTl(); save(); } });
+  // Raccourcis du piano pianoRoll quand sa fenêtre est active (avant ceux de la timeline).
+  window.addEventListener('keydown', e => {
+    if (wm?.active !== 'roll' || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    if (e.code === 'Space' && !e.ctrlKey) { e.preventDefault(); if (rollPlay) rollStop(); else rollStart(); return; }
+    if (pianoRoll.key(e)) { e.preventDefault(); e.stopImmediatePropagation(); }
+  }, true);
+  // Tête de lecture (écoute du motif ou lecture de la timeline).
+  let wasMoving = false;
+  (function frame() {
+    const moving = !!(wm?.isOpen('roll') && (rollPlay || timeline.playing));
+    if (moving || wasMoving) pianoRoll.draw();
+    wasMoving = moving;
+    requestAnimationFrame(frame);
+  })();
+  renderRollBar();
+}
+
+function renderRollBar() {
+  const f = rollFind();
+  const clip = f?.clip;
+  $('#roll-empty').hidden = !!clip;
+  for (const id of ['#roll-play', '#roll-preset', '#roll-shorter', '#roll-longer', '#roll-quant', '#roll-merge', '#roll-name']) $(id).disabled = !clip;
+  $('#roll-play').textContent = rollPlay ? t('tr.stop') : t('roll.listen');
+  $('#roll-play').classList.toggle('active', !!rollPlay);
+  $('#roll-step').classList.toggle('active', state.roll.step);
+  $('#roll-grid').value = ROLL_GRIDS.findIndex(g => Math.abs(g - state.roll.grid) < 1e-6);
+  const name = $('#roll-name');
+  if (document.activeElement !== name) name.value = clip?.name ?? '';
+  $('#roll-preset').value = clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
+  const pat = clip ? patLen(clip) : 0;
+  $('#roll-len').textContent = clip ? rollLenLabel(pat) : '—';
+  $('#roll-where').textContent = clip ? t('roll.where', {
+    track: f.track + 1, bar: Math.floor(clip.start / BEATS_PER_BAR) + 1, n: clip.seq?.length ?? 0,
+    reps: clip.len > pat + 1e-6 ? t('roll.reps', { n: +(clip.len / pat).toFixed(2) }) : '',
+  }) : '';
+  pianoRoll.draw();
+}
+
+const rollLenLabel = beats => (beats === BEATS_PER_BAR ? t('roll.bar1') : beats > BEATS_PER_BAR && beats % BEATS_PER_BAR === 0 ? t('tl.bars', { n: beats / BEATS_PER_BAR }) : t('roll.beats', { n: +beats.toFixed(3) }));
+
+// Longueur du motif : un bloc joué une fois suit sa longueur ; un bloc qui répète le motif garde la sienne.
+function rollLength(dir) {
+  const f = rollFind();
+  if (!f) return;
+  const clip = f.clip;
+  const pat = patLen(clip);
+  const next = dir > 0 ? PAT_LENGTHS.find(l => l > pat + 1e-6) : [...PAT_LENGTHS].reverse().find(l => l < pat - 1e-6);
+  if (!next) return;
+  const oneRep = clip.len <= pat + 1e-6;
+  clip.pat = next;
+  if (oneRep || clip.len < next) clip.len = next;
+  growSong(clip);
+  renderTl();
+  save();
+}
+
+// Nouveau bloc vide d'une mesure à la tête de lecture, sur la piste armée (ou la suivante libre).
+function rollNew() {
+  const start = Math.floor(state.tl.playhead / BEATS_PER_BAR) * BEATS_PER_BAR;
+  const len = BEATS_PER_BAR;
+  const clip = { id: crypto.randomUUID(), type: 'note', seq: [], pat: len, len, start, preset: state.preset, name: t('roll.clipName'), cat: 'lead', color: catColor('lead'), loop: false };
+  const track = freeTrack(start, len);
+  state.tl.tracks[track].clips.push(clip);
+  growSong(clip);
+  tlSel = { track, clip };
+  pianoRoll.cursor = 0;
+  openRoll(clip, true);
+  renderTl();
+  save();
+}
+
+// Regroupe dans ce bloc les blocs de notes voisins de la même piste (même son, écart d'une mesure au plus).
+function rollMerge() {
+  const f = rollFind();
+  if (!f) return;
+  const list = state.tl.tracks[f.track].clips;
+  const same = c => c.type === 'note' && (c.preset || '') === (f.clip.preset || '');
+  const group = [f.clip];
+  let s = f.clip.start, e = f.clip.start + f.clip.len, grew = true;
+  while (grew) {
+    grew = false;
+    for (const c of list) {
+      if (group.includes(c) || !same(c) || c.start > e + BEATS_PER_BAR || c.start + c.len < s - BEATS_PER_BAR) continue;
+      group.push(c);
+      s = Math.min(s, c.start);
+      e = Math.max(e, c.start + c.len);
+      grew = true;
+    }
+  }
+  if (group.length === 1) { toast(t('roll.mergeNone'), 3000); return; }
+  const start = Math.floor(s / BEATS_PER_BAR) * BEATS_PER_BAR;
+  const len = Math.ceil((e - start) / BEATS_PER_BAR - 1e-6) * BEATS_PER_BAR;
+  const seq = mergeNotes(group, start);
+  for (const c of group.slice(1)) list.splice(list.indexOf(c), 1);
+  Object.assign(f.clip, { seq, pat: len, len, start });
+  rollStop();
+  pianoRoll.fit();
+  renderTl();
+  save();
+  toast(t('roll.merged', { n: group.length }));
+}
+
+// Fin d'un enregistrement du synthé : les notes jouées deviennent un seul bloc (à la mesure), prêt pour le piano pianoRoll.
+function mergeTake(notes) {
+  const clips = notes.filter(c => state.tl.tracks.some(tr => tr.clips.includes(c)));
+  if (!clips.length) return;
+  for (const tr of state.tl.tracks) tr.clips = tr.clips.filter(c => !clips.includes(c));
+  const start = Math.floor(Math.min(...clips.map(c => c.start)) / BEATS_PER_BAR) * BEATS_PER_BAR;
+  const end = Math.ceil(Math.max(...clips.map(c => c.start + c.len)) / BEATS_PER_BAR - 1e-6) * BEATS_PER_BAR;
+  const len = Math.max(BEATS_PER_BAR, end - start);
+  const clip = { id: crypto.randomUUID(), type: 'note', seq: mergeNotes(clips, start), pat: len, len, start, name: t('roll.recName'), cat: 'lead', color: catColor('lead'), loop: false };
+  const track = freeTrack(start, len);
+  state.tl.tracks[track].clips.push(clip);
+  tlSel = { track, clip };
+  if (wm.isOpen('roll')) openRoll(clip, false);
+}
+
+// Clavier (APC ou ordinateur) : surligne la note dans le piano pianoRoll ; en saisie pas à pas, l'ajoute au curseur.
+function rollKey(note, velocity, on) {
+  if (!pianoRoll || !wm?.isOpen('roll')) return;
+  pianoRoll.setHeld(note, on);
+  if (state.roll.step && wm.active === 'roll' && !tlRec && rollFind()) pianoRoll.stepNote(note, velocity, on);
+}
+
+function rollPlayhead() {
+  const f = rollFind();
+  if (!f) return null;
+  const pat = patLen(f.clip);
+  if (rollPlay) {
+    const b = (engine.ctx.currentTime - rollPlay.t0) * rollPlay.bpm / 60;
+    return b < 0 ? null : b % pat;
+  }
+  if (!timeline.playing) return null;
+  const p = timeline.position() - f.clip.start;
+  return p < 0 || p >= f.clip.len ? null : p % pat;
+}
+
+// Écoute du motif seul, en boucle, programmée un peu en avance.
+function rollStart() {
+  if (!rollFind()) return;
+  rollStop();
+  rollPlay = { t0: engine.ctx.currentTime + 0.06, next: 0, n: 0, offs: [], bpm: state.bpm };
+  rollPlay.timer = setInterval(rollTick, 25);
+  rollTick();
+  renderRollBar();
+}
+
+function rollTick() {
+  const f = rollFind();
+  if (!f || !rollPlay) { rollStop(); return; }
+  const clip = f.clip;
+  const pat = patLen(clip);
+  const now = engine.ctx.currentTime;
+  if (rollPlay.bpm !== state.bpm) {   // changement de tempo : la position actuelle est gardée
+    const b = (now - rollPlay.t0) * rollPlay.bpm / 60;
+    rollPlay.bpm = state.bpm;
+    rollPlay.t0 = now - b * 60 / state.bpm;
+  }
+  const bd = 60 / state.bpm;
+  const until = (now + 0.12 - rollPlay.t0) / bd;
+  const patch = rollPatch();
+  while (pat > 0 && rollPlay.next < until) {
+    const from = rollPlay.next;
+    const base = Math.floor(from / pat + 1e-9) * pat;
+    const to = Math.min(until, base + pat);
+    for (const n of clip.seq ?? []) {
+      const at = base + n.t;
+      if (n.t >= pat - 1e-6 || at < from - 1e-9 || at >= to - 1e-9) continue;
+      const key = `rollp:${rollPlay.n++}`;
+      const when = rollPlay.t0 + at * bd;
+      engine.noteOn(n.note, n.vel ?? 0.85, when, key, patch);
+      rollPlay.offs.push({ note: n.note, key, time: when + n.len * bd - 0.005 });
+    }
+    rollPlay.next = to;
+  }
+  rollPlay.offs.sort((a, b) => a.time - b.time);
+  while (rollPlay.offs.length && rollPlay.offs[0].time < now + 0.1) {
+    const o = rollPlay.offs.shift();
+    engine.noteOff(o.note, false, o.time, o.key);
+  }
+}
+
+function rollStop() {
+  if (!rollPlay) return;
+  clearInterval(rollPlay.timer);
+  for (const o of rollPlay.offs) engine.noteOff(o.note, true, undefined, o.key);
+  rollPlay = null;
+  if (pianoRoll) renderRollBar();
+}
+
+// Notes d'un bloc dessinées dans la timeline (motif répété marqué comme une boucle).
+function drawNoteClip(g, clip, w, h) {
+  const ev = clipEvents(clip);
+  if (!ev.length) return;
+  const bp = beatPx();
+  const lo = Math.min(...ev.map(e => e.note));
+  const hi = Math.max(...ev.map(e => e.note));
+  const top = 14, span = h - top - 3;
+  const row = Math.min(4, span / (hi - lo + 1));
+  const y0 = top + (span - row * (hi - lo + 1)) / 2;
+  g.fillStyle = 'rgba(255,255,255,.8)';
+  for (const e of ev) g.fillRect(e.t * bp, y0 + (hi - e.note) * row, Math.max(1.5, e.len * bp - 1), Math.max(1.5, row - 0.5));
+  const pat = patLen(clip);
+  if (clip.seq && clip.len > pat + 1e-6) {
+    g.fillStyle = 'rgba(255,255,255,.35)';
+    for (let x = pat * bp; x < w; x += pat * bp) g.fillRect(Math.round(x), 0, 1, h);
+  }
+}
 
 // ---------- Démo ----------
 
@@ -2066,7 +2359,7 @@ function startLibDrag(e, item) {
 // Barre des plugins rangée en groupes : instruments, outils, studio, système.
 const PLUGIN_GROUPS = [
   ['instruments', ['pads', 'tr', 'acid', 'piano', 'decks']],
-  ['tools', ['editor', 'kick']],
+  ['tools', ['roll', 'editor', 'kick']],
   ['studio', ['mix', 'patch', 'scenes', 'perf']],
   ['system', ['monitor']],
 ];
@@ -2101,6 +2394,8 @@ function onWindowToggle(id, open) {
   if (open && id === 'piano') buildPiano();
   if (open && id === 'decks') requestAnimationFrame(() => DECK_IDS.forEach(drawDeckWave));   // à la bonne largeur
   if (open && id === 'patch') requestAnimationFrame(renderPatch);
+  if (open && id === 'roll') requestAnimationFrame(() => pianoRoll.fit());
+  if (!open && id === 'roll') rollStop();
 }
 
 // ---------- Scènes ----------

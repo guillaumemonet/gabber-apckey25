@@ -8,13 +8,14 @@
 
 GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une bibliothèque rangée par catégorie sur des pistes, les blocs se calent à la mesure et tout joue au même tempo. Les autres outils (pads du sampler, TR-909, synthé, table de mixage, effets…) sont des **plugins** qui s'ouvrent dans des fenêtres, et l'Akai APC Key 25 (mk1 ou mk2) les joue en direct. Rien à installer à part un navigateur :
 
-- **Timeline** : 16 pistes en mesures ; glisser, allonger (les boucles se répètent), copier et déplacer des blocs ; joue les pads ou le clavier pendant l'enregistrement et chaque coup ou note tenue devient un bloc, en direct ; la TR-909 s'enregistre en audio.
+- **Timeline** : 16 pistes en mesures ; glisser, allonger (les boucles se répètent), copier et déplacer des blocs ; joue les pads ou le clavier pendant l'enregistrement et chaque coup devient un bloc, en direct, et les notes du synthé un bloc de notes ; retouche les notes dans un **piano roll** ; la TR-909 s'enregistre en audio.
 - **Bibliothèque de sons** : 558 sons rangés en Kicks, Batterie, Basses, Leads, Stabs / claviers, Nappes / cordes, Voix et Effets, plus tes propres sons et tes enregistrements ; un clic pour écouter, glisser pour poser.
   - neuf **banques hardcore / gabber / hardstyle synthétisées** (sans doublons), dont deux banques de **80 mélodies** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, kicks et leads mainstream sombres, kicks uptempo modernes à queue brute, supersaws, cris, effets et boucles à 190 BPM ;
   - cinq banques d'échantillons **libres de droits (CC0)**.
 - **Plugins** dans des fenêtres déplaçables et aimantées :
   - **Sampler 40 pads** avec 15 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de tes propres sons ;
   - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
+  - **Piano roll** : édite les notes des blocs du synthé (hauteur, durée, vélocité, copier / coller, quantification, saisie pas à pas au clavier de l'APC) ;
   - **Designer de kick** : fabrique ton propre kick distordu avec 12 potards et 8 presets, puis envoie-le sur un pad ou dans la bibliothèque ;
   - **Platines** : deux decks avec disques à scratcher (en avant et en arrière), sync, cue, égaliseur, filtre DJ et crossfader ;
   - **Basse acid façon TB-303** : séquenceur 16 pas avec accent et slide, filtre résonant à enveloppe, distorsion, saisie au clavier de l'APC, calée sur la 909 ;
@@ -38,6 +39,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 | **Designer de kick**<br>[![Designer de kick : presets, 12 potards et la forme d'onde](docs/screenshots/kick-fr.png)](docs/screenshots/kick-fr.png) | **Platines**<br>[![Platines : deux decks avec disques à scratcher, égaliseur, filtre et crossfader](docs/screenshots/decks-fr.png)](docs/screenshots/decks-fr.png) |
 | **Table de mixage et sidechain**<br>[![Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](docs/screenshots/mixer-fr.png)](docs/screenshots/mixer-fr.png) | **Câblage**<br>[![Fenêtre Câblage : les outils à gauche, les boîtes à effets au milieu, le master à droite](docs/screenshots/patch-fr.png)](docs/screenshots/patch-fr.png) |
 | **Effets de piste**<br>[![Timeline avec une ligne d'effets sous chaque piste, l'onglet Effets de la bibliothèque et les réglages d'un PCF](docs/screenshots/tlfx-fr.png)](docs/screenshots/tlfx-fr.png) | **Scènes et performance**<br>[![Fenêtre Scènes avec des scènes enregistrées, et les effets de performance](docs/screenshots/scenes-fr.png)](docs/screenshots/scenes-fr.png) |
+| **Piano roll**<br>[![Piano roll : une mélodie de lead hardstyle sur deux mesures, avec ses accords et la bande des vélocités](docs/screenshots/roll-fr.png)](docs/screenshots/roll-fr.png) | |
 
 ## Prérequis
 
@@ -151,7 +153,7 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
 
 - **Bibliothèque** : deux onglets. **Sons** : choisis une catégorie (Kicks, Batterie, Basses, Leads, Stabs / claviers, Nappes / cordes, Voix, Bruitages, Mes sons, Enregistrements). **Effets** : les effets de piste, par famille (Volume, Filtre, Espace, Temps, Saturation, 3D). Ou cherche par nom. Un **clic** sur un son l'écoute (et le choisit) ; l'étiquette indique sa longueur en mesures (boucles) ou « 1 coup ».
 - **Poser** : glisse un son sur une piste. Il se cale au début de la mesure (garde **Maj** enfoncée pour le poser sur un temps). Un clic dans une case vide pose le dernier son choisi.
-- **Modifier les blocs** : glisse un bloc pour le déplacer (vers une autre mesure ou une autre piste), tire son **bord droit** pour l'allonger ou le raccourcir (une boucle se répète pour remplir le bloc), **Alt + glisser** le copie, un **double-clic** l'écoute, un **clic droit** ou **Suppr** le retire. Chaque piste a un bouton muet.
+- **Modifier les blocs** : glisse un bloc pour le déplacer (vers une autre mesure ou une autre piste), tire son **bord droit** pour l'allonger ou le raccourcir (une boucle se répète pour remplir le bloc), **Alt + glisser** le copie, un **double-clic** l'écoute (un bloc de notes s'ouvre dans le **piano roll**), un **clic droit** ou **Suppr** le retire. Chaque piste a un bouton muet.
 - **Annuler / rétablir** : **↶ / ↷** dans la barre, ou **Ctrl+Z** / **Ctrl+Maj+Z** (ou **Ctrl+Y**). Toute modification de la timeline peut être annulée (blocs posés, déplacés, allongés ou supprimés, nappes générées, enregistrements, chargement de la démo…), jusqu'à 100 étapes.
 
 ### Effets de piste
@@ -176,11 +178,27 @@ Chaque piste a deux parties : les **sons** en haut, et une fine **ligne d'effets
 - Tout est programmé sur l'horloge audio : les effets restent calés, s'annulent avec Ctrl+Z, et sont inclus dans l'export WAV et les stems.
 - **Enregistrer en jouant** : choisis ce qu'on enregistre, arme une piste (●), place la tête de lecture (clic sur la règle), puis **● Rec** (ou REC sur l'APC). La timeline joue (en boucle si Boucle est activé) et :
   - **Pads** : chaque coup de pad devient un bloc de ce pad, là où tu l'as frappé (calé à la double-croche). Le bloc rejoue le pad avec ses réglages.
-  - **Synthé** : chaque note devient un bloc de note qui **s'allonge tant que tu tiens la touche** ; il rejoue avec le preset du synthé en cours.
+  - **Synthé** : chaque note apparaît en direct et **s'allonge tant que tu tiens la touche** ; à l'arrêt, les notes de la prise deviennent **un seul bloc de notes** (d'une mesure à l'autre), qui rejoue avec le preset du synthé en cours et s'ouvre dans le piano roll.
   - Les blocs apparaissent en direct pendant que tu joues. Si la piste armée est occupée à ce moment-là, le bloc va sur la piste libre suivante. Avec Boucle, tu peux ajouter des coups à chaque passage.
   - **TR-909** / **TB-303** / **Platines** : l'instrument démarre calé sur les mesures de la timeline et s'enregistre en audio dans un bloc (aussi rangé dans la bibliothèque, rubrique Enregistrements).
   - **■ Arrêter rec** (ou REC à nouveau) termine l'enregistrement.
 - **Lire** : ▶ (ou PLAY sur l'APC) joue depuis la tête de lecture ; la vue suit la tête de lecture. Les boucles faites à un autre tempo suivent le tempo global. La timeline a sa propre voie dans la table de mixage.
+
+## Piano roll
+
+[![Piano roll : une mélodie de lead hardstyle sur deux mesures, avec ses accords, la bande des vélocités et la barre d'outils](docs/screenshots/roll-fr.png)](docs/screenshots/roll-fr.png)
+
+Édite les notes d'un **bloc de notes** de la timeline (enregistrements du synthé, nappes générées, accords, arpèges, ou un nouveau bloc).
+
+- **Ouvrir un bloc** : double-clic sur un bloc de notes de la timeline (quand la fenêtre est ouverte, un clic suffit), ou **+ Nouveau bloc** (1 mesure à la tête de lecture, sur la piste armée). Un **enregistrement du synthé devient un seul bloc de notes**, prêt à être retouché.
+- **Dessiner** : clic dans le vide pour poser une note (glisser pour sa durée), glisser une note pour la déplacer (**Alt** = copie), tirer son bord droit pour sa durée, **clic droit** pour effacer. **Maj + glisser** sélectionne un groupe.
+- **Touches** : Suppr, Ctrl+A / C / X / V (collage au curseur vert, placé d'un clic sur la règle), **Ctrl+D** duplique à la suite, ↑ / ↓ transposent (Maj = octave), ← / → déplacent d'une case (Maj = une mesure), **Q** quantifie, **Espace** écoute, Ctrl+Z annule.
+- **Vélocité** : glisser dans la bande du bas.
+- **Grille** de 1/4 à 1/32, avec les triolets ; **Quantifier** cale le début et la fin des notes. Les lignes de la gamme de fa mineur (la tonalité des banques) sont teintées.
+- **Longueur** −/+ règle la longueur du **motif** : dans la timeline, le bloc le répète sur toute sa longueur (tirer son bord droit), comme une boucle. Des notes posées après la fin allongent le motif.
+- **Son** : chaque bloc peut avoir son propre preset du synthé, ou jouer le son en cours au clavier. **Regrouper** rassemble en un seul les blocs de notes voisins de la piste (même son).
+- **Pas à pas** : les notes jouées au clavier de l'APC (ou de l'ordinateur) sont posées au curseur, accords compris, et le curseur avance d'une case.
+- **▶ Écouter** joue le motif seul en boucle ; pendant la lecture de la timeline, la tête de lecture s'affiche aussi dans le piano roll.
 
 ## TB-303
 
@@ -273,7 +291,7 @@ La fenêtre **Câblage** relie librement les outils et des **boîtes à effets**
 
 ## Fenêtres des plugins
 
-La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Platines), **Outils** (Éditeur de pad, Designer de kick), **Studio** (Mixeur, Câblage, Scènes, Performance) et **Système** (Moniteur MIDI). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
+La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick), **Studio** (Mixeur, Câblage, Scènes, Performance) et **Système** (Moniteur MIDI). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
 - Chaque fenêtre a une barre de titre : le **titre** à gauche, **?** et **✕** à droite.
 - La **fenêtre active** (au premier plan) est mise en valeur ; les fenêtres s'ouvrent et se ferment avec une transition 3D.
 - **Déplace**-la par sa barre de titre, **redimensionne**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.
@@ -376,13 +394,12 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 
 Ce qui est prévu, dans cet ordre :
 
-1. **Piano roll** : éditer les notes des blocs du synthé (enregistrés, accords, arpèges, générateur de nappes) : hauteur, durée, vélocité, copier / coller, quantification.
-2. **Synthé à oscillateurs** : un synthé façon analogique pour fabriquer ses propres sons : 3 oscillateurs (scie, impulsion à largeur variable, triangle, sinus ; octave, demi-ton, désaccord fin, niveau), bruit, **FM** et modulation en anneau, filtre passe-bas / passe-haut / passe-bande (12 ou 24 dB, coupure, résonance, enveloppe, suivi du clavier, saturation), 2 enveloppes ADSR, un LFO calé sur le tempo (hauteur, filtre, largeur d'impulsion, volume), polyphonique / mono / legato avec glissé, unisson, une douzaine de presets (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble synchronisé, laser) et tes propres presets. Le clavier de l'APC joue le synthé de la fenêtre active.
-3. **Séquenceur de pas pour n'importe quel son** : programmer les pads (kicks, claps, cris des banques…) sur une grille de 16 pas.
-4. **Étirement temporel qui garde la hauteur** : les boucles suivent le tempo sans changer de tonalité (aujourd'hui, une boucle à 150 BPM jouée à 190 monte de 4 demi-tons).
-5. **Sampler de voix et vocoder** : enregistrer au micro, découper, hauteur et formant, vocoder robotique du gabber.
-6. **Designer de montées** : riser, bruit balayé, roulement de caisse claire et chute de sub, calés sur un nombre de mesures.
-7. **Chaîne de mastering** : compresseur multibande, largeur stéréo, limiteur et vumètre en LUFS sur le master.
+1. **Synthé à oscillateurs** : un synthé façon analogique pour fabriquer ses propres sons : 3 oscillateurs (scie, impulsion à largeur variable, triangle, sinus ; octave, demi-ton, désaccord fin, niveau), bruit, **FM** et modulation en anneau, filtre passe-bas / passe-haut / passe-bande (12 ou 24 dB, coupure, résonance, enveloppe, suivi du clavier, saturation), 2 enveloppes ADSR, un LFO calé sur le tempo (hauteur, filtre, largeur d'impulsion, volume), polyphonique / mono / legato avec glissé, unisson, une douzaine de presets (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble synchronisé, laser) et tes propres presets. Le clavier de l'APC joue le synthé de la fenêtre active.
+2. **Séquenceur de pas pour n'importe quel son** : programmer les pads (kicks, claps, cris des banques…) sur une grille de 16 pas.
+3. **Étirement temporel qui garde la hauteur** : les boucles suivent le tempo sans changer de tonalité (aujourd'hui, une boucle à 150 BPM jouée à 190 monte de 4 demi-tons).
+4. **Sampler de voix et vocoder** : enregistrer au micro, découper, hauteur et formant, vocoder robotique du gabber.
+5. **Designer de montées** : riser, bruit balayé, roulement de caisse claire et chute de sub, calés sur un nombre de mesures.
+6. **Chaîne de mastering** : compresseur multibande, largeur stéréo, limiteur et vumètre en LUFS sur le master.
 
 Ensuite : **plusieurs exemplaires** de la TB-303 et de la TR-909 (chacun câblé où tu veux dans la fenêtre Câblage, tous synchronisés), et un **élément MIDI associé à chaque fenêtre**.
 
@@ -451,6 +468,8 @@ js/history.js         annuler / rétablir
 js/help.js            aide de chaque fenêtre (bouton ?)
 js/presets.js         presets du synthé
 js/performer.js       mode accords et arpégiateur
+js/pianoroll.js       piano roll
+js/notes.js           blocs de notes (motifs, regroupement, quantification)
 js/chords.js          suites d'accords (générateur de nappes)
 js/params.js          paramètres des potards
 js/i18n.js            traductions anglais / français

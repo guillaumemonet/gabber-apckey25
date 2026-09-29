@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=37">
+  <link rel="stylesheet" href="css/style.css?v=38">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -233,6 +233,26 @@
       <div id="piano" class="piano"></div>
     </section>
 
+    <section class="window roll-area" data-win="roll">
+      <div class="section-title">
+        <h2 data-i18n="roll.title"></h2>
+        <button id="roll-play" class="primary"></button>
+        <button id="roll-new" data-i18n="roll.new" data-i18n-title="roll.new.title"></button>
+        <select id="roll-preset" data-i18n-title="roll.preset.title"></select>
+        <span class="tl-bars" data-i18n-title="roll.len.title"><button id="roll-shorter">−</button><span id="roll-len"></span><button id="roll-longer">+</button></span>
+        <label class="roll-field"><span data-i18n="roll.grid"></span><select id="roll-grid"></select></label>
+        <button id="roll-quant" data-i18n="roll.quant" data-i18n-title="roll.quant.title"></button>
+        <button id="roll-merge" data-i18n="roll.merge" data-i18n-title="roll.merge.title"></button>
+        <button id="roll-step" data-i18n="roll.step" data-i18n-title="roll.step.title"></button>
+      </div>
+      <div class="roll-info">
+        <input id="roll-name" type="text" maxlength="24" spellcheck="false" data-i18n-title="roll.name.title">
+        <span id="roll-where" class="hint"></span>
+        <span class="hint roll-hint" data-i18n="roll.hint"></span>
+      </div>
+      <div class="roll-view"><canvas id="roll-canvas"></canvas><div id="roll-empty" class="roll-empty" data-i18n="roll.empty"></div></div>
+    </section>
+
     <section class="window monitor" data-win="monitor">
       <div class="section-title">
         <h2 data-i18n="monitor.title"></h2>
@@ -249,35 +269,37 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/acid.js": "./js/acid.js?v=37",
-      "./js/apc.js": "./js/apc.js?v=37",
-      "./js/audio.js": "./js/audio.js?v=37",
-      "./js/decks.js": "./js/decks.js?v=37",
-      "./js/chords.js": "./js/chords.js?v=37",
-      "./js/help.js": "./js/help.js?v=37",
-      "./js/history.js": "./js/history.js?v=37",
-      "./js/i18n.js": "./js/i18n.js?v=37",
-      "./js/kickdesign.js": "./js/kickdesign.js?v=37",
-      "./js/kit.js": "./js/kit.js?v=37",
-      "./js/kits.js": "./js/kits.js?v=37",
-      "./js/library.js": "./js/library.js?v=37",
-      "./js/main.js": "./js/main.js?v=37",
-      "./js/mixer.js": "./js/mixer.js?v=37",
-      "./js/params.js": "./js/params.js?v=37",
-      "./js/patch.js": "./js/patch.js?v=37",
-      "./js/performer.js": "./js/performer.js?v=37",
-      "./js/presets.js": "./js/presets.js?v=37",
-      "./js/sidechain.js": "./js/sidechain.js?v=37",
-      "./js/recorder.js": "./js/recorder.js?v=37",
-      "./js/timeline.js": "./js/timeline.js?v=37",
-      "./js/storage.js": "./js/storage.js?v=37",
-      "./js/tr909.js": "./js/tr909.js?v=37",
-      "./js/trackfx.js": "./js/trackfx.js?v=37",
-      "./js/windows.js": "./js/windows.js?v=37",
-      "./js/zip.js": "./js/zip.js?v=37"
+      "./js/acid.js": "./js/acid.js?v=38",
+      "./js/apc.js": "./js/apc.js?v=38",
+      "./js/audio.js": "./js/audio.js?v=38",
+      "./js/decks.js": "./js/decks.js?v=38",
+      "./js/chords.js": "./js/chords.js?v=38",
+      "./js/help.js": "./js/help.js?v=38",
+      "./js/history.js": "./js/history.js?v=38",
+      "./js/i18n.js": "./js/i18n.js?v=38",
+      "./js/kickdesign.js": "./js/kickdesign.js?v=38",
+      "./js/kit.js": "./js/kit.js?v=38",
+      "./js/kits.js": "./js/kits.js?v=38",
+      "./js/library.js": "./js/library.js?v=38",
+      "./js/main.js": "./js/main.js?v=38",
+      "./js/mixer.js": "./js/mixer.js?v=38",
+      "./js/notes.js": "./js/notes.js?v=38",
+      "./js/params.js": "./js/params.js?v=38",
+      "./js/patch.js": "./js/patch.js?v=38",
+      "./js/performer.js": "./js/performer.js?v=38",
+      "./js/pianoroll.js": "./js/pianoroll.js?v=38",
+      "./js/presets.js": "./js/presets.js?v=38",
+      "./js/sidechain.js": "./js/sidechain.js?v=38",
+      "./js/recorder.js": "./js/recorder.js?v=38",
+      "./js/timeline.js": "./js/timeline.js?v=38",
+      "./js/storage.js": "./js/storage.js?v=38",
+      "./js/tr909.js": "./js/tr909.js?v=38",
+      "./js/trackfx.js": "./js/trackfx.js?v=38",
+      "./js/windows.js": "./js/windows.js?v=38",
+      "./js/zip.js": "./js/zip.js?v=38"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=37"></script>
+  <script type="module" src="js/main.js?v=38"></script>
 </body>
 </html>
