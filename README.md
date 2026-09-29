@@ -438,9 +438,9 @@ Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemo
 
 GabberKey is developed and tested with an **Akai APC Key 25 mk1**. The **mk2** is supported from Akai Professional's MIDI documentation, but has not been tested on a real unit yet. Everything also works with the mouse and the computer keyboard.
 
-> **A word to Akai Professional** 🙏
+> **A word to hardware makers** 🙏
 >
-> Dear Akai team, thank you for designing such inspiring controllers: GabberKey exists because the APC Key 25 is so much fun to play. If you would ever be kind enough to lend or send some of your hardware (an APC Key 25 mk2, an APC mini mk2, an APC64, an MPK mini…), I would be truly delighted to make GabberKey as compatible as possible with it, and to share the result freely with everyone who plays your instruments. Please do not hesitate to get in touch by [opening an issue](https://github.com/guillaumemonet/gabber-apckey25/issues) on this repository. Thank you very much for your time and for your kindness!
+> Today GabberKey is played with the only controller I own, an APC Key 25. If you make MIDI controllers, keyboards, pad controllers or grooveboxes and would like to check whether your product works with GabberKey, I would be truly delighted to make it as compatible as possible, and to share the result freely with everyone who plays your instruments. If you would be kind enough to lend or send a unit, please get in touch by [opening an issue](https://github.com/guillaumemonet/gabber-apckey25/issues) on this repository. Thank you very much for your time and for your kindness!
 
 ## Troubleshooting
 
@@ -522,4 +522,4 @@ sounds/               generated banks + banks.json
 
 Code released under the [MIT License](LICENSE) © 2026 Guillaume Monet. The Sonic Pi samples in banks 2-6 remain public domain (CC0).
 
-Akai Professional, APC and MPK are trademarks of inMusic Brands, Inc. Roland, TR-909 and TB-303 are trademarks of Roland Corporation. GabberKey is an independent project, not affiliated with or endorsed by these companies.
+Akai Professional and APC are trademarks of inMusic Brands, Inc. Roland, TR-909 and TB-303 are trademarks of Roland Corporation. GabberKey is an independent project, not affiliated with or endorsed by these companies.
