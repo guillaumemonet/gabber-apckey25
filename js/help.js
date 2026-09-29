@@ -65,9 +65,13 @@ const HELP = {
         <li><b>Milk</b>: each image is fed back, zoomed and rotated, under a circle made of the waveform and spinning shapes: swirls and trails, the whole thing punching on every kick.</li>
         <li><b>VU meters</b>: two hi-fi needle meters (left / right, with a peak light) and an LED bar per mixer channel and for the master.</li>
         <li><b>3D (WebGL)</b>: <b>3D tunnel</b> (neon rings that fly by at the tempo, rays lit by the spectrum), <b>3D landscape</b> (you fly over a synthwave grid whose relief is the spectrum of the last two bars, bass in the middle, under a striped sun that pulses on the kicks) and <b>3D blob</b> (a sphere deformed by the bass, the mids and the spectrum, with neon lighting).</li>
+        <li><b>Text slam</b>: the words you type (separated by commas), one per bar, slammed on every kick with colour splits.</li>
+        <li><b>Hyperspace</b> (stars that fly at you, with a warp jump on every kick), <b>3D fractal</b> (a flight inside an endless Menger sponge that folds with the music) and <b>Lasers</b> (beams sweeping the smoke above a jumping crowd).</li>
+        <li><b>CRT</b>: a filter over any mode (scan lines, curved glass, colour fringes).</li>
+        <li><b>Projector</b>: opens the visuals alone in a second window. Drag it to the projector screen and double-click it for full screen; you keep playing in the main window. Keys 1-9 / ← / → also work in it.</li>
         <li>The colours move on with the tempo (one step per beat) and every <b>kick</b> (909, pads, blocks, loops) makes a flash.</li>
         <li><b>Auto</b> changes mode every 8 bars. <b>Full screen</b> (or F, or a double-click): a click shows the next mode, Esc leaves.</li>
-        <li>Keys while the window is active: 1-7 = mode, ← / → = previous / next, F = full screen. Nothing is drawn while the window is closed.</li>
+        <li>Keys while the window is active: 1-9 and 0 = mode, ← / → = previous / next, F = full screen. Nothing is drawn while the window is closed.</li>
       </ul>`,
     roll: `
       <p>Edit the notes of a note block of the timeline: pitch, start, length and velocity.</p>
@@ -225,9 +229,13 @@ const HELP = {
         <li><b>Milk</b> : chaque image est réinjectée, zoomée et tournée, sous un cercle fait de la forme d'onde et des formes qui tournent : tourbillons et traînées, le tout qui cogne à chaque kick.</li>
         <li><b>Vumètres</b> : deux vumètres à aiguille façon hi-fi (gauche / droite, avec voyant de crête) et une barre de LED par voie de mixage et pour le master.</li>
         <li><b>3D (WebGL)</b> : <b>Tunnel 3D</b> (des anneaux de néon qui défilent au tempo, des rayons éclairés par le spectre), <b>Paysage 3D</b> (on survole une grille synthwave dont le relief est le spectre des deux dernières mesures, graves au milieu, sous un soleil rayé qui pulse sur les kicks) et <b>Blob 3D</b> (une sphère déformée par les graves, les médiums et le spectre, éclairée en néon).</li>
+        <li><b>Texte qui cogne</b> : les mots que tu tapes (séparés par des virgules), un par mesure, écrasés sur chaque kick avec des couleurs séparées.</li>
+        <li><b>Hyperespace</b> (des étoiles qui filent vers toi, avec un saut à chaque kick), <b>Fractale 3D</b> (un vol dans une éponge de Menger infinie qui se replie avec la musique) et <b>Lasers</b> (des faisceaux qui balaient la fumée au-dessus d'une foule qui saute).</li>
+        <li><b>CRT</b> : un filtre sur n'importe quel mode (lignes de balayage, verre bombé, franges de couleur).</li>
+        <li><b>Projecteur</b> : ouvre les visuels seuls dans une deuxième fenêtre. Glisse-la sur l'écran du projecteur et double-clique pour le plein écran ; tu continues de jouer dans la fenêtre principale. Les touches 1-9 / ← / → y marchent aussi.</li>
         <li>Les couleurs avancent avec le tempo (un cran par temps) et chaque <b>kick</b> (909, pads, blocs, boucles) fait un flash.</li>
         <li><b>Auto</b> change de mode toutes les 8 mesures. <b>Plein écran</b> (ou F, ou un double-clic) : un clic passe au mode suivant, Échap pour sortir.</li>
-        <li>Touches quand la fenêtre est active : 1 à 7 = mode, ← / → = précédent / suivant, F = plein écran. Rien n'est dessiné quand la fenêtre est fermée.</li>
+        <li>Touches quand la fenêtre est active : 1 à 9 et 0 = mode, ← / → = précédent / suivant, F = plein écran. Rien n'est dessiné quand la fenêtre est fermée.</li>
       </ul>`,
     roll: `
       <p>Édite les notes d'un bloc de notes de la timeline : hauteur, début, durée et vélocité.</p>

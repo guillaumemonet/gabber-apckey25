@@ -1,20 +1,28 @@
-// Visualiseur façon Winamp, en clin d'œil : spectre à LED avec crêtes qui retombent, oscilloscope à traînées,
-// mode « MilkDrop » (l'image précédente est réinjectée, zoomée et tournée : formes qui tourbillonnent et laissent
-// des traînées), vumètres à aiguille façon hi-fi et barres LED par voie de mixage.
+// Visualiseur façon Winamp, en clin d'œil.
+// Modes 2D (dessinés dans un canvas) : spectre à LED avec crêtes qui retombent, oscilloscope à traînées,
+// « Milk » façon MilkDrop (l'image précédente est réinjectée, zoomée et tournée), vumètres à aiguille façon hi-fi,
+// texte qui cogne sur les kicks. Modes 3D (WebGL, voir js/viz3d.js) : tunnel, paysage, blob, starfield, fractale, lasers.
+// Chaîne d'image (WebGL) : le mode -> filtres empilables (CRT…) et transition entre modes -> chaque sortie
+// (l'aperçu de la fenêtre, la fenêtre projecteur sur un deuxième écran).
 // Les couleurs avancent avec le tempo (une teinte par temps) ; chaque kick fait un flash.
-// Rien n'est dessiné quand la fenêtre est fermée.
+// Rien n'est calculé quand aucune sortie n'est affichée.
 
-import { Viz3D, GL_MODES } from './viz3d.js';
+import { VizGL, GL_MODES } from './viz3d.js';
 
-// Modes 2D (canvas) puis 3D (WebGL, s'il est disponible).
-export const VIZ_MODES = ['spectrum', 'scope', 'milk', 'vu', ...(Viz3D.supported() ? GL_MODES : [])];
+const GL_OK = VizGL.supported();
+// Modes 2D, puis 3D (si le WebGL est disponible) ; filtres (ils passent par le WebGL).
+export const VIZ_MODES = ['spectrum', 'scope', 'milk', 'vu', 'bang', ...(GL_OK ? GL_MODES : [])];
+export const VIZ_FILTERS = GL_OK ? ['crt'] : [];
+const SCENE_SCALE = { fractal: 0.5, blob: 0.55, terrain: 0.6, lasers: 0.7, starfield: 0.8, tunnel: 0.75 };
+const MAX_PIXELS = 1920 * 1080;
+const STROBE_GAP = 0.34;   // au plus 3 flashs par seconde (recommandation pour l'épilepsie photosensible)
 
 const TAU = Math.PI * 2;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const hsl = (h, s, l, a = 1) => `hsla(${((h % 360) + 360) % 360}, ${s}%, ${l}%, ${a})`;
 
 export class Visualizer {
-  // opts : { beats() -> temps écoulés (tempo), channels: [{ id, label }], level(id) -> crête 0..1 }
+  // opts : { beats() -> temps écoulés, bpm(), channels: [{ id, label }], level(id) -> crête 0..1 }
   constructor(ctx, input, opts) {
     this.ctx = ctx;
     this.opts = opts;
@@ -41,73 +49,166 @@ export class Visualizer {
     this.wl = new Float32Array(this.aL.fftSize);
     this.wr = new Float32Array(this.aR.fftSize);
     this.mode = 'spectrum';
+    this.fx = {};                 // filtres actifs : { crt: 0..1, kaleido: branches, glitch: 0..1, strobe: bool }
+    this.words = ['HARDCORE'];    // textes du mode « texte qui cogne »
+    this.speed = 1;
     this.kicks = [];
     this.flash = 0;
     this.punch = 0;
+    this.strobe = 0;
+    this.strobeAt = -1;
+    this.travel = 0;
+    this.last = performance.now();
     this.bars = [];
     this.peaks = [];
     this.needles = [0, 0];
     this.clips = [0, 0];
     this.chan = {};
+    this.outputs = new Set();
     this.running = false;
-    this.fb = document.createElement('canvas');   // image précédente (MilkDrop)
+    this.src = document.createElement('canvas');   // image des modes 2D
+    this.fb = document.createElement('canvas');    // image précédente (Milk)
     this.spin = 0;
+    this.glp = null;
+    if (GL_OK) { try { this.glp = new VizGL(); } catch (err) { console.warn('Visualizer WebGL', err); } }
   }
 
   kick(time) { this.kicks.push(time); }
 
-  start(canvas, glCanvas) {
-    this.cv = canvas;
-    this.glCv = glCanvas;
+  // Une sortie = un canvas affiché (aperçu de la fenêtre, projecteur). Le calcul tourne tant qu'il y en a une.
+  addOutput(cv) {
+    this.outputs.add(cv);
     if (this.running) return;
     this.running = true;
-    const loop = () => { if (!this.running) return; this.frame(); requestAnimationFrame(loop); };
+    const loop = () => {
+      if (!this.outputs.size) { this.running = false; return; }
+      try { this.frame(); } catch (err) { console.warn('Visualizer', err); }
+      requestAnimationFrame(loop);
+    };
     requestAnimationFrame(loop);
   }
 
-  stop() { this.running = false; }
+  removeOutput(cv) { this.outputs.delete(cv); }
 
-  // Taille du canvas = taille affichée (le mode MilkDrop calcule en demi-résolution).
-  size() {
-    const cv = this.cv;
-    const dpr = Math.min(2, window.devicePixelRatio || 1) * (this.mode === 'milk' ? 0.5 : 1);
-    const w = Math.max(1, Math.round(cv.clientWidth * dpr)), h = Math.max(1, Math.round(cv.clientHeight * dpr));
-    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; this.fb.width = w; this.fb.height = h; }
-    return { w, h, s: dpr };
+  setMode(mode) {
+    if (mode === this.mode) return;
+    this.glp?.beginTransition();
+    this.mode = mode;
   }
 
   frame() {
-    if (!this.cv?.parentElement?.clientWidth) return;   // fenêtre repliée (le canvas 2D, lui, est masqué en mode 3D)
+    // Taille de travail : la plus grande des sorties visibles (plafonnée à la Full HD).
+    const outs = [...this.outputs].filter(c => c.isConnected && c.clientWidth > 0 && c.clientHeight > 0);
+    if (!outs.length) return;
+    const px = c => Math.min(2, c.ownerDocument.defaultView?.devicePixelRatio || 1);
+    let W = Math.max(...outs.map(c => c.clientWidth * px(c))), H = Math.max(...outs.map(c => c.clientHeight * px(c)));
+    const k = Math.min(1, Math.sqrt(MAX_PIXELS / (W * H)));
+    W = Math.max(2, Math.round(W * k));
+    H = Math.max(2, Math.round(H * k));
+    const cssW = Math.max(...outs.map(c => c.clientWidth));
+
     const now = this.ctx.currentTime;
+    let kicked = false;
     while (this.kicks.length && this.kicks[0] <= now + 0.01) {
       const t = this.kicks.shift();
-      if (now - t < 0.2) { this.flash = 1; this.punch = 1; }
+      if (now - t < 0.2) { this.flash = 1; this.punch = 1; kicked = true; }
     }
     this.kicks = this.kicks.filter(t => t > now - 0.2);
     this.an.getByteFrequencyData(this.freq);
     this.an.getFloatTimeDomainData(this.wave);
-    const beats = this.opts.beats();
+    const beats = this.opts.beats() * this.speed;
+    this.beats = beats;
     this.hue = 200 + beats * 24;   // la teinte avance d'un cran par temps
     this.tint = 40 * Math.sin(beats * Math.PI / 8);   // le spectre, lui, reste vert-jaune-rouge et oscille sur 16 temps
     this.bass = this.band(30, 150);
     this.mid = this.band(400, 2500);
     this.high = this.band(5000, 14000);
-    const gl = GL_MODES.includes(this.mode);
-    this.cv.hidden = gl;
-    if (this.glCv) this.glCv.hidden = !gl;
-    if (gl) {
-      try {
-        this.gl3d ??= new Viz3D(this.glCv);
-        // Résolution plafonnée (le plein écran reste fluide).
-        const scale = Math.min(1, 1100 / Math.max(1, this.glCv.clientWidth)) * Math.min(1.5, window.devicePixelRatio || 1);
-        this.gl3d.render(this.mode, this.freq, this.ctx.sampleRate / this.an.fftSize, { beats, bass: this.bass, mid: this.mid, high: this.high, flash: this.flash, hue: this.hue }, scale);
-      } catch (err) { console.warn('Visualizer 3D', err); this.mode = 'milk'; }
-    } else {
-      const g = this.cv.getContext('2d');
-      this[this.mode](g, this.size());
+    const t = performance.now();
+    const dt = Math.min(0.1, (t - this.last) / 1000);
+    this.last = t;
+    this.travel += dt * (this.opts.bpm() / 60) * this.speed * (0.5 + this.bass * 1.5 + this.punch * 3);
+    // Stroboscope : un flash blanc sur les kicks, jamais plus de 3 par seconde.
+    if (this.fx.strobe && kicked && now - this.strobeAt >= STROBE_GAP) this.strobeAt = now;
+    this.strobe = this.fx.strobe ? Math.max(0, 1 - (now - this.strobeAt) / 0.07) : 0;
+
+    let source;
+    const v = { beats, bass: this.bass, mid: this.mid, high: this.high, flash: this.flash, hue: this.hue, travel: this.travel, time: t / 1000 };
+    const gl3d = GL_MODES.includes(this.mode) && this.glp;
+    if (!gl3d) {
+      const s2 = this.mode === 'milk' ? 0.5 : 1;
+      const w = Math.round(W * s2), h = Math.round(H * s2);
+      if (this.src.width !== w || this.src.height !== h) { this.src.width = w; this.src.height = h; this.fb.width = w; this.fb.height = h; }
+      const mode = GL_MODES.includes(this.mode) ? 'milk' : this.mode;
+      this[mode](this.src.getContext('2d'), { w, h, s: (W / cssW) * s2 });
+    }
+    if (this.glp) {
+      this.glp.resize(W, H);
+      if (gl3d) {
+        this.glp.analyse(this.freq, this.ctx.sampleRate / this.an.fftSize, beats);
+        this.glp.scene(this.mode, v, SCENE_SCALE[this.mode] ?? 0.75);
+      } else this.glp.upload(this.src);
+      this.glp.post(v, { crt: this.fx.crt ? 1 : 0, kaleido: this.fx.kaleido || 0, glitch: this.fx.glitch ? 1 : 0, strobe: this.strobe });
+      source = this.glp.cv;
+    } else source = this.src;
+    for (const c of outs) {
+      const w = Math.round(Math.min(W, c.clientWidth * px(c))), h = Math.round(Math.min(H, c.clientHeight * px(c)));
+      if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+      c.getContext('2d').drawImage(source, 0, 0, w, h);
     }
     this.flash *= 0.86;
     this.punch *= 0.8;
+  }
+
+  // ---- Texte qui cogne : un mot par mesure, écrasé sur chaque kick, étiré par les graves, en glitch ----
+  bang(g, { w, h, s }) {
+    g.fillStyle = '#050507';
+    g.fillRect(0, 0, w, h);
+    // Bandes diagonales qui défilent au tempo.
+    g.save();
+    g.globalAlpha = 0.07 + this.flash * 0.12;
+    g.fillStyle = hsl(this.hue, 100, 55);
+    const off = (this.beats * 40 * s) % (80 * s);
+    for (let x = -h - 80 * s + off; x < w + h; x += 80 * s) {
+      g.beginPath(); g.moveTo(x, 0); g.lineTo(x + 40 * s, 0); g.lineTo(x + 40 * s + h, h); g.lineTo(x + h, h); g.fill();
+    }
+    g.restore();
+    const words = this.words.length ? this.words : ['HARDCORE'];
+    const word = words[Math.floor(this.beats / 4) % words.length].toUpperCase();
+    let size = h * 0.34;
+    g.font = `900 ${size}px Impact, "Arial Black", "Segoe UI Black", system-ui, sans-serif`;
+    const mw = g.measureText(word).width;
+    if (mw > w * 0.86) { size *= w * 0.86 / mw; g.font = `900 ${size}px Impact, "Arial Black", "Segoe UI Black", system-ui, sans-serif`; }
+    const slam = this.punch;
+    const sx = 1 + slam * 0.12, sy = 1 + slam * 0.18 + this.bass * 0.1;
+    const shake = slam * h * 0.02;
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    const draw = (color, dx) => {
+      g.save();
+      g.translate(w / 2 + dx + (Math.random() - 0.5) * shake, h / 2 + (Math.random() - 0.5) * shake);
+      g.scale(sx, sy);
+      g.fillStyle = color;
+      g.fillText(word, 0, 0);
+      g.restore();
+    };
+    g.globalCompositeOperation = 'lighter';
+    const split = (3 + slam * 10) * s;
+    draw(hsl(this.hue, 100, 50, 0.9), -split);
+    draw(hsl(this.hue + 180, 100, 50, 0.9), split);
+    g.globalCompositeOperation = 'source-over';
+    draw('#fff', 0);
+    // Bandes décalées (glitch) juste après le kick.
+    if (this.flash > 0.6) {
+      for (let k = 0; k < 3; k++) {
+        const y = h * (0.3 + Math.random() * 0.4), bh = (3 + Math.random() * 14) * s;
+        g.drawImage(this.src, 0, y, w, bh, (Math.random() - 0.5) * 30 * s * this.flash, y, w, bh);
+      }
+    }
+    g.font = `700 ${Math.round(14 * s)}px system-ui, sans-serif`;
+    g.fillStyle = hsl(this.hue + 180, 80, 70, 0.8);
+    g.fillText(`${Math.round(this.opts.bpm())} BPM`, w / 2, h * 0.88);
+    g.textAlign = 'left';
+    g.textBaseline = 'alphabetic';
   }
 
   // Niveau moyen 0..1 d'une bande de fréquences.
@@ -207,7 +308,7 @@ export class Visualizer {
   milk(g, { w, h }) {
     const b = this.fb.getContext('2d');
     b.clearRect(0, 0, w, h);
-    b.drawImage(this.cv, 0, 0);
+    b.drawImage(this.src, 0, 0);
     g.fillStyle = 'rgba(0,0,0,0.12)';
     g.fillRect(0, 0, w, h);
     this.spin += 0.004 + this.mid * 0.02;

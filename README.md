@@ -23,7 +23,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Layered synth** on the keyboard: 35 presets in 10 families (strings, pads, choirs, supersaw, hoovers, leads, basses, stabs, keys, FX) with ensemble, stereo width, vibrato and 8 expression knobs, chord mode and a tempo-synced arpeggiator;
   - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters, up to 4 insert effects, and a **sidechain** triggered by the kicks;
   - **Patch**: wire the tools and **effect boxes** (distortion, PCF, filter, delay, reverb, compressor, bitcrusher) freely, everything in sync with the tempo;
-  - **Visualizer** in the Winamp spirit: LED spectrum, oscilloscope, Milk swirls, hi-fi VU meters and 3D modes (tunnel, synthwave landscape, blob), in full screen for live sets;
+  - **Visualizer** in the Winamp spirit: LED spectrum, oscilloscope, Milk swirls, hi-fi VU meters, text slam and 3D modes (tunnel, synthwave landscape, blob, hyperspace, fractal, lasers), CRT filter, and a projector window for a second screen;
   - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **MIDI monitor**.
 - **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
@@ -42,7 +42,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 | **Mixer and sidechain**<br>[![Mixer: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png) | **Patch**<br>[![Patch window: tools on the left, effect boxes in the middle, the master on the right](docs/screenshots/patch-en.png)](docs/screenshots/patch-en.png) |
 | **Track effects**<br>[![Timeline with an effects line under each track, the Effects tab of the library and the settings of a PCF](docs/screenshots/tlfx-en.png)](docs/screenshots/tlfx-en.png) | **Scenes and performance**<br>[![Scenes window with stored scenes, and the performance effects](docs/screenshots/scenes-en.png)](docs/screenshots/scenes-en.png) |
 | **Piano roll**<br>[![Piano roll: a hardstyle lead melody over two bars, with its chords and the velocity lane](docs/screenshots/roll-en.png)](docs/screenshots/roll-en.png) | **Oscillator synth**<br>[![Oscillator synth: three oscillators, filter, envelopes, LFO and presets](docs/screenshots/osc-en.png)](docs/screenshots/osc-en.png) |
-| **Visualizer: Milk**<br>[![Visualizer, Milk mode: swirls and trails around the waveform](docs/screenshots/viz-en.png)](docs/screenshots/viz-en.png) | **Visualizer: 3D landscape**<br>[![Visualizer, 3D landscape: synthwave grid shaped by the spectrum](docs/screenshots/viz3d-en.png)](docs/screenshots/viz3d-en.png) |
+| **Visualizer: 3D fractal**<br>[![Visualizer, 3D fractal mode: a flight inside an endless Menger sponge](docs/screenshots/viz-en.png)](docs/screenshots/viz-en.png) | **Visualizer: 3D landscape**<br>[![Visualizer, 3D landscape: synthwave grid shaped by the spectrum](docs/screenshots/viz3d-en.png)](docs/screenshots/viz3d-en.png) |
 
 ## Requirements
 
@@ -380,8 +380,11 @@ A nod to Winamp, in the **Studio** group: music visualizations that follow the m
 - **Oscilloscope**: the glowing waveform with its trail, and a stereo figure in the corner.
 - **Milk**: each image is fed back, zoomed and rotated, under a circle made of the waveform and spinning shapes: swirls and trails that punch on every kick.
 - **VU meters**: two hi-fi needle meters (left / right, with peak lights) and an LED bar per mixer channel and for the master.
-- **3D (WebGL)**: a neon **tunnel** that flies by at the tempo, a synthwave **landscape** whose relief is the spectrum of the last two bars, and a **blob**, a sphere deformed by the sound.
-- Colours move on with the tempo and every **kick** makes a flash. **Auto** changes mode every 8 bars. **Full screen** (or F, or a double-click): a click shows the next mode, Esc leaves. Keys 1-7 choose the mode. Nothing is drawn while the window is closed.
+- **Text slam**: your own words (separated by commas), one per bar, slammed on every kick with colour splits.
+- **3D (WebGL)**: a neon **tunnel** that flies by at the tempo, a synthwave **landscape** whose relief is the spectrum of the last two bars, a **blob** (a sphere deformed by the sound), **hyperspace** (stars flying at you, warp jump on every kick), a **3D fractal** (a flight inside an endless Menger sponge) and **lasers** sweeping the smoke above a jumping crowd.
+- **CRT** filter over any mode: scan lines, curved glass, colour fringes.
+- **Projector**: the visuals alone in a **second window**, to drag to the projector screen and put in full screen (double-click) while you keep playing in the main window.
+- Colours move on with the tempo and every **kick** makes a flash. **Auto** changes mode every 8 bars. **Full screen** (or F, or a double-click): a click shows the next mode, Esc leaves. Keys 1-9 and 0 choose the mode. Nothing is drawn while the window is closed.
 
 ## Tempo and loops
 
