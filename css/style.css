@@ -542,6 +542,8 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .synth-play input[type=range] { width: 70px; }
 .synth-play :disabled { opacity: .45; }
 
+.tl-band { position: absolute; z-index: 30; border: 1px solid var(--accent-2); background: color-mix(in srgb, var(--accent-2) 14%, transparent); pointer-events: none; border-radius: 3px; }
+
 /* Piano roll */
 .roll-area .win-body { display: flex; flex-direction: column; overflow: hidden; }
 .roll-field { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }

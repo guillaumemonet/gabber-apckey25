@@ -1584,7 +1584,7 @@ async function tlStopRec() {
     if (kicks.length) clip.kickBeats = kicks.map(k => Math.round(k * 1000) / 1000);   // sidechain
     state.tl.tracks[rec.track].clips.push(clip);
     growSong(clip);
-    tlSel = { track: rec.track, clip };
+    tlSelect(rec.track, clip);
     renderLibrary();
     save();
   }
@@ -1606,7 +1606,7 @@ async function tlPlaceItem(item, track, beat) {
   const clip = { id: crypto.randomUUID(), start: beat, len, sampleId: item.sampleId, name: item.name, cat: item.cat, color: catColor(item.cat), bpm: item.bpm, loop: item.loop };
   state.tl.tracks[track].clips.push(clip);
   growSong(clip);
-  tlSel = { track, clip };
+  tlSelect(track, clip);
   renderTl();
   save();
 }
@@ -1617,6 +1617,7 @@ function tlDelete(track, clip) {
   // Un enregistrement qui ne sert plus reste stocké jusqu'au prochain démarrage (voir cleanRecordings) : « Annuler » peut le ramener.
   if (clip.sampleId?.startsWith('rec:')) renderLibrary();
   if (tlSel?.clip === clip) tlSel = null;
+  tlPicked.delete(clip);
   renderTl();
   save();
 }
@@ -1670,9 +1671,7 @@ function buildTl() {
     // Clic dans une case vide : pose le dernier son choisi dans la bibliothèque.
     lane.addEventListener('pointerdown', e => {
       if ((e.target !== lane && !e.target.classList.contains('tl-fxlane')) || e.button !== 0) return;
-      if (!libSelected) { toast(t('tl.noItem'), 3000); return; }
-      const target = tlTarget(e);
-      if (target) (libSelected.kind === 'fx' ? tlPlaceFx : tlPlaceItem)(libSelected, target.track, target.beat);
+      tlLaneDown(e);
     });
     grid.append(head, lane);
   }
@@ -1681,11 +1680,11 @@ function buildTl() {
   line.id = 'tl-playhead';
   grid.appendChild(line);
   window.addEventListener('keydown', e => {
-    if ((e.key === 'Delete' || e.key === 'Backspace') && tlSel && wm?.active !== 'roll' && !['INPUT', 'SELECT'].includes(e.target.tagName)) {
-      if (tlSel.fx) tlDeleteFx(tlSel.track, tlSel.fx); else tlDelete(tlSel.track, tlSel.clip);
-    }
+    tlKey(e);
     if (e.key === 'Escape') closeFxEditor();
   });
+  // Les raccourcis (Suppr, Ctrl+C / V…) vont à la timeline quand on vient de cliquer dedans.
+  document.addEventListener('pointerdown', e => { tlFocus = !!e.target.closest?.('#timeline, #library'); }, true);
   timeline.onStop = () => { renderTl(); renderLeds(); };
   const scroll = $('#tl-scroll');
   (function frame() {
@@ -1784,7 +1783,7 @@ function drawClip(cv, clip) {
 function clipEl(track, clip) {
   const bp = beatPx();
   const el = document.createElement('div');
-  el.className = 'tl-clip' + (tlSel?.clip === clip ? ' selected' : '') + (clip.loop ? ' loop' : '') + (clip.type ? ` ${clip.type}` : '');
+  el.className = 'tl-clip' + (tlPicked.has(clip) ? ' selected' : '') + (clip.loop ? ' loop' : '') + (clip.type ? ` ${clip.type}` : '');
   el.style.left = `${clip.start * bp}px`;
   el.style.width = `${Math.max(4, timeline.clipBeats(clip) * bp - 1)}px`;
   el.style.setProperty('--c', PALETTE[uiColor(clip.color ?? catColor(clip.cat))]);
@@ -1795,6 +1794,7 @@ function clipEl(track, clip) {
   const grip = document.createElement('div');
   grip.className = 'tl-grip';
   el.append(cv, label, grip);
+  el._obj = clip;
   requestAnimationFrame(() => drawClip(cv, clip));
   el.addEventListener('contextmenu', e => { e.preventDefault(); tlDelete(track, clip); });
   el.addEventListener('dblclick', () => {
@@ -1808,13 +1808,14 @@ function clipEl(track, clip) {
     if (e.button !== 0) return;
     e.stopPropagation();
     const resizing = e.target === grip;
+    if (!resizing) { tlGroupDown(e, clip, track); return; }
     let target = clip;
     let where = track;
     if (e.altKey && !resizing) {
       target = { ...clip, id: crypto.randomUUID() };
       state.tl.tracks[track].clips.push(target);
     }
-    tlSel = { track: where, clip: target };
+    tlSelect(where, target);
     const startX = e.clientX;
     const origStart = target.start;
     const origLen = timeline.clipBeats(target);
@@ -1836,7 +1837,7 @@ function clipEl(track, clip) {
           from.splice(from.indexOf(target), 1);
           state.tl.tracks[to].clips.push(target);
           where = to;
-          tlSel = { track: where, clip: target };
+          tlSelect(where, target);
         }
       }
       moved = true;
@@ -1855,6 +1856,206 @@ function clipEl(track, clip) {
   return el;
 }
 
+
+// ---------- Sélection multiple et copier / coller (timeline) ----------
+
+// Blocs sélectionnés : blocs de son / de notes et blocs d'effet (objets de state.tl.tracks[i].clips / .fx).
+const tlPicked = new Set();
+let tlClipboard = null;       // { items: [{ kind, track, obj }], span } ; départs relatifs au premier bloc
+let tlFocus = false;          // le dernier clic était dans la timeline (ou la bibliothèque) : les raccourcis sont pour elle
+const isFxBlock = o => typeof o?.fx === 'string';
+const tlList = (obj, track) => state.tl.tracks[track][isFxBlock(obj) ? 'fx' : 'clips'];
+const blockLen = obj => (isFxBlock(obj) ? obj.len : timeline.clipBeats(obj));
+
+// Sélectionne un seul bloc (ou rien).
+function tlSelect(track, obj) {
+  tlPicked.clear();
+  if (obj) tlPicked.add(obj);
+  tlSel = obj ? (isFxBlock(obj) ? { track, fx: obj } : { track, clip: obj }) : null;
+}
+
+// Blocs sélectionnés avec leur piste (ceux qui ont disparu, après « Annuler » par exemple, sont oubliés).
+function tlItems() {
+  const out = [];
+  state.tl.tracks.forEach((tr, track) => {
+    for (const obj of tr.clips) if (tlPicked.has(obj)) out.push({ obj, track });
+    for (const obj of tr.fx) if (tlPicked.has(obj)) out.push({ obj, track });
+  });
+  tlPicked.clear();
+  for (const it of out) tlPicked.add(it.obj);
+  return out;
+}
+
+const cloneBlock = obj => ({ ...structuredClone(obj), id: crypto.randomUUID() });
+
+// Glisser un bloc : tous les blocs sélectionnés bougent ensemble (Alt = copie) ; Ctrl + clic = ajouter / retirer.
+function tlGroupDown(e, obj, track) {
+  if (e.ctrlKey || e.metaKey) {
+    if (tlPicked.has(obj)) tlPicked.delete(obj); else tlPicked.add(obj);
+    renderTl();
+    return;
+  }
+  if (!tlPicked.has(obj)) tlSelect(track, obj);
+  let items = tlItems();
+  let lead = obj;
+  if (e.altKey) {
+    const copies = items.map(it => ({ obj: cloneBlock(it.obj), track: it.track, from: it.obj }));
+    for (const c of copies) tlList(c.obj, c.track).push(c.obj);
+    lead = copies.find(c => c.from === obj).obj;
+    items = copies;
+    tlPicked.clear();
+    for (const c of copies) tlPicked.add(c.obj);
+  }
+  const orig = items.map(it => ({ obj: it.obj, start: it.obj.start, track: it.track, cur: it.track }));
+  const o = orig.find(x => x.obj === lead);
+  const minStart = Math.min(...orig.map(x => x.start));
+  const minTrack = Math.min(...orig.map(x => x.track));
+  const maxTrack = Math.max(...orig.map(x => x.track));
+  const startX = e.clientX;
+  let moved = e.altKey;
+  const onMove = ev => {
+    const dx = (ev.clientX - startX) / beatPx();
+    const delta = Math.max(-minStart, Math.max(0, snapBeat(o.start + dx, ev.shiftKey)) - o.start);
+    const lane = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.tl-lane');
+    const dTrack = Math.max(-minTrack, Math.min(TL_TRACKS - 1 - maxTrack, (lane ? +lane.dataset.track : o.cur) - o.track));
+    if (orig.every(x => x.obj.start === x.start + delta && x.cur === x.track + dTrack)) return;
+    for (const x of orig) {
+      x.obj.start = x.start + delta;
+      const to = x.track + dTrack;
+      if (to !== x.cur) {
+        const from = tlList(x.obj, x.cur);
+        from.splice(from.indexOf(x.obj), 1);
+        tlList(x.obj, to).push(x.obj);
+        x.cur = to;
+      }
+    }
+    tlSel = isFxBlock(lead) ? { track: o.cur, fx: lead } : { track: o.cur, clip: lead };
+    moved = true;
+    renderTl();
+  };
+  const onUp = () => {
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+    if (moved) { for (const x of orig) growSong({ start: x.obj.start, len: blockLen(x.obj) }); save(); }
+    else if (!isFxBlock(lead) && lead.type === 'note' && wm.isOpen('roll') && state.roll.clip !== lead.id) openRoll(lead, false);
+    renderTl();
+  };
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+}
+
+// Case vide : un clic pose le dernier son choisi (ou vide la sélection) ; glisser = sélection au lasso
+// (Maj / Ctrl : ajoutée à la sélection).
+function tlLaneDown(e) {
+  const x0 = e.clientX, y0 = e.clientY;
+  const keep = e.shiftKey || e.ctrlKey || e.metaKey ? new Set(tlPicked) : new Set();
+  const grid = $('#tl-grid');
+  let band = null;
+  const onMove = ev => {
+    if (!band && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 5) return;
+    if (!band) { band = document.createElement('div'); band.className = 'tl-band'; grid.appendChild(band); }
+    const g = grid.getBoundingClientRect();
+    const r = { left: Math.min(x0, ev.clientX), right: Math.max(x0, ev.clientX), top: Math.min(y0, ev.clientY), bottom: Math.max(y0, ev.clientY) };
+    Object.assign(band.style, { left: `${r.left - g.left}px`, top: `${r.top - g.top}px`, width: `${r.right - r.left}px`, height: `${r.bottom - r.top}px` });
+    tlPicked.clear();
+    for (const o of keep) tlPicked.add(o);
+    for (const el of grid.querySelectorAll('.tl-clip, .tl-fx')) {
+      const b = el.getBoundingClientRect();
+      const hit = b.left < r.right && b.right > r.left && b.top < r.bottom && b.bottom > r.top;
+      el.classList.toggle('selected', hit || keep.has(el._obj));
+      if (hit) tlPicked.add(el._obj);
+    }
+  };
+  const onUp = ev => {
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+    if (band) { band.remove(); renderTl(); return; }
+    if (tlPicked.size && !libSelected) { tlSelect(null, null); renderTl(); return; }
+    if (!libSelected) { toast(t('tl.noItem'), 3000); return; }
+    const target = tlTarget(ev);
+    if (target) (libSelected.kind === 'fx' ? tlPlaceFx : tlPlaceItem)(libSelected, target.track, target.beat);
+  };
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+}
+
+// Durée d'un groupe de blocs, arrondie à la mesure : pas du collage à la suite.
+function tlSpan(items) {
+  const s = Math.min(...items.map(it => it.obj.start));
+  const e = Math.max(...items.map(it => it.obj.start + blockLen(it.obj)));
+  return { start: s, span: Math.max(BEATS_PER_BAR, Math.ceil((e - s) / BEATS_PER_BAR - 1e-6) * BEATS_PER_BAR) };
+}
+
+function tlCopy() {
+  const items = tlItems();
+  if (!items.length) return false;
+  const { start, span } = tlSpan(items);
+  tlClipboard = { span, items: items.map(it => ({ track: it.track, obj: { ...structuredClone(it.obj), start: it.obj.start - start } })) };
+  toast(t('tl.copied', { n: items.length }));
+  return true;
+}
+
+// Colle à la tête de lecture, sur les mêmes pistes ; la tête de lecture passe à la fin du collage.
+function tlPaste(at = state.tl.playhead) {
+  if (!tlClipboard) return;
+  tlPicked.clear();
+  for (const it of tlClipboard.items) {
+    const obj = { ...cloneBlock(it.obj), start: at + it.obj.start };
+    tlList(obj, it.track).push(obj);
+    tlPicked.add(obj);
+    growSong({ start: obj.start, len: blockLen(obj) });
+  }
+  state.tl.playhead = at + tlClipboard.span;
+  renderTl();
+  save();
+}
+
+function tlDuplicate() {
+  const items = tlItems();
+  if (!items.length) return;
+  const { start, span } = tlSpan(items);
+  tlPicked.clear();
+  for (const it of items) {
+    const obj = { ...cloneBlock(it.obj), start: it.obj.start + span };
+    tlList(obj, it.track).push(obj);
+    tlPicked.add(obj);
+    growSong({ start: obj.start, len: blockLen(obj) });
+  }
+  state.tl.playhead = start + span * 2;
+  renderTl();
+  save();
+}
+
+function tlDeletePicked() {
+  const items = tlItems();
+  if (!items.length) return;
+  for (const it of items) { const l = tlList(it.obj, it.track); l.splice(l.indexOf(it.obj), 1); }
+  if (items.some(it => it.obj.sampleId?.startsWith('rec:'))) renderLibrary();
+  tlSelect(null, null);
+  renderTl();
+  save();
+}
+
+function tlSelectAll() {
+  tlPicked.clear();
+  for (const tr of state.tl.tracks) { for (const c of tr.clips) tlPicked.add(c); for (const b of tr.fx) tlPicked.add(b); }
+  renderTl();
+}
+
+// Raccourcis de la timeline (quand le dernier clic était dedans).
+function tlKey(e) {
+  if (!tlFocus || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+  const ctrl = e.ctrlKey || e.metaKey;
+  const k = e.key.toLowerCase();
+  if (e.key === 'Delete' || e.key === 'Backspace') { if (tlPicked.size) { e.preventDefault(); tlDeletePicked(); } return; }
+  if (e.key === 'Escape') { tlSelect(null, null); renderTl(); return; }
+  if (!ctrl || e.altKey) return;
+  if (k === 'a') { e.preventDefault(); tlSelectAll(); }
+  else if (k === 'c') { e.preventDefault(); tlCopy(); }
+  else if (k === 'x') { e.preventDefault(); if (tlCopy()) tlDeletePicked(); }
+  else if (k === 'v') { e.preventDefault(); tlPaste(); }
+  else if (k === 'd') { e.preventDefault(); tlDuplicate(); }
+}
 
 // ---------- Enregistrement en jouant (pads et piano -> blocs posés en direct) ----------
 
@@ -2014,7 +2215,7 @@ function buildRoll() {
   name.addEventListener('input', () => { const f = rollFind(); if (f) { f.clip.name = name.value || t('roll.clipName'); renderTl(); save(); } });
   // Raccourcis du piano pianoRoll quand sa fenêtre est active (avant ceux de la timeline).
   window.addEventListener('keydown', e => {
-    if (wm?.active !== 'roll' || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    if (wm?.active !== 'roll' || tlFocus || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
     if (e.code === 'Space' && !e.ctrlKey) { e.preventDefault(); if (rollPlay) rollStop(); else rollStart(); return; }
     if (pianoRoll.key(e)) { e.preventDefault(); e.stopImmediatePropagation(); }
   }, true);
@@ -2099,7 +2300,7 @@ function rollNew() {
   const track = freeTrack(start, len);
   state.tl.tracks[track].clips.push(clip);
   growSong(clip);
-  tlSel = { track, clip };
+  tlSelect(track, clip);
   pianoRoll.cursor = 0;
   openRoll(clip, true);
   renderTl();
@@ -2152,7 +2353,7 @@ function mergeTakeSound(clips, osc) {
   const clip = { id: crypto.randomUUID(), type: 'note', seq: mergeNotes(clips, start), pat: len, len, start, name: t('roll.recName'), cat: 'lead', color: catColor('lead'), loop: false, ...(osc ? { osc } : {}) };
   const track = freeTrack(start, len);
   state.tl.tracks[track].clips.push(clip);
-  tlSel = { track, clip };
+  tlSelect(track, clip);
   if (wm.isOpen('roll')) openRoll(clip, false);
 }
 
@@ -2496,7 +2697,7 @@ async function loadDemo() {
   state.tl.tracks = tracks;
   state.tl.bars = demo.bars;
   state.tl.playhead = 0;
-  tlSel = null;
+  tlSelect(null, null);
   renderTl();
   renderLibrary();
   save();
@@ -3306,7 +3507,7 @@ function initHistory() {
     const s = JSON.parse(snap);
     state.tl.bars = s.bars;
     s.tracks.forEach((tr, i) => { if (state.tl.tracks[i]) Object.assign(state.tl.tracks[i], tr); });
-    tlSel = null;
+    tlSelect(null, null);
     loadTlBuffers().then(renderTl);
     renderTl();
     renderLibrary();
@@ -4076,7 +4277,7 @@ function tlPlaceFx(item, track, beat) {
   const block = { id: crypto.randomUUID(), fx: item.fx, start: beat, len: item.len, p: { ...fxDefaults(item.fx), ...item.p }, name: item.name };
   state.tl.tracks[track].fx.push(block);
   growSong(block);
-  tlSel = { track, fx: block };
+  tlSelect(track, block);
   renderTl();
   save();
 }
@@ -4085,6 +4286,7 @@ function tlDeleteFx(track, block) {
   const list = state.tl.tracks[track].fx;
   list.splice(list.indexOf(block), 1);
   if (tlSel?.fx === block) tlSel = null;
+  tlPicked.delete(block);
   closeFxEditor();
   renderTl();
   save();
@@ -4106,7 +4308,8 @@ function fxRows(blocks) {
 function fxEl(track, block, row) {
   const bp = beatPx();
   const el = document.createElement('div');
-  el.className = 'tl-fx' + (tlSel?.fx === block ? ' selected' : '');
+  el.className = 'tl-fx' + (tlPicked.has(block) ? ' selected' : '');
+  el._obj = block;
   el.style.left = `${block.start * bp}px`;
   el.style.width = `${Math.max(6, block.len * bp - 1)}px`;
   el.style.top = `${row * FX_ROW + 1}px`;
@@ -4123,13 +4326,14 @@ function fxEl(track, block, row) {
     if (e.button !== 0) return;
     e.stopPropagation();
     const resizing = e.target === grip;
+    if (!resizing) { tlGroupDown(e, block, track); return; }
     let target = block;
     let where = track;
     if (e.altKey && !resizing) {
       target = { ...block, id: crypto.randomUUID(), p: { ...block.p } };
       state.tl.tracks[track].fx.push(target);
     }
-    tlSel = { track: where, fx: target };
+    tlSelect(where, target);
     const startX = e.clientX;
     const origStart = target.start;
     const origLen = target.len;
@@ -4151,7 +4355,7 @@ function fxEl(track, block, row) {
           from.splice(from.indexOf(target), 1);
           state.tl.tracks[to].fx.push(target);
           where = to;
-          tlSel = { track: where, fx: target };
+          tlSelect(where, target);
         }
       }
       moved = true;
