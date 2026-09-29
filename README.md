@@ -1,6 +1,6 @@
 # GabberKey
 
-**A hardcore / gabber music maker played with an Akai APC Key 25, in your browser.**
+**A complete music studio in your browser, born for hardcore / gabber, played with an Akai APC Key 25.**
 
 *By Guillaume Monet* · [Version française](README.fr.md) · <sub>[☕ Support the project](https://paypal.me/holythunderblade)</sub>
 
