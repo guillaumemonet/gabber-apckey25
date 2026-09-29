@@ -42,7 +42,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 | **Table de mixage et sidechain**<br>[![Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](docs/screenshots/mixer-fr.png)](docs/screenshots/mixer-fr.png) | **Câblage**<br>[![Fenêtre Câblage : les outils à gauche, les boîtes à effets au milieu, le master à droite](docs/screenshots/patch-fr.png)](docs/screenshots/patch-fr.png) |
 | **Effets de piste**<br>[![Timeline avec une ligne d'effets sous chaque piste, l'onglet Effets de la bibliothèque et les réglages d'un PCF](docs/screenshots/tlfx-fr.png)](docs/screenshots/tlfx-fr.png) | **Scènes et performance**<br>[![Fenêtre Scènes avec des scènes enregistrées, et les effets de performance](docs/screenshots/scenes-fr.png)](docs/screenshots/scenes-fr.png) |
 | **Piano roll**<br>[![Piano roll : une mélodie de lead hardstyle sur deux mesures, avec ses accords et la bande des vélocités](docs/screenshots/roll-fr.png)](docs/screenshots/roll-fr.png) | **Synthé à oscillateurs**<br>[![Synthé à oscillateurs : trois oscillateurs, filtre, enveloppes, LFO et presets](docs/screenshots/osc-fr.png)](docs/screenshots/osc-fr.png) |
-| **Visualiseur : Fractale 3D**<br>[![Visualiseur, mode Fractale 3D : un vol dans une éponge de Menger infinie](docs/screenshots/viz-fr.png)](docs/screenshots/viz-fr.png) | **Visualiseur : Paysage 3D**<br>[![Visualiseur, Paysage 3D : grille synthwave façonnée par le spectre](docs/screenshots/viz3d-fr.png)](docs/screenshots/viz3d-fr.png) |
+| **Visualiseur : fractale + kaléidoscope + glitch**<br>[![Visualiseur, Fractale 3D avec les filtres kaléidoscope et glitch empilés](docs/screenshots/viz-fr.png)](docs/screenshots/viz-fr.png) | **Visualiseur : Paysage 3D**<br>[![Visualiseur, Paysage 3D : grille synthwave façonnée par le spectre](docs/screenshots/viz3d-fr.png)](docs/screenshots/viz3d-fr.png) |
 
 ## Prérequis
 
@@ -382,7 +382,10 @@ Un clin d'œil à Winamp, dans le groupe **Studio** : des visualisations de la m
 - **Vumètres** : deux vumètres à aiguille façon hi-fi (gauche / droite, avec voyants de crête) et une barre de LED par voie de mixage et pour le master.
 - **Texte qui cogne** : tes propres mots (séparés par des virgules), un par mesure, écrasés sur chaque kick avec des couleurs séparées.
 - **3D (WebGL)** : un **tunnel** de néons qui défile au tempo, un **paysage** synthwave dont le relief est le spectre des deux dernières mesures, un **blob** (une sphère déformée par le son), l'**hyperespace** (des étoiles qui filent vers toi, un saut à chaque kick), une **fractale 3D** (un vol dans une éponge de Menger infinie) et des **lasers** qui balaient la fumée au-dessus d'une foule qui saute.
-- Filtre **CRT** sur n'importe quel mode : lignes de balayage, verre bombé, franges de couleur.
+- **Particules** (une sphère de points qui éclate à chaque kick), **barres Amiga** avec défileur sinusoïdal, **spectrogramme**, et d'autres modes 3D / GPU : **ville de spectre** (des tours de néon faites de l'historique du spectre), **mur de LED**, **metaballs**, **plasma**, **rotozoomer**, **fluide** et **réaction-diffusion**.
+- **Filtres empilables** sur n'importe quel mode : **CRT**, **kaléidoscope**, **glitch** et **stroboscope** (3 flashs par seconde au plus). Changer de mode fait une transition (fondu, zoom ou bandes).
+- **Potards** (à l'écran, et sur l'APC quand la fenêtre est active) : vitesse, teinte, force des flashs, sensibilité et quantité de chaque filtre.
+- **Détection du drop** : quand les graves reviennent après un break, l'image explose (et change de mode en Auto).
 - **Projecteur** : les visuels seuls dans une **deuxième fenêtre**, à glisser sur l'écran du projecteur et à mettre en plein écran (double-clic) pendant que tu continues de jouer dans la fenêtre principale.
 - Les couleurs avancent avec le tempo et chaque **kick** fait un flash. **Auto** change de mode toutes les 8 mesures. **Plein écran** (ou F, ou un double-clic) : un clic passe au mode suivant, Échap pour sortir. Les touches 1 à 9 et 0 choisissent le mode. Rien n'est dessiné quand la fenêtre est fermée.
 

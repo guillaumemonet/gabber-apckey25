@@ -1,7 +1,8 @@
 // Visualiseur façon Winamp, en clin d'œil.
 // Modes 2D (dessinés dans un canvas) : spectre à LED avec crêtes qui retombent, oscilloscope à traînées,
 // « Milk » façon MilkDrop (l'image précédente est réinjectée, zoomée et tournée), vumètres à aiguille façon hi-fi,
-// texte qui cogne sur les kicks. Modes 3D (WebGL, voir js/viz3d.js) : tunnel, paysage, blob, starfield, fractale, lasers.
+// texte qui cogne sur les kicks, nuage de particules, barres Amiga et défileur, spectrogramme.
+// Modes 3D / GPU (WebGL, voir js/viz3d.js). Un drop (retour des graves après un break) fait exploser l'image.
 // Chaîne d'image (WebGL) : le mode -> filtres empilables (CRT…) et transition entre modes -> chaque sortie
 // (l'aperçu de la fenêtre, la fenêtre projecteur sur un deuxième écran).
 // Les couleurs avancent avec le tempo (une teinte par temps) ; chaque kick fait un flash.
@@ -10,10 +11,12 @@
 import { VizGL, GL_MODES } from './viz3d.js';
 
 const GL_OK = VizGL.supported();
-// Modes 2D, puis 3D (si le WebGL est disponible) ; filtres (ils passent par le WebGL).
-export const VIZ_MODES = ['spectrum', 'scope', 'milk', 'vu', 'bang', ...(GL_OK ? GL_MODES : [])];
-export const VIZ_FILTERS = GL_OK ? ['crt'] : [];
-const SCENE_SCALE = { fractal: 0.5, blob: 0.55, terrain: 0.6, lasers: 0.7, starfield: 0.8, tunnel: 0.75 };
+// Modes 2D, puis 3D / GPU (si le WebGL est disponible) ; filtres (ils passent par le WebGL).
+export const VIZ_2D = ['spectrum', 'scope', 'milk', 'vu', 'bang', 'particles', 'copper', 'spectrogram'];
+export const VIZ_3D = GL_OK ? GL_MODES : [];
+export const VIZ_MODES = [...VIZ_2D, ...VIZ_3D];
+export const VIZ_FILTERS = GL_OK ? ['crt', 'kaleido', 'glitch', 'strobe'] : [];
+const SCENE_SCALE = { fractal: 0.5, blob: 0.55, terrain: 0.6, city: 0.6, metaballs: 0.6, plasma: 0.5, lasers: 0.7, starfield: 0.8, tunnel: 0.75, rotozoom: 0.75, ledwall: 1 };
 const MAX_PIXELS = 1920 * 1080;
 const STROBE_GAP = 0.34;   // au plus 3 flashs par seconde (recommandation pour l'épilepsie photosensible)
 
@@ -51,7 +54,14 @@ export class Visualizer {
     this.mode = 'spectrum';
     this.fx = {};                 // filtres actifs : { crt: 0..1, kaleido: branches, glitch: 0..1, strobe: bool }
     this.words = ['HARDCORE'];    // textes du mode « texte qui cogne »
-    this.speed = 1;
+    this.speed = 1;       // réglages (potards) : vitesse, décalage de teinte, force des flashs, sensibilité
+    this.hueShift = 0;
+    this.flashGain = 1;
+    this.sens = 1;
+    this.bins = new Float32Array(64);
+    this.bassSlow = 0;    // détection des breaks et des drops
+    this.breakSince = null;
+    this.onDrop = () => {};
     this.kicks = [];
     this.flash = 0;
     this.punch = 0;
@@ -111,18 +121,24 @@ export class Visualizer {
     let kicked = false;
     while (this.kicks.length && this.kicks[0] <= now + 0.01) {
       const t = this.kicks.shift();
-      if (now - t < 0.2) { this.flash = 1; this.punch = 1; kicked = true; }
+      if (now - t < 0.2) { this.flash = Math.max(this.flash, this.flashGain); this.punch = 1; kicked = true; }
     }
     this.kicks = this.kicks.filter(t => t > now - 0.2);
     this.an.getByteFrequencyData(this.freq);
     this.an.getFloatTimeDomainData(this.wave);
     const beats = this.opts.beats() * this.speed;
     this.beats = beats;
-    this.hue = 200 + beats * 24;   // la teinte avance d'un cran par temps
+    this.hue = 200 + beats * 24 + this.hueShift;   // la teinte avance d'un cran par temps
     this.tint = 40 * Math.sin(beats * Math.PI / 8);   // le spectre, lui, reste vert-jaune-rouge et oscille sur 16 temps
-    this.bass = this.band(30, 150);
-    this.mid = this.band(400, 2500);
-    this.high = this.band(5000, 14000);
+    this.bass = Math.min(1, this.band(30, 150) * this.sens);
+    this.mid = Math.min(1, this.band(400, 2500) * this.sens);
+    this.high = Math.min(1, this.band(5000, 14000) * this.sens);
+    const hzb = this.ctx.sampleRate / this.an.fftSize;
+    for (let i = 0; i < 64; i++) {
+      const k = Math.min(this.freq.length - 1, Math.round(30 * Math.pow(16000 / 30, i / 64) / hzb));
+      this.bins[i] = Math.min(1, this.freq[k] / 255 * this.sens);
+    }
+    this.detectDrop(now);
     const t = performance.now();
     const dt = Math.min(0.1, (t - this.last) / 1000);
     this.last = t;
@@ -145,9 +161,10 @@ export class Visualizer {
       this.glp.resize(W, H);
       if (gl3d) {
         this.glp.analyse(this.freq, this.ctx.sampleRate / this.an.fftSize, beats);
-        this.glp.scene(this.mode, v, SCENE_SCALE[this.mode] ?? 0.75);
+        if (this.glp.isSim(this.mode)) this.glp.simulate(this.mode, v, this.splat(kicked));
+        else this.glp.scene(this.mode, v, SCENE_SCALE[this.mode] ?? 0.75);
       } else this.glp.upload(this.src);
-      this.glp.post(v, { crt: this.fx.crt ? 1 : 0, kaleido: this.fx.kaleido || 0, glitch: this.fx.glitch ? 1 : 0, strobe: this.strobe });
+      this.glp.post(v, { crt: this.fx.crt || 0, kaleido: this.fx.kaleido || 0, glitch: this.fx.glitch || 0, strobe: this.strobe });
       source = this.glp.cv;
     } else source = this.src;
     for (const c of outs) {
@@ -157,6 +174,26 @@ export class Visualizer {
     }
     this.flash *= 0.86;
     this.punch *= 0.8;
+  }
+
+  // Encre du fluide (une giclée à chaque kick, un filet qui tourne avec les médiums) ; germes de la réaction-diffusion.
+  splat(kicked) {
+    const col = h => { const c = [0, 8, 4].map(n => { const k = (n + h / 30) % 12; return 0.5 - 0.5 * Math.max(-1, Math.min(k - 3, 9 - k, 1)); }); return c; };
+    if (this.mode === 'reaction') return kicked ? { x: 0.15 + Math.random() * 0.7, y: 0.15 + Math.random() * 0.7, r: 0.03, w: 1, col: [0, 0, 0] } : null;
+    if (kicked) return { x: 0.2 + Math.random() * 0.6, y: 0.2 + Math.random() * 0.6, r: 0.07, w: 0.9, col: col(this.hue + Math.random() * 120) };
+    const a = this.beats * 0.8;
+    return { x: 0.5 + Math.cos(a) * 0.28, y: 0.5 + Math.sin(a * 1.3) * 0.28, r: 0.035, w: 0.15 + this.mid * 0.5, col: col(this.hue + 180) };
+  }
+
+  // Break (les graves disparaissent pendant plus de 2 mesures) puis drop (ils reviennent) : grosse explosion.
+  detectDrop(now) {
+    const bpm = this.opts.bpm();
+    this.bassSlow += (this.bass - this.bassSlow) * 0.01;
+    if (this.bass < this.bassSlow * 0.35 && this.bassSlow > 0.08) this.breakSince ??= now;
+    else if (this.breakSince !== null && this.bass > this.bassSlow * 0.8) {
+      if (now - this.breakSince > 8 * 60 / bpm) { this.flash = 1.5; this.punch = 1.6; this.onDrop(); }
+      this.breakSince = null;
+    }
   }
 
   // ---- Texte qui cogne : un mot par mesure, écrasé sur chaque kick, étiré par les graves, en glitch ----
@@ -209,6 +246,106 @@ export class Visualizer {
     g.fillText(`${Math.round(this.opts.bpm())} BPM`, w / 2, h * 0.88);
     g.textAlign = 'left';
     g.textBaseline = 'alphabetic';
+  }
+
+  // ---- Nuage de particules : une sphère de points qui explose à chaque kick puis se reforme ----
+  particles(g, { w, h, s }) {
+    g.fillStyle = 'rgba(3,3,6,0.35)';
+    g.fillRect(0, 0, w, h);
+    const N = 1400;
+    if (!this.pts) {
+      this.pts = [];
+      for (let i = 0; i < N; i++) {   // points répartis sur la sphère (spirale de Fibonacci)
+        const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(1 - y * y), a = i * 2.39996;
+        this.pts.push({ x: Math.cos(a) * r, y, z: Math.sin(a) * r, d: 0, v: 0, band: i % 64 });
+      }
+    }
+    const ay = this.beats * 0.12, ax = Math.sin(this.beats * 0.05) * 0.6;
+    const cy = Math.cos(ay), sy = Math.sin(ay), cx = Math.cos(ax), sx = Math.sin(ax);
+    const R = Math.min(w, h) * 0.3 * (1 + this.bass * 0.25);
+    const kick = this.punch > 0.95;
+    g.globalCompositeOperation = 'lighter';
+    for (const p of this.pts) {
+      if (kick) p.v += 0.06 + Math.random() * 0.1;
+      p.v += -p.d * 0.08;                 // ressort : retour sur la sphère
+      p.v *= 0.9;
+      p.d += p.v;
+      const bump = 1 + p.d + (this.bins?.[p.band] ?? 0) * 0.35;
+      let x = p.x * bump, y = p.y * bump, z = p.z * bump;
+      [x, z] = [x * cy - z * sy, x * sy + z * cy];
+      [y, z] = [y * cx - z * sx, y * sx + z * cx];
+      const persp = 2.2 / (2.2 + z);
+      const px = w / 2 + x * R * persp, py = h / 2 + y * R * persp;
+      const size = Math.max(1, 2.2 * s * persp);
+      g.fillStyle = hsl(this.hue + p.band * 2 + z * 40, 90, 55 + 10 * persp, 0.55 * persp);
+      g.fillRect(px - size / 2, py - size / 2, size, size);
+    }
+    g.globalCompositeOperation = 'source-over';
+  }
+
+  // ---- Barres Amiga (copper bars) et défileur sinusoïdal ----
+  copper(g, { w, h, s }) {
+    g.fillStyle = '#000';
+    g.fillRect(0, 0, w, h);
+    // Petites étoiles qui défilent à l'horizontale.
+    this.stars ??= Array.from({ length: 90 }, () => ({ x: Math.random(), y: Math.random(), z: 0.2 + Math.random() * 0.8 }));
+    g.fillStyle = '#fff';
+    for (const st of this.stars) {
+      st.x -= 0.002 * st.z * (1 + this.bass * 2);
+      if (st.x < 0) { st.x += 1; st.y = Math.random(); }
+      g.globalAlpha = st.z;
+      g.fillRect(st.x * w, st.y * h, 2 * s * st.z, 2 * s * st.z);
+    }
+    g.globalAlpha = 1;
+    const bh = h * 0.07;
+    for (let i = 0; i < 8; i++) {
+      const y = h * 0.42 + Math.sin(this.beats * 0.9 + i * 0.45) * h * 0.3 * (0.8 + this.mid * 0.4);
+      const grd = g.createLinearGradient(0, y - bh / 2, 0, y + bh / 2);
+      const hue = this.hue + i * 40;
+      grd.addColorStop(0, hsl(hue, 90, 10));
+      grd.addColorStop(0.5, hsl(hue, 90, 70 + this.flash * 20));
+      grd.addColorStop(1, hsl(hue, 90, 10));
+      g.fillStyle = grd;
+      g.fillRect(0, y - bh / 2, w, bh);
+    }
+    // Défileur : les mots du mode Texte qui cogne, sur une vague.
+    const text = `${(this.words.length ? this.words : ['GABBERKEY']).join('  ***  ')}  ***  ${Math.round(this.opts.bpm())} BPM  ***  `;
+    const size = Math.round(h * 0.11);
+    g.font = `900 ${size}px Impact, "Arial Black", system-ui, sans-serif`;
+    g.textBaseline = 'middle';
+    const cw = size * 0.62;
+    const total = text.length * cw;
+    this.scrollX = ((this.scrollX ?? 0) + (2 + this.bass * 4) * s) % total;
+    for (let i = 0; i * cw - this.scrollX < w + total; i++) {
+      const x = i * cw - this.scrollX;
+      if (x < -cw || x > w + cw) continue;
+      const ch = text[i % text.length];
+      const y = h * 0.8 + Math.sin(x * 0.012 / s + this.beats * 2.5) * h * 0.06 * (1 + this.punch);
+      g.fillStyle = hsl(this.hue + x * 0.2, 100, 60);
+      g.fillText(ch, x, y);
+    }
+    g.textBaseline = 'alphabetic';
+  }
+
+  // ---- Spectrogramme : le son défile en cascade de couleurs (graves en bas) ----
+  spectrogram(g, { w, h }) {
+    const sc = (this.sgram ??= document.createElement('canvas'));
+    if (sc.width !== w || sc.height !== h) { sc.width = w; sc.height = h; sc.getContext('2d').fillStyle = '#000'; sc.getContext('2d').fillRect(0, 0, w, h); }
+    const c = sc.getContext('2d');
+    const step = Math.max(1, Math.round(w / 500));
+    c.drawImage(sc, -step, 0);
+    const hz = this.ctx.sampleRate / this.an.fftSize;
+    const img = c.createImageData(step, h);
+    for (let y = 0; y < h; y++) {
+      const f = 30 * Math.pow(16000 / 30, 1 - y / h);
+      const v = this.freq[Math.min(this.freq.length - 1, Math.round(f / hz))] / 255;
+      // Noir -> violet -> rouge -> jaune -> blanc.
+      const r = Math.min(255, v * 3 * 255), gg = Math.min(255, Math.max(0, v * 3 - 1) * 255), b = Math.min(255, Math.max(0, v < 0.33 ? v * 2.2 : (1 - v) * 1.2 + Math.max(0, v * 3 - 2)) * 255);
+      for (let x = 0; x < step; x++) { const o = (y * step + x) * 4; img.data[o] = r; img.data[o + 1] = gg; img.data[o + 2] = b; img.data[o + 3] = 255; }
+    }
+    c.putImageData(img, w - step, 0);
+    g.drawImage(sc, 0, 0);
+    if (this.flash > 0.5) { g.fillStyle = `rgba(255,255,255,${(this.flash - 0.5) * 0.3})`; g.fillRect(w - 3, 0, 3, h); }
   }
 
   // Niveau moyen 0..1 d'une bande de fréquences.

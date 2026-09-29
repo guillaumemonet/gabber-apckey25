@@ -1,6 +1,7 @@
 // Rendu WebGL du visualiseur.
-// - Modes 3D (shaders sur tout l'écran) : tunnel de néons, paysage synthwave fait de l'historique du spectre, blob
-//   (sphère en raymarching), starfield (hyperespace), fractale (éponge de Menger infinie), lasers de salle au-dessus de la foule.
+// - Modes 3D et GPU (shaders sur tout l'écran) : tunnel de néons, paysage synthwave fait de l'historique du spectre, blob
+//   (sphère en raymarching), starfield (hyperespace), fractale (éponge de Menger infinie), lasers au-dessus de la foule,
+//   ville de spectre, mur de LED, metaballs, plasma, rotozoomer ; simulations : fluide, réaction-diffusion.
 // - Chaîne d'image : le mode (3D, ou un mode 2D recopié depuis son canvas) est dessiné dans une texture, puis une passe
 //   de post-traitement applique les filtres empilables (CRT, kaléidoscope, glitch, stroboscope) et la transition entre modes.
 // Tous : couleurs au tempo, flash et coup de zoom sur chaque kick.
@@ -258,7 +259,218 @@ void main() {
   gl_FragColor = vec4(col, 1.0);
 }`;
 
-export const GL_MODES = Object.keys(SHADERS);
+
+// Ville de spectre : l'historique du spectre en tours de néon qui avancent vers toi (le spectre 3D de Winamp, en ville).
+SHADERS.city = `
+float cellH(vec2 c) {
+  float u = abs(c.x + 0.5) / 12.0;
+  if (u > 1.0) return 0.0;
+  float row = (32.0 - (c.y + 0.5)) * 2.0 - uScroll;
+  float h = texture2D(uHist, vec2(u, row / ${ROWS}.0)).r;
+  return h * h * 2.6 + 0.05;
+}
+void main() {
+  vec2 p = (gl_FragCoord.xy * 2.0 - uRes) / uRes.y;
+  vec3 ro = vec3(0.3, 3.2 + uBass * 0.3, -3.0);
+  vec3 rd = normalize(vec3(p.x, p.y - 0.42, 1.5));
+  vec3 col = mix(vec3(0.0, 0.0, 0.03), hsv(fract(uHue + 0.8), 0.7, 0.3), smoothstep(0.7, -0.2, p.y));
+  // Parcours de la grille case par case (DDA), intersection exacte avec la tour de chaque case.
+  vec3 r = vec3(abs(rd.x) < 1e-4 ? 1e-4 : rd.x, rd.y, abs(rd.z) < 1e-4 ? 1e-4 : rd.z);
+  vec2 cell = floor(ro.xz);
+  vec2 stp = sign(r.xz);
+  vec2 tDelta = abs(1.0 / r.xz);
+  vec2 tMax = ((cell + max(stp, 0.0)) - ro.xz) / r.xz;
+  for (int i = 0; i < 96; i++) {
+    if (cell.y > 34.0) break;
+    float h = cellH(cell);
+    vec3 bmin = vec3(cell.x + 0.12, 0.0, cell.y + 0.12), bmax = vec3(cell.x + 0.88, h, cell.y + 0.88);
+    vec3 t1 = (bmin - ro) / r, t2 = (bmax - ro) / r;
+    vec3 tn3 = min(t1, t2), tf3 = max(t1, t2);
+    float tn = max(max(tn3.x, tn3.y), tn3.z), tf = min(min(tf3.x, tf3.y), tf3.z);
+    if (tf > max(tn, 0.0)) {
+      vec3 q = ro + r * tn;
+      vec3 neon = hsv(fract(uHue + h * 0.07 + cell.x * 0.01), 0.8, 1.0);
+      vec3 b;
+      if (tn == tn3.y) {   // toit : néon avec son contour
+        vec2 f = q.xz - cell;
+        float rim = max(smoothstep(0.8, 0.86, max(f.x, f.y)), smoothstep(0.2, 0.14, min(f.x, f.y)));
+        b = neon * (0.35 + rim * 0.9);
+      } else {             // façade : fenêtres allumées au hasard, arêtes lumineuses
+        float along = tn == tn3.x ? q.z - cell.y : q.x - cell.x;
+        float win = step(0.55, hash(cell * 7.0 + floor(q.y * 6.0) + floor(along * 4.0) * 3.1)) * step(0.35, fract(q.y * 6.0)) * step(0.3, fract(along * 4.0));
+        float edge = smoothstep(0.03, 0.0, min(abs(along - 0.12), abs(along - 0.88))) + smoothstep(0.04, 0.0, abs(q.y - h));
+        b = neon * (0.07 + win * 0.45 + edge * 0.8);
+      }
+      col = mix(b, col, smoothstep(12.0, 32.0, q.z));
+      break;
+    }
+    if (tMax.x < tMax.y) { tMax.x += tDelta.x; cell.x += stp.x; } else { tMax.y += tDelta.y; cell.y += stp.y; }
+  }
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+// Mur de LED : une grille de grosses LED façon écran de scène ; le motif change à chaque mesure.
+SHADERS.ledwall = `
+void main() {
+  vec2 uv = gl_FragCoord.xy / uRes;
+  float cols = 40.0, rows = floor(40.0 * uRes.y / uRes.x);
+  vec2 g = vec2(cols, rows);
+  vec2 cell = floor(uv * g), f = fract(uv * g) - 0.5;
+  vec2 c = (cell + 0.5) / g;
+  float pat = mod(floor(uBeats / 4.0), 5.0);
+  float ph = fract(uBeats);
+  float v = 0.0;
+  if (pat < 0.5) v = step(0.5, fract((cell.x + cell.y) * 0.5 + floor(uBeats) * 0.5)) * (1.0 - ph * 0.6);
+  else if (pat < 1.5) v = smoothstep(0.3, 1.0, sin(cell.x * 0.35 - uBeats * 3.14159 + sin(cell.y * 0.3) * 2.0));
+  else if (pat < 2.5) { vec2 q = (c - 0.5) * vec2(uRes.x / uRes.y, 1.0); v = smoothstep(0.6, 1.0, sin(atan(q.y, q.x) * 4.0 + length(q) * 20.0 - uBeats * 6.28)); }
+  else if (pat < 3.5) v = step(c.y, spec(abs(c.x - 0.5) * 2.0));   // barres du spectre, graves au milieu
+  else { vec2 q = (c - 0.5) * vec2(uRes.x / uRes.y, 1.0); v = smoothstep(0.08, 0.0, abs(length(q) - ph * 1.2)) + uFlash * 0.5; }
+  v = clamp(v + uFlash * 0.25, 0.0, 1.0);
+  float led = smoothstep(0.42, 0.3, length(f));
+  vec3 on = hsv(fract(uHue + c.x * 0.25 + c.y * 0.1), 0.85, 1.0);
+  vec3 col = on * led * (0.06 + v * 1.1) + on * v * 0.08;
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+// Metaballs : des blobs qui fusionnent et se séparent ; leur taille suit les graves, les médiums et les aigus.
+SHADERS.metaballs = `
+void main() {
+  vec2 p = (gl_FragCoord.xy * 2.0 - uRes) / uRes.y;
+  float field = 0.0;
+  vec3 tint = vec3(0.0);
+  for (int i = 0; i < 7; i++) {
+    float fi = float(i);
+    float band = i < 2 ? uBass : i < 5 ? uMid : uHigh;
+    vec2 c = vec2(sin(uBeats * 0.21 * (1.0 + fi * 0.13) + fi * 2.1) * 0.9, cos(uBeats * 0.17 * (1.0 + fi * 0.11) + fi * 1.3) * 0.55);
+    float r = 0.16 + band * 0.22 + uFlash * 0.05;
+    float k = r * r / dot(p - c, p - c);
+    field += k;
+    tint += hsv(fract(uHue + fi * 0.13), 0.8, 1.0) * k;
+  }
+  tint /= max(field, 1e-3);
+  float edge = smoothstep(0.9, 1.0, field) - smoothstep(1.0, 1.25, field);
+  float body = smoothstep(1.0, 1.6, field);
+  vec3 col = tint * (body * 0.55 + edge * 1.6) + tint * 0.12 * smoothstep(0.2, 1.0, field);
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+// Plasma : l'effet démo des années 90, des couleurs qui ondulent sans fin, accéléré par les graves.
+SHADERS.plasma = `
+void main() {
+  vec2 p = (gl_FragCoord.xy * 2.0 - uRes) / uRes.y * (2.5 + uBass * 1.2);
+  float t = uTravel * 0.8;
+  float v = sin(p.x * 1.3 + t) + sin(p.y * 1.7 - t * 0.8) + sin((p.x + p.y) * 1.1 + t * 0.6)
+          + sin(length(p + vec2(sin(t * 0.3), cos(t * 0.4)) * 2.0) * 2.2 - t);
+  vec3 col = hsv(fract(uHue + v * 0.12), 0.85, 0.5 + 0.5 * sin(v * 3.14159));
+  col = mix(col, 1.0 - col, uFlash * 0.6);
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+// Rotozoomer : un damier qui tourne et zoome à l'infini ; coup de zoom sur chaque kick.
+SHADERS.rotozoom = `
+void main() {
+  vec2 p = (gl_FragCoord.xy * 2.0 - uRes) / uRes.y;
+  float a = uBeats * 0.2 + sin(uBeats * 0.1) * 1.5;
+  float z = 2.2 + sin(uBeats * 0.125) * 1.6 - uFlash * 0.8;
+  mat2 m = mat2(cos(a), -sin(a), sin(a), cos(a));
+  vec2 q = m * p * z + vec2(uTravel * 0.7, uTravel * 0.3);
+  vec2 cell = floor(q * 2.0);
+  float chk = mod(cell.x + cell.y, 2.0);
+  vec2 f = fract(q * 2.0) - 0.5;
+  float ring = smoothstep(0.05, 0.0, abs(length(f) - 0.3 - uBass * 0.1));
+  vec3 c1 = hsv(fract(uHue + cell.x * 0.03), 0.8, 1.0), c2 = hsv(fract(uHue + 0.5 + cell.y * 0.03), 0.8, 0.35);
+  vec3 col = mix(c2, c1, chk) + ring * 0.6;
+  col *= 0.75 + 0.25 * smoothstep(1.8, 0.2, length(p));
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+// Simulations (image qui évolue d'une image à l'autre) : fluide et réaction-diffusion.
+// step : calcule l'état suivant depuis uState ; show : dessine l'état.
+const SIMS = {
+  fluid: {
+    scale: 0.35, float: false, iterations: 1,
+    step: `
+uniform sampler2D uState; uniform vec2 uSim; uniform vec4 uSplat; uniform vec3 uSplatCol; uniform float uInit;
+vec2 flow(vec2 p) {
+  float t = uBeats * 0.1;
+  vec2 c = p - 0.5;
+  vec2 swirl = vec2(-c.y, c.x) * (0.6 + uBass * 1.5);
+  vec2 n = vec2(sin(p.y * 9.0 + t * 3.0) + sin(p.y * 17.0 - t * 2.0) * 0.5, cos(p.x * 8.0 - t * 2.5) + cos(p.x * 15.0 + t) * 0.5);
+  return swirl * 0.004 + n * 0.0016 * (1.0 + uMid * 2.0);
+}
+void main() {
+  vec2 uv = gl_FragCoord.xy / uSim;
+  if (uInit > 0.5) { gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); return; }
+  vec3 dye = texture2D(uState, uv - flow(uv)).rgb * 0.985;
+  vec2 d = (uv - uSplat.xy) * vec2(uSim.x / uSim.y, 1.0);
+  dye += uSplatCol * exp(-dot(d, d) / (uSplat.z * uSplat.z)) * uSplat.w;
+  gl_FragColor = vec4(min(dye, vec3(1.2)), 1.0);
+}`,
+    show: `
+uniform sampler2D uState;
+void main() {
+  vec3 c = texture2D(uState, gl_FragCoord.xy / uRes).rgb;
+  c = pow(c, vec3(0.8)) * 1.3;
+  gl_FragColor = vec4(c + uFlash * 0.05, 1.0);
+}`,
+  },
+  reaction: {
+    scale: 0.3, float: true, iterations: 10,
+    step: `
+uniform sampler2D uState; uniform vec2 uSim; uniform vec4 uSplat; uniform vec3 uSplatCol; uniform float uInit;
+void main() {
+  vec2 uv = gl_FragCoord.xy / uSim, px = 1.0 / uSim;
+  if (uInit > 0.5) {
+    float s = step(0.985, hash(floor(gl_FragCoord.xy / 4.0)));
+    gl_FragColor = vec4(1.0, s, 0.0, 1.0);
+    return;
+  }
+  vec2 c = texture2D(uState, uv).rg;
+  vec2 lap = -c;
+  lap += 0.2 * (texture2D(uState, uv + vec2(px.x, 0.0)).rg + texture2D(uState, uv - vec2(px.x, 0.0)).rg
+              + texture2D(uState, uv + vec2(0.0, px.y)).rg + texture2D(uState, uv - vec2(0.0, px.y)).rg);
+  lap += 0.05 * (texture2D(uState, uv + px).rg + texture2D(uState, uv - px).rg
+               + texture2D(uState, uv + vec2(px.x, -px.y)).rg + texture2D(uState, uv - vec2(px.x, -px.y)).rg);
+  float feed = 0.034 + uBass * 0.012, kill = 0.0605 + uMid * 0.002;
+  float abb = c.r * c.g * c.g;
+  float a = c.r + (lap.r - abb + feed * (1.0 - c.r));
+  float b = c.g + (0.5 * lap.g + abb - (kill + feed) * c.g);
+  vec2 d = (uv - uSplat.xy) * vec2(uSim.x / uSim.y, 1.0);
+  b += step(length(d), uSplat.z) * uSplat.w;
+  gl_FragColor = vec4(clamp(a, 0.0, 1.0), clamp(b, 0.0, 1.0), 0.0, 1.0);
+}`,
+    show: `
+uniform sampler2D uState; uniform vec2 uSim;
+void main() {
+  vec2 uv = gl_FragCoord.xy / uRes;
+  float b = texture2D(uState, uv).g;
+  float e = abs(b - texture2D(uState, uv + vec2(1.5 / uSim.x, 0.0)).g) * 12.0;
+  vec3 col = hsv(fract(uHue + b * 0.5), 0.8, smoothstep(0.08, 0.35, b)) + hsv(fract(uHue + 0.5), 0.6, 1.0) * e;
+  gl_FragColor = vec4(col, 1.0);
+}`,
+  },
+};
+
+// La réaction-diffusion a besoin de textures à virgule (demi-précision) où l'on peut dessiner.
+function halfFloat(gl) {
+  const ext = gl.getExtension('OES_texture_half_float');
+  if (!ext) return null;
+  gl.getExtension('EXT_color_buffer_half_float');
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 4, 4, 0, gl.RGBA, ext.HALF_FLOAT_OES, null);
+  const fb = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.deleteFramebuffer(fb);
+  gl.deleteTexture(tex);
+  return ok ? { type: ext.HALF_FLOAT_OES, linear: !!gl.getExtension('OES_texture_half_float_linear') } : null;
+}
+const FLOAT_OK = (() => { try { const gl = document.createElement('canvas').getContext('webgl'); return !!(gl && halfFloat(gl)); } catch { return false; } })();
+
+export const GL_MODES = [...Object.keys(SHADERS), ...Object.keys(SIMS).filter(k => !SIMS[k].float || FLOAT_OK)];
 
 // Recopie une texture (modes 2D) ; post-traitement : filtres (CRT…) et transitions entre modes.
 const COPY = `precision highp float; uniform sampler2D uTex; uniform vec2 uRes;
@@ -347,6 +559,8 @@ export class VizGL {
     this.a = null;   // image du mode en cours (texture + framebuffer), à la taille de sortie
     this.b = null;   // dernière image du mode précédent (transitions)
     this.lo = null;  // image d'un mode 3D, calculée plus petite puis agrandie
+    this.sims = {};  // états des simulations (deux images qui se relaient)
+    this.half = halfFloat(gl);
     this.trans = null;
   }
 
@@ -361,10 +575,14 @@ export class VizGL {
     return tex;
   }
 
-  target(w, h) {
+  target(w, h, float = false) {
     const gl = this.gl;
     const tex = this.texture();
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    if (float && !this.half.linear) {
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    }
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, float ? this.half.type : gl.UNSIGNED_BYTE, null);
     const fb = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
@@ -458,19 +676,76 @@ export class VizGL {
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.lo.fb);
     gl.viewport(0, 0, sw, sh);
     this.use(pr);
+    this.textures();
+    this.common(pr, v, sw, sh);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    this.copy(this.lo.tex);
+  }
+
+  common(pr, v, w, h) {
+    const gl = this.gl;
+    gl.uniform2f(pr.u('uRes'), w, h);
+    for (const [n, val] of [['uBeats', v.beats], ['uBass', v.bass], ['uMid', v.mid], ['uHigh', v.high], ['uFlash', v.flash],
+      ['uHue', (((v.hue % 360) + 360) % 360) / 360], ['uScroll', this.scroll ?? 0], ['uTravel', v.travel], ['uTime', v.time]]) gl.uniform1f(pr.u(n), val);
+    gl.uniform1i(pr.u('uSpec'), 0);
+    gl.uniform1i(pr.u('uHist'), 1);
+  }
+
+  textures() {
+    const gl = this.gl;
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.specTex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, BINS, 1, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, this.spec);
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, this.histTex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, BINS, ROWS, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, this.hist);
-    gl.uniform2f(pr.u('uRes'), sw, sh);
-    for (const [n, val] of [['uBeats', v.beats], ['uBass', v.bass], ['uMid', v.mid], ['uHigh', v.high], ['uFlash', v.flash],
-      ['uHue', (((v.hue % 360) + 360) % 360) / 360], ['uScroll', this.scroll ?? 0], ['uTravel', v.travel], ['uTime', v.time]]) gl.uniform1f(pr.u(n), val);
-    gl.uniform1i(pr.u('uSpec'), 0);
-    gl.uniform1i(pr.u('uHist'), 1);
+  }
+
+  isSim(mode) { return mode in SIMS; }
+
+  // Une simulation avance d'un pas (ou plusieurs), puis son état est dessiné dans l'image du mode.
+  // splat : { x, y, r, w, col: [r, g, b] } : encre (fluide) ou germes (réaction-diffusion) ajoutés à cette image.
+  simulate(mode, v, splat) {
+    const gl = this.gl;
+    const S = SIMS[mode];
+    const w = Math.max(8, Math.round(this.a.w * S.scale)), h = Math.max(8, Math.round(this.a.h * S.scale));
+    let st = this.sims[mode];
+    if (!st || st.w !== w || st.h !== h) {
+      if (st) for (const t of st.t) this.drop(t);
+      st = { t: [this.target(w, h, S.float), this.target(w, h, S.float)], w, h, i: 0, init: true };
+      this.sims[mode] = st;
+    }
+    this.textures();
+    const pr = this.program(`sim:${mode}`, HEAD + S.step);
+    const n = st.init ? 1 : S.iterations;
+    for (let k = 0; k < n; k++) {
+      const src = st.t[st.i], dst = st.t[1 - st.i];
+      gl.bindFramebuffer(gl.FRAMEBUFFER, dst.fb);
+      gl.viewport(0, 0, w, h);
+      this.use(pr);
+      gl.activeTexture(gl.TEXTURE2);
+      gl.bindTexture(gl.TEXTURE_2D, src.tex);
+      this.common(pr, v, w, h);
+      gl.uniform1i(pr.u('uState'), 2);
+      gl.uniform2f(pr.u('uSim'), w, h);
+      gl.uniform1f(pr.u('uInit'), st.init ? 1 : 0);
+      const sp = k === 0 && splat ? splat : { x: -1, y: -1, r: 0.001, w: 0, col: [0, 0, 0] };
+      gl.uniform4f(pr.u('uSplat'), sp.x, sp.y, sp.r, sp.w);
+      gl.uniform3f(pr.u('uSplatCol'), ...sp.col);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      st.i = 1 - st.i;
+    }
+    st.init = false;
+    const show = this.program(`show:${mode}`, HEAD + S.show);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.a.fb);
+    gl.viewport(0, 0, this.a.w, this.a.h);
+    this.use(show);
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, st.t[st.i].tex);
+    this.common(show, v, this.a.w, this.a.h);
+    gl.uniform1i(show.u('uState'), 2);
+    gl.uniform2f(show.u('uSim'), w, h);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
-    this.copy(this.lo.tex);
   }
 
   // Un mode 2D (canvas) devient l'image du mode.

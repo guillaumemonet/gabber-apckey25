@@ -20,7 +20,7 @@ import { SHAPES } from './tr909.js';
 import { Patch, BOX_TYPES, BOX_ORDER, SOURCE_COLORS, boxDefaults, defaultPatch, mergePatch, wouldLoop } from './patch.js';
 import { makeZip } from './zip.js';
 import { packFile, readFile, FILE_EXT } from './project.js';
-import { Visualizer, VIZ_MODES, VIZ_FILTERS } from './visualizer.js';
+import { Visualizer, VIZ_MODES, VIZ_2D, VIZ_3D, VIZ_FILTERS } from './visualizer.js';
 import { FX_TYPES as TFX_TYPES, FX_BANK, FX_FAMILY_COLORS, fxDefaults, bankName } from './trackfx.js';
 import { KICK_PARAMS, KICK_PRESETS, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
 import { Decks, DECK_IDS, DECK_KNOBS, deckKnobDefs, defaultDecksState, mergeDecksState, guessBpm, vinylTurns, rateFromSpin } from './decks.js';
@@ -33,7 +33,7 @@ translatePage();
 
 const BANKS = 15;   // SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = banques 6-10, une 2e fois = 11-15
 const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (EQ aussi via SUSTAIN)
-const UI_PAGES = [...PAGE_ORDER, 'tr', 'acid', 'decks', 'osc', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
+const UI_PAGES = [...PAGE_ORDER, 'tr', 'acid', 'decks', 'osc', 'viz', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
 let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory, acid, decks, patch, oscSynth, viz;
@@ -64,7 +64,7 @@ const state = {
   roll: defaultRoll(),                // piano roll : bloc édité, grille, saisie pas à pas
   osc: defaultOscState(),             // synthé à oscillateurs : réglages, preset, presets perso
   keys: 'synth',                      // synthé joué au clavier : 'synth' ou 'osc' (celui de la fenêtre active)
-  viz: defaultViz(),                  // visualiseur : mode, changement automatique
+  viz: null,                          // visualiseur : mode, réglages, mots (préparé au démarrage)
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -217,6 +217,7 @@ async function restore() {
   const saved = await store.loadState().catch(() => null);
   const firstRun = !saved;
   state.gen = defaultGen();
+  state.viz = mergeViz(saved?.viz);
   state.banks = Array.from({ length: BANKS }, () => new Array(40).fill(null));
   if (!saved) {
     kit.forEach((s, i) => { state.banks[0][i] = newPad(soundName(s.name), s.color, `builtin:${i}`, s.buffer); });
@@ -244,7 +245,6 @@ async function restore() {
     state.roll = mergeRoll(saved.roll);
     state.osc = mergeOscState(saved.osc);
     state.keys = saved.keys === 'osc' ? 'osc' : 'synth';
-    state.viz = mergeViz(saved.viz);
     state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
@@ -434,6 +434,7 @@ function knobDefs(page = state.page) {
   if (page === 'synth') return synthKnobDefs();
   if (page === 'acid') return acidKnobDefs();
   if (page === 'osc') return oscKnobDefs();
+  if (page === 'viz') return vizKnobDefs();
   if (page === 'decks') return [...deckKnobDefs(), masterDef()];
   return page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[page].params;
 }
@@ -444,6 +445,7 @@ function knobTarget(def, page = state.page) {
   if (page === 'pad') return currentPad()?.p;
   if (def.acid) return state.acid.params;
   if (def.osc) return state.osc.params;
+  if (def.viz) return state.viz.k;
   if (def.deck) return def.deck === 'x' ? state.decks : state.decks[def.deck];
   if (page === 'tr') return def.group === 'global' ? state.tr.globals : state.tr.params[state.tr.sel];
   return state.globals;
@@ -477,6 +479,10 @@ function turnKnob(index, { delta, value }, page = state.page) {
     renderAcidKnobs();
   } else if (def.osc) {
     oscChanged();
+  } else if (def.viz) {
+    if (def.id === 'strobe' && target.strobe > 0) toast(t('viz.strobeWarn'), 5000);
+    applyVizKnobs();
+    renderViz();
   } else if (def.deck) {
     decks.update();
     renderDecks();
@@ -924,7 +930,7 @@ function buildApcPage() {
 }
 
 // Groupe de potards d'une fenêtre qui correspond à une page (entouré quand l'APC le pilote).
-const PAGE_GROUP = { osc: '#osc-modules', synth: '#synth-knobs', pad: '#pad-knobs, #ed-knobs', acid: '#acid-knobs', decks: '.decks', tr: '#tr-knobs', eq: '#master-eq', fx: '#master-fx' };
+const PAGE_GROUP = { viz: '#viz-knobs', osc: '#osc-modules', synth: '#synth-knobs', pad: '#pad-knobs, #ed-knobs', acid: '#acid-knobs', decks: '.decks', tr: '#tr-knobs', eq: '#master-eq', fx: '#master-fx' };
 const pageGroup = page => (mixField(page) ? '#mixer' : PAGE_GROUP[page]);
 
 function renderPages() {
@@ -938,7 +944,7 @@ function renderPages() {
 // Fenêtre active -> page des potards de l'APC (les autres fenêtres ne changent rien).
 function pageForWindow(id) {
   if (id === 'mix') return mixField(state.page) || ['eq', 'fx'].includes(state.page) ? null : 'mix_vol';
-  return { piano: 'synth', osc: 'osc', tr: 'tr', acid: 'acid', decks: 'decks', editor: 'pad', pads: 'pad' }[id] ?? null;
+  return { piano: 'synth', osc: 'osc', viz: 'viz', tr: 'tr', acid: 'acid', decks: 'decks', editor: 'pad', pads: 'pad' }[id] ?? null;
 }
 
 const ARC = 270;
@@ -4980,23 +4986,49 @@ function bindFiles() {
 
 const VIZ_ICONS = {
   spectrum: 'v-spectrum', scope: 'osc', milk: 'v-milk', vu: 'v-vu', bang: 'v-bang',
+  particles: 'v-particles', copper: 'v-copper', spectrogram: 'v-sgram',
   tunnel: 'v-tunnel', terrain: 'v-terrain', blob: 'v-blob', starfield: 'v-stars', fractal: 'v-fractal', lasers: 'v-lasers',
+  city: 'v-city', ledwall: 'v-led', metaballs: 'v-meta', plasma: 'v-plasma', rotozoom: 'v-roto', fluid: 'v-fluid', reaction: 'v-reaction',
 };
+// Réglages du visualiseur (potards de l'écran et de l'APC, page « Visualiseur ») : positions 0..1.
+const pct100 = v => `${Math.round(v * 100)}%`;
+const VIZ_KNOBS = [
+  { id: 'speed', min: 0.25, max: 2, def: 1, curve: 'exp', fmt: v => `×${v.toFixed(2)}` },
+  { id: 'hue', min: 0, max: 360, def: 0, fmt: v => `${Math.round(v)}°` },
+  { id: 'flash', min: 0, max: 1.5, def: 1, fmt: pct100 },
+  { id: 'sens', min: 0.5, max: 2.5, def: 1, curve: 'exp', fmt: v => `×${v.toFixed(2)}` },
+  { id: 'crt', min: 0, max: 1, def: 0, fmt: pct100 },
+  { id: 'kal', min: 0, max: 4, def: 0, steps: 5, fmt: v => (v ? `${4 + v * 2}` : '—') },
+  { id: 'glitch', min: 0, max: 1, def: 0, fmt: pct100 },
+  { id: 'strobe', min: 0, max: 1, def: 0, steps: 2, fmt: v => (v ? 'ON' : '—') },
+];
+const vizKnobDefs = () => VIZ_KNOBS.map(d => ({ ...d, viz: true, label: t(`viz.k.${d.id}`) }));
+const vizKnobDefaults = () => Object.fromEntries(VIZ_KNOBS.map(d => [d.id, toPos(d, d.def)]));
+const vizVal = id => { const d = VIZ_KNOBS.find(k => k.id === id); return toValue(d, state.viz.k[id]); };
+// Réglages -> visualiseur (les filtres s'allument dès que leur potard n'est plus à zéro).
+function applyVizKnobs() {
+  viz.speed = vizVal('speed');
+  viz.hueShift = vizVal('hue');
+  viz.flashGain = vizVal('flash');
+  viz.sens = vizVal('sens');
+  const kal = vizVal('kal');
+  viz.fx = { crt: vizVal('crt'), kaleido: kal ? 4 + kal * 2 : 0, glitch: vizVal('glitch'), strobe: vizVal('strobe') > 0 };
+}
 const VIZ_FX_ICONS = { crt: 'v-crt', kaleido: 'v-kaleido', glitch: 'v-glitch', strobe: 'v-strobe' };
 // Fonctions (et non constantes) : l'état de départ les appelle avant que ce code ne soit lu.
 function vizWordsDefault() { return 'HARDCORE, GABBER, TERROR, GABBERKEY'; }
-function defaultViz() { return { mode: 'spectrum', auto: false, fx: {}, words: vizWordsDefault() }; }
+function defaultViz() { return { mode: 'spectrum', auto: false, k: vizKnobDefaults(), words: vizWordsDefault() }; }
 function mergeViz(saved) {
-  const fx = {};
-  for (const f of VIZ_FILTERS) if (saved?.fx?.[f]) fx[f] = f === 'kaleido' ? clampInt(saved.fx[f], 4, 12) : true;
+  const k = vizKnobDefaults();
+  for (const id of Object.keys(k)) if (Number.isFinite(saved?.k?.[id])) k[id] = Math.min(1, Math.max(0, saved.k[id]));
+  if (saved?.fx?.crt) k.crt = 1;   // ancienne sauvegarde : filtre CRT allumé
   return {
     mode: VIZ_MODES.includes(saved?.mode) ? saved.mode : 'spectrum',
     auto: !!saved?.auto,
-    fx,
+    k,
     words: typeof saved?.words === 'string' ? saved.words.slice(0, 200) : vizWordsDefault(),
   };
 }
-const clampInt = (v, a, b) => (Number.isFinite(v) ? Math.min(b, Math.max(a, Math.round(v))) : a);
 let vizLabelTimer;
 let projector = null;   // fenêtre projecteur : { win, cv }
 
@@ -5016,19 +5048,29 @@ function buildViz() {
     level: id => (id === 'master' ? masterPeak() : mixer.level(id)),
   });
   viz.mode = state.viz.mode;
-  viz.fx = state.viz.fx;
   viz.words = vizWords();
+  viz.onDrop = () => { if (state.viz.auto) vizStep(1, false); };   // en mode auto, le drop change de mode
+  applyVizKnobs();
+  // Modes en deux groupes : 2D, puis 3D / GPU.
   const modes = $('#viz-modes');
-  for (const m of VIZ_MODES) {
-    const b = document.createElement('button');
-    b.dataset.mode = m;
-    b.dataset.icon = VIZ_ICONS[m];
-    b.className = 'icon-only';
-    b.title = t(`viz.mode.${m}`);
-    b.setAttribute('aria-label', b.title);
-    b.addEventListener('click', () => setVizMode(m));
-    modes.appendChild(b);
+  for (const [group, list] of [['2d', VIZ_2D], ['3d', VIZ_3D]]) {
+    if (!list.length) continue;
+    const seg = document.createElement('div');
+    seg.className = 'segmented';
+    seg.title = t(`viz.group.${group}`);
+    for (const m of list) {
+      const b = document.createElement('button');
+      b.dataset.mode = m;
+      b.dataset.icon = VIZ_ICONS[m];
+      b.className = 'icon-only';
+      b.title = t(`viz.mode.${m}`);
+      b.setAttribute('aria-label', b.title);
+      b.addEventListener('click', () => setVizMode(m));
+      seg.appendChild(b);
+    }
+    modes.appendChild(seg);
   }
+  buildKnobRow($('#viz-knobs'), 'viz');
   const fxBox = $('#viz-fx');
   for (const f of VIZ_FILTERS) {
     const b = document.createElement('button');
@@ -5097,14 +5139,16 @@ function setVizMode(mode, persist = true) {
   if (persist) save();
 }
 
+// Bouton d'un filtre : l'allume (à un réglage moyen) ou l'éteint ; le kaléidoscope passe de 6 à 8, 10, 12 branches puis s'éteint.
+const VIZ_FX_KNOB = { crt: 'crt', kaleido: 'kal', glitch: 'glitch', strobe: 'strobe' };
 function toggleVizFx(f) {
-  const fx = state.viz.fx;
-  if (f === 'kaleido') fx.kaleido = fx.kaleido ? (fx.kaleido >= 12 ? 0 : fx.kaleido + 2) : 6;   // 6, 8, 10, 12 branches puis coupé
-  else fx[f] = !fx[f];
-  if (!fx[f]) delete fx[f];
-  if (f === 'strobe' && fx.strobe) toast(t('viz.strobeWarn'), 5000);
-  viz.fx = fx;
+  const k = state.viz.k, id = VIZ_FX_KNOB[f];
+  if (f === 'kaleido') { const v = Math.round(k.kal * 4); k.kal = v === 0 ? 0.25 : v >= 4 ? 0 : (v + 1) / 4; }
+  else k[id] = k[id] > 0 ? 0 : f === 'glitch' ? 0.6 : 1;
+  if (f === 'strobe' && k.strobe > 0) toast(t('viz.strobeWarn'), 5000);
+  applyVizKnobs();
   renderViz();
+  renderKnobRow('viz');
   save();
 }
 
@@ -5164,11 +5208,11 @@ function openProjector() {
 }
 
 function renderViz() {
-  for (const b of $('#viz-modes').children) b.classList.toggle('active', b.dataset.mode === state.viz.mode);
+  for (const b of $('#viz-modes').querySelectorAll('button')) b.classList.toggle('active', b.dataset.mode === state.viz.mode);
   for (const b of $('#viz-fx').children) {
     const f = b.dataset.fx;
-    b.classList.toggle('active', !!state.viz.fx[f]);
-    if (f === 'kaleido') b.textContent = state.viz.fx.kaleido ? `${t('viz.fx.kaleido')} ×${state.viz.fx.kaleido}` : t('viz.fx.kaleido');
+    b.classList.toggle('active', !!viz.fx[f]);
+    if (f === 'kaleido') b.textContent = viz.fx.kaleido ? `${t('viz.fx.kaleido')} ×${viz.fx.kaleido}` : t('viz.fx.kaleido');
   }
   $('#viz-auto').classList.toggle('active', state.viz.auto);
   $('#viz-proj').classList.toggle('active', !!projector);
