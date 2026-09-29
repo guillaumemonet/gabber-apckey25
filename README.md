@@ -112,7 +112,7 @@ Everything can also be done with the mouse. On the computer keyboard, the middle
 | 14 | **Melodies** (hardcore / gabber, 190 BPM, F minor): 40 melodic loops with no drums, to layer on any beat: themes (hoover, screech, horn, dark lead, mentasm, acid), emotional themes (piano, strings, staccato, bells, choir, pluck, supersaw), 2-bar hooks, chord / arpeggio / bass-line loops, and 8 full themes (melody + chords + bass) over the classic progressions Fm–Db–Eb–Cm, Fm–Db–Ab–Eb, Fm–Bbm–Db–C and Fm–Eb–Db–C |
 | 15 | **Hardstyle melodies** (150 BPM): 40 loops: euphoric supersaw leads, raw screech melodies, raw leads and hoover, plucks, piano and bells intros, choir and strings, euphoric chords, reverse-bass lines, and 8 full anthems (lead + chords + reverse bass) |
 
-To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. The **✎ pencil** that appears when the mouse is over a pad opens the **pad editor** on it: name, LED colour, playback mode (**One-shot**, **Hold** or **Loop**) and the pad's **8 knobs** (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs.
+To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. Under the pad grid, **8 knobs** set the selected pad (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs when the Pads window is active. The **✎ pencil** that appears when the mouse is over a pad opens the **pad editor** on it: name, LED colour, playback mode (**One-shot**, **Hold** or **Loop**) and the pad's **8 knobs** (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs.
 
 ## TR-909
 
@@ -336,7 +336,7 @@ The global tempo (header, or the **Tap** button) drives every loop. Each loop st
 
 ## Knobs
 
-There is no global knob window: **each instrument has its knobs in its own window** (synth, pad editor, TR-909 under its grid, TB-303, turntables, kick designer), and the mixer has a **Master** section (master EQ, global effects and volumes).
+There is no global knob window: **each instrument has its knobs in its own window** (synth, pads window and pad editor, TR-909 under its grid, TB-303, turntables, kick designer), and the mixer has a **Master** section (master EQ, global effects and volumes).
 
 The 8 knobs of the APC (K1-K8) control one **page** at a time:
 - the page **follows the active window**: click the TB-303 and K1-K8 control the TB-303, click the TR-909 and they control the selected 909 instrument, and so on (synth, turntables, pad editor, mixer);

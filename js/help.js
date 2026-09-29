@@ -7,6 +7,7 @@ const HELP = {
       <p>The 40-pad sampler, laid out like the APC grid (pads 1-8 at the bottom).</p>
       <ul>
         <li><b>Click</b> a pad (or hit it on the APC) to play it; <b>Shift + click</b> selects it without playing.</li>
+        <li><b>Knobs</b> under the grid: volume, pitch, pan, filter, start point, delay and reverb sends, and mode of the selected pad (also on the APC knobs K1-K8 when this window is active).</li>
         <li><b>✎</b> (shown when the mouse is over a pad) opens the <b>pad editor</b>: name, colour, playback mode, knobs, loop tempo.</li>
         <li><b>Drop an audio file</b> (WAV, MP3, FLAC, OGG…) on a pad to load it.</li>
         <li>Playback modes: <b>one-shot</b> (plays to the end), <b>hold</b> (as long as the pad is pressed), <b>loop</b> (starts on the next bar, press again to stop).</li>
@@ -128,6 +129,7 @@ const HELP = {
       <p>Le sampler de 40 pads, disposé comme la grille de l'APC (pads 1 à 8 en bas).</p>
       <ul>
         <li><b>Clic</b> sur un pad (ou frappe sur l'APC) pour le jouer ; <b>Maj + clic</b> le sélectionne sans le jouer.</li>
+        <li><b>Potards</b> sous la grille : volume, hauteur, panoramique, filtre, point de départ, envois delay et reverb, et mode du pad sélectionné (aussi sur les potards K1-K8 de l'APC quand cette fenêtre est active).</li>
         <li><b>✎</b> (visible au survol d'un pad) ouvre l'<b>éditeur de pad</b> : nom, couleur, mode de lecture, potards, tempo de boucle.</li>
         <li><b>Glisse un fichier audio</b> (WAV, MP3, FLAC, OGG…) sur un pad pour le charger.</li>
         <li>Modes : <b>one-shot</b> (joue jusqu'au bout), <b>maintenu</b> (tant que le pad est appuyé), <b>boucle</b> (démarre à la mesure suivante, un nouvel appui l'arrête).</li>

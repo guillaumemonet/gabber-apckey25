@@ -133,6 +133,7 @@ async function start() {
   buildBanks();
   buildEditor();
   buildApcPage();
+  buildKnobRow($('#pad-knobs'), 'pad');
   buildKnobRow($('#tr-knobs'), 'tr');
   buildKnobRow($('#master-eq'), 'eq');
   buildKnobRow($('#master-fx'), 'fx');
@@ -666,7 +667,15 @@ function renderPad(i) {
   el.querySelector('.name').textContent = pad ? pad.name : t('pad.empty');
 }
 
-function renderPads() { for (let i = 0; i < 40; i++) renderPad(i); }
+function renderPads() { for (let i = 0; i < 40; i++) renderPad(i); renderPadKnobs(); }
+
+// Potards du pad sélectionné, sous la grille de la fenêtre des pads (les mêmes que dans l'éditeur).
+function renderPadKnobs() {
+  if (!knobRows.pad) return;
+  renderKnobRow('pad');
+  const pad = currentPad();
+  $('#pad-knobs-name').textContent = pad ? `Pad ${state.selected + 1} · ${pad.name}` : t('pads.knobsEmpty', { n: state.selected + 1 });
+}
 
 function buildBanks() {
   const wrap = $('#banks');
@@ -845,6 +854,7 @@ function renderEditorKnobs() {
     el.querySelector('.value').textContent = pad ? def.fmt(toValue(def, p)) : '—';
     el.style.opacity = pad ? 1 : 0.4;
   });
+  renderPadKnobs();
 }
 
 // Crayon d'un pad : ouvre l'éditeur sur ce pad, et les potards de l'APC passent sur ses réglages.
@@ -869,7 +879,7 @@ function buildApcPage() {
 }
 
 // Groupe de potards d'une fenêtre qui correspond à une page (entouré quand l'APC le pilote).
-const PAGE_GROUP = { synth: '#synth-knobs', pad: '#ed-knobs', acid: '#acid-knobs', decks: '.decks', tr: '#tr-knobs', eq: '#master-eq', fx: '#master-fx' };
+const PAGE_GROUP = { synth: '#synth-knobs', pad: '#pad-knobs, #ed-knobs', acid: '#acid-knobs', decks: '.decks', tr: '#tr-knobs', eq: '#master-eq', fx: '#master-fx' };
 const pageGroup = page => (mixField(page) ? '#mixer' : PAGE_GROUP[page]);
 
 function renderPages() {
@@ -877,7 +887,7 @@ function renderPages() {
   if (sel) sel.value = state.page;
   for (const el of document.querySelectorAll('.apc-live')) el.classList.remove('apc-live');
   const g = pageGroup(state.page);
-  if (g) document.querySelector(g)?.classList.add('apc-live');
+  if (g) for (const el of document.querySelectorAll(g)) el.classList.add('apc-live');
 }
 
 // Fenêtre active -> page des potards de l'APC (les autres fenêtres ne changent rien).

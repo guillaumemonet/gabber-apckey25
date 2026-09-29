@@ -348,6 +348,9 @@ footer { padding: 4px 20px 8px; }
 .apc-page select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
 .mini-knobs.row-knobs { grid-template-columns: repeat(8, 1fr); }
 .tr-knobs { margin-top: 12px; }
+.pad-knobs { margin-top: 12px; }
+.pad-knobs-title { display: flex; align-items: baseline; gap: 10px; font-size: 12px; margin-bottom: 4px; }
+.pad-knobs-title b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
 .mix-master { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
 .mm-group { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px 8px; }
 .mm-group > span { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 4px; }

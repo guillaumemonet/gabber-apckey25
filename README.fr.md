@@ -112,7 +112,7 @@ Tout se fait aussi à la souris. Sur le clavier de l'ordinateur, la rangée du m
 | 14 | **Mélodies** (hardcore / gabber, 190 BPM, fa mineur) : 40 boucles mélodiques sans batterie, à poser sur n'importe quel beat : thèmes (hoover, screech, horn, lead sombre, mentasm, acid), thèmes émotionnels (piano, cordes, staccato, cloches, chœur, pluck, supersaw), hooks de 2 mesures, boucles d'accords / d'arpèges / de basse, et 8 thèmes complets (mélodie + accords + basse) sur les suites classiques Fm–Db–Eb–Cm, Fm–Db–Ab–Eb, Fm–Bbm–Db–C et Fm–Eb–Db–C |
 | 15 | **Mélodies hardstyle** (150 BPM) : 40 boucles : leads euphoriques au supersaw, mélodies de screech raw, leads et hoover raw, plucks, intros au piano et aux cloches, chœur et cordes, accords euphoriques, lignes de reverse bass, et 8 hymnes complets (lead + accords + reverse bass) |
 
-Pour charger ton propre son, glisse un fichier audio (WAV, MP3, FLAC, OGG…) sur un pad ou sur l'éditeur, ou utilise **Charger un son…**. Le **crayon ✎**, qui apparaît au survol d'un pad, ouvre l'**éditeur de pad** sur ce pad : nom, couleur de la LED, mode de lecture (**One-shot**, **Maintien** ou **Boucle**) et les **8 potards** du pad (volume, hauteur, panoramique, filtre, début, delay, reverb, mode), aussi sur les potards de l'APC.
+Pour charger ton propre son, glisse un fichier audio (WAV, MP3, FLAC, OGG…) sur un pad ou sur l'éditeur, ou utilise **Charger un son…**. Sous la grille des pads, **8 potards** règlent le pad sélectionné (volume, hauteur, panoramique, filtre, début, delay, reverb, mode), aussi sur les potards de l'APC quand la fenêtre Pads est active. Le **crayon ✎**, qui apparaît au survol d'un pad, ouvre l'**éditeur de pad** sur ce pad : nom, couleur de la LED, mode de lecture (**One-shot**, **Maintien** ou **Boucle**) et les **8 potards** du pad (volume, hauteur, panoramique, filtre, début, delay, reverb, mode), aussi sur les potards de l'APC.
 
 ## TR-909
 
@@ -336,7 +336,7 @@ Le tempo global (en-tête, ou bouton **Tap**) pilote toutes les boucles. Chacune
 
 ## Potentiomètres
 
-Il n'y a pas de fenêtre de potards globale : **chaque instrument a ses potards dans sa propre fenêtre** (synthé, éditeur de pad, TR-909 sous sa grille, TB-303, platines, designer de kick), et la table de mixage a une section **Master** (EQ du master, effets globaux et volumes).
+Il n'y a pas de fenêtre de potards globale : **chaque instrument a ses potards dans sa propre fenêtre** (synthé, fenêtre des pads et éditeur de pad, TR-909 sous sa grille, TB-303, platines, designer de kick), et la table de mixage a une section **Master** (EQ du master, effets globaux et volumes).
 
 Les 8 potards de l'APC (K1-K8) pilotent une **page** à la fois :
 - la page **suit la fenêtre active** : clic sur la TB-303 et K1-K8 pilotent la TB-303, clic sur la TR-909 et ils pilotent l'instrument choisi de la 909, et ainsi de suite (synthé, platines, éditeur de pad, mixeur) ;
