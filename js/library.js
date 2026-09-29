@@ -43,7 +43,8 @@ export function libraryItems({ manifest, kit, banks, tl, userSounds = [] }) {
       add({ sampleId: `lib:${p.file}`, name: soundName(p.name), cat: p.cat ?? guessCat(p.name), bpm: p.bpm || 0, bars: p.bars || 0, loop: p.mode === 2 });
     }
   }
-  for (const s of userSounds) add({ sampleId: s.sampleId, name: s.name, cat: s.cat, bpm: 0, bars: 0, loop: false, own: true });
+  // Sons perso : un kick du designer (coup), ou une boucle importée avec son tempo et sa longueur en mesures.
+  for (const s of userSounds) add({ sampleId: s.sampleId, name: s.name, cat: s.cat, bpm: s.bpm || 0, bars: s.bars || 0, loop: !!s.loop, own: true });
   for (const pad of banks.flat()) {
     if (!pad?.sampleId?.startsWith('user:')) continue;
     add({ sampleId: pad.sampleId, name: pad.name, cat: 'mine', bpm: pad.bpm || 0, bars: 0, loop: !!pad.bpm });

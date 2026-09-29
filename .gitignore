@@ -5,6 +5,7 @@ __pycache__/
 
 # Files produced by the app
 *.apckit
+*.gabber
 *.wav
 
 # OS / editors

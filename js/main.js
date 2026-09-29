@@ -4918,8 +4918,9 @@ async function saveFile(kind) {
   let data, ids = [];
   if (kind === 'project') { data = stateSnapshot(); ids = projectSampleIds(); }
   else if (kind === 'song') {
-    data = { bpm: state.bpm, tl: { bars: state.tl.bars, loop: state.tl.loop, zoom: state.tl.zoom, tracks: state.tl.tracks } };
     ids = songSampleIds();
+    // Les sons importés qu'il utilise voyagent avec lui (ils reviennent dans « Mes sons » à l'ouverture).
+    data = { bpm: state.bpm, tl: { bars: state.tl.bars, loop: state.tl.loop, zoom: state.tl.zoom, tracks: state.tl.tracks }, userSounds: state.userSounds.filter(u => ids.includes(u.sampleId)) };
   } else data = TOOL_IO[kind].get();
   toast(t('file.saving'));
   const blob = await packFile(kind, JSON.parse(JSON.stringify(data)), ids, id => store.loadSample(id));
@@ -4960,6 +4961,12 @@ async function loadFile(file) {
     state.tl.zoom = tl.zoom;
     state.tl.playhead = 0;
     state.tl.tracks = tl.tracks;
+    for (const u of Array.isArray(f.data.userSounds) ? f.data.userSounds : []) {
+      if (typeof u?.sampleId !== 'string' || !u.sampleId.startsWith('user:') || state.userSounds.some(x => x.sampleId === u.sampleId)) continue;
+      const num = (v, lo, hi) => (Number.isFinite(v) && v >= lo && v <= hi ? v : 0);
+      state.userSounds.push({ sampleId: u.sampleId, name: String(u.name ?? '').slice(0, 40), cat: LIB_CATS.some(c => c.id === u.cat) ? u.cat : 'mine',
+        bpm: num(u.bpm, 40, 300), bars: num(u.bars, 0, 256), loop: !!u.loop });
+    }
     tlSelect(null, null);
     await loadTlBuffers();
     renderTl();
