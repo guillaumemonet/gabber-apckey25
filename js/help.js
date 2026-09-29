@@ -57,6 +57,18 @@ const HELP = {
         <li><b>APC knobs</b>: the knobs marked K1-K8 (cutoff, resonance, filter envelope, filter decay, drive, LFO depth, release, volume) follow the APC knobs while this window is active.</li>
         <li>It has its own <b>mixer channel</b> (K7 on the mixer pages), can be wired in the <b>Patch</b> window, and is ducked by the <b>sidechain</b> like the synth. Recordings of it become note blocks with its sound; in the <b>piano roll</b>, any note block can use one of its presets.</li>
       </ul>`,
+    viz: `
+      <p>A nod to Winamp: music visualizations that follow the master output. They look their best in full screen, projected during a live set.</p>
+      <ul>
+        <li><b>Spectrum</b>: LED bars from the bass (left) to the treble, with peaks that fall back slowly, and their reflection.</li>
+        <li><b>Oscilloscope</b>: the waveform with a glowing trail, and a stereo figure (Lissajous) in the corner.</li>
+        <li><b>Milk</b>: each image is fed back, zoomed and rotated, under a circle made of the waveform and spinning shapes: swirls and trails, the whole thing punching on every kick.</li>
+        <li><b>VU meters</b>: two hi-fi needle meters (left / right, with a peak light) and an LED bar per mixer channel and for the master.</li>
+        <li><b>3D (WebGL)</b>: <b>3D tunnel</b> (neon rings that fly by at the tempo, rays lit by the spectrum), <b>3D landscape</b> (you fly over a synthwave grid whose relief is the spectrum of the last two bars, bass in the middle, under a striped sun that pulses on the kicks) and <b>3D blob</b> (a sphere deformed by the bass, the mids and the spectrum, with neon lighting).</li>
+        <li>The colours move on with the tempo (one step per beat) and every <b>kick</b> (909, pads, blocks, loops) makes a flash.</li>
+        <li><b>Auto</b> changes mode every 8 bars. <b>Full screen</b> (or F, or a double-click): a click shows the next mode, Esc leaves.</li>
+        <li>Keys while the window is active: 1-7 = mode, ← / → = previous / next, F = full screen. Nothing is drawn while the window is closed.</li>
+      </ul>`,
     roll: `
       <p>Edit the notes of a note block of the timeline: pitch, start, length and velocity.</p>
       <ul>
@@ -204,6 +216,18 @@ const HELP = {
         <li><b>Presets</b> : 12 sons tout prêts (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser). Tape un nom puis <b>Enregistrer</b> pour garder le tien ; la corbeille le supprime.</li>
         <li><b>Potards de l'APC</b> : les potards marqués K1-K8 (coupure, résonance, enveloppe du filtre, déclin du filtre, saturation, quantité du LFO, relâche, volume) suivent les potards de l'APC quand cette fenêtre est active.</li>
         <li>Il a sa propre <b>voie de mixage</b> (K7 sur les pages mixeur), se câble dans la fenêtre <b>Câblage</b> et est baissé par le <b>sidechain</b> comme le synthé. Ses enregistrements deviennent des blocs de notes avec son son ; dans le <b>piano roll</b>, tout bloc de notes peut prendre un de ses presets.</li>
+      </ul>`,
+    viz: `
+      <p>Un clin d'œil à Winamp : des visualisations de la musique qui suivent la sortie générale. Elles sont à leur meilleur en plein écran, projetées pendant un live.</p>
+      <ul>
+        <li><b>Spectre</b> : des barres de LED des graves (à gauche) aux aigus, avec des crêtes qui retombent doucement, et leur reflet.</li>
+        <li><b>Oscilloscope</b> : la forme d'onde avec une traînée lumineuse, et une figure stéréo (Lissajous) dans le coin.</li>
+        <li><b>Milk</b> : chaque image est réinjectée, zoomée et tournée, sous un cercle fait de la forme d'onde et des formes qui tournent : tourbillons et traînées, le tout qui cogne à chaque kick.</li>
+        <li><b>Vumètres</b> : deux vumètres à aiguille façon hi-fi (gauche / droite, avec voyant de crête) et une barre de LED par voie de mixage et pour le master.</li>
+        <li><b>3D (WebGL)</b> : <b>Tunnel 3D</b> (des anneaux de néon qui défilent au tempo, des rayons éclairés par le spectre), <b>Paysage 3D</b> (on survole une grille synthwave dont le relief est le spectre des deux dernières mesures, graves au milieu, sous un soleil rayé qui pulse sur les kicks) et <b>Blob 3D</b> (une sphère déformée par les graves, les médiums et le spectre, éclairée en néon).</li>
+        <li>Les couleurs avancent avec le tempo (un cran par temps) et chaque <b>kick</b> (909, pads, blocs, boucles) fait un flash.</li>
+        <li><b>Auto</b> change de mode toutes les 8 mesures. <b>Plein écran</b> (ou F, ou un double-clic) : un clic passe au mode suivant, Échap pour sortir.</li>
+        <li>Touches quand la fenêtre est active : 1 à 7 = mode, ← / → = précédent / suivant, F = plein écran. Rien n'est dessiné quand la fenêtre est fermée.</li>
       </ul>`,
     roll: `
       <p>Édite les notes d'un bloc de notes de la timeline : hauteur, début, durée et vélocité.</p>

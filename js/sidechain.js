@@ -53,6 +53,7 @@ export class Sidechain {
     this.sampleAmt.connect(this.tl.gain);
     this.sampleAmt.connect(this.acid.gain);
     this.pending = new Set();
+    this.onKick = () => {};             // chaque kick (visualiseur) ; branché par l'application
     this.isRunning = () => false;       // la grille tourne (timeline, 909, boucle) ; branché par l'application
     this.loopKicks = () => [];          // boucles de pads qui contiennent des kicks ; branché par l'application
     this.marks = new Map();             // boucle -> dernier temps programmé
@@ -95,6 +96,7 @@ export class Sidechain {
 
   // Un kick à l'instant `time` (horloge audio). En mode « chaque temps », seuls les temps de la grille comptent.
   kick(time = this.ctx.currentTime) {
+    this.onKick(time);
     if (this.st.source !== 'kicks') return;
     this.duck(time);
   }

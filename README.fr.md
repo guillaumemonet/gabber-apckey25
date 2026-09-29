@@ -23,6 +23,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Synthé en couches** au clavier : 35 presets en 10 familles (cordes, nappes, chœurs, supersaw, hoovers, leads, basses, stabs, claviers, effets) avec ensemble, largeur stéréo, vibrato et 8 potards d'expression, mode accords et arpégiateur calé sur le tempo ;
   - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres, jusqu'à 4 effets d'insert, et un **sidechain** déclenché par les kicks ;
   - **Câblage** : relie librement les outils et des **boîtes à effets** (distorsion, PCF, filtre, delay, reverb, compresseur, bitcrusher), tout calé sur le tempo ;
+  - **Visualiseur** dans l'esprit Winamp : spectre à LED, oscilloscope, tourbillons Milk, vumètres hi-fi et modes 3D (tunnel, paysage synthwave, blob), en plein écran pour les lives ;
   - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **moniteur MIDI**.
 - **Enregistrement WAV** de ta session et **export / import de kits**.
 - Interface en **français ou en anglais**, selon la langue du navigateur.
@@ -41,6 +42,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 | **Table de mixage et sidechain**<br>[![Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](docs/screenshots/mixer-fr.png)](docs/screenshots/mixer-fr.png) | **Câblage**<br>[![Fenêtre Câblage : les outils à gauche, les boîtes à effets au milieu, le master à droite](docs/screenshots/patch-fr.png)](docs/screenshots/patch-fr.png) |
 | **Effets de piste**<br>[![Timeline avec une ligne d'effets sous chaque piste, l'onglet Effets de la bibliothèque et les réglages d'un PCF](docs/screenshots/tlfx-fr.png)](docs/screenshots/tlfx-fr.png) | **Scènes et performance**<br>[![Fenêtre Scènes avec des scènes enregistrées, et les effets de performance](docs/screenshots/scenes-fr.png)](docs/screenshots/scenes-fr.png) |
 | **Piano roll**<br>[![Piano roll : une mélodie de lead hardstyle sur deux mesures, avec ses accords et la bande des vélocités](docs/screenshots/roll-fr.png)](docs/screenshots/roll-fr.png) | **Synthé à oscillateurs**<br>[![Synthé à oscillateurs : trois oscillateurs, filtre, enveloppes, LFO et presets](docs/screenshots/osc-fr.png)](docs/screenshots/osc-fr.png) |
+| **Visualiseur : Milk**<br>[![Visualiseur, mode Milk : tourbillons et traînées autour de la forme d'onde](docs/screenshots/viz-fr.png)](docs/screenshots/viz-fr.png) | **Visualiseur : Paysage 3D**<br>[![Visualiseur, Paysage 3D : grille synthwave façonnée par le spectre](docs/screenshots/viz3d-fr.png)](docs/screenshots/viz3d-fr.png) |
 
 ## Prérequis
 
@@ -294,7 +296,7 @@ La fenêtre **Câblage** relie librement les outils et des **boîtes à effets**
 
 ## Fenêtres des plugins
 
-La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Synthé à oscillateurs, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick), **Studio** (Mixeur, Câblage, Scènes, Performance) et **Système** (Moniteur MIDI). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
+La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Synthé à oscillateurs, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick), **Studio** (Mixeur, Câblage, Scènes, Performance, Visualiseur) et **Système** (Moniteur MIDI). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
 - Chaque fenêtre a une barre de titre : le **titre** à gauche, **?** et **✕** à droite.
 - La **fenêtre active** (au premier plan) est mise en valeur ; les fenêtres s'ouvrent et se ferment avec une transition 3D.
 - **Déplace**-la par sa barre de titre, **redimensionne**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.
@@ -367,6 +369,19 @@ Un synthé façon analogique pour fabriquer tes propres sons, à côté du synth
 - **12 presets** : hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser. Tape un nom puis **Enregistrer** pour garder tes propres presets.
 - **Potards de l'APC** : K1-K8 = coupure, résonance, enveloppe du filtre, déclin du filtre, saturation, quantité du LFO, relâche, volume (marqués à l'écran) quand la fenêtre est active.
 - Il a sa propre **voie de mixage** (K7 sur les pages mixeur), se câble dans la fenêtre **Câblage** et est baissé par le **sidechain** comme le synthé. Ce que tu enregistres dessus devient un bloc de notes avec son son, et dans le **piano roll** tout bloc de notes peut prendre un de ses presets.
+
+## Visualiseur
+
+[![Visualiseur, mode Paysage 3D : une grille synthwave dont le relief est le spectre, sous un soleil rayé](docs/screenshots/viz3d-fr.png)](docs/screenshots/viz3d-fr.png)
+
+Un clin d'œil à Winamp, dans le groupe **Studio** : des visualisations de la musique qui suivent la sortie générale, faites pour être projetées en **plein écran** pendant un live.
+
+- **Spectre** : des barres de LED des graves aux aigus (vert, jaune, rouge) avec des crêtes qui retombent doucement, et leur reflet.
+- **Oscilloscope** : la forme d'onde lumineuse avec sa traînée, et une figure stéréo dans le coin.
+- **Milk** : chaque image est réinjectée, zoomée et tournée, sous un cercle fait de la forme d'onde et des formes qui tournent : tourbillons et traînées qui cognent à chaque kick.
+- **Vumètres** : deux vumètres à aiguille façon hi-fi (gauche / droite, avec voyants de crête) et une barre de LED par voie de mixage et pour le master.
+- **3D (WebGL)** : un **tunnel** de néons qui défile au tempo, un **paysage** synthwave dont le relief est le spectre des deux dernières mesures, et un **blob**, une sphère déformée par le son.
+- Les couleurs avancent avec le tempo et chaque **kick** fait un flash. **Auto** change de mode toutes les 8 mesures. **Plein écran** (ou F, ou un double-clic) : un clic passe au mode suivant, Échap pour sortir. Les touches 1 à 7 choisissent le mode. Rien n'est dessiné quand la fenêtre est fermée.
 
 ## Tempo et boucles
 
@@ -497,6 +512,9 @@ js/presets.js         presets du synthé
 js/performer.js       mode accords et arpégiateur
 js/pianoroll.js       piano roll
 js/osc.js             synthé à oscillateurs
+js/visualizer.js      visualiseur (modes 2D)
+js/viz3d.js           modes 3D du visualiseur (shaders WebGL)
+js/project.js         fichiers .gabber (projet, morceau, réglages des outils)
 js/notes.js           blocs de notes (motifs, regroupement, quantification)
 js/chords.js          suites d'accords (générateur de nappes)
 js/params.js          paramètres des potards
@@ -508,6 +526,7 @@ js/storage.js         sauvegarde locale (IndexedDB)
 tools/serve.py        serveur web local (sans cache)
 tools/build_banks.py  construction des banques de sons
 tools/gabber.py       synthèse des sons gabber
+tools/icons.py        icônes des boutons (génère le CSS)
 sounds/               banques générées + banks.json
 ```
 

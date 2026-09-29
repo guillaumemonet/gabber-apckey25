@@ -20,6 +20,7 @@ import { SHAPES } from './tr909.js';
 import { Patch, BOX_TYPES, BOX_ORDER, SOURCE_COLORS, boxDefaults, defaultPatch, mergePatch, wouldLoop } from './patch.js';
 import { makeZip } from './zip.js';
 import { packFile, readFile, FILE_EXT } from './project.js';
+import { Visualizer, VIZ_MODES } from './visualizer.js';
 import { FX_TYPES as TFX_TYPES, FX_BANK, FX_FAMILY_COLORS, fxDefaults, bankName } from './trackfx.js';
 import { KICK_PARAMS, KICK_PRESETS, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
 import { Decks, DECK_IDS, DECK_KNOBS, deckKnobDefs, defaultDecksState, mergeDecksState, guessBpm, vinylTurns, rateFromSpin } from './decks.js';
@@ -35,7 +36,7 @@ const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (E
 const UI_PAGES = [...PAGE_ORDER, 'tr', 'acid', 'decks', 'osc', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory, acid, decks, patch, oscSynth;
+let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory, acid, decks, patch, oscSynth, viz;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -63,6 +64,7 @@ const state = {
   roll: defaultRoll(),                // piano roll : bloc édité, grille, saisie pas à pas
   osc: defaultOscState(),             // synthé à oscillateurs : réglages, preset, presets perso
   keys: 'synth',                      // synthé joué au clavier : 'synth' ou 'osc' (celui de la fenêtre active)
+  viz: defaultViz(),                  // visualiseur : mode, changement automatique
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -107,6 +109,7 @@ async function start() {
   engine.pumpGain.connect(sidechain.synth).connect(mixer.input('synth'));
   sidechain.pads.connect(engine.padBus);
   engine.padOut = pad => (isDuckedSound(pad.sampleId, padCat(pad)) ? sidechain.pads : engine.padBus);
+  sidechain.onKick = time => viz?.kick(time);   // flash du visualiseur sur chaque kick
   drum.onKick = time => { sidechain.kick(time); if (tlRec?.source === 'tr') tlRec.kicks.push(time); };
   sidechain.isRunning = () => timeline?.playing || drum.running || [...engine.padVoices.values()].some(v => v.mode === 'loop');
   sidechain.loopKicks = padLoopKicks;
@@ -157,6 +160,7 @@ async function start() {
   buildKick();
   buildDecks();
   buildOsc();
+  buildViz();
   buildPatch();
   buildMixer();
   buildSidechain();
@@ -181,6 +185,7 @@ async function start() {
   $('#layout-reset').addEventListener('click', () => wm.reset());
   buildPluginBar();
   buildLibrary();
+  if (wm.isOpen('viz')) viz.start($('#viz-canvas'), $('#viz-gl'));
   $('#start').classList.add('hidden');
   if (libAdded.length) toast(libAdded.map(a => t('lib.added', { name: a.name, n: a.bank })).join(' · '), 6000);
 
@@ -239,6 +244,7 @@ async function restore() {
     state.roll = mergeRoll(saved.roll);
     state.osc = mergeOscState(saved.osc);
     state.keys = saved.keys === 'osc' ? 'osc' : 'synth';
+    state.viz = mergeViz(saved.viz);
     state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
@@ -342,6 +348,7 @@ function stateSnapshot() {
     roll: state.roll,
     osc: state.osc,
     keys: state.keys,
+    viz: state.viz,
     banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
   };
 }
@@ -2846,11 +2853,11 @@ function startLibDrag(e, item) {
 const PLUGIN_GROUPS = [
   ['instruments', ['pads', 'tr', 'acid', 'piano', 'osc', 'decks']],
   ['tools', ['roll', 'editor', 'kick']],
-  ['studio', ['mix', 'patch', 'scenes', 'perf']],
+  ['studio', ['mix', 'patch', 'scenes', 'perf', 'viz']],
   ['system', ['monitor']],
 ];
 
-const PLUGIN_ICONS = { pads: 'pads', tr: 'tr', acid: 'acid', piano: 'keys', osc: 'osc', decks: 'decks', roll: 'roll', editor: 'editor', kick: 'kick', mix: 'mix', patch: 'patch', scenes: 'scenes', perf: 'perf', monitor: 'monitor' };
+const PLUGIN_ICONS = { pads: 'pads', tr: 'tr', acid: 'acid', piano: 'keys', osc: 'osc', decks: 'decks', roll: 'roll', editor: 'editor', kick: 'kick', mix: 'mix', patch: 'patch', scenes: 'scenes', perf: 'perf', monitor: 'monitor', viz: 'viz' };
 
 function buildPluginBar() {
   const nav = $('#plugins');
@@ -2885,6 +2892,7 @@ function onWindowToggle(id, open) {
   if (open && id === 'patch') requestAnimationFrame(renderPatch);
   if (open && id === 'roll') requestAnimationFrame(() => pianoRoll.fit());
   if (!open && id === 'roll') rollStop();
+  if (id === 'viz') { if (open) viz.start($('#viz-canvas'), $('#viz-gl')); else viz.stop(); }
 }
 
 // ---------- Scènes ----------
@@ -4966,6 +4974,102 @@ function bindFiles() {
     e.target.value = '';
     if (file) loadFile(file);
   });
+}
+
+// ---------- Visualiseur (façon Winamp) ----------
+
+const VIZ_ICONS = { spectrum: 'v-spectrum', scope: 'osc', milk: 'v-milk', vu: 'v-vu', tunnel: 'v-tunnel', terrain: 'v-terrain', blob: 'v-blob' };
+function defaultViz() { return { mode: 'spectrum', auto: false }; }
+function mergeViz(saved) { return { mode: VIZ_MODES.includes(saved?.mode) ? saved.mode : 'spectrum', auto: !!saved?.auto }; }
+let vizLabelTimer;
+
+// Temps écoulés, au tempo : la grille des boucles si elle existe, sinon l'horloge audio.
+function vizBeats() {
+  const t = engine.ctx.currentTime - (Number.isFinite(engine.origin) ? engine.origin : 0);
+  return t * state.bpm / 60;
+}
+
+function buildViz() {
+  viz = new Visualizer(engine.ctx, engine.output, {
+    beats: vizBeats,
+    channels: [...CHANNELS.map(id => ({ id, label: t(`mix.short.${id}`) })), { id: 'master', label: 'Master' }],
+    level: id => (id === 'master' ? masterPeak() : mixer.level(id)),
+  });
+  viz.mode = state.viz.mode;
+  const modes = $('#viz-modes');
+  for (const m of VIZ_MODES) {
+    const b = document.createElement('button');
+    b.dataset.mode = m;
+    b.dataset.icon = VIZ_ICONS[m];
+    b.textContent = t(`viz.mode.${m}`);
+    b.addEventListener('click', () => setVizMode(m));
+    modes.appendChild(b);
+  }
+  $('#viz-auto').addEventListener('click', () => { state.viz.auto = !state.viz.auto; renderViz(); save(); });
+  $('#viz-full').addEventListener('click', vizFullscreen);
+  const stage = $('#viz-stage');
+  stage.addEventListener('dblclick', vizFullscreen);
+  // En plein écran : clic = mode suivant.
+  stage.addEventListener('click', () => { if (document.fullscreenElement === stage) setVizMode(VIZ_MODES[(VIZ_MODES.indexOf(state.viz.mode) + 1) % VIZ_MODES.length]); });
+  document.addEventListener('fullscreenchange', () => { renderViz(); if (document.fullscreenElement === stage) vizLabel(); });
+  // Raccourcis quand la fenêtre est active (ou en plein écran) : 1-4 = mode, ← / → = précédent / suivant, F = plein écran.
+  window.addEventListener('keydown', e => {
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (wm?.active !== 'viz' && document.fullscreenElement !== stage) return;
+    const i = VIZ_MODES.indexOf(state.viz.mode);
+    if (/^Digit[1-9]$/.test(e.code) && VIZ_MODES[+e.code.slice(5) - 1]) setVizMode(VIZ_MODES[+e.code.slice(5) - 1]);
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') setVizMode(VIZ_MODES[(i + (e.key === 'ArrowRight' ? 1 : VIZ_MODES.length - 1)) % VIZ_MODES.length]);
+    else if (e.code === 'KeyF') vizFullscreen();
+    else return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }, true);
+  // Mode automatique : un mode différent toutes les 8 mesures.
+  let lastBlock = -1;
+  setInterval(() => {
+    if (!state.viz.auto || !viz.running) return;
+    const block = Math.floor(vizBeats() / (8 * BEATS_PER_BAR));
+    if (lastBlock >= 0 && block !== lastBlock) setVizMode(VIZ_MODES[(VIZ_MODES.indexOf(state.viz.mode) + 1) % VIZ_MODES.length], false);
+    lastBlock = block;
+  }, 250);
+  renderViz();
+}
+
+let masterBuf = null;
+function masterPeak() {
+  masterBuf ??= new Float32Array(engine.analyser.fftSize);
+  engine.analyser.getFloatTimeDomainData(masterBuf);
+  let p = 0;
+  for (const v of masterBuf) p = Math.max(p, Math.abs(v));
+  return p;
+}
+
+function setVizMode(mode, persist = true) {
+  state.viz.mode = mode;
+  viz.mode = mode;
+  renderViz();
+  vizLabel();
+  if (persist) save();
+}
+
+// Nom du mode affiché un instant sur l'image.
+function vizLabel() {
+  const el = $('#viz-label');
+  el.textContent = t(`viz.mode.${state.viz.mode}`);
+  el.classList.add('show');
+  clearTimeout(vizLabelTimer);
+  vizLabelTimer = setTimeout(() => el.classList.remove('show'), 1400);
+}
+
+function vizFullscreen() {
+  const stage = $('#viz-stage');
+  if (document.fullscreenElement) document.exitFullscreen?.();
+  else stage.requestFullscreen?.().catch(() => toast(t('viz.noFull'), 3000));
+}
+
+function renderViz() {
+  for (const b of $('#viz-modes').children) b.classList.toggle('active', b.dataset.mode === state.viz.mode);
+  $('#viz-auto').classList.toggle('active', state.viz.auto);
 }
 
 // ---------- Divers ----------

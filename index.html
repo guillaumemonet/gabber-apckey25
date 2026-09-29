@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=42">
+  <link rel="stylesheet" href="css/style.css?v=43">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -253,6 +253,16 @@
       <div id="osc-modules" class="osc-modules"></div>
     </section>
 
+    <section class="window viz-area" data-win="viz">
+      <div class="section-title">
+        <h2 data-i18n="viz.title"></h2>
+        <div id="viz-modes" class="segmented"></div>
+        <button id="viz-auto" class="icon-only" data-icon="loop" data-i18n-aria="viz.auto" data-i18n-title="viz.auto.title"></button>
+        <button id="viz-full" class="icon-only" data-icon="fullscreen" data-i18n-aria="viz.full" data-i18n-title="viz.full.title"></button>
+      </div>
+      <div id="viz-stage" class="viz-stage"><canvas id="viz-canvas"></canvas><canvas id="viz-gl" hidden></canvas><div id="viz-label" class="viz-label"></div></div>
+    </section>
+
     <section class="window roll-area" data-win="roll">
       <div class="section-title">
         <h2 data-i18n="roll.title"></h2>
@@ -289,39 +299,41 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/acid.js": "./js/acid.js?v=42",
-      "./js/apc.js": "./js/apc.js?v=42",
-      "./js/audio.js": "./js/audio.js?v=42",
-      "./js/decks.js": "./js/decks.js?v=42",
-      "./js/chords.js": "./js/chords.js?v=42",
-      "./js/help.js": "./js/help.js?v=42",
-      "./js/history.js": "./js/history.js?v=42",
-      "./js/i18n.js": "./js/i18n.js?v=42",
-      "./js/kickdesign.js": "./js/kickdesign.js?v=42",
-      "./js/kit.js": "./js/kit.js?v=42",
-      "./js/kits.js": "./js/kits.js?v=42",
-      "./js/library.js": "./js/library.js?v=42",
-      "./js/main.js": "./js/main.js?v=42",
-      "./js/mixer.js": "./js/mixer.js?v=42",
-      "./js/notes.js": "./js/notes.js?v=42",
-      "./js/osc.js": "./js/osc.js?v=42",
-      "./js/params.js": "./js/params.js?v=42",
-      "./js/patch.js": "./js/patch.js?v=42",
-      "./js/performer.js": "./js/performer.js?v=42",
-      "./js/pianoroll.js": "./js/pianoroll.js?v=42",
-      "./js/presets.js": "./js/presets.js?v=42",
-      "./js/project.js": "./js/project.js?v=42",
-      "./js/sidechain.js": "./js/sidechain.js?v=42",
-      "./js/recorder.js": "./js/recorder.js?v=42",
-      "./js/timeline.js": "./js/timeline.js?v=42",
-      "./js/storage.js": "./js/storage.js?v=42",
-      "./js/tr909.js": "./js/tr909.js?v=42",
-      "./js/trackfx.js": "./js/trackfx.js?v=42",
-      "./js/windows.js": "./js/windows.js?v=42",
-      "./js/zip.js": "./js/zip.js?v=42"
+      "./js/acid.js": "./js/acid.js?v=43",
+      "./js/apc.js": "./js/apc.js?v=43",
+      "./js/audio.js": "./js/audio.js?v=43",
+      "./js/decks.js": "./js/decks.js?v=43",
+      "./js/chords.js": "./js/chords.js?v=43",
+      "./js/help.js": "./js/help.js?v=43",
+      "./js/history.js": "./js/history.js?v=43",
+      "./js/i18n.js": "./js/i18n.js?v=43",
+      "./js/kickdesign.js": "./js/kickdesign.js?v=43",
+      "./js/kit.js": "./js/kit.js?v=43",
+      "./js/kits.js": "./js/kits.js?v=43",
+      "./js/library.js": "./js/library.js?v=43",
+      "./js/main.js": "./js/main.js?v=43",
+      "./js/mixer.js": "./js/mixer.js?v=43",
+      "./js/notes.js": "./js/notes.js?v=43",
+      "./js/osc.js": "./js/osc.js?v=43",
+      "./js/params.js": "./js/params.js?v=43",
+      "./js/patch.js": "./js/patch.js?v=43",
+      "./js/performer.js": "./js/performer.js?v=43",
+      "./js/pianoroll.js": "./js/pianoroll.js?v=43",
+      "./js/presets.js": "./js/presets.js?v=43",
+      "./js/project.js": "./js/project.js?v=43",
+      "./js/sidechain.js": "./js/sidechain.js?v=43",
+      "./js/recorder.js": "./js/recorder.js?v=43",
+      "./js/timeline.js": "./js/timeline.js?v=43",
+      "./js/storage.js": "./js/storage.js?v=43",
+      "./js/tr909.js": "./js/tr909.js?v=43",
+      "./js/trackfx.js": "./js/trackfx.js?v=43",
+      "./js/visualizer.js": "./js/visualizer.js?v=43",
+      "./js/viz3d.js": "./js/viz3d.js?v=43",
+      "./js/windows.js": "./js/windows.js?v=43",
+      "./js/zip.js": "./js/zip.js?v=43"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=42"></script>
+  <script type="module" src="js/main.js?v=43"></script>
 </body>
 </html>

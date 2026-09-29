@@ -23,6 +23,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Layered synth** on the keyboard: 35 presets in 10 families (strings, pads, choirs, supersaw, hoovers, leads, basses, stabs, keys, FX) with ensemble, stereo width, vibrato and 8 expression knobs, chord mode and a tempo-synced arpeggiator;
   - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters, up to 4 insert effects, and a **sidechain** triggered by the kicks;
   - **Patch**: wire the tools and **effect boxes** (distortion, PCF, filter, delay, reverb, compressor, bitcrusher) freely, everything in sync with the tempo;
+  - **Visualizer** in the Winamp spirit: LED spectrum, oscilloscope, Milk swirls, hi-fi VU meters and 3D modes (tunnel, synthwave landscape, blob), in full screen for live sets;
   - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **MIDI monitor**.
 - **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
@@ -41,6 +42,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 | **Mixer and sidechain**<br>[![Mixer: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png) | **Patch**<br>[![Patch window: tools on the left, effect boxes in the middle, the master on the right](docs/screenshots/patch-en.png)](docs/screenshots/patch-en.png) |
 | **Track effects**<br>[![Timeline with an effects line under each track, the Effects tab of the library and the settings of a PCF](docs/screenshots/tlfx-en.png)](docs/screenshots/tlfx-en.png) | **Scenes and performance**<br>[![Scenes window with stored scenes, and the performance effects](docs/screenshots/scenes-en.png)](docs/screenshots/scenes-en.png) |
 | **Piano roll**<br>[![Piano roll: a hardstyle lead melody over two bars, with its chords and the velocity lane](docs/screenshots/roll-en.png)](docs/screenshots/roll-en.png) | **Oscillator synth**<br>[![Oscillator synth: three oscillators, filter, envelopes, LFO and presets](docs/screenshots/osc-en.png)](docs/screenshots/osc-en.png) |
+| **Visualizer: Milk**<br>[![Visualizer, Milk mode: swirls and trails around the waveform](docs/screenshots/viz-en.png)](docs/screenshots/viz-en.png) | **Visualizer: 3D landscape**<br>[![Visualizer, 3D landscape: synthwave grid shaped by the spectrum](docs/screenshots/viz3d-en.png)](docs/screenshots/viz3d-en.png) |
 
 ## Requirements
 
@@ -294,7 +296,7 @@ The **Patch** window wires the tools and **effect boxes** freely, like a rack of
 
 ## Plugin windows
 
-The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Oscillator synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer), **Studio** (Mixer, Patch, Scenes, Performance) and **System** (MIDI monitor). Each one opens in a window above the timeline:
+The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Oscillator synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer), **Studio** (Mixer, Patch, Scenes, Performance, Visualizer) and **System** (MIDI monitor). Each one opens in a window above the timeline:
 - Each window has a title bar: the **title** on the left, **?** and **✕** on the right.
 - The **active window** (in front) is highlighted; windows open and close with a 3D transition.
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.
@@ -367,6 +369,19 @@ An analogue-style synth to build your own sounds, next to the layered synth.
 - **12 presets**: hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, wobble, laser. Type a name and **Save** to keep your own presets.
 - **APC knobs**: K1-K8 = cutoff, resonance, filter envelope, filter decay, drive, LFO depth, release, volume (marked on screen) while the window is active.
 - It has its own **mixer channel** (K7 on the mixer pages), is wired in the **Patch** window and ducked by the **sidechain** like the synth. What you record on it becomes a note block with its sound, and in the **piano roll** any note block can use one of its presets.
+
+## Visualizer
+
+[![Visualizer, 3D landscape mode: a synthwave grid whose relief is the spectrum, under a striped sun](docs/screenshots/viz3d-en.png)](docs/screenshots/viz3d-en.png)
+
+A nod to Winamp, in the **Studio** group: music visualizations that follow the master output, made to be projected in **full screen** during a live set.
+
+- **Spectrum**: LED bars from bass to treble (green, yellow, red) with peaks that fall back slowly, and their reflection.
+- **Oscilloscope**: the glowing waveform with its trail, and a stereo figure in the corner.
+- **Milk**: each image is fed back, zoomed and rotated, under a circle made of the waveform and spinning shapes: swirls and trails that punch on every kick.
+- **VU meters**: two hi-fi needle meters (left / right, with peak lights) and an LED bar per mixer channel and for the master.
+- **3D (WebGL)**: a neon **tunnel** that flies by at the tempo, a synthwave **landscape** whose relief is the spectrum of the last two bars, and a **blob**, a sphere deformed by the sound.
+- Colours move on with the tempo and every **kick** makes a flash. **Auto** changes mode every 8 bars. **Full screen** (or F, or a double-click): a click shows the next mode, Esc leaves. Keys 1-7 choose the mode. Nothing is drawn while the window is closed.
 
 ## Tempo and loops
 
@@ -497,6 +512,9 @@ js/presets.js         synth presets
 js/performer.js       chord mode and arpeggiator
 js/pianoroll.js       piano roll
 js/osc.js             oscillator synth
+js/visualizer.js      visualizer (2D modes)
+js/viz3d.js           visualizer 3D modes (WebGL shaders)
+js/project.js         .gabber files (project, song, tool settings)
 js/notes.js           note blocks (patterns, merge, quantize)
 js/chords.js          chord progressions (pad generator)
 js/params.js          knob parameters
@@ -508,6 +526,7 @@ js/storage.js         local saving (IndexedDB)
 tools/serve.py        local web server (no cache)
 tools/build_banks.py  sound bank builder
 tools/gabber.py       gabber sound synthesis
+tools/icons.py        button icons (generates the CSS)
 sounds/               generated banks + banks.json
 ```
 
