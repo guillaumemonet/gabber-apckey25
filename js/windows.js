@@ -23,7 +23,9 @@ export function mergeWindows(saved) {
 }
 
 export class WindowManager {
-  constructor(getState, onChange, onToggle = () => {}) {
+  // files : { ids, save(id), open(id) } : fenêtres dont on peut enregistrer / ouvrir les réglages.
+  constructor(getState, onChange, onToggle = () => {}, files = null) {
+    this.files = files;
     this.getState = getState;
     this.onChange = onChange;
     this.onToggle = onToggle;
@@ -156,6 +158,17 @@ export class WindowManager {
     close.title = t('win.close');
     close.setAttribute('aria-label', t('win.close'));
     close.addEventListener('click', () => this.toggle(id, false));
+    if (this.files?.ids.has(id)) {
+      for (const [kind, icon] of [['open', 'folder'], ['save', 'save']]) {
+        const b = document.createElement('button');
+        b.className = 'win-file icon-only';
+        b.dataset.icon = icon;
+        b.title = t(`file.${kind}Tool`);
+        b.setAttribute('aria-label', b.title);
+        b.addEventListener('click', () => this.files[kind](id));
+        actions.appendChild(b);
+      }
+    }
     actions.append(help, close);
     bar.appendChild(actions);
     const body = document.createElement('div');

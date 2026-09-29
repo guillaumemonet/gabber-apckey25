@@ -19,6 +19,7 @@ import { History } from './history.js';
 import { SHAPES } from './tr909.js';
 import { Patch, BOX_TYPES, BOX_ORDER, SOURCE_COLORS, boxDefaults, defaultPatch, mergePatch, wouldLoop } from './patch.js';
 import { makeZip } from './zip.js';
+import { packFile, readFile, FILE_EXT } from './project.js';
 import { FX_TYPES as TFX_TYPES, FX_BANK, FX_FAMILY_COLORS, fxDefaults, bankName } from './trackfx.js';
 import { KICK_PARAMS, KICK_PRESETS, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
 import { Decks, DECK_IDS, DECK_KNOBS, deckKnobDefs, defaultDecksState, mergeDecksState, guessBpm, vinylTurns, rateFromSpin } from './decks.js';
@@ -165,10 +166,12 @@ async function start() {
   buildGen();
   buildScenes();
   bindKits();
+  bindFiles();
   bindComputerKeyboard();
   drawMeter();
   renderAll();
-  wm = new WindowManager(() => state.windows, save, onWindowToggle);
+  // Fenêtres des outils : boutons enregistrer / ouvrir leurs réglages dans la barre de titre.
+  wm = new WindowManager(() => state.windows, save, onWindowToggle, { ids: new Set(FILE_TOOLS), save: saveFile, open: openFile });
   wm.onActive = id => {
     const page = pageForWindow(id);
     if (page && page !== state.page) setPage(page);
@@ -313,36 +316,43 @@ async function importLibrary() {
 }
 
 let saveTimer;
+// État enregistré (dans le navigateur, et dans un fichier projet).
+function stateSnapshot() {
+  return {
+    bank: state.bank,
+    page: state.page,
+    bpm: state.bpm,
+    preset: state.preset,
+    libBanks: state.libBanks,
+    model: state.model,
+    globals: state.globals,
+    tr: state.tr,
+    mix: state.mix,
+    windows: state.windows,
+    tl: state.tl,
+    scenes: state.scenes,
+    play: state.play,
+    gen: state.gen,
+    sc: state.sc,
+    acid: state.acid,
+    kick: state.kick,
+    decks: state.decks,
+    patch: state.patch,
+    userSounds: state.userSounds,
+    roll: state.roll,
+    osc: state.osc,
+    keys: state.keys,
+    banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
+  };
+}
+
+let projectLoading = false;   // un projet ouvert remplace tout : plus rien n'est enregistré avant le redémarrage
 function save() {
+  if (projectLoading) return;
   if (!tlRec) tlHistory?.commit();
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    store.saveState({
-      bank: state.bank,
-      page: state.page,
-      bpm: state.bpm,
-      preset: state.preset,
-      libBanks: state.libBanks,
-      model: state.model,
-      globals: state.globals,
-      tr: state.tr,
-      mix: state.mix,
-      windows: state.windows,
-      tl: state.tl,
-      scenes: state.scenes,
-      play: state.play,
-      gen: state.gen,
-      sc: state.sc,
-      acid: state.acid,
-      kick: state.kick,
-      decks: state.decks,
-      patch: state.patch,
-      userSounds: state.userSounds,
-      roll: state.roll,
-      osc: state.osc,
-      keys: state.keys,
-      banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
-    }).catch(err => console.warn('Save failed', err));
+    store.saveState(stateSnapshot()).catch(err => console.warn('Save failed', err));
   }, 400);
 }
 
@@ -4816,6 +4826,145 @@ function bindKits() {
     } catch (err) {
       alert(t('kit.failed', { msg: err.message }));
     }
+  });
+}
+
+// ---------- Fichiers : projet, morceau, réglages de chaque outil ----------
+
+// Réglages de chaque outil : ce qu'on enregistre, et comment on le recharge.
+const pickIds = (obj, page) => Object.fromEntries(PAGES[page].params.filter(d => Number.isFinite(obj[d.id])).map(d => [d.id, obj[d.id]]));
+const TOOL_IO = {
+  tr: {
+    get: () => ({ tr: state.tr }),
+    set: d => { drum.stop(); state.tr = mergeTrState(d.tr); drum.setVolume(state.tr.globals.volume); renderTr(); },
+  },
+  acid: {
+    get: () => ({ acid: state.acid }),
+    set: d => { acid.stop(); state.acid = mergeAcidState(d.acid); acid.update(); renderAcid(); renderAcidKnobs(); },
+  },
+  osc: {
+    get: () => ({ osc: state.osc }),
+    set: d => { state.osc = mergeOscState(d.osc); oscPresetCache.clear(); oscChanged(false); rollPresetOptions(); },
+  },
+  piano: {
+    get: () => ({ preset: state.preset, synth: pickIds(state.globals, 'synth'), play: state.play }),
+    set: d => {
+      const preset = presetById(migratePreset(d.preset));
+      state.preset = preset.id;
+      synthFamily = preset.family;
+      engine.setVoice(preset.voice);
+      Object.assign(state.globals, d.synth && typeof d.synth === 'object' ? pickIds(d.synth, 'synth') : {});
+      applyGlobals();
+      state.play = mergePlayState(d.play);
+      performer.refresh();
+      renderPresets();
+      renderPlayControls();
+    },
+  },
+  kick: {
+    get: () => ({ kick: state.kick }),
+    set: d => { state.kick = mergeKickState(d.kick); renderKick(); renderKickKnobs(); },
+  },
+  mix: {
+    get: () => ({ mix: state.mix, sc: state.sc, fx: pickIds(state.globals, 'fx'), eq: pickIds(state.globals, 'eq') }),
+    set: d => {
+      state.mix = mergeMixState(d.mix);
+      mixer.reload();
+      CHANNELS.forEach(renderFx);
+      state.sc = mergeScState(d.sc);
+      sidechain.apply();
+      renderSidechain();
+      for (const page of ['fx', 'eq']) if (d[page] && typeof d[page] === 'object') Object.assign(state.globals, pickIds(d[page], page));
+      applyGlobals();
+      renderMixer();
+    },
+  },
+  patch: {
+    get: () => ({ patch: state.patch }),
+    set: d => { state.patch = mergePatch(d.patch); patch.rebuild(); renderPatch(); renderMixerDest(); },
+  },
+  scenes: {
+    get: () => ({ scenes: state.scenes }),
+    set: d => { state.scenes = mergeScenes(d.scenes); currentScene = null; queuedScene = null; renderScenes(); },
+  },
+};
+const FILE_TOOLS = Object.keys(TOOL_IO);
+
+// Sons utilisés par le morceau, par le projet.
+const songSampleIds = () => state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)).filter(Boolean);
+const projectSampleIds = () => [
+  ...songSampleIds(), ...state.banks.flat().map(p => p?.sampleId), ...state.userSounds.map(s => s.sampleId),
+  ...DECK_IDS.map(id => state.decks[id]?.sampleId),
+].filter(Boolean);
+
+async function saveFile(kind) {
+  let data, ids = [];
+  if (kind === 'project') { data = stateSnapshot(); ids = projectSampleIds(); }
+  else if (kind === 'song') {
+    data = { bpm: state.bpm, tl: { bars: state.tl.bars, loop: state.tl.loop, zoom: state.tl.zoom, tracks: state.tl.tracks } };
+    ids = songSampleIds();
+  } else data = TOOL_IO[kind].get();
+  toast(t('file.saving'));
+  const blob = await packFile(kind, JSON.parse(JSON.stringify(data)), ids, id => store.loadSample(id));
+  download(blob, `gabberkey-${t(`file.slug.${kind}`)}-${stamp()}${FILE_EXT}`);
+  toast(t('file.saved', { what: t(`file.kind.${kind}`) }), 3000);
+}
+
+function openFile() {
+  $('#file-input').click();
+}
+
+async function loadFile(file) {
+  let f;
+  try { f = await readFile(file); } catch (err) { alert(t('file.failed', { msg: err.message })); return; }
+  const what = t(`file.kind.${f.kind}`);
+  if (f.kind === 'project' && !confirm(t('file.confirmProject'))) return;
+  if (f.kind === 'song' && state.tl.tracks.some(tr => tr.clips.length || tr.fx.length) && !confirm(t('file.confirmSong'))) return;
+  // Sons embarqués : rangés comme les sons importés (mêmes identifiants).
+  for (const [id, s] of Object.entries(f.samples)) {
+    await store.saveSample(id, { name: s.name, data: s.data });
+    bufferCache.delete(id);
+  }
+  if (f.kind === 'project') {
+    // Tout l'état est remplacé : on l'écrit tel quel, puis l'application redémarre dessus.
+    projectLoading = true;
+    clearTimeout(saveTimer);
+    await store.saveState(f.data);
+    location.reload();
+    return;
+  }
+  if (f.kind === 'song') {
+    if (tlRec) await tlStopRec();
+    timeline.stop(true);
+    if (Number.isFinite(f.data.bpm)) setBpm(f.data.bpm);
+    const tl = mergeTlState({ ...f.data.tl, armed: state.tl.armed, source: state.tl.source, playhead: 0 });
+    state.tl.bars = tl.bars;
+    state.tl.loop = tl.loop;
+    state.tl.zoom = tl.zoom;
+    state.tl.playhead = 0;
+    state.tl.tracks = tl.tracks;
+    tlSelect(null, null);
+    await loadTlBuffers();
+    renderTl();
+    renderLibrary();
+  } else {
+    TOOL_IO[f.kind].set(f.data);
+    if (!wm.isOpen(f.kind)) wm.toggle(f.kind, true);
+    renderKnobs();
+  }
+  save();
+  toast(t('file.loaded', { what }), 3000);
+}
+
+function bindFiles() {
+  $('#file-save').addEventListener('click', () => saveFile('project'));
+  $('#file-open').addEventListener('click', openFile);
+  $('#tl-save').addEventListener('click', () => saveFile('song'));
+  $('#tl-open').addEventListener('click', openFile);
+  $('#file-input').addEventListener('change', e => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (file) loadFile(file);
   });
 }
 

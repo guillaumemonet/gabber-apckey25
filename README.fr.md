@@ -397,6 +397,14 @@ Double-clic sur un potard à l'écran pour le remettre à zéro.
 - **Tape-stop** ralentit tout jusqu'à l'arrêt.
 - **Pump** fait s'effacer le synthé à chaque temps.
 
+## Enregistrer et ouvrir
+
+GabberKey enregistre tout automatiquement dans le navigateur, et tu peux aussi garder ton travail dans des **fichiers `.gabber`** (pour le sauvegarder, le passer sur un autre ordinateur ou le partager) :
+- **Enregistrer le projet** (en-tête) : tout le projet dans un fichier : timeline, tempo, pads et banques, chaque outil, mixeur, câblage, scènes, fenêtres, avec tes sons et tes enregistrements dedans. **Ouvrir…** le recharge (tout est remplacé, puis l'application redémarre dessus).
+- **Morceau** (boutons 📁 / 💾 de la barre de la timeline) : la timeline seule (pistes, blocs, effets de piste, longueur, tempo) avec les enregistrements qu'elle utilise. Ouvrir un morceau remplace la timeline (Ctrl+Z ramène la précédente).
+- **Réglages d'un outil** : les boutons 📁 / 💾 dans la barre de titre des fenêtres TR-909 (patterns et potards), TB-303, Synthé, Synthé à oscillateurs (avec tes presets), Designer de kick, Mixeur (avec le sidechain et la section master), Câblage et Scènes.
+- Chaque bouton **Ouvrir** accepte n'importe quel fichier GabberKey : il reconnaît ce qu'il contient et le charge au bon endroit. Les sons de la bibliothèque sont désignés par leur nom ; les sons importés et les enregistrements sont embarqués.
+
 ## Enregistrement et kits
 
 - **⤓ WAV** (barre de la timeline) exporte le morceau en WAV, **calculé en quelques secondes** au lieu d'être rejoué en temps réel : de la mesure 1 à la fin du dernier bloc, avec le synthé, les pads, la table de mixage, les effets d'insert et le sidechain tels que tu les entends (environ 3 s pour la démo d'une minute).
