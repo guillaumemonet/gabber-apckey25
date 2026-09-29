@@ -7,7 +7,7 @@ document.documentElement.lang = lang;
 
 const STRINGS = {
   en: {
-    'start.subtitle': '40-pad sampler + synth for the Akai APC Key 25',
+    'start.subtitle': 'A complete music studio in your browser, born for hardcore / gabber, played with an Akai APC Key 25',
     'start.button': 'Start',
     'start.hint': 'Browsers require a click before playing sound.',
     'start.generating': 'Generating sounds…',
@@ -726,7 +726,7 @@ const STRINGS = {
   },
 
   fr: {
-    'start.subtitle': 'Sampler 40 pads + synthé pour Akai APC Key 25',
+    'start.subtitle': 'Un studio de musique complet dans le navigateur, né pour le hardcore / gabber, joué avec un Akai APC Key 25',
     'start.button': 'Démarrer',
     'start.hint': 'Le navigateur exige un clic avant de jouer du son.',
     'start.generating': 'Génération des sons…',
