@@ -335,7 +335,15 @@ function buildGroup(ctx, engine, b) {
   }
   return {
     input, output, play,
-    reset() { for (const [param, v] of params) { param.cancelScheduledValues(0); param.value = v; } },
+    // Retour aux valeurs neutres ; une courbe en cours peut refuser .value : on repasse alors par setValueAtTime.
+    reset() {
+      const now = ctx.currentTime;
+      for (const [param, v] of params) {
+        try { param.cancelScheduledValues(0); param.value = v; } catch {
+          try { param.cancelScheduledValues(0); param.setValueAtTime(v, now + 0.005); } catch { /* il reviendra au prochain bloc */ }
+        }
+      }
+    },
   };
 }
 

@@ -570,7 +570,7 @@ export class Engine {
 
     // startBeat : temps de la grille où la boucle démarre (pour placer ses kicks, voir js/sidechain.js).
     const startBeat = this.origin === null ? 0 : (startAt - this.origin) * this.bpm / 60;
-    const voice = { src, amp, filter, pan, dSend, rSend, mode, pitchRate, syncBpm: src.loop ? pad.bpm : 0, pad, startBeat };
+    const voice = { src, amp, filter, pan, dSend, rSend, mode, pitchRate, syncBpm: src.loop ? pad.bpm : 0, pad, startBeat, startAt };
     src.onended = () => {
       if (this.padVoices.get(index) === voice) {
         this.padVoices.delete(index);
@@ -580,6 +580,19 @@ export class Engine {
     src.start(startAt, offset);
     this.padVoices.set(index, voice);
     this.onPadState(index, true, mode);
+    return voice;
+  }
+
+  // Coupe une voix de pad précise, même si un coup plus récent du même pad l'a remplacée
+  // (la timeline programme d'avance tous les coups d'un cycle : ils doivent tous se taire à l'arrêt).
+  stopVoice(v, fade = 0.01) {
+    const t = this.ctx.currentTime;
+    try {
+      v.amp.gain.cancelScheduledValues(t);
+      v.amp.gain.setValueAtTime(v.amp.gain.value, t);
+      v.amp.gain.linearRampToValueAtTime(0, t + fade);
+      v.src.stop(t + fade + 0.01);
+    } catch { /* déjà terminée */ }
   }
 
   releasePad(index) {

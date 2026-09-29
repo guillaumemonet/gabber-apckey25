@@ -1531,9 +1531,12 @@ async function ensureBuffer(id) { if (!clipBuffer(id)) await loadBuffers([id]); 
 
 function tlToggle() {
   if (tlRec) return tlStopRec();
-  if (timeline.playing) timeline.stop(); else timeline.play(state.tl.playhead);
-  renderTl();
-  renderLeds();
+  try {
+    if (timeline.playing) timeline.stop(); else timeline.play(state.tl.playhead);
+  } finally {   // le bouton et la tête de lecture suivent toujours l'état réel
+    renderTl();
+    renderLeds();
+  }
 }
 const tlRecToggle = () => (tlRec ? tlStopRec() : tlStartRec());
 
@@ -1575,7 +1578,7 @@ async function tlStopRec() {
     for (const clip of rec.open.values()) growHeldNote(clip);
     tlRec = null;
     timeline.stop(true);
-    mergeTake(rec.notes);
+    try { mergeTake(rec.notes); } catch (err) { console.warn('Take', err); }
     for (const tr of state.tl.tracks) for (const c of tr.clips) growSong(c);
     save();
     renderTl();

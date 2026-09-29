@@ -69,7 +69,7 @@ export class Timeline {
     this.getPatch = () => undefined;   // preset d'un bloc -> { cfg, values } ; branché par l'application
     this.getOsc = () => null;          // bloc du synthé à oscillateurs -> { synth, values } ; branché par l'application
     this.offs = [];             // fins de notes programmées : { note, key, time }
-    this.padHits = new Set();   // voix de pads programmées (coupées à l'arrêt)
+    this.padHits = new Set();   // voix de pads programmées (toutes coupées à l'arrêt)
     this.chains = new Map();    // piste -> Map(destination -> TrackChain) : effets de piste
     this.cycleChains = new Set();
     this.cycle = null;          // cycle en cours de programmation : { time, beat, len, bd }
@@ -108,6 +108,8 @@ export class Timeline {
     const endTime = time + (len - beat) * bd;
     this.cycle = { time, beat, len, bd, until: st.loop && !this.recording ? len : Infinity };
     this.cycleChains.clear();
+    // Les coups de pad déjà joués (d'un cycle précédent) sont oubliés.
+    for (const h of this.padHits) if (h.v.startAt < this.ctx.currentTime - 10) this.padHits.delete(h);
     st.tracks.forEach((track, ti) => {
       if (track.mute) return;
       for (const clip of track.clips) {
@@ -136,8 +138,8 @@ export class Timeline {
           const pad = this.getPad(clip.bank, clip.pad);
           const key = this.padKey(clip.bank, clip.pad);
           if (pad?.buffer) {
-            this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1, out: this.trackIn(ti, this.engine.padOut(pad) ?? this.engine.padBus) });
-            this.padHits.add(key);
+            const v = this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1, out: this.trackIn(ti, this.engine.padOut(pad) ?? this.engine.padBus) });
+            if (v) this.padHits.add({ key, v });
             if (this.isKickPad(pad)) this.onKick(when);
           }
           continue;
@@ -234,26 +236,32 @@ export class Timeline {
     if (!this.playing) return this.st.playhead;
     const now = this.ctx.currentTime;
     const cycle = [...this.cycles].reverse().find(c => c.time <= now) ?? this.cycles[0];
+    if (!cycle) return this.st.playhead;
     return cycle.beat + Math.max(0, now - cycle.time) / this.beatDur;
   }
 
+  // L'arrêt passe d'abord la timeline à l'arrêt, puis coupe chaque son à part : une erreur pendant le nettoyage
+  // (un effet qui refuse sa remise à zéro…) ne doit jamais laisser la lecture « en cours » à l'écran.
   stop(silent = false) {
-    clearTimeout(this.timer);
-    clearInterval(this.ticker);
-    for (const o of this.offs) (o.syn ?? this.engine).noteOff(o.note, true, undefined, o.key);
-    this.offs = [];
-    for (const key of this.padHits) this.engine.stopPad(key, 0.01);
-    this.padHits.clear();
-    const t = this.ctx.currentTime;
-    for (const { src, gain } of this.sources) {
-      gain.gain.setTargetAtTime(0, t, 0.01);
-      src.stop(t + 0.05);
-    }
-    this.sources = [];
-    for (const m of this.chains.values()) for (const c of m.values()) c.reset();
-    this.onHalt();
     const was = this.playing;
     this.playing = false;
+    clearTimeout(this.timer);
+    clearInterval(this.ticker);
+    const safe = fn => { try { fn(); } catch (err) { console.warn('Timeline stop', err); } };
+    for (const o of this.offs) safe(() => (o.syn ?? this.engine).noteOff(o.note, true, undefined, o.key));
+    this.offs = [];
+    for (const { key, v } of this.padHits) {
+      safe(() => {
+        this.engine.stopVoice(v);
+        if (this.engine.padVoices.get(key) === v) this.engine.stopPad(key, 0.01);   // voyant du pad
+      });
+    }
+    this.padHits.clear();
+    const t = this.ctx.currentTime;
+    for (const { src, gain } of this.sources) safe(() => { gain.gain.setTargetAtTime(0, t, 0.01); src.stop(t + 0.05); });
+    this.sources = [];
+    for (const m of this.chains.values()) for (const c of m.values()) safe(() => c.reset());
+    safe(() => this.onHalt());
     if (was && !silent) this.onStop();
   }
 }
