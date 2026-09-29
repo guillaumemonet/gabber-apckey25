@@ -60,6 +60,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: v
 .overlay.hidden { display: none; }
 .overlay-box { text-align: center; }
 .overlay-box h1 { font-size: 40px; margin: 0 0 6px; }
+.overlay-box p { max-width: 520px; margin-left: auto; margin-right: auto; }
 .overlay-box button { font-size: 18px; padding: 12px 36px; margin: 22px 0 10px; }
 
 /* --- En-tête --- */
