@@ -19,6 +19,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Kick designer**: build your own distorted kick from 12 knobs and 8 presets, then send it to a pad or the library;
   - **Turntables**: two decks with scratchable records (forwards and backwards), sync, cue, EQ, DJ filter and crossfader;
   - **TB-303-style acid bass line**: 16-step sequencer with accent and slide, resonant filter with envelope, distortion, step entry from the APC keyboard, in sync with the 909;
+  - **Oscillator synth**: 3 oscillators with unison, FM, ring modulation, noise, 12 / 24 dB filter, 2 envelopes, tempo-synced LFO, poly / mono / legato, 12 presets and your own;
   - **Layered synth** on the keyboard: 35 presets in 10 families (strings, pads, choirs, supersaw, hoovers, leads, basses, stabs, keys, FX) with ensemble, stereo width, vibrato and 8 expression knobs, chord mode and a tempo-synced arpeggiator;
   - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters, up to 4 insert effects, and a **sidechain** triggered by the kicks;
   - **Patch**: wire the tools and **effect boxes** (distortion, PCF, filter, delay, reverb, compressor, bitcrusher) freely, everything in sync with the tempo;
@@ -39,7 +40,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 | **Kick designer**<br>[![Kick designer: presets, 12 knobs and the waveform](docs/screenshots/kick-en.png)](docs/screenshots/kick-en.png) | **Turntables**<br>[![Turntables: two decks with scratchable records, EQ, filter and crossfader](docs/screenshots/decks-en.png)](docs/screenshots/decks-en.png) |
 | **Mixer and sidechain**<br>[![Mixer: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png) | **Patch**<br>[![Patch window: tools on the left, effect boxes in the middle, the master on the right](docs/screenshots/patch-en.png)](docs/screenshots/patch-en.png) |
 | **Track effects**<br>[![Timeline with an effects line under each track, the Effects tab of the library and the settings of a PCF](docs/screenshots/tlfx-en.png)](docs/screenshots/tlfx-en.png) | **Scenes and performance**<br>[![Scenes window with stored scenes, and the performance effects](docs/screenshots/scenes-en.png)](docs/screenshots/scenes-en.png) |
-| **Piano roll**<br>[![Piano roll: a hardstyle lead melody over two bars, with its chords and the velocity lane](docs/screenshots/roll-en.png)](docs/screenshots/roll-en.png) | |
+| **Piano roll**<br>[![Piano roll: a hardstyle lead melody over two bars, with its chords and the velocity lane](docs/screenshots/roll-en.png)](docs/screenshots/roll-en.png) | **Oscillator synth**<br>[![Oscillator synth: three oscillators, filter, envelopes, LFO and presets](docs/screenshots/osc-en.png)](docs/screenshots/osc-en.png) |
 
 ## Requirements
 
@@ -77,7 +78,7 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 | **Track buttons 1 / 2 / 3 / 4** | Knob page: Synth / Effects / Selected pad / EQ |
 | **Track buttons 5 / 6 / 7 / 8** (hold) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filter down |
 | **Shift + track 5 / 6 / 7 / 8** | Roll 1/4 · Tape stop · Filter up · Pump (on/off) |
-| **Shift + track 1 / 2 / 3 / 4** | Mixer knob page: volumes / pans / delay sends / reverb sends (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K5 TB-303, K6 Decks, K8 master) |
+| **Shift + track 1 / 2 / 3 / 4** | Mixer knob page: volumes / pans / delay sends / reverb sends (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K5 TB-303, K6 Decks, K7 Oscillator synth, K8 master) |
 | **Knobs K1-K8** | Parameters of the current page, which follows the active window (Shift = fine tuning) |
 | **SUSTAIN** | Opens / closes the EQ page (held: EQ while pressed) |
 | **Shift + white key** | Preset of the current synth family (C = 1st, D = 2nd…) · **Shift + C# / D#** = previous / next family · **Shift + F# / G# / A#** = chord type / arpeggio on-off / arpeggio speed |
@@ -291,7 +292,7 @@ The **Patch** window wires the tools and **effect boxes** freely, like a rack of
 
 ## Plugin windows
 
-The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer), **Studio** (Mixer, Patch, Scenes, Performance) and **System** (MIDI monitor). Each one opens in a window above the timeline:
+The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Oscillator synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer), **Studio** (Mixer, Patch, Scenes, Performance) and **System** (MIDI monitor). Each one opens in a window above the timeline:
 - Each window has a title bar: the **title** on the left, **?** and **✕** on the right.
 - The **active window** (in front) is highlighted; windows open and close with a 3D transition.
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.
@@ -348,6 +349,23 @@ When the timeline records the synth, chords and every arpeggio note become block
 
 A chord block works like any other block: move it, lengthen it, copy it (Alt), listen to it (double-click) or delete it.
 
+## Oscillator synth
+
+[![Oscillator synth: presets, three oscillators, noise / ring / FM / pitch envelope, filter, two envelopes, tempo-synced LFO and voice settings](docs/screenshots/osc-en.png)](docs/screenshots/osc-en.png)
+
+An analogue-style synth to build your own sounds, next to the layered synth.
+
+- **Which synth the keyboard plays**: the APC keyboard (and the computer keyboard) plays the synth of the **active window**. Click the Oscillator synth window to play it, click the Synth window to go back (the **Keyboard here** button shows which one is played). Chord mode and arpeggiator work with both.
+- **3 oscillators**: saw, pulse (with its **width**), triangle or sine; octave, semitone, fine tune, level, **unison** (up to 7 detuned copies spread in stereo) and their detune.
+- **Noise, ring modulation** (osc 1 × osc 2), **FM** (osc 3 modulates osc 1, for screeches and bells) and a **pitch envelope** (each note starts higher or lower and slides to its pitch: lasers, hoovers).
+- **Filter**: low-pass, high-pass or band-pass, **12 or 24 dB**, cutoff, resonance, envelope amount (negative closes it), key tracking, drive before the filter.
+- **Two ADSR envelopes** (filter and volume), drawn above their knobs.
+- **Tempo-synced LFO**: sine, triangle, saw or square, from 1/1 to 1/32 with triplets, on the pitch, the filter, the pulse width or the volume.
+- **Voice**: polyphonic (8 notes), mono or legato (no new attack between linked notes), glide, stereo width, volume.
+- **12 presets**: hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, wobble, laser. Type a name and **Save** to keep your own presets.
+- **APC knobs**: K1-K8 = cutoff, resonance, filter envelope, filter decay, drive, LFO depth, release, volume (marked on screen) while the window is active.
+- It has its own **mixer channel** (K7 on the mixer pages), is wired in the **Patch** window and ducked by the **sidechain** like the synth. What you record on it becomes a note block with its sound, and in the **piano roll** any note block can use one of its presets.
+
 ## Tempo and loops
 
 The global tempo (header, or the **Tap** button) drives every loop. Each loop starts on the next bar and stays in sync when you change the tempo. For your own loops, enter their original tempo in the editor, or click **Auto**: this assumes the file lasts a whole number of bars. Set the tempo to 190 for the Gabber, Hardcore, Oldschool, Mainstream and New wave banks: their loops share the same key (F minor) and lengths, so they stay in sync with each other. The **Hardstyle** and **Hardstyle melodies** banks are made at **150 BPM**, the tempo of the style (their loops follow the global tempo too, but sound most natural at 150).
@@ -366,7 +384,7 @@ The group of knobs driven by the APC is outlined on screen and tagged "APC K1-K8
 - **Effects**: delay time / feedback / send, reverb send / size, synth volume, pads volume, master volume (Master section of the mixer)
 - **Pad**: volume, pitch, pan, filter, start point, delay and reverb sends, and playback mode of the selected pad (pad editor)
 - **EQ**: low 100 Hz, low-mid 350 Hz, mid 1.2 kHz, high-mid 3.5 kHz, high 9 kHz (±15 dB), low-pass, high-pass, output gain (Master section of the mixer)
-- **TR-909**, **TB-303**, **Decks** and the four **mixer** pages.
+- **TR-909**, **TB-303**, **Decks**, **Oscillators** (see Oscillator synth) and the four **mixer** pages.
 
 Double-click a knob on screen to reset it.
 
@@ -394,12 +412,11 @@ The interface follows the browser language: French if the browser is set to Fren
 
 What is planned, in this order:
 
-1. **Oscillator synth**: an analogue-style synth to build your own sounds: 3 oscillators (saw, pulse with width, triangle, sine; octave, semitone, fine tune, level), noise, **FM** and ring modulation, low-pass / high-pass / band-pass filter (12 or 24 dB, cutoff, resonance, envelope, key tracking, drive), 2 ADSR envelopes, a tempo-synced LFO (pitch, filter, pulse width, volume), polyphonic / mono / legato with glide, unison, a dozen presets (hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, synced wobble, laser) and your own presets. The APC keyboard plays the synth of the active window.
-2. **Step sequencer for any sound**: program the pads (kicks, claps, shouts from the banks…) on a 16-step grid.
-3. **Time-stretching that keeps the pitch**: loops follow the tempo without changing key (today a 150 BPM loop played at 190 goes up by 4 semitones).
-4. **Vocal sampler and vocoder**: record with the microphone, chop, pitch and formant, robotic gabber vocoder.
-5. **Build-up designer**: riser, noise sweep, snare roll and sub drop, set to a number of bars.
-6. **Mastering chain**: multiband compressor, stereo width, limiter and a LUFS meter on the master.
+1. **Step sequencer for any sound**: program the pads (kicks, claps, shouts from the banks…) on a 16-step grid.
+2. **Time-stretching that keeps the pitch**: loops follow the tempo without changing key (today a 150 BPM loop played at 190 goes up by 4 semitones).
+3. **Vocal sampler and vocoder**: record with the microphone, chop, pitch and formant, robotic gabber vocoder.
+4. **Build-up designer**: riser, noise sweep, snare roll and sub drop, set to a number of bars.
+5. **Mastering chain**: multiband compressor, stereo width, limiter and a LUFS meter on the master.
 
 Then: **several instances** of the TB-303 and TR-909 (each one wired where you want in the Patch window, all in sync), and a **MIDI element attached to each window**.
 
@@ -469,6 +486,7 @@ js/help.js            help of each window (? button)
 js/presets.js         synth presets
 js/performer.js       chord mode and arpeggiator
 js/pianoroll.js       piano roll
+js/osc.js             oscillator synth
 js/notes.js           note blocks (patterns, merge, quantize)
 js/chords.js          chord progressions (pad generator)
 js/params.js          knob parameters

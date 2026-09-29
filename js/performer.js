@@ -47,6 +47,7 @@ export function chordNotes(note, mode) {
 export class Performer {
   constructor(engine, getState) {
     this.engine = engine;
+    this.synth = () => engine;   // synthé joué (celui de la fenêtre active) ; branché par l'application
     this.getState = getState;
     this.pressed = new Map();   // touche -> notes produites
     this.held = [];             // notes de l'arpège, dans l'ordre joué
@@ -74,9 +75,10 @@ export class Performer {
     }
     // Sans accord, la voix garde la clé de la note (pédale de sustain) ; sinon une clé par note de l'accord.
     const keys = notes.map(n => (s.chord === 'off' ? note : `k:${note}:${n}`));
-    this.pressed.set(note, { notes, keys, arp: false });
+    const syn = this.synth();
+    this.pressed.set(note, { notes, keys, arp: false, syn });
     notes.forEach((n, i) => {
-      this.engine.noteOn(n, vel, undefined, keys[i]);
+      syn.noteOn(n, vel, undefined, keys[i]);
       this.onNote(n, vel, true);
     });
   }
@@ -93,7 +95,7 @@ export class Performer {
       return;
     }
     entry.notes.forEach((n, i) => {
-      this.engine.noteOff(n, false, undefined, entry.keys[i]);
+      entry.syn.noteOff(n, false, undefined, entry.keys[i]);
       this.onNote(n, 0, false);
     });
   }
@@ -140,8 +142,9 @@ export class Performer {
       const n = this.st.mode === 'random' ? seq[Math.floor(Math.random() * seq.length)] : seq[this.idx % seq.length];
       const dur = this.stepDur() * this.st.gate;
       const key = `arp:${n}`;
-      this.engine.noteOn(n, this.lastVel, this.next, key);
-      this.engine.noteOff(n, false, this.next + dur, key);
+      const syn = this.synth();
+      syn.noteOn(n, this.lastVel, this.next, key);
+      syn.noteOff(n, false, this.next + dur, key);
       this.onNoteAt(n, this.lastVel, this.next, dur);
       this.idx++;
       this.next += this.stepDur();

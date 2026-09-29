@@ -43,6 +43,20 @@ const HELP = {
         <li><b>Step entry</b>: play notes on the APC keyboard (or the computer keyboard); each one goes into the selected step and the cursor moves on. A strong hit adds an accent, <b>Rest</b> leaves a step empty. Click a step number to move the cursor.</li>
         <li>The 303 has its own <b>mixer channel</b> (K5 on the mixer pages), is ducked by the <b>sidechain</b> with the melodic sounds, and can be <b>recorded</b> into the timeline (choose TB-303 as the source).</li>
       </ul>`,
+    osc: `
+      <p>An analogue-style synth to build your own sounds, played on the APC keyboard.</p>
+      <ul>
+        <li><b>Keyboard</b>: the APC keyboard (and the computer keyboard) plays the synth of the active window: click this window (or <b>Play on keyboard</b>) to play it, click the Synth window to go back. Chords and arpeggiator work too.</li>
+        <li><b>Osc 1-3</b>: wave (saw, pulse, triangle, sine), octave, semitone, fine tune, level, pulse <b>width</b>, <b>unison</b> (up to 7 detuned copies) and their detune. An oscillator at level 0 is off.</li>
+        <li><b>Noise, ring, FM, pitch</b>: white noise, ring modulation (osc 1 × osc 2), FM of osc 1 by osc 3 (osc 3 can stay silent), and a pitch envelope (each note starts higher or lower and slides to its pitch: lasers, hoovers).</li>
+        <li><b>Filter</b>: low-pass, high-pass or band-pass, 12 or 24 dB, cutoff, resonance, envelope amount (negative = closes), key tracking, drive before the filter.</li>
+        <li><b>Envelopes</b>: ADSR of the filter and of the volume, drawn above their knobs.</li>
+        <li><b>LFO</b>: sine, triangle, saw or square, in sync with the tempo (1/1 to 1/32, triplets), on the pitch, the filter, the pulse width or the volume.</li>
+        <li><b>Voice</b>: poly (8 notes), mono or legato (no new attack between linked notes), glide, stereo width of the unison, volume.</li>
+        <li><b>Presets</b>: 12 ready-made sounds (hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, wobble, laser). Type a name and <b>Save</b> to keep your own; the bin deletes it.</li>
+        <li><b>APC knobs</b>: the knobs marked K1-K8 (cutoff, resonance, filter envelope, filter decay, drive, LFO depth, release, volume) follow the APC knobs while this window is active.</li>
+        <li>It has its own <b>mixer channel</b> (K7 on the mixer pages), can be wired in the <b>Patch</b> window, and is ducked by the <b>sidechain</b> like the synth. Recordings of it become note blocks with its sound; in the <b>piano roll</b>, any note block can use one of its presets.</li>
+      </ul>`,
     roll: `
       <p>Edit the notes of a note block of the timeline: pitch, start, length and velocity.</p>
       <ul>
@@ -176,6 +190,20 @@ const HELP = {
         <li><b>Suivre la 909</b> : la 303 joue sur l'horloge de la TR-909 (shuffle compris) ; ▶ lance les deux. Désactive-le pour jouer la 303 seule.</li>
         <li><b>Saisie</b> : joue les notes au clavier de l'APC (ou de l'ordinateur) ; chacune va dans le pas choisi et le curseur avance. Une frappe forte ajoute un accent, <b>Silence</b> laisse un pas vide. Clic sur un numéro de pas pour déplacer le curseur.</li>
         <li>La 303 a sa propre <b>voie de mixage</b> (K5 sur les pages mixeur), est baissée par le <b>sidechain</b> avec les sons mélodiques, et peut être <b>enregistrée</b> dans la timeline (source TB-303).</li>
+      </ul>`,
+    osc: `
+      <p>Un synthé façon analogique pour fabriquer tes propres sons, joué au clavier de l'APC.</p>
+      <ul>
+        <li><b>Clavier</b> : le clavier de l'APC (et celui de l'ordinateur) joue le synthé de la fenêtre active : clique sur cette fenêtre (ou <b>Jouer au clavier</b>) pour le jouer, clique sur la fenêtre Synthé pour revenir. Les accords et l'arpégiateur marchent aussi.</li>
+        <li><b>Osc 1 à 3</b> : onde (scie, impulsion, triangle, sinus), octave, demi-ton, désaccord fin, niveau, <b>largeur</b> de l'impulsion, <b>unisson</b> (jusqu'à 7 copies désaccordées) et leur désaccord. Un oscillateur au niveau 0 est éteint.</li>
+        <li><b>Bruit, anneau, FM, hauteur</b> : bruit blanc, modulation en anneau (osc 1 × osc 2), FM de l'osc 1 par l'osc 3 (l'osc 3 peut rester muet), et une enveloppe de hauteur (chaque note part plus haut ou plus bas et glisse jusqu'à sa hauteur : lasers, hoovers).</li>
+        <li><b>Filtre</b> : passe-bas, passe-haut ou passe-bande, 12 ou 24 dB, coupure, résonance, quantité d'enveloppe (négative = ferme), suivi du clavier, saturation avant le filtre.</li>
+        <li><b>Enveloppes</b> : ADSR du filtre et du volume, dessinées au-dessus de leurs potards.</li>
+        <li><b>LFO</b> : sinus, triangle, scie ou carré, calé sur le tempo (1/1 à 1/32, triolets), sur la hauteur, le filtre, la largeur d'impulsion ou le volume.</li>
+        <li><b>Voix</b> : poly (8 notes), mono ou legato (pas de nouvelle attaque entre notes liées), glissé, largeur stéréo de l'unisson, volume.</li>
+        <li><b>Presets</b> : 12 sons tout prêts (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser). Tape un nom puis <b>Enregistrer</b> pour garder le tien ; la corbeille le supprime.</li>
+        <li><b>Potards de l'APC</b> : les potards marqués K1-K8 (coupure, résonance, enveloppe du filtre, déclin du filtre, saturation, quantité du LFO, relâche, volume) suivent les potards de l'APC quand cette fenêtre est active.</li>
+        <li>Il a sa propre <b>voie de mixage</b> (K7 sur les pages mixeur), se câble dans la fenêtre <b>Câblage</b> et est baissé par le <b>sidechain</b> comme le synthé. Ses enregistrements deviennent des blocs de notes avec son son ; dans le <b>piano roll</b>, tout bloc de notes peut prendre un de ses presets.</li>
       </ul>`,
     roll: `
       <p>Édite les notes d'un bloc de notes de la timeline : hauteur, début, durée et vélocité.</p>

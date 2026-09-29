@@ -6,11 +6,11 @@
 import { t } from './i18n.js';
 import { helpHtml } from './help.js';
 
-export const WINDOWS = ['pads', 'editor', 'tr', 'acid', 'kick', 'decks', 'patch', 'piano', 'perf', 'mix', 'scenes', 'monitor', 'roll'];
+export const WINDOWS = ['pads', 'editor', 'tr', 'acid', 'kick', 'decks', 'patch', 'piano', 'perf', 'mix', 'scenes', 'monitor', 'roll', 'osc'];
 const SNAP = 14;   // distance d'aimantation (px)
 const DEFAULT_SIZE = {
   pads: [780, null], editor: [360, null], tr: [900, null], acid: [920, null], kick: [720, null], decks: [980, null], patch: [1040, 600], piano: [760, null], knobs: [760, null],
-  perf: [760, null], mix: [1060, null], scenes: [760, null], monitor: [640, 280], roll: [980, 540],
+  perf: [760, null], mix: [1060, null], scenes: [760, null], monitor: [640, 280], roll: [980, 540], osc: [1120, null],
 };
 
 export function mergeWindows(saved) {

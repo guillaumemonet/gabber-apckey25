@@ -40,12 +40,14 @@ export class Sidechain {
     this.pads = ctx.createGain();
     this.tl = ctx.createGain();
     this.acid = ctx.createGain();   // TB-303 : une basse, baissée avec les sons mélodiques
+    this.osc = ctx.createGain();    // synthé à oscillateurs : baissé comme le synthé
     this.env = ctx.createGain();
     this.shaper = ctx.createWaveShaper();
     this.env.connect(this.shaper);
     this.synthAmt = ctx.createGain();
     this.sampleAmt = ctx.createGain();
     this.shaper.connect(this.synthAmt).connect(this.synth.gain);
+    this.synthAmt.connect(this.osc.gain);
     this.shaper.connect(this.sampleAmt);
     this.sampleAmt.connect(this.pads.gain);
     this.sampleAmt.connect(this.tl.gain);

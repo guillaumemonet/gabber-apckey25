@@ -19,6 +19,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Designer de kick** : fabrique ton propre kick distordu avec 12 potards et 8 presets, puis envoie-le sur un pad ou dans la bibliothèque ;
   - **Platines** : deux decks avec disques à scratcher (en avant et en arrière), sync, cue, égaliseur, filtre DJ et crossfader ;
   - **Basse acid façon TB-303** : séquenceur 16 pas avec accent et slide, filtre résonant à enveloppe, distorsion, saisie au clavier de l'APC, calée sur la 909 ;
+  - **Synthé à oscillateurs** : 3 oscillateurs avec unisson, FM, modulation en anneau, bruit, filtre 12 / 24 dB, 2 enveloppes, LFO calé sur le tempo, poly / mono / legato, 12 presets et les tiens ;
   - **Synthé en couches** au clavier : 35 presets en 10 familles (cordes, nappes, chœurs, supersaw, hoovers, leads, basses, stabs, claviers, effets) avec ensemble, largeur stéréo, vibrato et 8 potards d'expression, mode accords et arpégiateur calé sur le tempo ;
   - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres, jusqu'à 4 effets d'insert, et un **sidechain** déclenché par les kicks ;
   - **Câblage** : relie librement les outils et des **boîtes à effets** (distorsion, PCF, filtre, delay, reverb, compresseur, bitcrusher), tout calé sur le tempo ;
@@ -39,7 +40,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 | **Designer de kick**<br>[![Designer de kick : presets, 12 potards et la forme d'onde](docs/screenshots/kick-fr.png)](docs/screenshots/kick-fr.png) | **Platines**<br>[![Platines : deux decks avec disques à scratcher, égaliseur, filtre et crossfader](docs/screenshots/decks-fr.png)](docs/screenshots/decks-fr.png) |
 | **Table de mixage et sidechain**<br>[![Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](docs/screenshots/mixer-fr.png)](docs/screenshots/mixer-fr.png) | **Câblage**<br>[![Fenêtre Câblage : les outils à gauche, les boîtes à effets au milieu, le master à droite](docs/screenshots/patch-fr.png)](docs/screenshots/patch-fr.png) |
 | **Effets de piste**<br>[![Timeline avec une ligne d'effets sous chaque piste, l'onglet Effets de la bibliothèque et les réglages d'un PCF](docs/screenshots/tlfx-fr.png)](docs/screenshots/tlfx-fr.png) | **Scènes et performance**<br>[![Fenêtre Scènes avec des scènes enregistrées, et les effets de performance](docs/screenshots/scenes-fr.png)](docs/screenshots/scenes-fr.png) |
-| **Piano roll**<br>[![Piano roll : une mélodie de lead hardstyle sur deux mesures, avec ses accords et la bande des vélocités](docs/screenshots/roll-fr.png)](docs/screenshots/roll-fr.png) | |
+| **Piano roll**<br>[![Piano roll : une mélodie de lead hardstyle sur deux mesures, avec ses accords et la bande des vélocités](docs/screenshots/roll-fr.png)](docs/screenshots/roll-fr.png) | **Synthé à oscillateurs**<br>[![Synthé à oscillateurs : trois oscillateurs, filtre, enveloppes, LFO et presets](docs/screenshots/osc-fr.png)](docs/screenshots/osc-fr.png) |
 
 ## Prérequis
 
@@ -77,7 +78,7 @@ L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert
 | **Boutons de piste 1 / 2 / 3 / 4** | Page des potards : Synthé / Effets / Pad sélectionné / EQ |
 | **Boutons de piste 5 / 6 / 7 / 8** (maintenus) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filtre ↓ |
 | **Maj + piste 5 / 6 / 7 / 8** | Roll 1/4 · Tape-stop · Filtre ↑ · Pump (marche/arrêt) |
-| **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K5 TB-303, K6 Platines, K8 master) |
+| **Maj + piste 1 / 2 / 3 / 4** | Page de potards du mixeur : volumes / panos / envois delay / envois reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K5 TB-303, K6 Platines, K7 Synthé à oscillateurs, K8 master) |
 | **Potards K1-K8** | Paramètres de la page en cours, qui suit la fenêtre active (Maj = réglage fin) |
 | **SUSTAIN** | Ouvre / ferme la page EQ (maintenu : EQ le temps de l'appui) |
 | **Maj + touche blanche** | Preset de la famille du synthé (do = 1er, ré = 2e…) · **Maj + do# / ré#** = famille précédente / suivante · **Maj + fa# / sol# / la#** = type d'accord / arpège oui-non / vitesse de l'arpège |
@@ -291,7 +292,7 @@ La fenêtre **Câblage** relie librement les outils et des **boîtes à effets**
 
 ## Fenêtres des plugins
 
-La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick), **Studio** (Mixeur, Câblage, Scènes, Performance) et **Système** (Moniteur MIDI). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
+La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Synthé à oscillateurs, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick), **Studio** (Mixeur, Câblage, Scènes, Performance) et **Système** (Moniteur MIDI). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
 - Chaque fenêtre a une barre de titre : le **titre** à gauche, **?** et **✕** à droite.
 - La **fenêtre active** (au premier plan) est mise en valeur ; les fenêtres s'ouvrent et se ferment avec une transition 3D.
 - **Déplace**-la par sa barre de titre, **redimensionne**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.
@@ -348,6 +349,23 @@ Quand la timeline enregistre le synthé, les accords et chaque note de l'arpège
 
 Un bloc d'accord se manipule comme les autres : le déplacer, l'allonger, le copier (Alt), l'écouter (double-clic) ou le supprimer.
 
+## Synthé à oscillateurs
+
+[![Synthé à oscillateurs : presets, trois oscillateurs, bruit / anneau / FM / enveloppe de hauteur, filtre, deux enveloppes, LFO calé sur le tempo et réglages de voix](docs/screenshots/osc-fr.png)](docs/screenshots/osc-fr.png)
+
+Un synthé façon analogique pour fabriquer tes propres sons, à côté du synthé en couches.
+
+- **Quel synthé joue le clavier** : le clavier de l'APC (et celui de l'ordinateur) joue le synthé de la **fenêtre active**. Clique sur la fenêtre Synthé à oscillateurs pour le jouer, sur la fenêtre Synthé pour revenir (le bouton **Clavier ici** montre lequel est joué). Le mode accords et l'arpégiateur marchent avec les deux.
+- **3 oscillateurs** : scie, impulsion (avec sa **largeur**), triangle ou sinus ; octave, demi-ton, désaccord fin, niveau, **unisson** (jusqu'à 7 copies désaccordées, étalées en stéréo) et leur désaccord.
+- **Bruit, modulation en anneau** (osc 1 × osc 2), **FM** (l'osc 3 module l'osc 1, pour les screechs et les cloches) et une **enveloppe de hauteur** (chaque note part plus haut ou plus bas et glisse jusqu'à sa hauteur : lasers, hoovers).
+- **Filtre** : passe-bas, passe-haut ou passe-bande, **12 ou 24 dB**, coupure, résonance, quantité d'enveloppe (négative, elle le ferme), suivi du clavier, saturation avant le filtre.
+- **Deux enveloppes ADSR** (filtre et volume), dessinées au-dessus de leurs potards.
+- **LFO calé sur le tempo** : sinus, triangle, scie ou carré, de 1/1 à 1/32 avec les triolets, sur la hauteur, le filtre, la largeur d'impulsion ou le volume.
+- **Voix** : polyphonique (8 notes), mono ou legato (pas de nouvelle attaque entre notes liées), glissé, largeur stéréo, volume.
+- **12 presets** : hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser. Tape un nom puis **Enregistrer** pour garder tes propres presets.
+- **Potards de l'APC** : K1-K8 = coupure, résonance, enveloppe du filtre, déclin du filtre, saturation, quantité du LFO, relâche, volume (marqués à l'écran) quand la fenêtre est active.
+- Il a sa propre **voie de mixage** (K7 sur les pages mixeur), se câble dans la fenêtre **Câblage** et est baissé par le **sidechain** comme le synthé. Ce que tu enregistres dessus devient un bloc de notes avec son son, et dans le **piano roll** tout bloc de notes peut prendre un de ses presets.
+
 ## Tempo et boucles
 
 Le tempo global (en-tête, ou bouton **Tap**) pilote toutes les boucles. Chacune démarre sur la mesure suivante et reste calée quand tu changes le tempo. Pour tes propres boucles, indique leur tempo d'origine dans l'éditeur, ou clique sur **Auto** : le calcul suppose que le fichier dure un nombre entier de mesures. Règle le tempo à 190 pour les banques Gabber, Hardcore, Oldschool, Mainstream et New wave : leurs boucles partagent la même tonalité (fa mineur) et les mêmes longueurs, elles restent donc calées entre elles. Les banques **Hardstyle** et **Mélodies hardstyle** sont faites à **150 BPM**, le tempo du style (leurs boucles suivent aussi le tempo global, mais sonnent le plus naturellement à 150).
@@ -366,7 +384,7 @@ Le groupe de potards piloté par l'APC est entouré à l'écran, avec l'étiquet
 - **Effets** : temps, répétitions et envoi du delay, envoi et taille de la reverb, volume du synthé, volume des pads, volume général (section Master du mixeur)
 - **Pad** : volume, hauteur, panoramique, filtre, point de départ, envois delay et reverb, et mode de lecture du pad sélectionné (éditeur de pad)
 - **EQ** : grave 100 Hz, bas-médium 350 Hz, médium 1,2 kHz, haut-médium 3,5 kHz, aigu 9 kHz (±15 dB), passe-bas, passe-haut, gain de sortie (section Master du mixeur)
-- **TR-909**, **TB-303**, **Platines** et les quatre pages du **mixeur**.
+- **TR-909**, **TB-303**, **Platines**, **Oscillateurs** (voir Synthé à oscillateurs) et les quatre pages du **mixeur**.
 
 Double-clic sur un potard à l'écran pour le remettre à zéro.
 
@@ -394,12 +412,11 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 
 Ce qui est prévu, dans cet ordre :
 
-1. **Synthé à oscillateurs** : un synthé façon analogique pour fabriquer ses propres sons : 3 oscillateurs (scie, impulsion à largeur variable, triangle, sinus ; octave, demi-ton, désaccord fin, niveau), bruit, **FM** et modulation en anneau, filtre passe-bas / passe-haut / passe-bande (12 ou 24 dB, coupure, résonance, enveloppe, suivi du clavier, saturation), 2 enveloppes ADSR, un LFO calé sur le tempo (hauteur, filtre, largeur d'impulsion, volume), polyphonique / mono / legato avec glissé, unisson, une douzaine de presets (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble synchronisé, laser) et tes propres presets. Le clavier de l'APC joue le synthé de la fenêtre active.
-2. **Séquenceur de pas pour n'importe quel son** : programmer les pads (kicks, claps, cris des banques…) sur une grille de 16 pas.
-3. **Étirement temporel qui garde la hauteur** : les boucles suivent le tempo sans changer de tonalité (aujourd'hui, une boucle à 150 BPM jouée à 190 monte de 4 demi-tons).
-4. **Sampler de voix et vocoder** : enregistrer au micro, découper, hauteur et formant, vocoder robotique du gabber.
-5. **Designer de montées** : riser, bruit balayé, roulement de caisse claire et chute de sub, calés sur un nombre de mesures.
-6. **Chaîne de mastering** : compresseur multibande, largeur stéréo, limiteur et vumètre en LUFS sur le master.
+1. **Séquenceur de pas pour n'importe quel son** : programmer les pads (kicks, claps, cris des banques…) sur une grille de 16 pas.
+2. **Étirement temporel qui garde la hauteur** : les boucles suivent le tempo sans changer de tonalité (aujourd'hui, une boucle à 150 BPM jouée à 190 monte de 4 demi-tons).
+3. **Sampler de voix et vocoder** : enregistrer au micro, découper, hauteur et formant, vocoder robotique du gabber.
+4. **Designer de montées** : riser, bruit balayé, roulement de caisse claire et chute de sub, calés sur un nombre de mesures.
+5. **Chaîne de mastering** : compresseur multibande, largeur stéréo, limiteur et vumètre en LUFS sur le master.
 
 Ensuite : **plusieurs exemplaires** de la TB-303 et de la TR-909 (chacun câblé où tu veux dans la fenêtre Câblage, tous synchronisés), et un **élément MIDI associé à chaque fenêtre**.
 
@@ -469,6 +486,7 @@ js/help.js            aide de chaque fenêtre (bouton ?)
 js/presets.js         presets du synthé
 js/performer.js       mode accords et arpégiateur
 js/pianoroll.js       piano roll
+js/osc.js             synthé à oscillateurs
 js/notes.js           blocs de notes (motifs, regroupement, quantification)
 js/chords.js          suites d'accords (générateur de nappes)
 js/params.js          paramètres des potards

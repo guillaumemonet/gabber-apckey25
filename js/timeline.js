@@ -9,7 +9,7 @@
 // avec `seq` et `pat`, c'est un motif du piano roll (voir js/notes.js).
 
 import { TrackChain, cleanFx } from './trackfx.js';
-import { clipEvents } from './notes.js';
+import { clipEvents, monoLine } from './notes.js';
 
 export const TL_TRACKS = 16;
 export const BEATS_PER_BAR = 4;
@@ -67,6 +67,7 @@ export class Timeline {
     this.duckOutput = null;
     this.isDucked = () => false;
     this.getPatch = () => undefined;   // preset d'un bloc -> { cfg, values } ; branché par l'application
+    this.getOsc = () => null;          // bloc du synthé à oscillateurs -> { synth, values } ; branché par l'application
     this.offs = [];             // fins de notes programmées : { note, key, time }
     this.padHits = new Set();   // voix de pads programmées (coupées à l'arrêt)
     this.chains = new Map();    // piste -> Map(destination -> TrackChain) : effets de piste
@@ -112,14 +113,19 @@ export class Timeline {
       for (const clip of track.clips) {
         if (clip.type === 'note') {
           // Chaque note du bloc (motif répété) ; une note à moitié passée n'est pas rejouée.
-          const patch = clip.preset ? this.getPatch(clip.preset) : undefined;
-          for (const n of clipEvents(clip)) {
+          // Synthé à oscillateurs (clip.osc) ou synthé du clavier (preset du bloc, sinon celui en cours).
+          const osc = clip.osc ? this.getOsc(clip) : null;
+          const syn = osc?.synth ?? this.engine;
+          const patch = osc ? osc.values : clip.preset ? this.getPatch(clip.preset) : undefined;
+          const dest = osc ? osc.synth.out : this.engine.synthIn;
+          const events = osc && osc.synth.isMono(osc.values) ? monoLine(clipEvents(clip)) : clipEvents(clip);
+          for (const n of events) {
             const at = clip.start + n.t;
             if (at < beat - 1e-6 || at >= len) continue;
             const when = time + (at - beat) * bd;
             const key = `tl:${clip.id}:${n.i}`;
-            this.engine.noteOn(n.note, n.vel, when, key, patch, this.trackIn(ti, this.engine.synthIn));
-            this.offs.push({ note: n.note, key, time: when + n.len * bd - 0.005 });
+            syn.noteOn(n.note, n.vel, when, key, patch, this.trackIn(ti, dest), n.from);
+            this.offs.push({ note: n.note, key, time: when + n.len * bd - 0.005, syn });
           }
           continue;
         }
@@ -219,7 +225,7 @@ export class Timeline {
     this.offs.sort((a, b) => a.time - b.time);
     while (this.offs.length && this.offs[0].time < horizon) {
       const o = this.offs.shift();
-      this.engine.noteOff(o.note, false, o.time, o.key);
+      (o.syn ?? this.engine).noteOff(o.note, false, o.time, o.key);
     }
   }
 
@@ -234,7 +240,7 @@ export class Timeline {
   stop(silent = false) {
     clearTimeout(this.timer);
     clearInterval(this.ticker);
-    for (const o of this.offs) this.engine.noteOff(o.note, true, undefined, o.key);
+    for (const o of this.offs) (o.syn ?? this.engine).noteOff(o.note, true, undefined, o.key);
     this.offs = [];
     for (const key of this.padHits) this.engine.stopPad(key, 0.01);
     this.padHits.clear();

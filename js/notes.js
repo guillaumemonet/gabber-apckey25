@@ -40,6 +40,18 @@ export function clipEvents(clip) {
   return out;
 }
 
+// Ligne monophonique (synthé à oscillateurs en mono / legato) : une note s'arrête quand la suivante commence,
+// et la suivante glisse depuis elle si elles se touchent.
+export function monoLine(events) {
+  const ev = events.map(e => ({ ...e })).sort((a, b) => a.t - b.t);
+  for (let i = 0; i + 1 < ev.length; i++) {
+    const a = ev[i], b = ev[i + 1];
+    if (b.t < a.t + a.len - 1e-6) a.len = Math.max(0.01, b.t - a.t);
+    if (b.t <= a.t + a.len + 1e-6 && b.t > a.t) b.from = a.note;
+  }
+  return ev;
+}
+
 // Rassemble des blocs de notes en un seul motif qui commence au temps `start` (temps de la timeline).
 export function mergeNotes(clips, start) {
   return clips.flatMap(c => clipEvents(c).map(e => ({ t: c.start + e.t - start, len: e.len, note: e.note, vel: e.vel })))

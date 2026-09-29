@@ -1,7 +1,7 @@
 // Page de câblage : les sorties des voies de mixage (un outil = une voie) et des boîtes à effets sont reliées
 // librement, vers le master ou vers d'autres boîtes. Par défaut, chaque outil est câblé sur le master.
 // État : { boxes: [{ id, type, p, name }], links: [{ from, to }], pos: { nœud: { x, y } } }.
-// Nœuds : les voies (CHANNELS : pads, synth, tr, tl, acid, decks), 'box:…' pour les boîtes, 'master'.
+// Nœuds : les voies (CHANNELS : pads, synth, tr, tl, acid, decks, osc), 'box:…' pour les boîtes, 'master'.
 import { CHANNELS, impulse } from './mixer.js';
 import { distCurve, SHAPES } from './tr909.js';
 import { PCF_PATTERNS } from './trackfx.js';
@@ -20,7 +20,7 @@ export const BOX_TYPES = {
   crush: { color: 57, params: { bits: R(6, 2, 12, 1), mix: R(1, 0, 1, 0.01), level: LEVEL } },
 };
 export const BOX_ORDER = Object.keys(BOX_TYPES);
-export const SOURCE_COLORS = { pads: 21, synth: 49, tr: 5, tl: 37, acid: 57, decks: 53 };
+export const SOURCE_COLORS = { pads: 21, synth: 49, tr: 5, tl: 37, acid: 57, decks: 53, osc: 45 };
 
 export const boxDefaults = type => Object.fromEntries(Object.entries(BOX_TYPES[type].params).map(([k, v]) => [k, v[1]]));
 
