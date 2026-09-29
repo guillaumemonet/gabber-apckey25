@@ -300,7 +300,7 @@ La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instr
 - **Déplace**-la par sa barre de titre, **redimensionne**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.
 - **?** ouvre l'**aide** du contenu de la fenêtre, à côté d'elle (**?** à nouveau, ✕ ou Échap la ferme).
 - **✕** la ferme ; les fenêtres utilisées sont mémorisées avec leur position.
-- **Réorganiser les fenêtres** (en-tête) les remet à leur place et à leur taille de départ.
+- Le bouton **Réorganiser les fenêtres** (quatre carrés, dans l'en-tête) les remet à leur place et à leur taille de départ.
 
 ## Synthé
 
@@ -468,7 +468,7 @@ Le script travaille en deux temps :
 - **Échantillons CC0** : il télécharge les échantillons de Sonic Pi, retire le silence initial et normalise le volume. Pour les boucles, il détecte le tempo, étire le son au tempo cible sans changer la hauteur (WSOLA) et coupe chaque boucle à un nombre exact de mesures.
 - **Banques Gabber, Hardcore, Oldschool, Mainstream et New wave** : il les synthétise de zéro (`tools/gabber.py`).
 
-Clique ensuite sur **Réinitialiser** dans l'appli.
+Clique ensuite sur **Réinitialiser** dans l'appli (la flèche circulaire à droite de l'en-tête).
 
 ## Structure du projet
 

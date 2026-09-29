@@ -546,6 +546,8 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 
 .win-file { width: 26px; height: 26px; padding: 0 !important; display: inline-flex; align-items: center; justify-content: center; }
 
+header button, header .status { white-space: nowrap; }
+
 /* Piano roll */
 .roll-area .win-body { display: flex; flex-direction: column; overflow: hidden; }
 .roll-field { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }

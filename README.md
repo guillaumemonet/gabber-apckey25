@@ -300,7 +300,7 @@ The bar under the header opens and closes the plugins, in four groups: **Instrum
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.
 - **?** opens the **help** for the window's content, next to it (**?** again, ✕ or Esc closes it).
 - **✕** closes it; the windows you use are remembered with their position.
-- **Reset windows** (header) puts them back in their default place and size.
+- The **Reset windows** button (four squares, in the header) puts them back in their default place and size.
 
 ## Synth
 
@@ -468,7 +468,7 @@ The script works in two parts:
 - **CC0 samples**: it downloads the Sonic Pi samples, trims silence and normalises levels. For loops, it detects the tempo, time-stretches them to the target tempo without changing pitch (WSOLA) and cuts them to an exact number of bars.
 - **Gabber, Hardcore, Oldschool, Mainstream and New wave banks**: it synthesises them from scratch (`tools/gabber.py`).
 
-After regenerating, click **Reset** in the app.
+After regenerating, click **Reset** in the app (the circular arrow at the right of the header).
 
 ## Project structure
 
