@@ -34,6 +34,7 @@ ICONS = {
     'save': S('M5 3h11l3 3v15H5zM8 3v5h7V3M8 21v-6h8v6'),
     'folder': S('M3 6h6l2 2h10v11H3z'),
     'trash': S('M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14'),
+    'dial': S('M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zM12 12l4-5', DOT(12, 12, 1.6)),
     'fullscreen': S('M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5'),
     # En-tête
     'star': S('M12 2.5l2.9 6.2 6.6.7-4.9 4.6 1.4 6.6L12 17.3l-6 3.3 1.4-6.6-4.9-4.6 6.6-.7z'),

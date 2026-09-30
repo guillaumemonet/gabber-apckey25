@@ -9,7 +9,7 @@ import * as store from './storage.js';
 import { WindowManager, WINDOWS, mergeWindows } from './windows.js';
 import { LIB_CATS, catColor, libraryItems, guessCat } from './library.js';
 import { Mixer, CHANNELS, MIX_FIELDS, FX_TYPES, MAX_FX, defaultMixState, mergeMixState, mixKnobDefs, newFx, fxParamLabel } from './mixer.js';
-import { Timeline, TL_TRACKS, BEATS_PER_BAR, defaultTlState, mergeTlState } from './timeline.js';
+import { Timeline, MIN_TRACKS, MAX_TRACKS, TRACK_DEFAULTS, BEATS_PER_BAR, defaultTlState, mergeTlState, newTrack, cleanTrack } from './timeline.js';
 import { TR909, TR_INSTR, PATTERNS, trKnobDefs, defaultTrState, mergeTrState } from './tr909.js';
 import { t, soundName, translatePage } from './i18n.js';
 import { Performer, CHORD_MODES, ARP_MODES, ARP_RATES, defaultPlayState, mergePlayState } from './performer.js';
@@ -1503,6 +1503,7 @@ let tlRecorder = null;
 let tlRec = null;                // enregistrement en cours : { beat, time, track, source, startedDrum, bpm }
 let tlSel = null;                // bloc sélectionné : { track, clip }
 
+const TL_HEAD = 158;   // largeur des en-têtes de piste (px) : la 1re colonne de .tl dans css/style.css
 const beatPx = () => state.tl.zoom / BEATS_PER_BAR;
 const snapBeat = (v, fine) => (fine ? Math.round(v) : Math.round(v / BEATS_PER_BAR) * BEATS_PER_BAR);
 
@@ -1681,30 +1682,13 @@ function buildTl() {
     if (timeline.playing && !tlRec) timeline.play(state.tl.playhead);
     save();
   });
-  for (let i = 0; i < TL_TRACKS; i++) {
-    const head = document.createElement('div');
-    head.className = 'tl-head';
-    head.innerHTML = `<span>${t('tl.track', { n: i + 1 })}</span><button class="tl-arm" title="${t('tl.arm')}">●</button><button class="tl-mute" title="${t('mix.mute')}">M</button>`;
-    head.querySelector('.tl-arm').addEventListener('click', () => { state.tl.armed = i; renderTl(); save(); });
-    head.querySelector('.tl-mute').addEventListener('click', () => { state.tl.tracks[i].mute = !state.tl.tracks[i].mute; renderTl(); save(); });
-    const lane = document.createElement('div');
-    lane.className = 'tl-lane';
-    lane.dataset.track = i;
-    const fxLane = document.createElement('div');
-    fxLane.className = 'tl-fxlane';
-    fxLane.title = t('tfx.laneTitle');
-    lane.appendChild(fxLane);
-    // Clic dans une case vide : pose le dernier son choisi dans la bibliothèque.
-    lane.addEventListener('pointerdown', e => {
-      if ((e.target !== lane && !e.target.classList.contains('tl-fxlane')) || e.button !== 0) return;
-      tlLaneDown(e);
-    });
-    grid.append(head, lane);
-  }
   const line = document.createElement('div');
   line.className = 'tl-playhead';
   line.id = 'tl-playhead';
   grid.appendChild(line);
+  buildTrackRows();
+  $('#tl-tracks-less').addEventListener('click', tlRemoveTrack);
+  $('#tl-tracks-more').addEventListener('click', tlAddTrack);
   window.addEventListener('keydown', e => {
     tlKey(e);
     if (e.key === 'Escape') closeFxEditor();
@@ -1718,20 +1702,152 @@ function buildTl() {
       for (const clip of tlRec.open.values()) growHeldNote(clip);
       if ((tlRec.dirty || tlRec.open.size) && performance.now() - lastRecRender > 100) { tlRec.dirty = false; lastRecRender = performance.now(); renderTl(); }
     }
-    const x = 132 + timeline.position() * beatPx();
+    const x = TL_HEAD + timeline.position() * beatPx();
     line.style.left = `${x}px`;
     // Pendant la lecture, la vue suit la tête de lecture.
-    if (timeline.playing && (x > scroll.scrollLeft + scroll.clientWidth - 60 || x < scroll.scrollLeft + 132)) scroll.scrollLeft = x - 200;
+    if (timeline.playing && (x > scroll.scrollLeft + scroll.clientWidth - 60 || x < scroll.scrollLeft + TL_HEAD)) scroll.scrollLeft = x - 200;
     requestAnimationFrame(frame);
   })();
   renderTl();
 }
 
+// Une ligne par piste : en-tête (nom, armer, muet, potards) et couloir des blocs.
+function buildTrackRows() {
+  const grid = $('#tl-grid');
+  for (const el of grid.querySelectorAll('.tl-head, .tl-lane')) el.remove();
+  const line = $('#tl-playhead');
+  state.tl.tracks.forEach((_, i) => {
+    const head = document.createElement('div');
+    head.className = 'tl-head';
+    head.innerHTML = `<span>${t('tl.track', { n: i + 1 })}</span><button class="tl-knobs icon-only" data-icon="dial" title="${t('tl.knobs')}" aria-label="${t('tl.knobs')}"></button><button class="tl-arm" title="${t('tl.arm')}">●</button><button class="tl-mute" title="${t('mix.mute')}">M</button>`;
+    head.querySelector('.tl-arm').addEventListener('click', () => { state.tl.armed = i; renderTl(); save(); });
+    head.querySelector('.tl-mute').addEventListener('click', () => { state.tl.tracks[i].mute = !state.tl.tracks[i].mute; renderTl(); save(); });
+    head.querySelector('.tl-knobs').addEventListener('click', e => openTrackKnobs(i, e.currentTarget));
+    const lane = document.createElement('div');
+    lane.className = 'tl-lane';
+    lane.dataset.track = i;
+    const fxLane = document.createElement('div');
+    fxLane.className = 'tl-fxlane';
+    fxLane.title = t('tfx.laneTitle');
+    lane.appendChild(fxLane);
+    // Clic dans une case vide : pose le dernier son choisi dans la bibliothèque.
+    lane.addEventListener('pointerdown', e => {
+      if ((e.target !== lane && !e.target.classList.contains('tl-fxlane')) || e.button !== 0) return;
+      tlLaneDown(e);
+    });
+    grid.insertBefore(head, line);
+    grid.insertBefore(lane, line);
+  });
+}
+
+// Ajouter / retirer une piste (la dernière ; une piste qui contient des blocs demande confirmation, et « Annuler » la ramène).
+function tlAddTrack() {
+  if (state.tl.tracks.length >= MAX_TRACKS) { toast(t('tl.tracksMax', { n: MAX_TRACKS }), 3000); return; }
+  state.tl.tracks.push(newTrack());
+  renderTl();
+  save();
+  const scroll = $('#tl-scroll');
+  scroll.scrollTop = scroll.scrollHeight;
+}
+
+function tlRemoveTrack() {
+  const tracks = state.tl.tracks;
+  if (tracks.length <= MIN_TRACKS) return;
+  const last = tracks[tracks.length - 1];
+  if ((last.clips.length || last.fx.length) && !confirm(t('tl.trackDelConfirm', { n: tracks.length }))) return;
+  if (tlRec) return;
+  timeline.stop(true);
+  tracks.pop();
+  state.tl.armed = Math.min(state.tl.armed, tracks.length - 1);
+  tlSelect(null, null);
+  closeFxEditor();
+  renderTl();
+  save();
+}
+
+// Potards d'une piste : un petit panneau sous son bouton (tourner = glisser verticalement ou molette, double-clic = défaut).
+const TRACK_KNOBS = [
+  { id: 'vol', min: 0, max: 1.5, def: 1, fmt: v => `${Math.round(v * 100)}%` },
+  { id: 'pan', min: -1, max: 1, def: 0, fmt: v => (Math.abs(v) < 0.02 ? 'C' : v < 0 ? `${t('fmt.left')}${Math.round(-v * 100)}` : `${t('fmt.right')}${Math.round(v * 100)}`) },
+  { id: 'lp', min: 200, max: 20000, def: 20000, curve: 'exp', fmt: v => (v >= 19900 ? '—' : v >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${Math.round(v)}Hz`) },
+  { id: 'hp', min: 20, max: 2000, def: 20, curve: 'exp', fmt: v => (v <= 20.5 ? '—' : v >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${Math.round(v)}Hz`) },
+  { id: 'dly', min: 0, max: 1, def: 0, fmt: v => `${Math.round(v * 100)}%` },
+  { id: 'rev', min: 0, max: 1, def: 0, fmt: v => `${Math.round(v * 100)}%` },
+];
+const trackTouched = tr => TRACK_KNOBS.some(d => Math.abs((tr[d.id] ?? d.def) - d.def) > 1e-6);
+
+function openTrackKnobs(i, anchor) {
+  const was = fxEditing?.track === i;
+  closeFxEditor();
+  if (was) return;   // second clic sur le même bouton : fermer
+  const tr = state.tl.tracks[i];
+  const box = document.createElement('div');
+  box.id = 'fx-editor';
+  box.className = 'fx-editor track-knobs';
+  box.innerHTML = `<div class="fx-editor-head"><b>${t('tl.track', { n: i + 1 })} · ${t('tl.knobs')}</b><button class="win-close" title="${t('win.close')}">✕</button></div><div class="mini-knobs track-knob-row"></div><div class="row track-knob-foot"><button class="tk-reset" data-icon="reset">${t('tl.knobsReset')}</button></div>`;
+  box.querySelector('.win-close').addEventListener('click', closeFxEditor);
+  const row = box.querySelector('.track-knob-row');
+  const render = [];
+  const changed = () => { timeline.updateTrack(i); render.forEach(f => f()); renderTrackHeads(); };
+  for (const d of TRACK_KNOBS) {
+    const el = document.createElement('div');
+    el.className = 'knob';
+    el.innerHTML = `
+      <svg viewBox="0 0 80 80">
+        <path class="track" d="${arcPath(1)}" fill="none" stroke-width="8" stroke-linecap="round"/>
+        <path class="arc" fill="none" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+      <div class="value"></div><div class="label">${t(`tl.k.${d.id}`)}</div>`;
+    const pos = () => toPos(d, tr[d.id] ?? d.def);
+    const set = p => { tr[d.id] = +toValue(d, Math.min(1, Math.max(0, p))).toFixed(4); changed(); };
+    const draw = () => {
+      const p = d.id === 'pan' ? pos() : pos();
+      el.querySelector('.arc').setAttribute('d', p > 0.001 ? arcPath(p) : '');
+      el.querySelector('.value').textContent = d.fmt(tr[d.id] ?? d.def);
+    };
+    render.push(draw);
+    let lastY = null;
+    el.addEventListener('pointerdown', e => { lastY = e.clientY; try { el.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } });
+    el.addEventListener('pointermove', e => {
+      if (lastY === null || Math.abs(lastY - e.clientY) < 2) return;
+      set(pos() + (lastY - e.clientY) * (e.shiftKey ? 0.0012 : 0.005));
+      lastY = e.clientY;
+    });
+    el.addEventListener('pointerup', () => { if (lastY !== null) save(); lastY = null; });
+    el.addEventListener('wheel', e => { e.preventDefault(); set(pos() + (e.deltaY < 0 ? 0.02 : -0.02)); save(); }, { passive: false });
+    el.addEventListener('dblclick', () => { tr[d.id] = d.def; changed(); save(); });
+    row.appendChild(el);
+  }
+  box.querySelector('.tk-reset').addEventListener('click', () => { Object.assign(tr, TRACK_DEFAULTS); changed(); save(); });
+  render.forEach(f => f());
+  document.body.appendChild(box);
+  const r = anchor.getBoundingClientRect();
+  const w = box.offsetWidth, h = box.offsetHeight;
+  box.style.left = `${Math.max(8, Math.min(window.innerWidth - w - 8, r.left))}px`;
+  box.style.top = `${r.bottom + h + 8 < window.innerHeight ? r.bottom + 6 : Math.max(8, r.top - h - 6)}px`;
+  fxEditing = { box, track: i };
+  setTimeout(() => window.addEventListener('pointerdown', fxOutside, true), 0);
+}
+
+// En-têtes : armée, muette, potards touchés (le bouton s'allume).
+function renderTrackHeads() {
+  $('#tl-grid').querySelectorAll('.tl-head').forEach((h, i) => {
+    const tr = state.tl.tracks[i];
+    if (!tr) return;
+    h.querySelector('.tl-arm').classList.toggle('active', i === state.tl.armed);
+    h.querySelector('.tl-mute').classList.toggle('active', tr.mute);
+    const k = h.querySelector('.tl-knobs');
+    k.classList.toggle('active', trackTouched(tr));
+    k.classList.toggle('open', fxEditing?.track === i);
+  });
+}
+
 function renderTl() {
   const st = state.tl;
   const grid = $('#tl-grid');
+  if (!grid.querySelector('.tl-ruler')) return;
+  if (grid.querySelectorAll('.tl-lane').length !== st.tracks.length) buildTrackRows();
   const lanes = [...grid.querySelectorAll('.tl-lane')];
-  if (!lanes.length) return;
   const bp = beatPx();
   grid.style.setProperty('--beat', `${bp}px`);
   grid.style.setProperty('--bar', `${st.zoom}px`);
@@ -1749,10 +1865,10 @@ function renderTl() {
   rec.textContent = tlRec ? t('tl.recStop') : t('tl.rec');
   rec.dataset.icon = tlRec ? 'stop' : 'rec';
   rec.classList.toggle('active', !!tlRec);
-  grid.querySelectorAll('.tl-head').forEach((h, i) => {
-    h.querySelector('.tl-arm').classList.toggle('active', i === st.armed);
-    h.querySelector('.tl-mute').classList.toggle('active', st.tracks[i].mute);
-  });
+  renderTrackHeads();
+  $('#tl-tracks').textContent = t('tl.tracks', { n: st.tracks.length });
+  $('#tl-tracks-less').disabled = st.tracks.length <= MIN_TRACKS;
+  $('#tl-tracks-more').disabled = st.tracks.length >= MAX_TRACKS;
   lanes.forEach((lane, i) => {
     lane.classList.toggle('muted', st.tracks[i].mute);
     lane.querySelectorAll('.tl-clip').forEach(c => c.remove());
@@ -1943,7 +2059,7 @@ function tlGroupDown(e, obj, track) {
     const dx = (ev.clientX - startX) / beatPx();
     const delta = Math.max(-minStart, Math.max(0, snapBeat(o.start + dx, ev.shiftKey)) - o.start);
     const lane = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.tl-lane');
-    const dTrack = Math.max(-minTrack, Math.min(TL_TRACKS - 1 - maxTrack, (lane ? +lane.dataset.track : o.cur) - o.track));
+    const dTrack = Math.max(-minTrack, Math.min(state.tl.tracks.length - 1 - maxTrack, (lane ? +lane.dataset.track : o.cur) - o.track));
     if (orig.every(x => x.obj.start === x.start + delta && x.cur === x.track + dTrack)) return;
     for (const x of orig) {
       x.obj.start = x.start + delta;
@@ -2702,7 +2818,7 @@ async function loadDemo() {
   timeline.stop(true);
   setBpm(demo.bpm);
   const find = (bank, sound) => libManifest.banks.find(b => b.name === bank)?.pads.find(p => p?.name === sound);
-  const tracks = state.tl.tracks.map(() => ({ mute: false, clips: [], fx: [] }));
+  const tracks = state.tl.tracks.map(newTrack);
   const pending = [];
   demo.tracks.slice(0, tracks.length).forEach((list, i) => {
     for (const e of list) {
@@ -3527,13 +3643,15 @@ function renderSidechain() {
 // ---------- Annuler / rétablir (timeline) ----------
 
 // Instantané de la timeline : pistes (muets et blocs) et longueur. La position de lecture n'en fait pas partie.
-const tlSnapshot = () => JSON.stringify({ bars: state.tl.bars, tracks: state.tl.tracks.map(tr => ({ mute: tr.mute, clips: tr.clips, fx: tr.fx })) });
+const tlSnapshot = () => JSON.stringify({ bars: state.tl.bars, tracks: state.tl.tracks });
 
 function initHistory() {
   tlHistory = new History(tlSnapshot, snap => {
     const s = JSON.parse(snap);
     state.tl.bars = s.bars;
-    s.tracks.forEach((tr, i) => { if (state.tl.tracks[i]) Object.assign(state.tl.tracks[i], tr); });
+    state.tl.tracks = s.tracks.map(cleanTrack);
+    state.tl.armed = Math.min(state.tl.armed, state.tl.tracks.length - 1);
+    timeline.updateAllTracks();
     tlSelect(null, null);
     loadTlBuffers().then(renderTl);
     renderTl();
@@ -4455,8 +4573,10 @@ function openParamEditor({ title, color, params, values, anchor, onInput = () =>
 function fxOutside(e) { if (fxEditing && !fxEditing.box.contains(e.target)) closeFxEditor(); }
 function closeFxEditor() {
   window.removeEventListener('pointerdown', fxOutside, true);
+  const track = fxEditing?.track;
   fxEditing?.box.remove();
   fxEditing = null;
+  if (track !== undefined) renderTrackHeads();
 }
 
 function fxOptionLabel(k, v) {

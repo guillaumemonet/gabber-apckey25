@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=47">
+  <link rel="stylesheet" href="css/style.css?v=48">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -64,6 +64,7 @@
         <span class="tl-bars"><button id="tl-undo" class="icon-only" data-icon="undo" data-i18n-title="tl.undo" data-i18n-aria="tl.undo"></button><button id="tl-redo" class="icon-only" data-icon="redo" data-i18n-title="tl.redo" data-i18n-aria="tl.redo"></button></span>
         <span class="tl-bars"><button id="tl-zoom-out" data-i18n-title="tl.zoomOut">−</button><span data-i18n="tl.zoom"></span><button id="tl-zoom-in" data-i18n-title="tl.zoomIn">+</button></span>
         <span class="tl-bars"><button id="tl-less">−</button><span id="tl-bars"></span><button id="tl-more">+</button></span>
+        <span class="tl-bars"><button id="tl-tracks-less" data-i18n-title="tl.removeTrack">−</button><span id="tl-tracks"></span><button id="tl-tracks-more" data-i18n-title="tl.addTrack">+</button></span>
         <span class="tl-bars"><button id="tl-open" class="icon-only" data-icon="folder" data-i18n-title="file.openSong" data-i18n-aria="file.openSong"></button><button id="tl-save" class="icon-only" data-icon="save" data-i18n-title="file.saveSong" data-i18n-aria="file.saveSong"></button></span>
         <button id="tl-demo" data-icon="star" data-i18n="tl.demo" data-i18n-title="tl.demo.title"></button>
         <span class="tl-bars"><button id="tl-export" data-icon="download" data-i18n="export.wav" data-i18n-title="export.wav.title"></button><button id="tl-stems" data-icon="stems" data-i18n="export.stems" data-i18n-title="export.stems.title"></button></span>
@@ -305,41 +306,41 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/acid.js": "./js/acid.js?v=47",
-      "./js/apc.js": "./js/apc.js?v=47",
-      "./js/audio.js": "./js/audio.js?v=47",
-      "./js/decks.js": "./js/decks.js?v=47",
-      "./js/chords.js": "./js/chords.js?v=47",
-      "./js/help.js": "./js/help.js?v=47",
-      "./js/history.js": "./js/history.js?v=47",
-      "./js/i18n.js": "./js/i18n.js?v=47",
-      "./js/kickdesign.js": "./js/kickdesign.js?v=47",
-      "./js/kit.js": "./js/kit.js?v=47",
-      "./js/kits.js": "./js/kits.js?v=47",
-      "./js/library.js": "./js/library.js?v=47",
-      "./js/main.js": "./js/main.js?v=47",
-      "./js/mixer.js": "./js/mixer.js?v=47",
-      "./js/notes.js": "./js/notes.js?v=47",
-      "./js/osc.js": "./js/osc.js?v=47",
-      "./js/params.js": "./js/params.js?v=47",
-      "./js/patch.js": "./js/patch.js?v=47",
-      "./js/performer.js": "./js/performer.js?v=47",
-      "./js/pianoroll.js": "./js/pianoroll.js?v=47",
-      "./js/presets.js": "./js/presets.js?v=47",
-      "./js/project.js": "./js/project.js?v=47",
-      "./js/sidechain.js": "./js/sidechain.js?v=47",
-      "./js/recorder.js": "./js/recorder.js?v=47",
-      "./js/timeline.js": "./js/timeline.js?v=47",
-      "./js/storage.js": "./js/storage.js?v=47",
-      "./js/tr909.js": "./js/tr909.js?v=47",
-      "./js/trackfx.js": "./js/trackfx.js?v=47",
-      "./js/visualizer.js": "./js/visualizer.js?v=47",
-      "./js/viz3d.js": "./js/viz3d.js?v=47",
-      "./js/windows.js": "./js/windows.js?v=47",
-      "./js/zip.js": "./js/zip.js?v=47"
+      "./js/acid.js": "./js/acid.js?v=48",
+      "./js/apc.js": "./js/apc.js?v=48",
+      "./js/audio.js": "./js/audio.js?v=48",
+      "./js/decks.js": "./js/decks.js?v=48",
+      "./js/chords.js": "./js/chords.js?v=48",
+      "./js/help.js": "./js/help.js?v=48",
+      "./js/history.js": "./js/history.js?v=48",
+      "./js/i18n.js": "./js/i18n.js?v=48",
+      "./js/kickdesign.js": "./js/kickdesign.js?v=48",
+      "./js/kit.js": "./js/kit.js?v=48",
+      "./js/kits.js": "./js/kits.js?v=48",
+      "./js/library.js": "./js/library.js?v=48",
+      "./js/main.js": "./js/main.js?v=48",
+      "./js/mixer.js": "./js/mixer.js?v=48",
+      "./js/notes.js": "./js/notes.js?v=48",
+      "./js/osc.js": "./js/osc.js?v=48",
+      "./js/params.js": "./js/params.js?v=48",
+      "./js/patch.js": "./js/patch.js?v=48",
+      "./js/performer.js": "./js/performer.js?v=48",
+      "./js/pianoroll.js": "./js/pianoroll.js?v=48",
+      "./js/presets.js": "./js/presets.js?v=48",
+      "./js/project.js": "./js/project.js?v=48",
+      "./js/sidechain.js": "./js/sidechain.js?v=48",
+      "./js/recorder.js": "./js/recorder.js?v=48",
+      "./js/timeline.js": "./js/timeline.js?v=48",
+      "./js/storage.js": "./js/storage.js?v=48",
+      "./js/tr909.js": "./js/tr909.js?v=48",
+      "./js/trackfx.js": "./js/trackfx.js?v=48",
+      "./js/visualizer.js": "./js/visualizer.js?v=48",
+      "./js/viz3d.js": "./js/viz3d.js?v=48",
+      "./js/windows.js": "./js/windows.js?v=48",
+      "./js/zip.js": "./js/zip.js?v=48"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=47"></script>
+  <script type="module" src="js/main.js?v=48"></script>
 </body>
 </html>

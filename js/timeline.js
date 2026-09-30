@@ -11,8 +11,23 @@
 import { TrackChain, cleanFx } from './trackfx.js';
 import { clipEvents, monoLine } from './notes.js';
 
-export const TL_TRACKS = 16;
+export const TL_TRACKS = 16;        // pistes au départ
+export const MIN_TRACKS = 4;
+export const MAX_TRACKS = 64;
 export const BEATS_PER_BAR = 4;
+// Réglages d'une piste (ses potards) : volume, panoramique, filtres passe-bas / passe-haut, envois delay et reverb.
+export const TRACK_DEFAULTS = { vol: 1, pan: 0, lp: 20000, hp: 20, dly: 0, rev: 0 };
+const num = (v, lo, hi, d) => (Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d);
+export const newTrack = () => ({ mute: false, clips: [], fx: [], ...TRACK_DEFAULTS });
+export function cleanTrack(tr) {
+  return {
+    mute: !!tr?.mute,
+    clips: Array.isArray(tr?.clips) ? tr.clips : [],
+    fx: Array.isArray(tr?.fx) ? tr.fx.map(cleanFx).filter(Boolean) : [],
+    vol: num(tr?.vol, 0, 1.5, 1), pan: num(tr?.pan, -1, 1, 0), lp: num(tr?.lp, 200, 20000, 20000), hp: num(tr?.hp, 20, 2000, 20),
+    dly: num(tr?.dly, 0, 1, 0), rev: num(tr?.rev, 0, 1, 0),
+  };
+}
 
 export function defaultTlState() {
   return {
@@ -22,7 +37,7 @@ export function defaultTlState() {
     playhead: 0,        // en temps (noires)
     source: 'pads',     // outil enregistré : pads, synth (blocs posés en jouant), tr (audio)
     armed: 0,           // piste qui reçoit l'enregistrement
-    tracks: Array.from({ length: TL_TRACKS }, () => ({ mute: false, clips: [], fx: [] })),   // fx : blocs d'effet de la piste (js/trackfx.js)
+    tracks: Array.from({ length: TL_TRACKS }, newTrack),   // fx : blocs d'effet de la piste (js/trackfx.js) ; + ses potards
   };
 }
 
@@ -31,14 +46,13 @@ export function mergeTlState(saved) {
   if (!saved) return base;
   for (const k of ['bars', 'zoom', 'loop', 'playhead', 'source', 'armed']) if (saved[k] !== undefined) base[k] = saved[k];
   base.bars = Math.max(base.bars, 16);
-  if (!['pads', 'synth', 'tr'].includes(base.source)) base.source = 'pads';
+  if (!['pads', 'synth', 'tr', 'acid', 'decks'].includes(base.source)) base.source = 'pads';
   if (Array.isArray(saved.tracks)) {
-    base.tracks = base.tracks.map((tr, i) => ({
-      mute: !!saved.tracks[i]?.mute,
-      clips: Array.isArray(saved.tracks[i]?.clips) ? saved.tracks[i].clips : [],
-      fx: Array.isArray(saved.tracks[i]?.fx) ? saved.tracks[i].fx.map(cleanFx).filter(Boolean) : [],
-    }));
+    // Autant de pistes que dans la sauvegarde (de 4 à 64 ; les anciennes en avaient 16).
+    const n = Math.min(MAX_TRACKS, Math.max(MIN_TRACKS, saved.tracks.length));
+    base.tracks = Array.from({ length: n }, (_, i) => cleanTrack(saved.tracks[i]));
   }
+  base.armed = Math.min(base.tracks.length - 1, Math.max(0, base.armed | 0));
   return base;
 }
 
@@ -71,6 +85,7 @@ export class Timeline {
     this.offs = [];             // fins de notes programmées : { note, key, time }
     this.padHits = new Set();   // voix de pads programmées (toutes coupées à l'arrêt)
     this.chains = new Map();    // piste -> Map(destination -> TrackChain) : effets de piste
+    this.strips = new Map();    // piste -> Map(destination -> tranche : filtres, volume, pano, envois)
     this.cycleChains = new Set();
     this.cycle = null;          // cycle en cours de programmation : { time, beat, len, bd }
   }
@@ -186,8 +201,10 @@ export class Timeline {
   // Entrée de la piste `ti` vers la destination `dest` : sa chaîne d'effets si elle en a, sinon la destination.
   // Une chaîne vue pour la première fois dans le cycle reçoit la programmation de ses blocs d'effet.
   trackIn(ti, dest) {
+    if (!dest) return dest;
+    dest = this.strip(ti, dest);
     const blocks = this.st.tracks[ti]?.fx;
-    if (!blocks?.length || !dest) return dest;
+    if (!blocks?.length) return dest;
     if (!this.chains.has(ti)) this.chains.set(ti, new Map());
     const m = this.chains.get(ti);
     let chain = m.get(dest);
@@ -205,6 +222,46 @@ export class Timeline {
     }
     return chain.input;
   }
+
+  // Tranche de la piste `ti` vers `dest` : passe-haut -> passe-bas -> volume -> pano -> dest, avec envois delay / reverb (avant le pano).
+  strip(ti, dest) {
+    if (!this.strips.has(ti)) this.strips.set(ti, new Map());
+    const m = this.strips.get(ti);
+    let s = m.get(dest);
+    if (!s) {
+      const c = this.ctx;
+      s = { hp: c.createBiquadFilter(), lp: c.createBiquadFilter(), gain: c.createGain(), pan: c.createStereoPanner(), dly: c.createGain(), rev: c.createGain() };
+      s.hp.type = 'highpass';
+      s.lp.type = 'lowpass';
+      s.hp.Q.value = s.lp.Q.value = 0.707;
+      s.hp.connect(s.lp).connect(s.gain).connect(s.pan).connect(dest);
+      // Envois pris avant le panoramique : la reverb et le delay restent larges même pour une piste calée d'un côté.
+      s.gain.connect(s.dly).connect(this.engine.delayIn);
+      s.gain.connect(s.rev).connect(this.engine.reverbIn);
+      s.input = s.hp;
+      m.set(dest, s);
+      this.applyStrip(s, this.st.tracks[ti], true);
+    }
+    return s.input;
+  }
+
+  applyStrip(s, tr, now = false) {
+    if (!tr) return;
+    const t = this.ctx.currentTime;
+    const set = (p, v) => (now ? p.setValueAtTime(v, t) : p.setTargetAtTime(v, t, 0.02));
+    set(s.hp.frequency, tr.hp ?? 20);
+    set(s.lp.frequency, tr.lp ?? 20000);
+    set(s.gain.gain, tr.vol ?? 1);
+    set(s.pan.pan, tr.pan ?? 0);
+    set(s.dly.gain, tr.dly ?? 0);
+    set(s.rev.gain, tr.rev ?? 0);
+  }
+
+  // Potards d'une piste tournés (ou « Annuler ») : le son suit tout de suite.
+  updateTrack(ti) {
+    for (const s of this.strips.get(ti)?.values() ?? []) this.applyStrip(s, this.st.tracks[ti]);
+  }
+  updateAllTracks() { for (const ti of this.strips.keys()) this.updateTrack(ti); }
 
   // Kicks d'un bloc audio entre le temps `beat` (joué à l'instant `time`) et `until` (en temps de la timeline).
   scheduleKicks(clip, time, beat, until) {
