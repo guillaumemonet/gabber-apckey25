@@ -395,7 +395,11 @@ Un clin d'œil à Winamp, dans le groupe **Studio** : des visualisations de la m
 
 ## Tempo et boucles
 
-Le tempo global (en-tête, ou bouton **Tap**) pilote toutes les boucles. Chacune démarre sur la mesure suivante et reste calée quand tu changes le tempo. Pour tes propres boucles, indique leur tempo d'origine dans l'éditeur, ou clique sur **Auto** : le calcul suppose que le fichier dure un nombre entier de mesures. Règle le tempo à 190 pour les banques Gabber, Hardcore, Oldschool, Mainstream et New wave : leurs boucles partagent la même tonalité (fa mineur) et les mêmes longueurs, elles restent donc calées entre elles. Les banques **Hardstyle** et **Mélodies hardstyle** sont faites à **150 BPM**, le tempo du style (leurs boucles suivent aussi le tempo global, mais sonnent le plus naturellement à 150).
+Le tempo global (en-tête) pilote toutes les boucles. Chacune démarre sur la mesure suivante et reste calée quand tu changes le tempo. Pour tes propres boucles, indique leur tempo d'origine dans l'éditeur, ou clique sur **Auto** : le calcul suppose que le fichier dure un nombre entier de mesures. Règle le tempo à 190 pour les banques Gabber, Hardcore, Oldschool, Mainstream et New wave : leurs boucles partagent la même tonalité (fa mineur) et les mêmes longueurs, elles restent donc calées entre elles. Les banques **Hardstyle** et **Mélodies hardstyle** sont faites à **150 BPM**, le tempo du style (leurs boucles suivent aussi le tempo global, mais sonnent le plus naturellement à 150).
+
+**Tap** : clique en rythme, au moins deux fois ; chaque clic clignote et le tempo trouvé (moyenne des derniers clics) s'affiche sur le bouton.
+
+**Métronome** (à côté du Tap) : un clic sur chaque temps de la grille, plus aigu sur le 1er temps de la mesure, avec quatre voyants qui battent la mesure. Son menu **▾** règle quand il clique (tout le temps, ou seulement pendant l'enregistrement), un **décompte d'une mesure avant REC** et son volume. Le clic part directement vers les haut-parleurs : il n'est jamais dans l'export WAV, les stems ni les enregistrements.
 
 ## Potentiomètres
 
@@ -455,7 +459,7 @@ Ce qui est prévu, dans cet ordre :
 
 Ensuite : **plusieurs exemplaires** de la TB-303 et de la TR-909 (chacun câblé où tu veux dans la fenêtre Câblage, tous synchronisés), et un **élément MIDI associé à chaque fenêtre**.
 
-Autres idées gardées pour plus tard : un **découpeur de breaks** (un break coupé en 16 tranches sur les pads), un **designer de lead** (hoover, screech), une **TR-808**, une **entrée audio** pour réenregistrer n'importe quoi sur un pad, un **métronome**, le **MIDI learn** pour d'autres contrôleurs, des **marqueurs, sections, zone de boucle et rampes de tempo** dans la timeline, l'enregistrement d'un outil dans la timeline **après** ses boîtes à effets, et une **version en ligne** jouable sans rien installer.
+Autres idées gardées pour plus tard : un **découpeur de breaks** (un break coupé en 16 tranches sur les pads), un **designer de lead** (hoover, screech), une **TR-808**, une **entrée audio** pour réenregistrer n'importe quoi sur un pad, le **MIDI learn** pour d'autres contrôleurs, des **marqueurs, sections, zone de boucle et rampes de tempo** dans la timeline, l'enregistrement d'un outil dans la timeline **après** ses boîtes à effets, et une **version en ligne** jouable sans rien installer.
 
 Les idées et suggestions sont les bienvenues dans les [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 

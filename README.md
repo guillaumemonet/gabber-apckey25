@@ -395,7 +395,11 @@ A nod to Winamp, in the **Studio** group: music visualizations that follow the m
 
 ## Tempo and loops
 
-The global tempo (header, or the **Tap** button) drives every loop. Each loop starts on the next bar and stays in sync when you change the tempo. For your own loops, enter their original tempo in the editor, or click **Auto**: this assumes the file lasts a whole number of bars. Set the tempo to 190 for the Gabber, Hardcore, Oldschool, Mainstream and New wave banks: their loops share the same key (F minor) and lengths, so they stay in sync with each other. The **Hardstyle** and **Hardstyle melodies** banks are made at **150 BPM**, the tempo of the style (their loops follow the global tempo too, but sound most natural at 150).
+The global tempo (header) drives every loop. Each loop starts on the next bar and stays in sync when you change the tempo. For your own loops, enter their original tempo in the editor, or click **Auto**: this assumes the file lasts a whole number of bars. Set the tempo to 190 for the Gabber, Hardcore, Oldschool, Mainstream and New wave banks: their loops share the same key (F minor) and lengths, so they stay in sync with each other. The **Hardstyle** and **Hardstyle melodies** banks are made at **150 BPM**, the tempo of the style (their loops follow the global tempo too, but sound most natural at 150).
+
+**Tap**: click it in rhythm, at least twice; each click flashes and the tempo found (average of the last clicks) is shown on the button.
+
+**Metronome** (next to Tap): a click on every beat of the grid, higher on the first beat of the bar, with four lights that beat the bar. Its **▾** menu sets when it clicks (all the time, or only while recording), a **one-bar count-in before REC** and its volume. The click goes straight to the speakers: it is never in the WAV export, the stems or the recordings.
 
 ## Knobs
 
@@ -455,7 +459,7 @@ What is planned, in this order:
 
 Then: **several instances** of the TB-303 and TR-909 (each one wired where you want in the Patch window, all in sync), and a **MIDI element attached to each window**.
 
-Other ideas kept for later: a **break slicer** (a break cut into 16 slices on the pads), a **lead designer** (hoover, screech), a **TR-808**, an **audio input** to resample anything onto a pad, a **metronome**, **MIDI learn** for other controllers, timeline **markers, sections, loop region and tempo ramps**, recording a tool into the timeline **after** its effect boxes, and an **online version** playable without installing anything.
+Other ideas kept for later: a **break slicer** (a break cut into 16 slices on the pads), a **lead designer** (hoover, screech), a **TR-808**, an **audio input** to resample anything onto a pad, **MIDI learn** for other controllers, timeline **markers, sections, loop region and tempo ramps**, recording a tool into the timeline **after** its effect boxes, and an **online version** playable without installing anything.
 
 Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 

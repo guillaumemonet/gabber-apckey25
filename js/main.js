@@ -20,6 +20,7 @@ import { SHAPES } from './tr909.js';
 import { Patch, BOX_TYPES, BOX_ORDER, SOURCE_COLORS, boxDefaults, defaultPatch, mergePatch, wouldLoop } from './patch.js';
 import { makeZip } from './zip.js';
 import { packFile, readFile, FILE_EXT } from './project.js';
+import { Metronome, defaultMetroState, mergeMetroState } from './metronome.js';
 import { Visualizer, VIZ_MODES, VIZ_2D, VIZ_3D, VIZ_FILTERS } from './visualizer.js';
 import { FX_TYPES as TFX_TYPES, FX_BANK, FX_FAMILY_COLORS, fxDefaults, bankName } from './trackfx.js';
 import { KICK_PARAMS, KICK_PRESETS, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
@@ -36,7 +37,7 @@ const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (E
 const UI_PAGES = [...PAGE_ORDER, 'tr', 'acid', 'decks', 'osc', 'viz', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
 
-let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory, acid, decks, patch, oscSynth, viz;
+let engine, apc, kit, recorder, drum, mixer, wm, timeline, performer, sidechain, tlHistory, acid, decks, patch, oscSynth, viz, metro;
 let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
 const state = {
   bank: 0,
@@ -65,6 +66,7 @@ const state = {
   osc: defaultOscState(),             // synthé à oscillateurs : réglages, preset, presets perso
   keys: 'synth',                      // synthé joué au clavier : 'synth' ou 'osc' (celui de la fenêtre active)
   viz: null,                          // visualiseur : mode, réglages, mots (préparé au démarrage)
+  metro: defaultMetroState(),         // métronome : allumé, quand, décompte, volume
 };
 const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 let shiftHeld = false;
@@ -161,6 +163,7 @@ async function start() {
   buildDecks();
   buildOsc();
   buildViz();
+  buildMetro();
   buildPatch();
   buildMixer();
   buildSidechain();
@@ -245,6 +248,7 @@ async function restore() {
     state.roll = mergeRoll(saved.roll);
     state.osc = mergeOscState(saved.osc);
     state.keys = saved.keys === 'osc' ? 'osc' : 'synth';
+    state.metro = mergeMetroState(saved.metro);
     state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
     for (let b = 0; b < BANKS; b++) {
       for (let i = 0; i < 40; i++) {
@@ -349,6 +353,7 @@ function stateSnapshot() {
     osc: state.osc,
     keys: state.keys,
     viz: state.viz,
+    metro: state.metro,
     banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
   };
 }
@@ -1148,13 +1153,24 @@ function setBpm(bpm) {
 function bindTempo() {
   $('#bpm').value = state.bpm;
   $('#bpm').addEventListener('change', e => setBpm(+e.target.value));
+  // Tap tempo : chaque clic clignote ; dès le 2e, le tempo (moyenne des derniers clics) s'affiche sur le bouton.
   const taps = [];
-  $('#tap').addEventListener('click', () => {
+  const tap = $('#tap');
+  let tapTimer;
+  tap.addEventListener('click', () => {
     const now = performance.now();
     if (taps.length && now - taps[taps.length - 1] > 2000) taps.length = 0;
     taps.push(now);
-    if (taps.length > 5) taps.shift();
-    if (taps.length >= 3) setBpm(60000 * (taps.length - 1) / (now - taps[0]));
+    if (taps.length > 8) taps.shift();
+    tap.classList.remove('tapped');
+    void tap.offsetWidth;
+    tap.classList.add('tapped');
+    if (taps.length >= 2) {
+      const bpm = 60000 * (taps.length - 1) / (now - taps[0]);
+      if (bpm >= 40 && bpm <= 240) { setBpm(bpm); tap.textContent = t('tap.bpm', { bpm: Math.round(bpm) }); }
+    } else tap.textContent = t('tap.first');
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(() => { taps.length = 0; tap.textContent = 'Tap'; }, 2500);
   });
 
   $('#ed-bpm').addEventListener('change', e => {
@@ -1539,7 +1555,8 @@ function tlToggle() {
     renderLeds();
   }
 }
-const tlRecToggle = () => (tlRec ? tlStopRec() : tlStartRec());
+let countingIn = false;   // décompte du métronome en cours (le REC attend)
+const tlRecToggle = () => (countingIn ? null : tlRec ? tlStopRec() : tlStartRec());
 
 // Point de captation de l'outil enregistré (après son fader, avant le master).
 function tlSourceNode(source) {
@@ -1562,6 +1579,13 @@ async function tlStartRec() {
   const audio = [];
   for (const x of targets) if (AUDIO_SOURCES.has(x.src) && !audio.some(r => r.source === x.src)) audio.push({ source: x.src, track: x.track, kicks: [] });
   for (const r of audio) { r.recorder = new Recorder(engine.ctx, tlSourceNode(r.source)); await r.recorder.start(); }
+  if (state.metro.on && state.metro.countIn) {   // une mesure de décompte avant de lancer l'enregistrement
+    countingIn = true;
+    renderLeds();
+    const end = metro.countIn();
+    await new Promise(r => setTimeout(r, Math.max(0, (end - engine.ctx.currentTime - 0.08) * 1000)));
+    countingIn = false;
+  }
   const beat = Math.round(state.tl.playhead);
   timeline.recording = audio.length > 0;   // l'audio s'enregistre d'un trait (sans boucle)
   const time = timeline.play(beat);
@@ -5432,6 +5456,60 @@ function renderViz() {
   $('#viz-proj').classList.toggle('active', !!projector);
   $('#viz-current').textContent = t(`viz.mode.${state.viz.mode}`);
   $('#viz-words').hidden = state.viz.mode !== 'bang';
+}
+
+// ---------- Métronome ----------
+
+function buildMetro() {
+  metro = new Metronome(engine, () => state.metro, () => state.metro.on && (state.metro.when === 'always' || !!tlRec));
+  $('#metro').addEventListener('click', () => { state.metro.on = !state.metro.on; renderMetro(); save(); });
+  $('#metro-opts').addEventListener('click', e => openMetroOptions(e.currentTarget));
+  const dots = [...document.querySelectorAll('#metro .metro-dots i')];
+  let lastBeat = -2;
+  (function frame() {
+    const b = state.metro.on || countingIn ? metro.current() : -1;
+    if (b !== lastBeat) { dots.forEach((d, k) => { d.classList.toggle('on', k === b); d.classList.toggle('one', k === b && b === 0); }); lastBeat = b; }
+    requestAnimationFrame(frame);
+  })();
+  renderMetro();
+}
+
+function renderMetro() {
+  $('#metro').classList.toggle('active', state.metro.on);
+}
+
+// Options : quand il bat, décompte avant REC, volume.
+function openMetroOptions(anchor) {
+  const was = fxEditing?.metro;
+  closeFxEditor();
+  if (was) return;
+  const m = state.metro;
+  const box = document.createElement('div');
+  box.id = 'fx-editor';
+  box.className = 'fx-editor metro-opts';
+  box.innerHTML = `<div class="fx-editor-head"><b>${t('metro.name')}</b><button class="win-close" title="${t('win.close')}">✕</button></div>
+    <div class="fx-editor-body">
+      <label class="fx-param"><span>${t('metro.when')}</span><select class="m-when"><option value="always">${t('metro.always')}</option><option value="rec">${t('metro.rec')}</option></select></label>
+      <label class="fx-param check"><input type="checkbox" class="m-count"><span>${t('metro.countIn')}</span></label>
+      <label class="fx-param"><span>${t('metro.vol')}</span><input type="range" min="0" max="1" step="0.01" class="m-vol"><em></em></label>
+    </div>`;
+  box.querySelector('.win-close').addEventListener('click', closeFxEditor);
+  const when = box.querySelector('.m-when'), count = box.querySelector('.m-count'), vol = box.querySelector('.m-vol'), volLabel = box.querySelector('em');
+  when.value = m.when;
+  count.checked = m.countIn;
+  vol.value = m.vol;
+  const showVol = () => { volLabel.textContent = `${Math.round(m.vol * 100)}%`; };
+  showVol();
+  when.addEventListener('change', () => { m.when = when.value; save(); });
+  count.addEventListener('change', () => { m.countIn = count.checked; save(); });
+  vol.addEventListener('input', () => { m.vol = +vol.value; showVol(); });
+  vol.addEventListener('change', save);
+  document.body.appendChild(box);
+  const r = anchor.getBoundingClientRect();
+  box.style.left = `${Math.max(8, Math.min(window.innerWidth - box.offsetWidth - 8, r.right - box.offsetWidth))}px`;
+  box.style.top = `${r.bottom + 6}px`;
+  fxEditing = { box, metro: true };
+  setTimeout(() => window.addEventListener('pointerdown', fxOutside, true), 0);
 }
 
 // ---------- Divers ----------
