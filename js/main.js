@@ -9,7 +9,7 @@ import * as store from './storage.js';
 import { WindowManager, WINDOWS, mergeWindows } from './windows.js';
 import { LIB_CATS, catColor, libraryItems, guessCat } from './library.js';
 import { Mixer, CHANNELS, MIX_FIELDS, FX_TYPES, MAX_FX, defaultMixState, mergeMixState, mixKnobDefs, newFx, fxParamLabel } from './mixer.js';
-import { Timeline, MIN_TRACKS, MAX_TRACKS, TRACK_DEFAULTS, BEATS_PER_BAR, defaultTlState, mergeTlState, newTrack, cleanTrack } from './timeline.js';
+import { Timeline, MIN_TRACKS, MAX_TRACKS, TRACK_DEFAULTS, REC_SOURCES, BEATS_PER_BAR, defaultTlState, mergeTlState, newTrack, cleanTrack } from './timeline.js';
 import { TR909, TR_INSTR, PATTERNS, trKnobDefs, defaultTrState, mergeTrState } from './tr909.js';
 import { t, soundName, translatePage } from './i18n.js';
 import { Performer, CHORD_MODES, ARP_MODES, ARP_RATES, defaultPlayState, mergePlayState } from './performer.js';
@@ -110,7 +110,7 @@ async function start() {
   sidechain.pads.connect(engine.padBus);
   engine.padOut = pad => (isDuckedSound(pad.sampleId, padCat(pad)) ? sidechain.pads : engine.padBus);
   sidechain.onKick = time => viz?.kick(time);   // flash du visualiseur sur chaque kick
-  drum.onKick = time => { sidechain.kick(time); if (tlRec?.source === 'tr') tlRec.kicks.push(time); };
+  drum.onKick = time => { sidechain.kick(time); tlRec?.audio.find(r => r.source === 'tr')?.kicks.push(time); };
   sidechain.isRunning = () => timeline?.playing || drum.running || [...engine.padVoices.values()].some(v => v.mode === 'loop');
   sidechain.loopKicks = padLoopKicks;
   acid = new Acid303(engine, () => state.acid);
@@ -1496,14 +1496,14 @@ function renderTrHead() {
 // ---------- Timeline (écran principal, façon eJay) ----------
 
 // Pads et synthé : blocs posés en jouant ; TR-909 : enregistrement audio.
-const TL_SOURCES = ['pads', 'synth', 'tr', 'acid', 'decks'];
+const TL_SOURCES = REC_SOURCES;   // pads, synthé, synthé à oscillateurs, TR-909, TB-303, platines
 const bufferCache = new Map();   // sampleId -> AudioBuffer des blocs
 const peaksCache = new Map();    // sampleId -> crêtes pour dessiner la forme d'onde
 let tlRecorder = null;
-let tlRec = null;                // enregistrement en cours : { beat, time, track, source, startedDrum, bpm }
+let tlRec = null;                // enregistrement en cours : { beat, time, events, audio, open, notes, startedDrum, startedAcid, bpm }
 let tlSel = null;                // bloc sélectionné : { track, clip }
 
-const TL_HEAD = 158;   // largeur des en-têtes de piste (px) : la 1re colonne de .tl dans css/style.css
+const TL_HEAD = 176;   // largeur des en-têtes de piste (px) : la 1re colonne de .tl dans css/style.css
 const beatPx = () => state.tl.zoom / BEATS_PER_BAR;
 const snapBeat = (v, fine) => (fine ? Math.round(v) : Math.round(v / BEATS_PER_BAR) * BEATS_PER_BAR);
 
@@ -1546,27 +1546,30 @@ function tlSourceNode(source) {
   return source === 'master' ? engine.output : mixer.strips[source].mute;
 }
 
+// Pistes armées et l'instrument que chacune enregistre (le sien, sinon le choix « Enregistrer » de la barre).
+const AUDIO_SOURCES = new Set(['tr', 'acid', 'decks']);
+const trackSource = tr => tr.src || state.tl.source;
+const armedTrack = () => Math.max(0, state.tl.tracks.findIndex(tr => tr.arm));
+
+// Enregistrement : chaque piste armée enregistre son instrument, toutes en même temps.
+// Pads / synthés : chaque coup ou note devient un bloc, en direct ; TR-909 / TB-303 / platines : audio.
 async function tlStartRec() {
   if (timeline.playing) timeline.stop(true);
-  const source = state.tl.source;
-  if (!['tr', 'acid', 'decks'].includes(source)) {
-    // Pads / synthé : on joue la timeline (en boucle si activée) et chaque coup devient un bloc.
-    tlRec = { mode: 'events', source, open: new Map(), notes: [], dirty: false };
-    timeline.play(Math.round(state.tl.playhead));
-    renderTl();
-    renderLeds();
-    return;
-  }
-  tlRecorder = new Recorder(engine.ctx, tlSourceNode(source));
-  await tlRecorder.start();
+  const targets = state.tl.tracks.map((tr, i) => ({ track: i, src: trackSource(tr), arm: tr.arm })).filter(x => x.arm);
+  if (!targets.length) { toast(t('tl.noArmed'), 3500); return; }
+  const events = {};
+  for (const x of targets) if (!AUDIO_SOURCES.has(x.src) && events[x.src] === undefined) events[x.src] = x.track;
+  const audio = [];
+  for (const x of targets) if (AUDIO_SOURCES.has(x.src) && !audio.some(r => r.source === x.src)) audio.push({ source: x.src, track: x.track, kicks: [] });
+  for (const r of audio) { r.recorder = new Recorder(engine.ctx, tlSourceNode(r.source)); await r.recorder.start(); }
   const beat = Math.round(state.tl.playhead);
-  timeline.recording = true;
+  timeline.recording = audio.length > 0;   // l'audio s'enregistre d'un trait (sans boucle)
   const time = timeline.play(beat);
-  let startedDrum = false;
-  if (source === 'tr' && !drum.running) { drum.start(true); startedDrum = true; }   // la 909 joue calée sur la timeline
-  let startedAcid = false;
-  if (source === 'acid' && !acid.playing) { if (state.acid.link) { drum.start(true); startedDrum = true; } else acid.start(true); startedAcid = true; }
-  tlRec = { beat, time, track: state.tl.armed, source, startedDrum, startedAcid, bpm: state.bpm, kicks: [] };
+  let startedDrum = false, startedAcid = false;
+  const has = src => audio.some(r => r.source === src);
+  if (has('tr') && !drum.running) { drum.start(true); startedDrum = true; }   // la 909 joue calée sur la timeline
+  if (has('acid') && !acid.playing) { if (state.acid.link) { if (!drum.running) { drum.start(true); startedDrum = true; } } else acid.start(true); startedAcid = true; }
+  tlRec = { beat, time, events, audio, open: new Map(), notes: [], dirty: false, startedDrum, startedAcid, bpm: state.bpm };
   renderTl();
   renderTr();
   renderLeds();
@@ -1575,49 +1578,49 @@ async function tlStartRec() {
 async function tlStopRec() {
   const rec = tlRec;
   if (!rec) return;
-  if (rec.mode === 'events') {
-    for (const clip of rec.open.values()) growHeldNote(clip);
-    tlRec = null;
-    timeline.stop(true);
-    try { mergeTake(rec.notes); } catch (err) { console.warn('Take', err); }
-    for (const tr of state.tl.tracks) for (const c of tr.clips) growSong(c);
-    save();
-    renderTl();
-    renderLeds();
-    return;
-  }
+  for (const clip of rec.open.values()) growHeldNote(clip);
   tlRec = null;
   timeline.recording = false;
-  const raw = await tlRecorder.stopRaw();
+  const raws = [];
+  for (const r of rec.audio) raws.push(await r.recorder.stopRaw().catch(() => null));
   timeline.stop(true);
   if (rec.startedDrum) drum.stop();
   if (rec.startedAcid) acid.stop();
   renderAcid();
+  try { mergeTake(rec.notes, rec.events); } catch (err) { console.warn('Take', err); }
+  rec.audio.forEach((r, k) => { if (raws[k]) saveAudioTake(rec, r, raws[k]); });
+  for (const tr of state.tl.tracks) for (const c of tr.clips) growSong(c);
+  renderLibrary();
+  save();
+  renderTl();
+  renderTr();
+  renderLeds();
+}
+
+// Une prise audio devient un bloc sur sa piste (et un son de la rubrique Enregistrements).
+async function saveAudioTake(rec, r, raw) {
   const sr = raw.sampleRate;
   // Retire ce qui a été capté avant le temps de départ.
   const skip = Math.max(0, Math.round((rec.time - raw.startedAt) * sr));
   const chans = raw.channels.map(c => c.subarray(skip));
-  if (chans[0].length > sr * 0.05) {
-    const buffer = engine.ctx.createBuffer(2, chans[0].length, sr);
-    chans.forEach((c, i) => buffer.copyToChannel(c, i));
-    const id = `rec:${crypto.randomUUID()}`;
-    const n = state.tl.tracks.flatMap(tr => tr.clips).filter(c => c.sampleId?.startsWith('rec:')).length + 1;
-    const name = `${t(`tl.src.${rec.source}`)} ${n}`;
-    await store.saveSample(id, { name, data: encodeWav(chans, sr) });
-    bufferCache.set(id, buffer);
-    const len = Math.max(1, Math.round(buffer.duration * rec.bpm / 60));
-    const clip = { id: crypto.randomUUID(), start: rec.beat, len, sampleId: id, name, cat: 'rec', color: catColor('rec'), bpm: rec.bpm, loop: false };
-    const kicks = rec.kicks.map(k => (k - rec.time) * rec.bpm / 60).filter(k => k >= 0 && k < len);
-    if (kicks.length) clip.kickBeats = kicks.map(k => Math.round(k * 1000) / 1000);   // sidechain
-    state.tl.tracks[rec.track].clips.push(clip);
-    growSong(clip);
-    tlSelect(rec.track, clip);
-    renderLibrary();
-    save();
-  }
+  if (chans[0].length <= sr * 0.05) return;
+  const buffer = engine.ctx.createBuffer(2, chans[0].length, sr);
+  chans.forEach((c, i) => buffer.copyToChannel(c, i));
+  const id = `rec:${crypto.randomUUID()}`;
+  const n = state.tl.tracks.flatMap(tr => tr.clips).filter(c => c.sampleId?.startsWith('rec:')).length + 1;
+  const name = `${t(`tl.src.${r.source}`)} ${n}`;
+  bufferCache.set(id, buffer);
+  const len = Math.max(1, Math.round(buffer.duration * rec.bpm / 60));
+  const clip = { id: crypto.randomUUID(), start: rec.beat, len, sampleId: id, name, cat: 'rec', color: catColor('rec'), bpm: rec.bpm, loop: false };
+  const kicks = r.kicks.map(k => (k - rec.time) * rec.bpm / 60).filter(k => k >= 0 && k < len);
+  if (kicks.length) clip.kickBeats = kicks.map(k => Math.round(k * 1000) / 1000);   // sidechain
+  state.tl.tracks[r.track].clips.push(clip);
+  growSong(clip);
+  tlSelect(r.track, clip);
   renderTl();
-  renderTr();
-  renderLeds();
+  await store.saveSample(id, { name, data: encodeWav(chans, sr) });
+  renderLibrary();
+  save();
 }
 
 function growSong(clip) {
@@ -1698,7 +1701,7 @@ function buildTl() {
   timeline.onStop = () => { renderTl(); renderLeds(); };
   const scroll = $('#tl-scroll');
   (function frame() {
-    if (tlRec?.mode === 'events') {
+    if (tlRec) {
       for (const clip of tlRec.open.values()) growHeldNote(clip);
       if ((tlRec.dirty || tlRec.open.size) && performance.now() - lastRecRender > 100) { tlRec.dirty = false; lastRecRender = performance.now(); renderTl(); }
     }
@@ -1719,8 +1722,9 @@ function buildTrackRows() {
   state.tl.tracks.forEach((_, i) => {
     const head = document.createElement('div');
     head.className = 'tl-head';
-    head.innerHTML = `<span>${t('tl.track', { n: i + 1 })}</span><button class="tl-knobs icon-only" data-icon="dial" title="${t('tl.knobs')}" aria-label="${t('tl.knobs')}"></button><button class="tl-arm" title="${t('tl.arm')}">●</button><button class="tl-mute" title="${t('mix.mute')}">M</button>`;
-    head.querySelector('.tl-arm').addEventListener('click', () => { state.tl.armed = i; renderTl(); save(); });
+    head.innerHTML = `<i class="tl-src" hidden></i><span class="tl-name" title="${t('tl.renameTitle')}"></span><button class="tl-knobs icon-only" data-icon="dial" title="${t('tl.knobs')}" aria-label="${t('tl.knobs')}"></button><button class="tl-arm" title="${t('tl.arm')}">●</button><button class="tl-mute" title="${t('mix.mute')}">M</button>`;
+    head.querySelector('.tl-name').addEventListener('dblclick', e => renameTrack(i, e.currentTarget));
+    head.querySelector('.tl-arm').addEventListener('click', () => { const tr = state.tl.tracks[i]; tr.arm = !tr.arm; renderTl(); save(); });
     head.querySelector('.tl-mute').addEventListener('click', () => { state.tl.tracks[i].mute = !state.tl.tracks[i].mute; renderTl(); save(); });
     head.querySelector('.tl-knobs').addEventListener('click', e => openTrackKnobs(i, e.currentTarget));
     const lane = document.createElement('div');
@@ -1758,7 +1762,6 @@ function tlRemoveTrack() {
   if (tlRec) return;
   timeline.stop(true);
   tracks.pop();
-  state.tl.armed = Math.min(state.tl.armed, tracks.length - 1);
   tlSelect(null, null);
   closeFxEditor();
   renderTl();
@@ -1784,8 +1787,42 @@ function openTrackKnobs(i, anchor) {
   const box = document.createElement('div');
   box.id = 'fx-editor';
   box.className = 'fx-editor track-knobs';
-  box.innerHTML = `<div class="fx-editor-head"><b>${t('tl.track', { n: i + 1 })} · ${t('tl.knobs')}</b><button class="win-close" title="${t('win.close')}">✕</button></div><div class="mini-knobs track-knob-row"></div><div class="row track-knob-foot"><button class="tk-reset" data-icon="reset">${t('tl.knobsReset')}</button></div>`;
+  box.innerHTML = `<div class="fx-editor-head"><b></b><button class="win-close" title="${t('win.close')}">✕</button></div>
+    <div class="track-meta">
+      <label>${t('tl.trackName')}<input class="tk-name" maxlength="24" spellcheck="false"></label>
+      <label>${t('tl.trackSrc')}<select class="tk-src"></select></label>
+      <div class="tk-colors"><span>${t('tl.trackColor')}</span></div>
+    </div>
+    <div class="mini-knobs track-knob-row"></div><div class="row track-knob-foot"><button class="tk-reset" data-icon="reset">${t('tl.knobsReset')}</button></div>`;
   box.querySelector('.win-close').addEventListener('click', closeFxEditor);
+  const title = () => { box.querySelector('b').textContent = `${trackName(i)} · ${t('tl.knobs')}`; };
+  title();
+  const nameIn = box.querySelector('.tk-name');
+  nameIn.value = tr.name;
+  nameIn.placeholder = t('tl.track', { n: i + 1 });
+  nameIn.addEventListener('input', () => { tr.name = nameIn.value.slice(0, 24); title(); renderTrackHeads(); });
+  nameIn.addEventListener('change', () => { tr.name = nameIn.value.trim().slice(0, 24); save(); });
+  nameIn.addEventListener('keydown', e => e.stopPropagation());
+  const srcSel = box.querySelector('.tk-src');
+  srcSel.add(new Option(t('tl.srcAuto', { src: t(`tl.src.${state.tl.source}`) }), ''));
+  for (const src of REC_SOURCES) srcSel.add(new Option(t(`tl.src.${src}`), src));
+  srcSel.value = tr.src || '';
+  srcSel.addEventListener('change', () => { tr.src = srcSel.value || null; renderTrackHeads(); save(); });
+  const colors = box.querySelector('.tk-colors');
+  for (const c of [null, ...TRACK_COLORS]) {
+    const b = document.createElement('button');
+    b.className = 'tk-color' + (c ? '' : ' none');
+    b.style.setProperty('--c', c || 'transparent');
+    b.title = c ? c : t('tl.noColor');
+    b.classList.toggle('active', (tr.color || null) === c);
+    b.addEventListener('click', () => {
+      tr.color = c;
+      for (const x of colors.querySelectorAll('.tk-color')) x.classList.toggle('active', x === b);
+      renderTl();
+      save();
+    });
+    colors.appendChild(b);
+  }
   const row = box.querySelector('.track-knob-row');
   const render = [];
   const changed = () => { timeline.updateTrack(i); render.forEach(f => f()); renderTrackHeads(); };
@@ -1829,12 +1866,47 @@ function openTrackKnobs(i, anchor) {
   setTimeout(() => window.addEventListener('pointerdown', fxOutside, true), 0);
 }
 
-// En-têtes : armée, muette, potards touchés (le bouton s'allume).
+const trackName = i => state.tl.tracks[i]?.name || t('tl.track', { n: i + 1 });
+const SRC_ICONS = { pads: 'pads', synth: 'keys', osc: 'osc', tr: 'tr', acid: 'acid', decks: 'decks' };
+// Couleurs de fond des pistes.
+const TRACK_COLORS = ['#e5484d', '#f76b15', '#ffc53d', '#46a758', '#12a594', '#0090ff', '#6e56cf', '#d6409f', '#8d8d86'];
+
+// Renommer une piste : un champ à la place du nom (Entrée = valider, Échap = annuler, vide = nom par défaut).
+function renameTrack(i, el) {
+  const tr = state.tl.tracks[i];
+  const input = document.createElement('input');
+  input.className = 'tl-rename';
+  input.maxLength = 24;
+  input.value = tr.name;
+  input.placeholder = t('tl.track', { n: i + 1 });
+  el.replaceWith(input);
+  input.focus();
+  input.select();
+  let done = false;
+  const finish = ok => {
+    if (done) return;
+    done = true;
+    if (ok) { tr.name = input.value.trim().slice(0, 24); save(); }
+    input.replaceWith(el);
+    renderTrackHeads();
+  };
+  input.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') finish(true); if (e.key === 'Escape') finish(false); });
+  input.addEventListener('blur', () => finish(true));
+}
+
+// En-têtes : nom, instrument enregistré, armée, muette, potards touchés (le bouton s'allume), couleur.
 function renderTrackHeads() {
   $('#tl-grid').querySelectorAll('.tl-head').forEach((h, i) => {
     const tr = state.tl.tracks[i];
     if (!tr) return;
-    h.querySelector('.tl-arm').classList.toggle('active', i === state.tl.armed);
+    const name = h.querySelector('.tl-name');
+    if (name) name.textContent = trackName(i);
+    const src = h.querySelector('.tl-src');
+    src.hidden = !tr.src;
+    if (tr.src) { src.dataset.icon = SRC_ICONS[tr.src]; src.title = t('tl.recordsThis', { src: t(`tl.src.${tr.src}`) }); }
+    h.style.setProperty('--tc', tr.color || 'transparent');
+    h.classList.toggle('colored', !!tr.color);
+    h.querySelector('.tl-arm').classList.toggle('active', tr.arm);
     h.querySelector('.tl-mute').classList.toggle('active', tr.mute);
     const k = h.querySelector('.tl-knobs');
     k.classList.toggle('active', trackTouched(tr));
@@ -1871,6 +1943,8 @@ function renderTl() {
   $('#tl-tracks-more').disabled = st.tracks.length >= MAX_TRACKS;
   lanes.forEach((lane, i) => {
     lane.classList.toggle('muted', st.tracks[i].mute);
+    lane.style.setProperty('--tc', st.tracks[i].color || 'transparent');
+    lane.classList.toggle('colored', !!st.tracks[i].color);
     lane.querySelectorAll('.tl-clip').forEach(c => c.remove());
     for (const clip of st.tracks[i].clips) lane.appendChild(clipEl(i, clip));
     const fxLane = lane.querySelector('.tl-fxlane');
@@ -2207,15 +2281,20 @@ const snapRec = v => Math.round(v / REC_GRID) * REC_GRID;
 const noteLabel = n => `${t('notes')[n % 12]}${Math.floor(n / 12) - 1}`;
 
 // Piste libre à cet endroit : la piste armée, sinon la suivante qui ne contient rien à ce moment-là.
-function freeTrack(start, len) {
+// Pendant un enregistrement (`src` donné), une piste armée pour un autre instrument n'est jamais prise.
+function freeTrack(start, len, from = armedTrack(), src = null) {
   const tracks = state.tl.tracks;
   for (let k = 0; k < tracks.length; k++) {
-    const i = (state.tl.armed + k) % tracks.length;
+    const i = (from + k) % tracks.length;
+    if (src && k > 0 && tracks[i].arm && trackSource(tracks[i]) !== src) continue;
     const busy = tracks[i].clips.some(c => c.start < start + len - 1e-6 && start < c.start + timeline.clipBeats(c) - 1e-6);
     if (!busy) return i;
   }
-  return state.tl.armed;
+  return from;
 }
+
+// Piste qui reçoit les notes du clavier : celle du synthé joué (Synthé ou Synthé à oscillateurs), sinon l'autre.
+const noteTrack = () => tlRec?.events[state.keys === 'osc' ? 'osc' : 'synth'] ?? tlRec?.events.synth ?? tlRec?.events.osc;
 
 function recPosition() {
   const pos = timeline.position();
@@ -2223,22 +2302,24 @@ function recPosition() {
 }
 
 function tlRecordPad(bank, i) {
-  if (tlRec?.mode !== 'events' || tlRec.source !== 'pads' || !timeline.playing) return;
+  const ti = tlRec?.events.pads;
+  if (ti === undefined || !timeline.playing) return;
   const pad = state.banks[bank][i];
   if (!pad?.buffer) return;
   const start = recPosition();
   const len = Math.max(REC_GRID, Math.ceil(pad.buffer.duration / timeline.beatDur / REC_GRID) * REC_GRID);
   const clip = { id: crypto.randomUUID(), type: 'pad', bank, pad: i, sampleId: pad.sampleId, name: pad.name, color: pad.color, cat: 'drums', start, len, loop: false };
-  state.tl.tracks[freeTrack(start, len)].clips.push(clip);
+  state.tl.tracks[freeTrack(start, len, ti, 'pads')].clips.push(clip);
   tlRec.dirty = true;
 }
 
 function tlRecordNote(note, on, velocity = 0.85) {
-  if (tlRec?.mode !== 'events' || tlRec.source !== 'synth' || !timeline.playing) return;
+  const ti = noteTrack();
+  if (ti === undefined || !timeline.playing) return;
   if (on) {
     const start = recPosition();
     const clip = { id: crypto.randomUUID(), type: 'note', note, vel: velocity, name: noteLabel(note), color: catColor('lead'), cat: 'lead', start, len: REC_GRID, loop: false, ...recSound() };
-    state.tl.tracks[freeTrack(start, REC_GRID)].clips.push(clip);
+    state.tl.tracks[freeTrack(start, REC_GRID, ti, trackSource(state.tl.tracks[ti]))].clips.push(clip);
     tlRec.notes.push(clip);
     tlRec.open.set(note, clip);   // s'allonge tant que la touche est tenue
   } else {
@@ -2253,13 +2334,14 @@ function tlRecordNote(note, on, velocity = 0.85) {
 // Note de l'arpège programmée à l'instant `when` (secondes) pour `dur` secondes : calée sur la triple-croche.
 const ARP_GRID = 0.125;
 function tlRecordArpNote(note, vel, when, dur) {
-  if (tlRec?.mode !== 'events' || tlRec.source !== 'synth' || !timeline.playing) return;
+  const ti = noteTrack();
+  if (ti === undefined || !timeline.playing) return;
   let pos = timeline.position() + (when - engine.ctx.currentTime) / timeline.beatDur;
   if (timeline.length) pos %= timeline.length;
   const start = Math.round(pos / ARP_GRID) * ARP_GRID;
   const len = Math.max(ARP_GRID, Math.round(dur / timeline.beatDur / ARP_GRID) * ARP_GRID);
   const clip = { id: crypto.randomUUID(), type: 'note', note, vel, name: noteLabel(note), color: catColor('lead'), cat: 'lead', start, len, loop: false, ...recSound() };
-  state.tl.tracks[freeTrack(start, len)].clips.push(clip);
+  state.tl.tracks[freeTrack(start, len, ti, trackSource(state.tl.tracks[ti]))].clips.push(clip);
   tlRec.notes.push(clip);
   tlRec.dirty = true;
 }
@@ -2481,19 +2563,22 @@ function rollMerge() {
 }
 
 // Fin d'un enregistrement du synthé : les notes jouées deviennent un seul bloc (à la mesure), prêt pour le piano pianoRoll.
-function mergeTake(notes) {
+function mergeTake(notes, events = {}) {
   const all = notes.filter(c => state.tl.tracks.some(tr => tr.clips.includes(c)));
-  for (const osc of new Set(all.map(c => c.osc ?? ''))) mergeTakeSound(all.filter(c => (c.osc ?? '') === osc), osc);
+  for (const osc of new Set(all.map(c => c.osc ?? ''))) {
+    const home = osc ? events.osc ?? events.synth : events.synth ?? events.osc;
+    mergeTakeSound(all.filter(c => (c.osc ?? '') === osc), osc, home ?? armedTrack(), home !== undefined ? trackSource(state.tl.tracks[home]) : null);
+  }
 }
 
-function mergeTakeSound(clips, osc) {
+function mergeTakeSound(clips, osc, home, src) {
   if (!clips.length) return;
   for (const tr of state.tl.tracks) tr.clips = tr.clips.filter(c => !clips.includes(c));
   const start = Math.floor(Math.min(...clips.map(c => c.start)) / BEATS_PER_BAR) * BEATS_PER_BAR;
   const end = Math.ceil(Math.max(...clips.map(c => c.start + c.len)) / BEATS_PER_BAR - 1e-6) * BEATS_PER_BAR;
   const len = Math.max(BEATS_PER_BAR, end - start);
   const clip = { id: crypto.randomUUID(), type: 'note', seq: mergeNotes(clips, start), pat: len, len, start, name: t('roll.recName'), cat: 'lead', color: catColor('lead'), loop: false, ...(osc ? { osc } : {}) };
-  const track = freeTrack(start, len);
+  const track = freeTrack(start, len, home, src);
   state.tl.tracks[track].clips.push(clip);
   tlSelect(track, clip);
   if (wm.isOpen('roll')) openRoll(clip, false);
@@ -3424,7 +3509,7 @@ function generatePads() {
   const lane = () => {
     const tracks = state.tl.tracks;
     for (let k = 0; k < tracks.length; k++) {
-      const i = (state.tl.armed + k) % tracks.length;
+      const i = (armedTrack() + k) % tracks.length;
       if (used.includes(i)) continue;
       if (!tracks[i].clips.some(c => c.start < start + total - 1e-6 && start < c.start + timeline.clipBeats(c) - 1e-6)) return i;
     }
@@ -3650,7 +3735,6 @@ function initHistory() {
     const s = JSON.parse(snap);
     state.tl.bars = s.bars;
     state.tl.tracks = s.tracks.map(cleanTrack);
-    state.tl.armed = Math.min(state.tl.armed, state.tl.tracks.length - 1);
     timeline.updateAllTracks();
     tlSelect(null, null);
     loadTlBuffers().then(renderTl);

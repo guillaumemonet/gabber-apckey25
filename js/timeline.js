@@ -18,7 +18,9 @@ export const BEATS_PER_BAR = 4;
 // Réglages d'une piste (ses potards) : volume, panoramique, filtres passe-bas / passe-haut, envois delay et reverb.
 export const TRACK_DEFAULTS = { vol: 1, pan: 0, lp: 20000, hp: 20, dly: 0, rev: 0 };
 const num = (v, lo, hi, d) => (Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d);
-export const newTrack = () => ({ mute: false, clips: [], fx: [], ...TRACK_DEFAULTS });
+// Instruments qu'une piste peut enregistrer (null = « Auto » : le choix « Enregistrer » de la barre de la timeline).
+export const REC_SOURCES = ['pads', 'synth', 'osc', 'tr', 'acid', 'decks'];
+export const newTrack = () => ({ mute: false, clips: [], fx: [], ...TRACK_DEFAULTS, name: '', color: null, arm: false, src: null });
 export function cleanTrack(tr) {
   return {
     mute: !!tr?.mute,
@@ -26,6 +28,10 @@ export function cleanTrack(tr) {
     fx: Array.isArray(tr?.fx) ? tr.fx.map(cleanFx).filter(Boolean) : [],
     vol: num(tr?.vol, 0, 1.5, 1), pan: num(tr?.pan, -1, 1, 0), lp: num(tr?.lp, 200, 20000, 20000), hp: num(tr?.hp, 20, 2000, 20),
     dly: num(tr?.dly, 0, 1, 0), rev: num(tr?.rev, 0, 1, 0),
+    name: typeof tr?.name === 'string' ? tr.name.slice(0, 24) : '',
+    color: typeof tr?.color === 'string' && /^#[0-9a-f]{6}$/i.test(tr.color) ? tr.color : null,
+    arm: !!tr?.arm,
+    src: REC_SOURCES.includes(tr?.src) ? tr.src : null,
   };
 }
 
@@ -37,7 +43,7 @@ export function defaultTlState() {
     playhead: 0,        // en temps (noires)
     source: 'pads',     // outil enregistré : pads, synth (blocs posés en jouant), tr (audio)
     armed: 0,           // piste qui reçoit l'enregistrement
-    tracks: Array.from({ length: TL_TRACKS }, newTrack),   // fx : blocs d'effet de la piste (js/trackfx.js) ; + ses potards
+    tracks: Array.from({ length: TL_TRACKS }, (_, i) => ({ ...newTrack(), arm: i === 0 })),   // fx : blocs d'effet (js/trackfx.js), potards, nom, couleur, armement, instrument
   };
 }
 
@@ -46,13 +52,15 @@ export function mergeTlState(saved) {
   if (!saved) return base;
   for (const k of ['bars', 'zoom', 'loop', 'playhead', 'source', 'armed']) if (saved[k] !== undefined) base[k] = saved[k];
   base.bars = Math.max(base.bars, 16);
-  if (!['pads', 'synth', 'tr', 'acid', 'decks'].includes(base.source)) base.source = 'pads';
+  if (!REC_SOURCES.includes(base.source)) base.source = 'pads';
   if (Array.isArray(saved.tracks)) {
     // Autant de pistes que dans la sauvegarde (de 4 à 64 ; les anciennes en avaient 16).
     const n = Math.min(MAX_TRACKS, Math.max(MIN_TRACKS, saved.tracks.length));
     base.tracks = Array.from({ length: n }, (_, i) => cleanTrack(saved.tracks[i]));
   }
   base.armed = Math.min(base.tracks.length - 1, Math.max(0, base.armed | 0));
+  // Anciennes sauvegardes : une seule piste armée (armed) ; maintenant chaque piste a son bouton.
+  if (!base.tracks.some(tr => tr.arm)) base.tracks[base.armed].arm = true;
   return base;
 }
 

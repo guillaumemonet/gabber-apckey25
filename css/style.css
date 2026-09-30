@@ -389,7 +389,7 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 
 /* Timeline */
 .tl-scroll { flex: 1; min-height: 0; overflow: auto; border-radius: 6px; background: var(--bg); }
-.tl { position: relative; display: grid; grid-template-columns: 158px var(--w); grid-template-rows: 24px; grid-auto-rows: auto; row-gap: 2px; width: max-content; user-select: none; }
+.tl { position: relative; display: grid; grid-template-columns: 176px var(--w); grid-template-rows: 24px; grid-auto-rows: auto; row-gap: 2px; width: max-content; user-select: none; }
 .tl-corner { position: sticky; left: 0; top: 0; z-index: 5; background: var(--panel); }
 .tl-ruler { position: sticky; top: 0; z-index: 4; cursor: pointer; background-color: var(--panel); border-bottom: 1px solid var(--line);
   background-image: repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px var(--bar)); }
@@ -576,6 +576,22 @@ header button, header .status { white-space: nowrap; }
 .track-knob-row { grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 8px 10px 4px; }
 .track-knob-row .knob .label, .track-knob-row .knob .value { font-size: 10px; }
 .track-knob-foot { justify-content: flex-end; padding: 0 10px 10px; }
+
+.tl-head .tl-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: text; }
+.tl-head .tl-src { flex: none; width: 14px; height: 14px; font-style: normal; color: var(--muted); }
+.tl-head .tl-src[data-icon]::before { margin: 0; width: 14px; height: 14px; }
+.tl-head .tl-src[hidden] { display: none; }
+.tl-head.colored { box-shadow: inset 4px 0 0 var(--tc); }
+.tl-lane.colored { background-color: color-mix(in srgb, var(--tc) 16%, var(--bg)); }
+.tl-rename { flex: 1; min-width: 0; width: 60px; padding: 2px 4px; font-size: 12px; }
+.track-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; padding: 8px 10px 2px; font-size: 11px; color: var(--muted); }
+.track-meta label { display: flex; flex-direction: column; gap: 3px; }
+.track-meta input, .track-meta select { font-size: 12px; }
+.tk-colors { grid-column: 1 / -1; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.tk-colors span { margin-right: 4px; }
+.tk-color { width: 20px; height: 20px; padding: 0; border-radius: 50%; background: var(--c); border: 2px solid transparent; }
+.tk-color.none { background: repeating-linear-gradient(45deg, var(--panel-2) 0 3px, var(--line) 3px 6px); }
+.tk-color.active { border-color: #fff; box-shadow: 0 0 0 1px #000; }
 
 /* Piano roll */
 .roll-area .win-body { display: flex; flex-direction: column; overflow: hidden; }
