@@ -1704,7 +1704,7 @@ function tlTarget(ev) {
 
 function buildTl() {
   $('#tl-play').addEventListener('click', tlToggle);
-  $('#tl-demo').addEventListener('click', loadDemo);
+  $('#tl-demo').addEventListener('click', e => openDemoMenu(e.currentTarget));
   $('#tl-export').addEventListener('click', () => exportSong(false));
   $('#tl-stems').addEventListener('click', () => exportSong(true));
   $('#tl-rec').addEventListener('click', tlRecToggle);
@@ -2914,6 +2914,43 @@ function renderOsc() {
 
 // ---------- Démo ----------
 
+// Le bouton Démo propose les deux morceaux : boucles de la bibliothèque, ou un morceau fait avec tous les outils.
+const DEMOS = [{ id: 1, icon: 'lib', load: () => loadDemo() }, { id: 2, icon: 'star', load: () => loadDemo2() }];
+function openDemoMenu(anchor) {
+  const was = fxEditing?.demo;
+  closeFxEditor();
+  if (was) return;
+  const box = document.createElement('div');
+  box.id = 'fx-editor';
+  box.className = 'fx-editor demo-menu';
+  box.innerHTML = `<div class="fx-editor-head"><b>${t('demo.menu')}</b><button class="win-close" title="${t('win.close')}">✕</button></div>
+    <div class="fx-editor-body">${DEMOS.map(d => `<button class="demo-pick" data-demo="${d.id}" data-icon="${d.icon}"><b>${t(`demo.${d.id}`)}</b><small>${t(`demo.${d.id}.desc`)}</small></button>`).join('')}</div>`;
+  box.querySelector('.win-close').addEventListener('click', closeFxEditor);
+  for (const b of box.querySelectorAll('.demo-pick')) b.addEventListener('click', () => { closeFxEditor(); DEMOS.find(d => d.id === +b.dataset.demo).load(); });
+  document.body.appendChild(box);
+  const r = anchor.getBoundingClientRect();
+  box.style.left = `${Math.max(8, Math.min(window.innerWidth - box.offsetWidth - 8, r.left))}px`;
+  box.style.top = `${r.bottom + 6}px`;
+  fxEditing = { box, demo: true };
+  setTimeout(() => window.addEventListener('pointerdown', fxOutside, true), 0);
+}
+
+// Démo 2 : un fichier morceau (.gabber) avec ses prises 909 / 303 et le kick du designer embarqués.
+async function loadDemo2() {
+  if (state.tl.tracks.some(tr => tr.clips.length || tr.fx.length) && !confirm(t('tl.demoConfirm'))) return;
+  const blob = await fetch('demo/gabberkey-demo-2.gabber', { cache: 'no-cache' }).then(r => (r.ok ? r.blob() : null)).catch(() => null);
+  if (!blob) { toast(t('lib.loadFail'), 3000); return; }
+  await loadFile(new File([blob], 'gabberkey-demo-2.gabber'), true);
+  // Noms des sons et des effets dans la langue de l'interface.
+  refreshLibNames();
+  for (const tr of state.tl.tracks) for (const b of tr.fx) {
+    const m = FX_BANK.find(x => x.fx === b.fx && Object.entries(x.p ?? {}).every(([k, v]) => b.p[k] === v));
+    if (m) b.name = bankName(m);
+  }
+  renderTl();
+  save();
+}
+
 // Charge le morceau de démonstration (demo/demo.json) dans la timeline, avec les sons de la bibliothèque.
 async function loadDemo() {
   if (state.tl.tracks.some(tr => tr.clips.length) && !confirm(t('tl.demoConfirm'))) return;
@@ -2923,7 +2960,7 @@ async function loadDemo() {
   timeline.stop(true);
   setBpm(demo.bpm);
   const find = (bank, sound) => libManifest.banks.find(b => b.name === bank)?.pads.find(p => p?.name === sound);
-  const tracks = state.tl.tracks.map(newTrack);
+  const tracks = Array.from({ length: Math.min(MAX_TRACKS, Math.max(state.tl.tracks.length, demo.tracks.length)) }, newTrack);
   const pending = [];
   demo.tracks.slice(0, tracks.length).forEach((list, i) => {
     for (const e of list) {
@@ -5164,12 +5201,12 @@ function openFile() {
   $('#file-input').click();
 }
 
-async function loadFile(file) {
+async function loadFile(file, demo = false) {
   let f;
   try { f = await readFile(file); } catch (err) { alert(t('file.failed', { msg: err.message })); return; }
   const what = t(`file.kind.${f.kind}`);
   if (f.kind === 'project' && !confirm(t('file.confirmProject'))) return;
-  if (f.kind === 'song' && state.tl.tracks.some(tr => tr.clips.length || tr.fx.length) && !confirm(t('file.confirmSong'))) return;
+  if (f.kind === 'song' && !demo && state.tl.tracks.some(tr => tr.clips.length || tr.fx.length) && !confirm(t('file.confirmSong'))) return;
   // Sons embarqués : rangés comme les sons importés (mêmes identifiants).
   for (const [id, s] of Object.entries(f.samples)) {
     await store.saveSample(id, { name: s.name, data: s.data });
@@ -5209,7 +5246,7 @@ async function loadFile(file) {
     renderKnobs();
   }
   save();
-  toast(t('file.loaded', { what }), 3000);
+  toast(demo ? t('tl.demoLoaded', { bpm: state.bpm }) : t('file.loaded', { what }), demo ? 5000 : 3000);
 }
 
 function bindFiles() {

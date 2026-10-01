@@ -151,7 +151,21 @@ Un appui sur un bouton SCENE LAUNCH ramène la grille aux pads du sampler.
 
 ## Démo
 
-Clique sur **Démo** dans la barre de la timeline pour charger le morceau de démonstration : environ une minute à 190 BPM en fa mineur, construit avec les banques Gabber, Hardcore et Oldschool (intro aux cordes, montée gabber avec hoovers, premier drop, break oldschool avec break façon Amen, piano et chœurs, second drop hardcore avec screech et cordes, final en roulement de kicks). Appuie sur ▶ pour l'écouter, puis modifie-le comme tu veux. Tu peux aussi l'écouter directement : [`demo/gabberkey-demo.ogg`](demo/gabberkey-demo.ogg) (rendu par `tools/render_demo.py` à partir de `demo/demo.json`).
+Clique sur **Démo** dans la barre de la timeline et choisis un morceau. Appuie sur ▶ pour l'écouter, puis modifie-le comme tu veux.
+
+![Le menu Démo et la démo 2 dans la timeline : prises 909 et 303, blocs de notes des synthés, effets de piste sous les blocs](docs/screenshots/demo2-fr.png)
+
+- **Démo 1 : boucles de la bibliothèque** : environ une minute à 190 BPM en fa mineur, construit avec les banques Gabber, Hardcore et Oldschool (intro aux cordes, montée gabber avec hoovers, premier drop, break oldschool avec break façon Amen, piano et chœurs, second drop hardcore avec screech et cordes, final en roulement de kicks). À écouter : [`demo/gabberkey-demo.ogg`](demo/gabberkey-demo.ogg) (rendu par `tools/render_demo.py` à partir de `demo/demo.json`).
+- **Démo 2 : tous les outils** : 64 mesures de hardcore à 190 BPM en fa mineur (Fm, Db, Eb, C), faites dans l'application avec un maximum d'outils, sur 15 pistes nommées et colorées :
+  - la **TR-909** (kit Rotterdam) et la **TB-303** (son Rotterdam) enregistrées en direct : beat gabber, roulement de kick, kick seul, ligne acid et ligne « squelch » ;
+  - le **synthé à oscillateurs** : mélodie au hoover, basse reese à contretemps, supersaw à l'octave, pluck (chaque mélodie est un bloc de notes qui s'ouvre au **piano roll**) ;
+  - le **synthé à couches** : cordes épiques et stabs de piano rave ;
+  - un kick du **designer de kick** (Terror) sur chaque drop ;
+  - des sons de la bibliothèque : charleys, montées de caisse claire, risers, crashs, impacts, cris, screech, sirène, chœur ;
+  - les **effets de piste** : filtre qui s'ouvre et se ferme, filtre pompant, saturation qui monte, wobble, stutter, tape stop, gate, envois de reverb et de delay, autopan, et la **3D** : orbite, spirale, passage et zoom ;
+  - les **potards de piste** : volume, panoramique, filtres, envois delay et reverb.
+
+  Intro aux cordes et sirène, montée (ligne acid, roulement de caisse claire, « hey ! »), premier drop, break au piano avec un pluck qui tourne autour de toi en 3D, second drop avec supersaw, final. À écouter : [`demo/gabberkey-demo-2.ogg`](demo/gabberkey-demo-2.ogg). C'est un fichier morceau ([`demo/gabberkey-demo-2.gabber`](demo/gabberkey-demo-2.gabber)) : les prises 909 / 303 et le kick du designer voyagent dedans.
 
 ## Timeline et bibliothèque de sons
 

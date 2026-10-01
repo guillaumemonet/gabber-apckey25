@@ -605,6 +605,12 @@ header button, header .status { white-space: nowrap; }
 .metro-dots i.on { opacity: 1; }
 .metro-dots i.one { background: #ff5a36; }
 .metro-opts .fx-param.check { flex-direction: row; align-items: center; gap: 8px; }
+.demo-menu { width: 330px; }
+.demo-menu .fx-editor-body { display: flex; flex-direction: column; gap: 6px; }
+.demo-pick { display: grid; grid-template-columns: auto 1fr; column-gap: 8px; text-align: left; padding: 8px 10px; height: auto; }
+.demo-pick::before { grid-row: span 2; align-self: center; }
+.demo-pick b { font-size: 13px; }
+.demo-pick small { grid-column: 2; color: var(--muted, #999); font-size: 11px; line-height: 1.35; white-space: normal; }
 
 .preset-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 10px; }
 .preset-bar .pb-sel { min-width: 210px; }

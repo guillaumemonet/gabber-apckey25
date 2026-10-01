@@ -151,7 +151,21 @@ Pressing a SCENE LAUNCH button brings the grid back to the sampler pads.
 
 ## Demo
 
-Click **Demo** in the timeline toolbar to load the demo song: about one minute at 190 BPM in F minor, built from the Gabber, Hardcore and Oldschool banks (intro with strings, gabber build-up with hoovers, first drop, oldschool break with Amen break, piano and choir, hardcore second drop with screech and strings, final kick build-up). Press ▶ to listen, then change it as you like. You can also listen to it directly: [`demo/gabberkey-demo.ogg`](demo/gabberkey-demo.ogg) (rendered by `tools/render_demo.py` from `demo/demo.json`).
+Click **Demo** in the timeline toolbar and choose a song. Press ▶ to listen, then change it as you like.
+
+![The Demo menu and demo 2 in the timeline: 909 and 303 takes, oscillator synth and layered synth note blocks, track effects under the blocks](docs/screenshots/demo2-en.png)
+
+- **Demo 1: library loops**: about one minute at 190 BPM in F minor, built from the Gabber, Hardcore and Oldschool banks (intro with strings, gabber build-up with hoovers, first drop, oldschool break with Amen break, piano and choir, hardcore second drop with screech and strings, final kick build-up). Listen: [`demo/gabberkey-demo.ogg`](demo/gabberkey-demo.ogg) (rendered by `tools/render_demo.py` from `demo/demo.json`).
+- **Demo 2: every tool**: 64 bars of hardcore at 190 BPM in F minor (Fm, Db, Eb, C), made in the app with as many tools as possible, on 15 named and coloured tracks:
+  - **TR-909** (Rotterdam kit) and **TB-303** (Rotterdam sound) recorded live: gabber beat, kick roll, kick alone, acid line and squelch line;
+  - **oscillator synth**: hoover hook, reese bass on the offbeats, supersaw an octave up, pluck (every melody is a note block you can open in the **piano roll**);
+  - **layered synth**: epic strings and rave piano stabs;
+  - a kick from the **kick designer** (Terror) on each drop;
+  - library sounds: hats, snare builds, risers, crashes, impacts, shouts, screech, siren, choir;
+  - **track effects**: filter rise and close, pumping filter, drive rise, wobble, stutter, tape stop, gate, reverb and delay throws, autopan, and the **3D** orbit, spiral, fly-by and zoom;
+  - **track knobs**: volume, pan, filters, delay and reverb sends.
+
+  Intro with strings and air-raid siren, build-up (acid line, snare build, "hey!"), first drop, break with piano and a pluck turning around you in 3D, second drop with supersaw, outro. Listen: [`demo/gabberkey-demo-2.ogg`](demo/gabberkey-demo-2.ogg). It is a song file ([`demo/gabberkey-demo-2.gabber`](demo/gabberkey-demo-2.gabber)): the 909 / 303 takes and the designer kick travel inside it.
 
 ## Timeline and sound library
 
