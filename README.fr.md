@@ -17,6 +17,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
   - **Piano roll** : édite les notes des blocs du synthé (hauteur, durée, vélocité, copier / coller, quantification, saisie pas à pas au clavier de l'APC) ;
   - **Designer de kick** : fabrique ton propre kick distordu avec 12 potards et 8 presets, puis envoie-le sur un pad ou dans la bibliothèque ;
+  - **Designer d'effet** : dessine la courbe d'un effet (volume, filtres, panoramique, saturation, envois) sur 1, 2 ou 4 temps et pose-la sur n'importe quelle piste ;
   - **Platines** : deux decks avec disques à scratcher (en avant et en arrière), sync, cue, égaliseur, filtre DJ et crossfader ;
   - **Basse acid façon TB-303** : séquenceur 16 pas avec accent et slide, filtre résonant à enveloppe, distorsion, saisie au clavier de l'APC, calée sur la 909 ;
   - **Synthé à oscillateurs** : 3 oscillateurs avec unisson, FM, modulation en anneau, bruit, filtre 12 / 24 dB, 2 enveloppes, LFO calé sur le tempo, poly / mono / legato, 12 presets et les tiens ;
@@ -251,6 +252,20 @@ Fabrique ton propre kick gabber / hardcore, calculé par le navigateur en quelqu
 - **Écoute auto** joue le kick à chaque potard relâché ; la forme d'onde et la longueur s'affichent.
 - **→ Pad** le met sur le pad sélectionné, **→ Bibliothèque** l'ajoute à la catégorie **Kicks** de la bibliothèque (à glisser sur la timeline ; clic droit dessus pour le retirer), **⤓ WAV** le télécharge. Tes kicks déclenchent le sidechain comme les autres.
 
+## Designer d'effet
+
+[![Designer d'effet : formes de départ, l'éditeur de courbe avec sa grille, profondeur et lissage](docs/screenshots/curve-fr.png)](docs/screenshots/curve-fr.png)
+
+Dessine comment un réglage d'une piste bouge sur **1, 2 ou 4 temps** : la forme se répète en boucle, calée sur le tempo, tant que son bloc dure sur la timeline (une pompe sidechain faite main, un gate trance, un wobble de filtre, un balancier de panoramique…).
+
+- **Réglage piloté** : volume, filtre passe-bas, filtre passe-haut, panoramique, saturation, envoi reverb ou envoi delay.
+- **Édition** : clic pour ajouter un point, puis glisse-le (aimanté à la grille : 1/4, 1/8, 1/16, 1/32 et triolets ; **Maj** = libre), double-clic ou clic droit sur un point pour le supprimer. Le **losange** entre deux points courbe le trait (glisse-le vers le haut ou le bas) ; double-clic dessus pour un **palier** : la valeur reste jusqu'au point suivant.
+- **Profondeur** ramène la courbe vers « sans effet » (en pointillés), **Lissage** arrondit les paliers pour qu'ils ne claquent jamais. Pour les filtres, la coupure extrême et la résonance.
+- **Écouter** joue une boucle de la bibliothèque (batterie, basse, cordes ou hoover) à travers la courbe, avec une tête de lecture : chaque retouche s'entend tout de suite.
+- **14 formes de départ** : pompe sidechain, pompe double, gate trance, gate 3-3-2, stutter 1/32, respiration, wobble filtre, dent de scie filtre, balayage passe-haut, ping-pong, balancier, impulsion saturée, queue de reverb, écho à contretemps. Modifie-en une, puis **Enregistrer dans la bibliothèque** : elle devient ta courbe.
+- **Sur la timeline** : tes courbes sont dans la bibliothèque, **Effets › Courbes**. Glisse-en une sur une piste comme un effet de piste, ou clique sur **Sur la timeline** (à la tête de lecture, sur la piste du bloc sélectionné). Le bloc montre la forme. Retoucher ta courbe change tous ses blocs d'un coup, même pendant la lecture ; double-clic sur un bloc de courbe pour l'ouvrir dans le designer.
+- Tes courbes sont sauvegardées avec le projet, voyagent dans les fichiers morceau et sont dans l'export WAV et les stems.
+
 ## Platines
 
 [![Platines : deux decks avec disques à scratcher, égaliseur, filtre et crossfader](docs/screenshots/decks-fr.png)](docs/screenshots/decks-fr.png)
@@ -316,7 +331,7 @@ La fenêtre **Câblage** relie librement les outils et des **boîtes à effets**
 
 ## Fenêtres des plugins
 
-La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Synthé à oscillateurs, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick), **Studio** (Mixeur, Câblage, Scènes, Performance, Visualiseur) et **Système** (Moniteur MIDI). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
+La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Synthé à oscillateurs, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick, Designer d'effet), **Studio** (Mixeur, Câblage, Scènes, Performance, Visualiseur) et **Système** (Moniteur MIDI). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
 - Chaque fenêtre a une barre de titre : le **titre** à gauche, **?** et **✕** à droite.
 - La **fenêtre active** (au premier plan) est mise en valeur ; les fenêtres s'ouvrent et se ferment avec une transition 3D.
 - **Déplace**-la par sa barre de titre, **redimensionne**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.

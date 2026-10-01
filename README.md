@@ -17,6 +17,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
   - **Piano roll**: edit the notes of the synth blocks (pitch, length, velocity, copy / paste, quantize, step input from the APC keyboard);
   - **Kick designer**: build your own distorted kick from 12 knobs and 8 presets, then send it to a pad or the library;
+  - **Effect designer**: draw the curve of an effect (volume, filters, pan, saturation, sends) over 1, 2 or 4 beats and put it on any track;
   - **Turntables**: two decks with scratchable records (forwards and backwards), sync, cue, EQ, DJ filter and crossfader;
   - **TB-303-style acid bass line**: 16-step sequencer with accent and slide, resonant filter with envelope, distortion, step entry from the APC keyboard, in sync with the 909;
   - **Oscillator synth**: 3 oscillators with unison, FM, ring modulation, noise, 12 / 24 dB filter, 2 envelopes, tempo-synced LFO, poly / mono / legato, 12 presets and your own;
@@ -251,6 +252,20 @@ Build your own gabber / hardcore kick, computed by the browser in a few millisec
 - **Auto-listen** plays the kick each time you release a knob; the waveform and the length are shown.
 - **→ Pad** puts it on the selected pad, **→ Library** adds it to the **Kicks** category of the library (drag it onto the timeline; right-click it there to remove it), **⤓ WAV** downloads it. Your kicks trigger the sidechain like any other kick.
 
+## Effect designer
+
+[![Effect designer: starting shapes, the curve editor with its grid, depth and smoothing](docs/screenshots/curve-en.png)](docs/screenshots/curve-en.png)
+
+Draw how a setting of a track moves over **1, 2 or 4 beats**: the shape repeats in a loop, locked to the tempo, for as long as its block lasts on the timeline (a sidechain pump made by hand, a trance gate, a filter wobble, a pan swing…).
+
+- **Setting driven**: volume, low-pass filter, high-pass filter, pan, saturation, reverb send or delay send.
+- **Editing**: click to add a point and drag it (snapped to the grid: 1/4, 1/8, 1/16, 1/32 and triplets; **Shift** = free), double-click or right-click a point to delete it. The **diamond** between two points bends the line (drag it up or down); double-click it for a **step**: the value holds until the next point.
+- **Depth** brings the curve back towards "no effect" (shown dotted), **Smoothing** rounds off the steps so they never click. For the filters, the extreme cutoff and the resonance.
+- **Listen** plays a library loop (drums, bass, strings or hoover) through the curve, with a playhead: every change is heard right away.
+- **14 starting shapes**: sidechain pump, double pump, trance gate, 3-3-2 gate, stutter 1/32, breath, filter wobble, filter saw, high-pass sweep, ping-pong, pan swing, drive pulse, reverb tail, offbeat echo. Change one, then **Save to the library**: it becomes your curve.
+- **On the timeline**: your curves are in the library, **Effects › Curves**. Drag one onto a track like any track effect, or click **On the timeline** (at the playhead, on the selected block's track). The block shows the shape. Changing your curve changes all its blocks at once, even while the song plays; double-click a curve block to open it in the designer.
+- Your curves are saved with the project, travel inside song files and are in the WAV export and the stems.
+
 ## Turntables
 
 [![Turntables: two decks with scratchable records, EQ, filter and crossfader](docs/screenshots/decks-en.png)](docs/screenshots/decks-en.png)
@@ -316,7 +331,7 @@ The **Patch** window wires the tools and **effect boxes** freely, like a rack of
 
 ## Plugin windows
 
-The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Oscillator synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer), **Studio** (Mixer, Patch, Scenes, Performance, Visualizer) and **System** (MIDI monitor). Each one opens in a window above the timeline:
+The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Oscillator synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer, Effect designer), **Studio** (Mixer, Patch, Scenes, Performance, Visualizer) and **System** (MIDI monitor). Each one opens in a window above the timeline:
 - Each window has a title bar: the **title** on the left, **?** and **✕** on the right.
 - The **active window** (in front) is highlighted; windows open and close with a 3D transition.
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.

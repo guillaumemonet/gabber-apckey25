@@ -4,6 +4,13 @@
 // Un bloc : { id, fx (type), start, len (en temps), p (réglages), name }.
 import { t } from './i18n.js';
 import { distCurve } from './tr909.js';
+import { curveSamples, curveNeutral } from './curves.js';
+
+// Courbes des blocs « Courbe » (designer d'effet) : identifiant -> courbe ; branché par l'application.
+let resolveCurve = () => null;
+export function setCurveResolver(fn) { resolveCurve = fn; }
+// Ce qui change la structure de la chaîne d'une courbe (le réglage piloté) : la chaîne est alors reconstruite.
+const curveSig = id => resolveCurve(id)?.target ?? '-';
 
 // Motifs de déclenchement du PCF (16 pas).
 export const PCF_PATTERNS = {
@@ -43,6 +50,7 @@ export const FX_TYPES = {
   zoomout3d: { family: '3d', params: { distance: R(12, 2, 30, 0.5) } },
   spiral3d: { family: '3d', params: { bars: S(1, [0.5, 1, 2]), height: R(4, 1, 10, 0.5) } },
   crushrise: { family: 'drive', params: { amount: R(0.85, 0.2, 1, 0.05) } },
+  curve: { family: 'curve', params: { curve: ['curve', 'b:pump'] } },
 };
 
 // Banque d'effets : ce qui apparaît dans la bibliothèque (type, réglages, longueur par défaut en temps).
@@ -79,7 +87,7 @@ export const FX_BANK = [
   { id: 'spiral3d', fx: 'spiral3d', len: 16 },
 ];
 
-export const FX_FAMILY_COLORS = { volume: 13, filter: 37, space: 41, time: 53, drive: 5, '3d': 49 };
+export const FX_FAMILY_COLORS = { volume: 13, filter: 37, space: 41, time: 53, drive: 5, '3d': 49, curve: 21 };
 
 export function fxDefaults(type) {
   return Object.fromEntries(Object.entries(FX_TYPES[type]?.params ?? {}).map(([k, v]) => [k, v[1]]));
@@ -91,7 +99,7 @@ export function cleanFx(b) {
   const p = fxDefaults(b.fx);
   for (const [k, [kind, , a, bmax]] of Object.entries(FX_TYPES[b.fx].params)) {
     const v = b.p?.[k];
-    if (kind === 'select' ? a.includes(v) : Number.isFinite(v) && v >= a && v <= bmax) p[k] = v;
+    if (kind === 'curve' ? typeof v === 'string' && /^[bu]:/.test(v) : kind === 'select' ? a.includes(v) : Number.isFinite(v) && v >= a && v <= bmax) p[k] = v;
   }
   return { id: typeof b.id === 'string' ? b.id : crypto.randomUUID(), fx: b.fx, start: Math.max(0, b.start), len: Math.max(0.25, b.len), p, name: String(b.name ?? '') };
 }
@@ -129,15 +137,18 @@ function buildGroup(ctx, engine, b) {
     else unwire = () => { for (const id of timers) clearTimeout(id); timers.length = 0; open = 0; wire(false); };
     neutral(dry.gain, 1);
     neutral(wet.gain, 0);
-    return { dry, wet, open(t0, t1, fade = RAMP) {
-      dry.gain.setTargetAtTime(0, t0, fade); wet.gain.setTargetAtTime(1, t0, fade);
-      dry.gain.setTargetAtTime(1, t1, RAMP); wet.gain.setTargetAtTime(0, t1, RAMP);
+    // Branché 1,5 s avant (une minuterie peut prendre du retard), débranché une fois le côté traité retombé à zéro.
+    const arm = (t0, t1) => {
       if (offline) return;
-      // Branché 1,5 s avant (une minuterie peut prendre du retard), débranché une fois le côté traité retombé à zéro.
       const now = ctx.currentTime;
       open++;
       timers.push(setTimeout(() => wire(true), Math.max(0, (t0 - now - 1.5) * 1000)));
       timers.push(setTimeout(() => { open = Math.max(0, open - 1); if (!open) wire(false); }, Math.max(0, (t1 - now + 0.5) * 1000)));
+    };
+    return { dry, wet, arm, open(t0, t1, fade = RAMP) {
+      dry.gain.setTargetAtTime(0, t0, fade); wet.gain.setTargetAtTime(1, t0, fade);
+      dry.gain.setTargetAtTime(1, t1, RAMP); wet.gain.setTargetAtTime(0, t1, RAMP);
+      arm(t0, t1);
     } };
   };
   let play = () => {};
@@ -348,6 +359,67 @@ function buildGroup(ctx, engine, b) {
       neutral(air.frequency, 20000);
       break;
     }
+    case 'curve': {
+      // Courbe du designer d'effet : le réglage choisi suit la forme dessinée, répétée en boucle sur la durée du bloc.
+      const curve = () => resolveCurve(p.curve);
+      const target = curve()?.target;
+      // Programme `param` de t0 à t1 ; un rejeu (courbe retouchée pendant la lecture) remplace ce qui était prévu.
+      const ride = (param, values, t0, T, neutral) => {
+        const now = ctx.currentTime;
+        try {
+          param.cancelScheduledValues(t0 > now + 0.1 ? t0 : 0);
+          param.setValueCurveAtTime(values, t0, T);
+        } catch {
+          param.cancelScheduledValues(0);
+          param.setValueCurveAtTime(values, Math.max(t0, now + 0.01), Math.max(0.01, T - Math.max(0, now + 0.01 - t0)));
+        }
+        param.setTargetAtTime(neutral, t0 + T, 0.004);
+      };
+      const make = mapper => (t0, t1, bd, off = 0) => {
+        const c = curve();
+        if (!c) return;
+        const T = t1 - t0;
+        mapper(c, curveSamples(c, T, bd, off), t0, T);
+      };
+      if (target === 'lp' || target === 'hp') {
+        const f = ctx.createBiquadFilter();
+        f.type = target === 'lp' ? 'lowpass' : 'highpass';
+        input.connect(f).connect(output);
+        neutral(f.frequency, target === 'lp' ? 20000 : 20);
+        f.Q.value = curve().q;
+        play = make((c, v, t0, T) => { f.Q.setValueAtTime(c.q, t0); ride(f.frequency, v, t0, T, curveNeutral(c)); });
+      } else if (target === 'pan') {
+        const pan = ctx.createStereoPanner();
+        input.connect(pan).connect(output);
+        neutral(pan.pan, 0);
+        play = make((c, v, t0, T) => ride(pan.pan, v, t0, T, 0));
+      } else if (target === 'drive') {
+        // Saturation : mélange sec / saturé suivant la courbe (le côté saturé n'est branché que pendant le bloc).
+        const sh = ctx.createWaveShaper();
+        sh.curve = distCurve(0.8, 'tube');
+        sh.oversample = '2x';
+        const x = crossfade(sh);
+        sh.connect(x.wet).connect(output);
+        play = make((c, v, t0, T) => {
+          const dry = v.map(a => 1 - a * 0.7);
+          ride(x.wet.gain, v, t0, T, 0);
+          ride(x.dry.gain, dry, t0, T, 1);
+          x.arm(t0, t0 + T);
+        });
+      } else if (target === 'rev' || target === 'dly') {
+        input.connect(output);
+        const send = gain(0);
+        input.connect(send).connect(target === 'rev' ? engine.reverbIn : engine.delayIn);
+        neutral(send.gain, 0);
+        play = make((c, v, t0, T) => ride(send.gain, v, t0, T, 0));
+      } else {   // volume (et courbe introuvable : transparent)
+        const g = gain(1);
+        input.connect(g).connect(output);
+        neutral(g.gain, 1);
+        play = make((c, v, t0, T) => ride(g.gain, v, t0, T, 1));
+      }
+      break;
+    }
     default:
       input.connect(output);
   }
@@ -366,6 +438,8 @@ function buildGroup(ctx, engine, b) {
   };
 }
 
+const fxKey = b => `${b.id}:${JSON.stringify(b.p)}${b.fx === 'curve' ? `:${curveSig(b.p.curve)}` : ''}`;
+
 // Chaîne d'effets d'une piste vers une destination (son de la timeline, synthé, pads).
 export class TrackChain {
   constructor(ctx, engine, dest) {
@@ -380,7 +454,7 @@ export class TrackChain {
 
   // Reconstruit la chaîne si la liste des blocs (ou leurs réglages) a changé.
   sync(blocks) {
-    const keyOf = b => `${b.id}:${JSON.stringify(b.p)}`;
+    const keyOf = fxKey;
     const sorted = [...blocks].sort((a, b) => a.start - b.start);
     const order = sorted.map(keyOf).join('|');
     if (order === this.order) return;
@@ -395,9 +469,10 @@ export class TrackChain {
     node.connect(this.dest);
   }
 
-  play(block, t0, t1, bd) {
+  // off : temps du bloc déjà passés à t0 (lecture partie du milieu du bloc), pour les courbes calées sur le bloc.
+  play(block, t0, t1, bd, off = 0) {
     if (t1 - t0 < 0.01) return;
-    try { this.groups.get(`${block.id}:${JSON.stringify(block.p)}`)?.play(t0, t1, bd); } catch (err) { console.warn('Track effect', block.fx, err); }
+    try { this.groups.get(fxKey(block))?.play(t0, t1, bd, off); } catch (err) { console.warn('Track effect', block.fx, err); }
   }
   reset() { for (const g of this.groups.values()) g.reset(); }
 }

@@ -247,10 +247,33 @@ export class Timeline {
         const s = Math.max(b.start, beat);
         const e = Math.min(b.start + b.len, until);
         if (e <= s) continue;
-        chain.play(b, time + (s - beat) * bd, time + (e - beat) * bd, bd);
+        chain.play(b, time + (s - beat) * bd, time + (e - beat) * bd, bd, s - b.start);
       }
     }
     return chain.input;
+  }
+
+  // Blocs d'effet retouchés pendant la lecture (une courbe du designer) : reprogrammés à partir de maintenant.
+  refreshFx(match) {
+    if (!this.playing) return;
+    const now = this.ctx.currentTime + 0.05;
+    const c = [...this.cycles].reverse().find(x => x.time <= now) ?? this.cycles[0];
+    if (!c) return;
+    const bd = this.beatDur;
+    const until = this.st.loop && !this.recording ? this.length : Infinity;
+    const pos = c.beat + (now - c.time) / bd;
+    for (const [ti, m] of this.chains) {
+      const all = this.st.tracks[ti]?.fx ?? [];
+      const blocks = all.filter(match);
+      if (!blocks.length) continue;
+      for (const chain of m.values()) {
+        chain.sync(all);
+        for (const b of blocks) {
+          const s = Math.max(b.start, pos), e = Math.min(b.start + b.len, until);
+          if (e > s) chain.play(b, c.time + (s - c.beat) * bd, c.time + (e - c.beat) * bd, bd, s - b.start);
+        }
+      }
+    }
   }
 
   // Tranche de la piste `ti` vers `dest` : passe-haut -> passe-bas -> volume -> pano -> dest, avec envois delay / reverb (avant le pano).

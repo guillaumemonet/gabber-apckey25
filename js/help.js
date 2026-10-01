@@ -91,6 +91,17 @@ const HELP = {
         <li><b>Sound</b>: a synth preset of its own, or the sound currently played on the keyboard. <b>Merge</b> gathers the neighbouring note blocks of the track (same sound) into this one.</li>
         <li><b>Step input</b>: the notes you play on the APC keyboard (or the computer keyboard) go in at the cursor (chords too), which moves on by one grid step.</li>
       </ul>`,
+    curve: `
+      <p>Draw how a setting of a track moves over 1, 2 or 4 beats: the shape repeats in a loop, locked to the tempo, for as long as its block lasts on the timeline.</p>
+      <ul>
+        <li><b>Setting</b>: volume (sidechain pump, gate, stutter made by hand), low-pass or high-pass filter, pan, saturation, reverb send or delay send.</li>
+        <li><b>Editing</b>: click to add a point, drag it (snapped to the grid: 1/4 to 1/32 and triplets, <b>Shift</b> = free), double-click or right-click to delete it. The diamond between two points bends the line (drag it up or down); double-click it for a step: the value holds until the next point.</li>
+        <li><b>Depth</b> brings the curve back towards "no effect" (dotted line), <b>Smoothing</b> rounds off the steps (no clicks). For the filters: the extreme cutoff and the resonance.</li>
+        <li><b>Listen</b> plays a library loop (drums, bass, strings or hoover) through the curve; every change is heard right away.</li>
+        <li><b>Starting shapes</b>: sidechain pumps, trance gate, 3-3-2 gate, stutter, breath, wobble, filter saw, high-pass sweep, ping-pong, pan swing, drive pulse, reverb tail, offbeat echo. Change one, then <b>Save to the library</b>: it becomes your curve (★).</li>
+        <li><b>Your curves</b> are in the library, <b>Effects › Curves</b>: drag one onto a track like any track effect, or click <b>On the timeline</b>. Changing your curve changes all its blocks at once, even while the song plays. Double-click a curve block to open it here.</li>
+        <li>Your curves are saved with the project, travel in song files and are in the WAV export.</li>
+      </ul>`,
     kick: `
       <p>Build your own gabber / hardcore kick, computed in a few milliseconds, then use it anywhere.</p>
       <ul>
@@ -261,6 +272,17 @@ const HELP = {
         <li><b>Longueur</b> −/+ : longueur du motif. Le bloc le répète sur toute sa longueur dans la timeline (tirer son bord droit). Des notes posées après la fin allongent le motif.</li>
         <li><b>Son</b> : un preset du synthé rien qu'à lui, ou le son joué en ce moment au clavier. <b>Regrouper</b> rassemble dans ce bloc les blocs de notes voisins de la piste (même son).</li>
         <li><b>Pas à pas</b> : les notes jouées au clavier de l'APC (ou de l'ordinateur) sont posées au curseur (accords compris), qui avance d'une case.</li>
+      </ul>`,
+    curve: `
+      <p>Dessine comment un réglage d'une piste bouge sur 1, 2 ou 4 temps : la forme se répète en boucle, calée sur le tempo, tant que son bloc dure sur la timeline.</p>
+      <ul>
+        <li><b>Réglage</b> : volume (pompe sidechain, gate, stutter faits main), filtre passe-bas ou passe-haut, panoramique, saturation, envoi reverb ou envoi delay.</li>
+        <li><b>Édition</b> : clic pour ajouter un point, glisse-le (aimanté à la grille : 1/4 à 1/32 et triolets, <b>Maj</b> = libre), double-clic ou clic droit pour le supprimer. Le losange entre deux points courbe le trait (glisse-le vers le haut ou le bas) ; double-clic dessus pour un palier : la valeur reste jusqu'au point suivant.</li>
+        <li><b>Profondeur</b> ramène la courbe vers « sans effet » (pointillés), <b>Lissage</b> arrondit les paliers (pas de clic). Pour les filtres : la coupure extrême et la résonance.</li>
+        <li><b>Écouter</b> joue une boucle de la bibliothèque (batterie, basse, cordes ou hoover) à travers la courbe ; chaque retouche s'entend tout de suite.</li>
+        <li><b>Formes de départ</b> : pompes sidechain, gate trance, gate 3-3-2, stutter, respiration, wobble, dent de scie filtre, balayage passe-haut, ping-pong, balancier, impulsion saturée, queue de reverb, écho à contretemps. Modifie-en une, puis <b>Enregistrer dans la bibliothèque</b> : elle devient ta courbe (★).</li>
+        <li><b>Tes courbes</b> sont dans la bibliothèque, <b>Effets › Courbes</b> : glisse-en une sur une piste comme un effet de piste, ou clique sur <b>Sur la timeline</b>. Retoucher ta courbe change tous ses blocs d'un coup, même pendant la lecture. Double-clic sur un bloc de courbe pour l'ouvrir ici.</li>
+        <li>Tes courbes sont sauvegardées avec le projet, voyagent dans les fichiers morceau et sont dans l'export WAV.</li>
       </ul>`,
     kick: `
       <p>Fabrique ton propre kick gabber / hardcore, calculé en quelques millisecondes, puis utilise-le partout.</p>
