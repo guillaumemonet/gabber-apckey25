@@ -67,6 +67,22 @@ export function trKnobDefs(sel) {
 const emptyPattern = () => Object.fromEntries(TR_INSTR.map(i => [i.id, new Array(16).fill(0)]));
 
 // État par défaut, avec 4 patterns de départ (0 = silence, 1 = note, 2 = note accentuée).
+// Kits de son : réglages des instruments (positions 0..1) ; ce qui n'est pas donné garde sa valeur par défaut.
+export const TR_CATS = ['hard', 'classic', 'fx'];
+const ALL = fn => Object.fromEntries(TR_INSTR.map(i => [i.id, fn(i.id)]));
+export const TR_KITS = [
+  { id: 'gabber', cat: 'hard', v: { bd: { drive: 0.45, shape: 0.5 } } },
+  { id: 'rotterdam', cat: 'hard', v: { bd: { tune: 0.35, attack: 0.7, decay: 0.75, drive: 0.8, shape: 0.5 }, sd: { drive: 0.3, shape: 0.25 }, oh: { decay: 0.4 } } },
+  { id: 'terror', cat: 'hard', v: { bd: { tune: 0.6, attack: 0.9, decay: 0.4, drive: 1, shape: 0.25 }, sd: { tone: 0.7, snappy: 0.8, drive: 0.5, shape: 0.25 }, ch: { decay: 0.3 }, oh: { decay: 0.3 } } },
+  { id: 'industrial', cat: 'hard', v: { bd: { drive: 0.9, shape: 1 }, sd: { drive: 0.7, shape: 0.75 }, lt: { drive: 0.6, shape: 1 }, mt: { drive: 0.6, shape: 1 }, ht: { drive: 0.6, shape: 1 }, cr: { drive: 0.5, shape: 0.75 } } },
+  { id: 'clean', cat: 'classic', v: {} },
+  { id: 'house', cat: 'classic', v: { bd: { tune: 0.45, attack: 0.4, decay: 0.6 }, sd: { tone: 0.4, snappy: 0.5 }, oh: { decay: 0.6 } } },
+  { id: 'techno', cat: 'classic', v: { bd: { tune: 0.4, attack: 0.6, decay: 0.55, drive: 0.2, shape: 0 }, ch: { decay: 0.3 }, rd: { level: 0.7 } } },
+  { id: 'lofi', cat: 'fx', v: ALL(() => ({ drive: 0.5, shape: 1 })) },
+  { id: 'folded', cat: 'fx', v: ALL(() => ({ drive: 0.6, shape: 0.75 })) },
+];
+export const kitParams = v => Object.fromEntries(TR_INSTR.map(i => [i.id, { ...Object.fromEntries([...i.params, ...DIST].map(p => [p, PARAM_DEFAULTS[p]])), ...(v?.[i.id] ?? {}) }]));
+
 export function defaultTrState() {
   const params = Object.fromEntries(TR_INSTR.map(i => [i.id, Object.fromEntries([...i.params, ...DIST].map(p => [p, PARAM_DEFAULTS[p]]))]));
   params.bd.drive = 0.45;   // grosse caisse saturée « tube » par défaut : le son gabber
@@ -83,7 +99,7 @@ export function defaultTrState() {
   set(2, 'bd', [0, 2, 10, 11]); set(2, 'sd', [7, 9, 15]); set(2, 'sd', [4, 12], 2); set(2, 'ch', all.filter(s => s % 2 === 0));
   // 4 : roll de grosse caisse
   set(3, 'bd', all); set(3, 'bd', [0, 4, 8, 12], 2); set(3, 'cr', [0]);
-  return { params, globals: { ...GLOBAL_DEFAULTS }, patterns, pattern: 0, sel: 'bd', mutes: {} };
+  return { params, globals: { ...GLOBAL_DEFAULTS }, patterns, pattern: 0, sel: 'bd', mutes: {}, kit: 'gabber', userKits: [] };
 }
 
 // Fusionne un état sauvegardé avec les valeurs par défaut (instruments ou champs ajoutés plus tard).
@@ -98,6 +114,11 @@ export function mergeTrState(saved) {
   base.pattern = saved.pattern ?? 0;
   base.sel = TR_INSTR.some(i => i.id === saved.sel) ? saved.sel : 'bd';
   base.mutes = saved.mutes ?? {};
+  base.kit = typeof saved.kit === 'string' || saved.kit === null ? saved.kit : saved.params ? null : 'gabber';
+  if (Array.isArray(saved.userKits)) {
+    base.userKits = saved.userKits.filter(u => typeof u?.id === 'string' && u.id.startsWith('u:') && typeof u.name === 'string' && u.params)
+      .map(u => ({ id: u.id, name: u.name.slice(0, 24), cat: TR_CATS.includes(u.cat) ? u.cat : 'hard', params: kitParams(u.params) }));
+  }
   return base;
 }
 

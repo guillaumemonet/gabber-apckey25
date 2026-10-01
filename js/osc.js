@@ -97,6 +97,9 @@ export const OSC_PRESETS = [
   { id: 'wobble', v: { o1w: W.saw, o1oct: -1, o1uni: 3, o1det: 15, o2w: W.pulse, o2oct: -1, o2lvl: 0.6, cutoff: 300, reso: 6, fenv: 0, lshape: 0, lrate: 3, ldest: 1, ldepth: 0.8, mode: 1, glide: 0.05, drive: 0.5, as: 1, ar: 0.1 } },
   { id: 'laser', v: { o1w: W.saw, o1lvl: 0.8, o2lvl: 0, o3w: W.sine, o3oct: 1, fm: 0.4, pbend: 24, ptime: 0.3, cutoff: 8000, reso: 5, fenv: -0.5, fd: 0.3, fs: 0, aa: 0.001, ad: 0.3, as: 0, ar: 0.1, mode: 1, glide: 0, drive: 0.4 } },
 ];
+export const OSC_CATS = ['lead', 'bass', 'pad', 'fx'];
+export const OSC_PRESET_CAT = { init: 'lead', hoover: 'lead', fm_screech: 'lead', reese: 'bass', gabber_lead: 'lead', acid_bass: 'bass', sub: 'bass',
+  supersaw: 'pad', pluck: 'lead', brass_stab: 'lead', pad: 'pad', wobble: 'bass', laser: 'fx' };
 export const presetPositions = v => {
   const pos = oscDefaults();
   for (const [id, val] of Object.entries(v ?? {})) if (OSC_PARAMS[id] && Number.isFinite(val)) pos[id] = oscToPos(OSC_PARAMS[id], val);
@@ -114,7 +117,7 @@ export function mergeOscState(saved) {
   if (typeof saved.preset === 'string' || saved.preset === null) base.preset = saved.preset;
   if (Array.isArray(saved.user)) {
     base.user = saved.user.filter(u => typeof u?.id === 'string' && u.id.startsWith('u:') && typeof u.name === 'string' && u.params && typeof u.params === 'object')
-      .map(u => ({ id: u.id, name: u.name.slice(0, 24), params: { ...oscDefaults(), ...Object.fromEntries(OSC_IDS.filter(id => Number.isFinite(u.params[id])).map(id => [id, Math.min(1, Math.max(0, u.params[id]))])) } }));
+      .map(u => ({ id: u.id, name: u.name.slice(0, 24), cat: OSC_CATS.includes(u.cat) ? u.cat : 'lead', params: { ...oscDefaults(), ...Object.fromEntries(OSC_IDS.filter(id => Number.isFinite(u.params[id])).map(id => [id, Math.min(1, Math.max(0, u.params[id]))])) } }));
   }
   return base;
 }

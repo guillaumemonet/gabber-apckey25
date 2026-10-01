@@ -42,15 +42,25 @@ export const KICK_PRESETS = {
   frenchcore: { pitch: 0.6, sweep: 0.15, bend: 0.2, length: 0.36, zaag: 0.25, drive: 0.7, shape: 0.25, tone: 0.65, bite: 0.6, click: 0.9, top: 1 },
 };
 
+export const KICK_CATS = ['gabber', 'hardcore', 'modern'];
+export const KICK_PRESET_CAT = { rotterdam: 'gabber', early: 'gabber', terror: 'hardcore', industrial: 'hardcore', frenchcore: 'hardcore', mainstream: 'modern', uptempo: 'modern', raw: 'modern' };
+
 export function defaultKickState() {
-  return { params: { ...kickDefaults(), ...KICK_PRESETS.mainstream }, preset: 'mainstream', auto: true };
+  return { params: { ...kickDefaults(), ...KICK_PRESETS.mainstream }, preset: 'mainstream', auto: true, user: [] };
 }
 
 export function mergeKickState(saved) {
   const base = defaultKickState();
   if (!saved || typeof saved !== 'object') return base;
   for (const id of KICK_PARAMS) if (Number.isFinite(saved.params?.[id])) base.params[id] = Math.min(1, Math.max(0, saved.params[id]));
-  base.preset = saved.preset in KICK_PRESETS ? saved.preset : null;
+  base.preset = saved.preset in KICK_PRESETS || (typeof saved.preset === 'string' && saved.preset.startsWith('u:')) ? saved.preset : null;
+  if (Array.isArray(saved.user)) {
+    base.user = saved.user.filter(u => typeof u?.id === 'string' && u.id.startsWith('u:') && typeof u.name === 'string' && u.params).map(u => ({
+      id: u.id, name: u.name.slice(0, 24), cat: KICK_CATS.includes(u.cat) ? u.cat : 'gabber',
+      params: { ...kickDefaults(), ...Object.fromEntries(KICK_PARAMS.filter(id => Number.isFinite(u.params[id])).map(id => [id, Math.min(1, Math.max(0, u.params[id]))])) },
+    }));
+  }
+  if (base.preset?.startsWith('u:') && !base.user.some(u => u.id === base.preset)) base.preset = null;
   if (typeof saved.auto === 'boolean') base.auto = saved.auto;
   return base;
 }

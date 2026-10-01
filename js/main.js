@@ -10,7 +10,7 @@ import { WindowManager, WINDOWS, mergeWindows } from './windows.js';
 import { LIB_CATS, catColor, libraryItems, guessCat } from './library.js';
 import { Mixer, CHANNELS, MIX_FIELDS, FX_TYPES, MAX_FX, defaultMixState, mergeMixState, mixKnobDefs, newFx, fxParamLabel } from './mixer.js';
 import { Timeline, MIN_TRACKS, MAX_TRACKS, TRACK_DEFAULTS, REC_SOURCES, BEATS_PER_BAR, defaultTlState, mergeTlState, newTrack, cleanTrack } from './timeline.js';
-import { TR909, TR_INSTR, PATTERNS, trKnobDefs, defaultTrState, mergeTrState } from './tr909.js';
+import { TR909, TR_INSTR, TR_CATS, TR_KITS, kitParams, PATTERNS, trKnobDefs, defaultTrState, mergeTrState } from './tr909.js';
 import { t, soundName, translatePage } from './i18n.js';
 import { Performer, CHORD_MODES, ARP_MODES, ARP_RATES, defaultPlayState, mergePlayState } from './performer.js';
 import { PROGRESSIONS, parseProgression, voiceChords, bassNote } from './chords.js';
@@ -23,10 +23,10 @@ import { packFile, readFile, FILE_EXT } from './project.js';
 import { Metronome, defaultMetroState, mergeMetroState } from './metronome.js';
 import { Visualizer, VIZ_MODES, VIZ_2D, VIZ_3D, VIZ_FILTERS } from './visualizer.js';
 import { FX_TYPES as TFX_TYPES, FX_BANK, FX_FAMILY_COLORS, fxDefaults, bankName } from './trackfx.js';
-import { KICK_PARAMS, KICK_PRESETS, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
+import { KICK_PARAMS, KICK_PRESETS, KICK_CATS, KICK_PRESET_CAT, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
 import { Decks, DECK_IDS, DECK_KNOBS, deckKnobDefs, defaultDecksState, mergeDecksState, guessBpm, vinylTurns, rateFromSpin } from './decks.js';
 import { PianoRoll, ROLL_GRIDS, PAT_LENGTHS } from './pianoroll.js';
-import { OscSynth, OSC_PARAMS, OSC_PRESETS, OSC_KNOBS, OSC_WAVES, FILTER_TYPES, oscKnobDefs, oscValues, oscDefaults, oscFmt, oscToPos, presetPositions, defaultOscState, mergeOscState } from './osc.js';
+import { OscSynth, OSC_PARAMS, OSC_PRESETS, OSC_CATS, OSC_PRESET_CAT, OSC_KNOBS, OSC_WAVES, FILTER_TYPES, oscKnobDefs, oscValues, oscDefaults, oscFmt, oscToPos, presetPositions, defaultOscState, mergeOscState } from './osc.js';
 import { clipEvents, patLen, toSeq, mergeNotes } from './notes.js';
 import { Acid303, ACID_PATTERNS, ACID_ROWS, ACID_BASE, ACID_PARAMS, ACID_CATS, ACID_SOUNDS, soundParams, acidKnobDefs, acidFmt, acidSteps, defaultAcidState, mergeAcidState, randomPattern } from './acid.js';
 
@@ -64,6 +64,9 @@ const state = {
   userSounds: [],                     // sons créés dans l'application (kicks du designer) : { sampleId, name, cat }
   roll: defaultRoll(),                // piano roll : bloc édité, grille, saisie pas à pas
   osc: defaultOscState(),             // synthé à oscillateurs : réglages, preset, presets perso
+  synthUser: [],                      // presets perso du synthé en couches : { id, name, cat, base, values }
+  synthPick: null,                    // preset perso en cours (sinon state.preset)
+  synthDirty: false,                  // potards du synthé tournés depuis le preset
   keys: 'synth',                      // synthé joué au clavier : 'synth' ou 'osc' (celui de la fenêtre active)
   viz: null,                          // visualiseur : mode, réglages, mots (préparé au démarrage)
   metro: defaultMetroState(),         // métronome : allumé, quand, décompte, volume
@@ -158,8 +161,10 @@ async function start() {
   buildPresets();
   buildPerf();
   buildTr();
+  buildTrPresets();
   buildAcid();
   buildKick();
+  buildKickPresets();
   buildDecks();
   buildOsc();
   buildViz();
@@ -247,6 +252,10 @@ async function restore() {
     state.patch = mergePatch(saved.patch);
     state.roll = mergeRoll(saved.roll);
     state.osc = mergeOscState(saved.osc);
+    state.synthUser = Array.isArray(saved.synthUser) ? saved.synthUser.filter(u => typeof u?.id === 'string' && u.id.startsWith('u:') && typeof u.name === 'string' && u.values && PRESETS.some(p => p.id === u.base))
+      .map(u => ({ id: u.id, name: u.name.slice(0, 24), cat: FAMILIES.includes(u.cat) ? u.cat : presetById(u.base).family, base: u.base, values: u.values })) : [];
+    state.synthPick = state.synthUser.some(u => u.id === saved.synthPick) ? saved.synthPick : null;
+    state.synthDirty = !!saved.synthDirty;
     state.keys = saved.keys === 'osc' ? 'osc' : 'synth';
     state.metro = mergeMetroState(saved.metro);
     state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
@@ -351,6 +360,9 @@ function stateSnapshot() {
     userSounds: state.userSounds,
     roll: state.roll,
     osc: state.osc,
+    synthUser: state.synthUser,
+    synthPick: state.synthPick,
+    synthDirty: state.synthDirty,
     keys: state.keys,
     viz: state.viz,
     metro: state.metro,
@@ -495,7 +507,9 @@ function turnKnob(index, { delta, value }, page = state.page) {
     renderDecks();
   } else {
     engine.set(def.id, toValue(def, target[def.id]));
+    if (page === 'synth') synthTouched();
   }
+  if (page === 'tr' && def.group === 'inst' && state.tr.kit !== null) { state.tr.kit = null; trPresets?.render(); }
   if (def.id === 'master') renderMixer();
   if (page === 'synth') renderSynthKnobs();
   flashKnob(page, index);
@@ -2767,27 +2781,7 @@ function buildOsc() {
       setTimeout(() => oscSynth.noteOff(n, false, undefined, key), 700);
     }
   });
-  $('#osc-save').addEventListener('click', () => {
-    const name = ($('#osc-name').value.trim() || t('osc.userName', { n: state.osc.user.length + 1 })).slice(0, 24);
-    let u = state.osc.user.find(x => x.name === name);
-    if (!u) { u = { id: `u:${crypto.randomUUID()}`, name, params: {} }; state.osc.user.push(u); }
-    u.params = { ...state.osc.params };
-    state.osc.preset = u.id;
-    $('#osc-name').value = '';
-    renderOsc();
-    rollPresetOptions();
-    save();
-    toast(t('osc.saved', { name }));
-  });
-  $('#osc-del').addEventListener('click', () => {
-    const id = state.osc.preset;
-    if (!id?.startsWith('u:')) return;
-    state.osc.user = state.osc.user.filter(u => u.id !== id);
-    state.osc.preset = null;
-    renderOsc();
-    rollPresetOptions();
-    save();
-  });
+  buildOscPresets();
   const wrap = $('#osc-modules');
   for (const mod of OSC_MODULES) {
     const box = document.createElement('div');
@@ -2914,7 +2908,7 @@ function renderOsc() {
   };
   for (const p of OSC_PRESETS) add(p.id, t(`osc.preset.${p.id}`), false);
   for (const u of state.osc.user) add(u.id, u.name, true);
-  $('#osc-del').disabled = !state.osc.preset?.startsWith('u:');
+  oscPresets?.render();
   $('#osc-current').textContent = state.osc.preset ? oscPresetName(state.osc.preset) : t('osc.custom');
 }
 
@@ -3277,6 +3271,8 @@ const synthKnobDefs = () => SYNTH_KNOBS[familyGroup(presetById(state.preset).fam
 function applyPreset(id) {
   const preset = presetById(id);
   state.preset = preset.id;
+  state.synthPick = null;
+  state.synthDirty = false;
   synthFamily = preset.family;
   // Tous les potards du synthé : valeur du preset, sinon valeur par défaut.
   for (const def of PAGES.synth.params) {
@@ -3322,6 +3318,7 @@ function buildPresets() {
   }
   buildSynthKnobs();
   buildPlayControls();
+  buildSynthPresets();
   renderPresets();
 }
 
@@ -3342,6 +3339,7 @@ function renderPresets() {
     box.appendChild(btn);
   });
   renderSynthKnobs();
+  synthPresets?.render();
 }
 
 // Les 8 potards d'expression dans la fenêtre du synthé (les mêmes que la page Synthé de l'APC).
@@ -3381,6 +3379,7 @@ function turnSynthKnob(k, { delta, value }) {
   const pos = value ?? Math.min(1, Math.max(0, state.globals[def.id] + delta * 0.01));
   state.globals[def.id] = pos;
   engine.set(def.id, toValue(def, pos));
+  synthTouched();
   renderSynthKnobs();
   if (state.page === 'synth') renderKnobs();
   save();
@@ -4226,7 +4225,7 @@ function drawKick(data) {
   $('#kick-len').textContent = `${Math.round(data.length / engine.ctx.sampleRate * 1000)} ms`;
 }
 
-const kickName = () => `Kick ${state.kick.preset ? t(`kick.preset.${state.kick.preset}`) : t('kick.custom')}`;
+const kickName = () => `Kick ${state.kick.user.find(u => u.id === state.kick.preset)?.name ?? (state.kick.preset ? t(`kick.preset.${state.kick.preset}`) : t('kick.custom'))}`;
 
 // Le kick devient le son du pad sélectionné (banque affichée).
 async function kickToPad() {
@@ -4276,6 +4275,7 @@ function renderKickKnobs() {
 
 function renderKick() {
   for (const b of $('#kick-presets').children) b.classList.toggle('active', b.dataset.preset === state.kick.preset);
+  kickPresets?.render();
   $('#kick-auto').classList.toggle('active', state.kick.auto);
   $('#kick-to-pad').title = t('kick.toPad.title', { n: state.selected + 1, bank: state.bank + 1 });
   renderKickKnobs();
@@ -5081,7 +5081,7 @@ const pickIds = (obj, page) => Object.fromEntries(PAGES[page].params.filter(d =>
 const TOOL_IO = {
   tr: {
     get: () => ({ tr: state.tr }),
-    set: d => { drum.stop(); state.tr = mergeTrState(d.tr); drum.setVolume(state.tr.globals.volume); renderTr(); },
+    set: d => { drum.stop(); state.tr = mergeTrState(d.tr); drum.setVolume(state.tr.globals.volume); renderTr(); trPresets?.render(); },
   },
   acid: {
     get: () => ({ acid: state.acid }),
@@ -5092,7 +5092,7 @@ const TOOL_IO = {
     set: d => { state.osc = mergeOscState(d.osc); oscPresetCache.clear(); oscChanged(false); rollPresetOptions(); },
   },
   piano: {
-    get: () => ({ preset: state.preset, synth: pickIds(state.globals, 'synth'), play: state.play }),
+    get: () => ({ preset: state.preset, synth: pickIds(state.globals, 'synth'), play: state.play, user: state.synthUser, pick: state.synthPick, dirty: state.synthDirty }),
     set: d => {
       const preset = presetById(migratePreset(d.preset));
       state.preset = preset.id;
@@ -5101,6 +5101,10 @@ const TOOL_IO = {
       Object.assign(state.globals, d.synth && typeof d.synth === 'object' ? pickIds(d.synth, 'synth') : {});
       applyGlobals();
       state.play = mergePlayState(d.play);
+      if (Array.isArray(d.user)) state.synthUser = d.user.filter(u => typeof u?.id === 'string' && u.id.startsWith('u:') && PRESETS.some(p => p.id === u.base));
+      state.synthPick = state.synthUser.some(u => u.id === d.pick) ? d.pick : null;
+      state.synthDirty = !!d.dirty;
+      synthPresets?.render();
       performer.refresh();
       renderPresets();
       renderPlayControls();
@@ -5108,7 +5112,7 @@ const TOOL_IO = {
   },
   kick: {
     get: () => ({ kick: state.kick }),
-    set: d => { state.kick = mergeKickState(d.kick); renderKick(); renderKickKnobs(); },
+    set: d => { state.kick = mergeKickState(d.kick); renderKick(); renderKickKnobs(); kickPresets?.render(); },
   },
   mix: {
     get: () => ({ mix: state.mix, sc: state.sc, fx: pickIds(state.globals, 'fx'), eq: pickIds(state.globals, 'eq') }),
@@ -5514,6 +5518,7 @@ function openMetroOptions(anchor) {
 
 // ---------- Barre de presets (instruments) ----------
 
+
 // Un menu par catégories (presets fournis, puis « Mes presets »), Enregistrer sous un nom et une catégorie, Supprimer.
 // cfg : { cats, catLabel(cat), builtins: [{ id, cat, name }], user(): [{ id, cat, name }], current(): id | null,
 //         apply(id), save(name, cat) -> id, remove(id) }
@@ -5560,6 +5565,134 @@ function presetBar(wrap, cfg) {
   });
   render();
   return { render };
+}
+
+// Kits de son de la TR-909.
+let trPresets = null;
+function buildTrPresets() {
+  trPresets = presetBar($('#tr-pbar'), {
+    cats: TR_CATS,
+    catLabel: c => t(`tr.cat.${c}`),
+    builtins: TR_KITS.map(k => ({ id: k.id, cat: k.cat, name: t(`tr.kit.${k.id}`) })),
+    user: () => state.tr.userKits,
+    current: () => state.tr.kit,
+    apply: id => {
+      const u = state.tr.userKits.find(x => x.id === id), b = TR_KITS.find(x => x.id === id);
+      if (!u && !b) return;
+      state.tr.params = u ? kitParams(u.params) : kitParams(b.v);
+      state.tr.kit = id;
+      renderTr();
+      renderKnobs();
+      save();
+    },
+    save: (name, cat) => {
+      let u = state.tr.userKits.find(x => x.name === name);
+      if (!u) { u = { id: `u:${crypto.randomUUID()}`, name }; state.tr.userKits.push(u); }
+      Object.assign(u, { cat, params: structuredClone(state.tr.params) });
+      state.tr.kit = u.id;
+      save();
+      return u.id;
+    },
+    remove: id => { state.tr.userKits = state.tr.userKits.filter(x => x.id !== id); state.tr.kit = null; save(); },
+  });
+}
+
+// Presets du designer de kick (les boutons restent pour les presets fournis).
+let kickPresets = null;
+function buildKickPresets() {
+  kickPresets = presetBar($('#kick-pbar'), {
+    cats: KICK_CATS,
+    catLabel: c => t(`kick.cat.${c}`),
+    builtins: Object.keys(KICK_PRESETS).map(id => ({ id, cat: KICK_PRESET_CAT[id], name: t(`kick.preset.${id}`) })),
+    user: () => state.kick.user,
+    current: () => state.kick.preset,
+    apply: id => {
+      const u = state.kick.user.find(x => x.id === id);
+      if (!u && !KICK_PRESETS[id]) return;
+      state.kick.params = { ...kickDefaults(), ...(u ? u.params : KICK_PRESETS[id]) };
+      state.kick.preset = id;
+      kickChanged(true);
+    },
+    save: (name, cat) => {
+      let u = state.kick.user.find(x => x.name === name);
+      if (!u) { u = { id: `u:${crypto.randomUUID()}`, name }; state.kick.user.push(u); }
+      Object.assign(u, { cat, params: { ...state.kick.params } });
+      state.kick.preset = u.id;
+      renderKick();
+      save();
+      return u.id;
+    },
+    remove: id => { state.kick.user = state.kick.user.filter(x => x.id !== id); state.kick.preset = null; renderKick(); save(); },
+  });
+}
+
+// Presets du synthé en couches : ceux fournis (par famille) et les tiens (un preset de départ + tes potards).
+let synthPresets = null;
+const synthCurrent = () => (state.synthDirty ? null : state.synthPick ?? state.preset);
+function buildSynthPresets() {
+  synthPresets = presetBar($('#synth-pbar'), {
+    cats: FAMILIES,
+    catLabel: f => t(`family.${f}`),
+    builtins: PRESETS.map(p => ({ id: p.id, cat: p.family, name: p.name })),
+    user: () => state.synthUser,
+    current: synthCurrent,
+    apply: id => {
+      const u = state.synthUser.find(x => x.id === id);
+      if (!u) { applyPreset(id); return; }
+      applyPreset(u.base);
+      for (const def of PAGES.synth.params) {
+        if (!Number.isFinite(u.values[def.id])) continue;
+        state.globals[def.id] = u.values[def.id];
+        engine.set(def.id, toValue(def, u.values[def.id]));
+      }
+      state.synthPick = id;
+      state.synthDirty = false;
+      renderSynthKnobs();
+      renderKnobs();
+      synthPresets.render();
+      save();
+    },
+    save: (name, cat) => {
+      let u = state.synthUser.find(x => x.name === name);
+      if (!u) { u = { id: `u:${crypto.randomUUID()}`, name }; state.synthUser.push(u); }
+      Object.assign(u, { cat, base: state.preset, values: Object.fromEntries(PAGES.synth.params.map(d => [d.id, state.globals[d.id]])) });
+      state.synthPick = u.id;
+      state.synthDirty = false;
+      save();
+      return u.id;
+    },
+    remove: id => { state.synthUser = state.synthUser.filter(x => x.id !== id); state.synthPick = null; state.synthDirty = true; save(); },
+  });
+}
+// Un potard du synthé tourné : le preset devient « perso ».
+function synthTouched() {
+  if (state.synthDirty) return;
+  state.synthDirty = true;
+  synthPresets?.render();
+}
+
+// Presets du synthé à oscillateurs : catégories, et les tiens.
+let oscPresets = null;
+function buildOscPresets() {
+  oscPresets = presetBar($('#osc-pbar'), {
+    cats: OSC_CATS,
+    catLabel: c => t(`osc.cat.${c}`),
+    builtins: OSC_PRESETS.map(p => ({ id: p.id, cat: OSC_PRESET_CAT[p.id] ?? 'lead', name: t(`osc.preset.${p.id}`) })),
+    user: () => state.osc.user,
+    current: () => state.osc.preset,
+    apply: id => loadOscPreset(id),
+    save: (name, cat) => {
+      let u = state.osc.user.find(x => x.name === name);
+      if (!u) { u = { id: `u:${crypto.randomUUID()}`, name }; state.osc.user.push(u); }
+      Object.assign(u, { cat, params: { ...state.osc.params } });
+      state.osc.preset = u.id;
+      renderOsc();
+      rollPresetOptions();
+      save();
+      return u.id;
+    },
+    remove: id => { state.osc.user = state.osc.user.filter(x => x.id !== id); state.osc.preset = null; renderOsc(); rollPresetOptions(); save(); },
+  });
 }
 
 // Presets de son de la TB-303.

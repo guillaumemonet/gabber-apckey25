@@ -28,6 +28,7 @@ const HELP = {
       <ul>
         <li><b>Click a step</b>: note → accent → off. <b>Click an instrument name</b> to play and select it.</li>
         <li><b>Patterns 1-8</b> (4 presets: gabber, rave, breakbeat, kick roll). A change waits for the next bar.</li>
+        <li><b>Sound kits</b> (menu above the grid): the settings of the 11 instruments at once: Hardcore (Gabber, Rotterdam, Terror, Industrial), Classic (Clean 909, House, Techno), FX (Lo-fi crush, Folded). Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
         <li><b>Accent</b>: how much louder the accented steps are.</li>
         <li><b>Knobs</b> (under the grid, also on the APC knobs K1-K8 when this window is active): K1-K4 = parameters of the selected instrument, K5 = <b>drive</b>, K6 = distortion <b>shape</b> (soft, hard, tube, fold, crush), K7 = shuffle, K8 = 909 volume.</li>
         <li><b>APC grid</b> (Shift + PLAY): rows 1-2 = the 16 steps, row 3-4 = instruments, Accent, Clear, Mute, row 5 = patterns. A SCENE LAUNCH button brings the pads back.</li>
@@ -54,7 +55,7 @@ const HELP = {
         <li><b>Envelopes</b>: ADSR of the filter and of the volume, drawn above their knobs.</li>
         <li><b>LFO</b>: sine, triangle, saw or square, in sync with the tempo (1/1 to 1/32, triplets), on the pitch, the filter, the pulse width or the volume.</li>
         <li><b>Voice</b>: poly (8 notes), mono or legato (no new attack between linked notes), glide, stereo width of the unison, volume.</li>
-        <li><b>Presets</b>: 12 ready-made sounds (hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, wobble, laser). Type a name and <b>Save</b> to keep your own; the bin deletes it.</li>
+        <li><b>Presets</b>: 12 ready-made sounds (hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, wobble, laser), as buttons and in a menu by category (Lead, Bass, Pad, FX). Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
         <li><b>APC knobs</b>: the knobs marked K1-K8 (cutoff, resonance, filter envelope, filter decay, drive, LFO depth, release, volume) follow the APC knobs while this window is active.</li>
         <li>It has its own <b>mixer channel</b> (K7 on the mixer pages), can be wired in the <b>Patch</b> window, and is ducked by the <b>sidechain</b> like the synth. Recordings of it become note blocks with its sound; in the <b>piano roll</b>, any note block can use one of its presets.</li>
       </ul>`,
@@ -93,7 +94,7 @@ const HELP = {
     kick: `
       <p>Build your own gabber / hardcore kick, computed in a few milliseconds, then use it anywhere.</p>
       <ul>
-        <li><b>Presets</b>: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore. Start from one, then shape it.</li>
+        <li><b>Presets</b>: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore. Start from one, then shape it. The menu under the buttons sorts them by category (Gabber, Hardcore, Mainstream / uptempo) with your own kicks. Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
         <li><b>Tail</b>: <b>Tune</b> (note of the tail, F = the key of the banks), <b>Punch</b> and <b>Sweep</b> (how high the pitch starts and how fast it drops), <b>Tail drop</b> (how far it keeps falling), <b>Length</b>, <b>Zaag</b> (sawtooth for a raw, buzzing tail).</li>
         <li><b>Distortion</b>: <b>Drive</b> and <b>Shape</b> (the 909's 5 shapes), then <b>Formant</b> and <b>Bite</b>, which make the tail "talk".</li>
         <li><b>Attack</b>: <b>Click</b> (noise) and <b>Attack</b> (short punchy layer).</li>
@@ -125,6 +126,7 @@ const HELP = {
       <ul>
         <li><b>Families and presets</b>: click, or on the APC <b>Shift + white key</b> = preset of the family, <b>Shift + C# / D#</b> = previous / next family.</li>
         <li><b>8 knobs</b> adapted to the family (brightness, resonance, attack, release, width, vibrato, ensemble or drive, glide, detune, reverb). Double-click = back to the preset's value.</li>
+        <li><b>Your presets</b> (menu under the presets, by family): a preset of yours keeps its starting sound and your 8 knobs. Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
         <li><b>Chords</b>: one key plays a whole chord; <b>In key (F minor)</b> builds the right chord of the scale on each key. APC: Shift + F#.</li>
         <li><b>Arpeggio</b>: the held notes are played one after another in time with the tempo (1/8, 1/16, 1/32; order; 1-3 octaves; note length; <b>Hold</b>). APC: Shift + G# = on / off, Shift + A# = speed.</li>
         <li><b>Pad generator → timeline</b>: type a progression (<code>Fm Db Eb Cm</code>), choose a sound, register, bars per chord, repeats, rhythm and bass, then <b>Generate</b>: the chord blocks are placed from the playhead, each with its own preset.</li>
@@ -197,6 +199,7 @@ const HELP = {
       <ul>
         <li><b>Clic sur un pas</b> : note → accent → silence. <b>Clic sur le nom d'un instrument</b> pour le jouer et le choisir.</li>
         <li><b>Patterns 1 à 8</b> (4 préréglés : gabber, rave, breakbeat, roulement de kick). Un changement attend la mesure suivante.</li>
+        <li><b>Kits de son</b> (menu au-dessus de la grille) : les réglages des 11 instruments d'un coup : Hardcore (Gabber, Rotterdam, Terror, Industriel), Classique (909 propre, House, Techno), FX (Lo-fi écrasé, Replié). Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et <b>Enregistrer</b> pour garder le tien (★), la corbeille le supprime.</li>
         <li><b>Accent</b> : de combien les pas accentués sont plus forts.</li>
         <li><b>Potards</b> (sous la grille, aussi sur les potards K1-K8 de l'APC quand cette fenêtre est active) : K1-K4 = paramètres de l'instrument choisi, K5 = <b>drive</b>, K6 = <b>forme</b> de distorsion (douce, dure, lampe, repli, crush), K7 = shuffle, K8 = volume 909.</li>
         <li><b>Grille de l'APC</b> (Maj + PLAY) : rangées 1-2 = les 16 pas, rangées 3-4 = instruments, Accent, Effacer, Muet, rangée 5 = patterns. Un bouton SCENE LAUNCH ramène les pads.</li>
@@ -223,7 +226,7 @@ const HELP = {
         <li><b>Enveloppes</b> : ADSR du filtre et du volume, dessinées au-dessus de leurs potards.</li>
         <li><b>LFO</b> : sinus, triangle, scie ou carré, calé sur le tempo (1/1 à 1/32, triolets), sur la hauteur, le filtre, la largeur d'impulsion ou le volume.</li>
         <li><b>Voix</b> : poly (8 notes), mono ou legato (pas de nouvelle attaque entre notes liées), glissé, largeur stéréo de l'unisson, volume.</li>
-        <li><b>Presets</b> : 12 sons tout prêts (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser). Tape un nom puis <b>Enregistrer</b> pour garder le tien ; la corbeille le supprime.</li>
+        <li><b>Presets</b> : 12 sons tout prêts (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser), en boutons et dans un menu par catégorie (Lead, Basse, Nappe, FX). Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et <b>Enregistrer</b> pour garder le tien (★), la corbeille le supprime.</li>
         <li><b>Potards de l'APC</b> : les potards marqués K1-K8 (coupure, résonance, enveloppe du filtre, déclin du filtre, saturation, quantité du LFO, relâche, volume) suivent les potards de l'APC quand cette fenêtre est active.</li>
         <li>Il a sa propre <b>voie de mixage</b> (K7 sur les pages mixeur), se câble dans la fenêtre <b>Câblage</b> et est baissé par le <b>sidechain</b> comme le synthé. Ses enregistrements deviennent des blocs de notes avec son son ; dans le <b>piano roll</b>, tout bloc de notes peut prendre un de ses presets.</li>
       </ul>`,
@@ -262,7 +265,7 @@ const HELP = {
     kick: `
       <p>Fabrique ton propre kick gabber / hardcore, calculé en quelques millisecondes, puis utilise-le partout.</p>
       <ul>
-        <li><b>Presets</b> : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore. Pars de l'un d'eux, puis sculpte-le.</li>
+        <li><b>Presets</b> : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore. Pars de l'un d'eux, puis sculpte-le. Le menu sous les boutons les range par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec tes propres kicks. Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et <b>Enregistrer</b> pour garder le tien (★), la corbeille le supprime.</li>
         <li><b>Queue</b> : <b>Note</b> (fa = la tonalité des banques), <b>Punch</b> et <b>Chute</b> (de combien la hauteur part haut et à quelle vitesse elle tombe), <b>Plongée</b> (de combien elle continue de descendre), <b>Longueur</b>, <b>Zaag</b> (scie pour une queue brute qui bourdonne).</li>
         <li><b>Distorsion</b> : <b>Drive</b> et <b>Forme</b> (les 5 formes de la 909), puis <b>Formant</b> et <b>Mordant</b>, qui font « parler » la queue.</li>
         <li><b>Attaque</b> : <b>Clic</b> (bruit) et <b>Attaque</b> (couche courte et percutante).</li>
@@ -294,6 +297,7 @@ const HELP = {
       <ul>
         <li><b>Familles et presets</b> : clic, ou sur l'APC <b>Maj + touche blanche</b> = preset de la famille, <b>Maj + do# / ré#</b> = famille précédente / suivante.</li>
         <li><b>8 potards</b> adaptés à la famille (brillance, résonance, attaque, relâche, largeur, vibrato, ensemble ou saturation, glissé, désaccord, réverb). Double-clic = retour à la valeur du preset.</li>
+        <li><b>Tes presets</b> (menu sous les presets, par famille) : un preset perso garde son son de départ et tes 8 potards. Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et <b>Enregistrer</b> pour garder le tien (★), la corbeille le supprime.</li>
         <li><b>Accords</b> : une touche joue un accord complet ; <b>Dans la tonalité (fa mineur)</b> construit sur chaque touche l'accord juste de la gamme. APC : Maj + fa#.</li>
         <li><b>Arpège</b> : les notes tenues sont jouées l'une après l'autre, calées sur le tempo (1/8, 1/16, 1/32 ; ordre ; 1 à 3 octaves ; durée des notes ; <b>Tenue</b>). APC : Maj + sol# = oui / non, Maj + la# = vitesse.</li>
         <li><b>Générateur de nappes → timeline</b> : tape une suite d'accords (<code>Fm Db Eb Cm</code>), choisis le son, le registre, les mesures par accord, les répétitions, le rythme et la basse, puis <b>Générer</b> : les blocs d'accords sont posés à partir de la tête de lecture, chacun avec son propre preset.</li>

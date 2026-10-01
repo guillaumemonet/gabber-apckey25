@@ -134,6 +134,8 @@ Une émulation de la Roland TR-909 avec ses 11 instruments : grosse caisse, cais
 
 Chaque instrument a sa propre distorsion. La grosse caisse démarre avec une saturation « Lampe », pour le son gabber. La quantité d'accent se règle avec le curseur à l'écran.
 
+**Kits de son** (menu au-dessus de la grille) : les réglages des 11 instruments d'un coup, distorsion comprise : **Hardcore** (Gabber, Rotterdam, Terror, Industriel), **Classique** (909 propre, House, Techno) et **FX** (Lo-fi écrasé, Replié). Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et **Enregistrer** pour garder le tien (★ dans le menu), la corbeille le supprime. Les patterns ne font pas partie d'un kit.
+
 **Séquenceur** : 16 pas et 8 patterns, dont 4 préréglés (gabber, rave, breakbeat, roulement de grosse caisse). Il suit le même tempo et la même grille de mesures que les boucles, donc il reste calé avec elles. Un changement de pattern attend la mesure suivante. À l'écran, un clic sur un pas fait défiler note → accent → silence, et un clic sur le nom d'un instrument le joue et le sélectionne.
 
 **Grille de l'APC en mode 909** (Maj + PLAY) :
@@ -228,7 +230,7 @@ Une ligne de basse acid façon Roland TB-303, synthétisée en direct : oscillat
 
 Fabrique ton propre kick gabber / hardcore, calculé par le navigateur en quelques millisecondes à partir de 12 potards :
 
-- **Presets** : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore.
+- **Presets** : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore (boutons), aussi dans un menu par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec tes propres kicks. Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et **Enregistrer** pour garder le tien (★ dans le menu), la corbeille le supprime.
 - **Queue** : **Note** (accordée avec les banques), **Punch** et **Chute** (de combien la hauteur part haut et à quelle vitesse elle tombe), **Plongée** (de combien elle continue de descendre), **Longueur**, **Zaag** (scie pour la queue brute et bourdonnante des kicks uptempo).
 - **Distorsion** : **Drive** et **Forme** (les 5 formes de la 909), puis **Formant** et **Mordant**, qui font « parler » la queue.
 - **Attaque** : **Clic** (bruit) et **Attaque** (couche courte et percutante).
@@ -336,6 +338,8 @@ Le clavier joue un synthé en couches pensé pour le hardcore : chaque preset em
 
 Double-clic sur un potard de la fenêtre Synthé pour revenir à la valeur du preset.
 
+**Tes presets** : le menu sous les presets les liste tous par famille. Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et **Enregistrer** pour garder le tien (★ dans le menu), la corbeille le supprime. Un preset perso garde son son de départ et tes 8 potards.
+
 ### Accords et arpégiateur
 
 Sous les potards de la fenêtre Synthé :
@@ -371,7 +375,7 @@ Un synthé façon analogique pour fabriquer tes propres sons, à côté du synth
 - **Deux enveloppes ADSR** (filtre et volume), dessinées au-dessus de leurs potards.
 - **LFO calé sur le tempo** : sinus, triangle, scie ou carré, de 1/1 à 1/32 avec les triolets, sur la hauteur, le filtre, la largeur d'impulsion ou le volume.
 - **Voix** : polyphonique (8 notes), mono ou legato (pas de nouvelle attaque entre notes liées), glissé, largeur stéréo, volume.
-- **12 presets** : hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser. Tape un nom puis **Enregistrer** pour garder tes propres presets.
+- **12 presets** : hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser, en boutons et dans un menu par catégorie (**Lead**, **Basse**, **Nappe**, **FX**). Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et **Enregistrer** pour garder le tien (★ dans le menu), la corbeille le supprime.
 - **Potards de l'APC** : K1-K8 = coupure, résonance, enveloppe du filtre, déclin du filtre, saturation, quantité du LFO, relâche, volume (marqués à l'écran) quand la fenêtre est active.
 - Il a sa propre **voie de mixage** (K7 sur les pages mixeur), se câble dans la fenêtre **Câblage** et est baissé par le **sidechain** comme le synthé. Ce que tu enregistres dessus devient un bloc de notes avec son son, et dans le **piano roll** tout bloc de notes peut prendre un de ses presets.
 
