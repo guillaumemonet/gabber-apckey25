@@ -95,6 +95,7 @@ export class Timeline {
     this.getOsc = () => null;          // bloc du synthé à oscillateurs -> { synth, values } ; branché par l'application
     this.offs = [];             // fins de notes programmées : { note, key, time }
     this.ons = [];              // départs à créer, au fil de la lecture : { time, run }
+    this.synths = new Set();    // synthés qui ont reçu des notes (coupés net à l'arrêt)
     this.padHits = new Set();   // voix de pads programmées (toutes coupées à l'arrêt)
     this.chains = new Map();    // piste -> Map(destination -> TrackChain) : effets de piste
     this.strips = new Map();    // piste -> Map(destination -> tranche : filtres, volume, pano, envois)
@@ -156,8 +157,10 @@ export class Timeline {
             const key = `tl:${clip.id}:${n.i}`;
             const out = this.trackIn(ti, dest);
             jobs.push({ time: when, run: () => {
+              this.synths.add(syn);
               syn.noteOn(n.note, n.vel, when, key, patch, out, n.from);
               this.offs.push({ note: n.note, key, time: when + n.len * bd - 0.005, syn });
+              this.offsDirty = true;
             } });
           }
           continue;
@@ -312,7 +315,7 @@ export class Timeline {
   flush(horizon) {
     const until = horizon + LOOKAHEAD;
     for (;;) {
-      this.offs.sort((a, b) => a.time - b.time);
+      if (this.offsDirty) { this.offs.sort((a, b) => a.time - b.time); this.offsDirty = false; }
       const on = this.ons[0]?.time < until ? this.ons[0] : null;
       const off = this.offs[0]?.time < horizon ? this.offs[0] : null;
       if (off && (!on || off.time <= on.time)) {
@@ -345,6 +348,8 @@ export class Timeline {
     const safe = fn => { try { fn(); } catch (err) { console.warn('Timeline stop', err); } };
     for (const o of this.offs) safe(() => (o.syn ?? this.engine).noteOff(o.note, true, undefined, o.key));
     this.offs = [];
+    for (const syn of this.synths) safe(() => syn.cut?.('tl:'));
+    this.synths.clear();
     for (const { key, v } of this.padHits) {
       safe(() => {
         this.engine.stopVoice(v);

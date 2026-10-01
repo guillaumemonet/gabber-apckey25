@@ -149,6 +149,7 @@ export class OscSynth {
     this.getBpm = getBpm;
     this.out = ctx.createGain();
     this.voices = new Map();   // clé -> voix
+    this.all = new Set();      // toutes les voix pas encore éteintes (même relâchées ou volées), pour pouvoir les couper
     this.stack = [];           // notes tenues (mono / legato)
     this.values = oscValues(null);
   }
@@ -175,13 +176,13 @@ export class OscSynth {
         if (V.mode === 1) v.retrigger(t0, vel);
         return;
       }
-      this.voices.set('mono', this.makeVoice(note, vel, t0, V, out, undefined, true));
+      this.voices.set('mono', this.makeVoice(note, vel, t0, V, out, undefined, true, 'mono'));
       return;
     }
     this.kill(key, t0);
     const active = [...this.voices.entries()].filter(([, v]) => !v.released);
     if (active.length >= MAX_VOICES) { const [k, v] = active.sort((a, b) => a[1].t0 - b[1].t0)[0]; v.release(t0, 0.01); this.voices.delete(k); }
-    this.voices.set(key, this.makeVoice(note, vel, t0, V, out, from, live));
+    this.voices.set(key, this.makeVoice(note, vel, t0, V, out, from, live, key));
   }
 
   noteOff(note, immediate = false, when, key = note) {
@@ -215,7 +216,18 @@ export class OscSynth {
     this.stack = [];
   }
 
-  makeVoice(note, vel, t0, V, out, from, live) {
+  // Coupe tout de suite les voix dont la clé commence par `prefix` (« tl: » = la timeline), y compris celles
+  // déjà relâchées, volées ou programmées pour plus tard (la timeline crée ses notes un peu en avance).
+  cut(prefix) {
+    const now = this.ctx.currentTime;
+    for (const v of this.all) {
+      if (!String(v.key).startsWith(prefix)) continue;
+      v.cut(now);
+      if (this.voices.get(v.key) === v) this.voices.delete(v.key);
+    }
+  }
+
+  makeVoice(note, vel, t0, V, out, from, live, key) {
     const ctx = this.ctx;
     const nodes = [];
     const sources = [];
@@ -402,7 +414,14 @@ export class OscSynth {
         for (const fl of filters) { fl.detune.cancelScheduledValues(Math.max(t, s + V.fa)); fl.detune.setTargetAtTime(0, Math.max(t, s + V.fa), fr / 4); }
         const end = t + r * 1.5 + 0.05;
         for (const n of sources) { try { n.stop(end); } catch { /* déjà arrêtée */ } }
-        sources[0].onended = () => { for (const n of nodes) n.disconnect(); };
+      },
+      // Silence immédiat (arrêt de la timeline) : la voix se tait même si elle n'a pas encore commencé.
+      cut: t => {
+        voice.released = true;
+        const g = vca.gain;
+        if (g.cancelAndHoldAtTime) g.cancelAndHoldAtTime(t); else g.cancelScheduledValues(t);
+        g.setTargetAtTime(0, t, 0.005);
+        for (const n of sources) { try { n.stop(t + 0.05); } catch { /* déjà arrêtée */ } }
       },
       // Potards tournés pendant qu'une note joue.
       update: (N, t) => {
@@ -418,6 +437,9 @@ export class OscSynth {
     voice.setPitch(note, t0, startF ? (from !== undefined ? V.glide : V.ptime) : 0, startF);
     voice.retrigger(t0, vel);
     for (const n of sources) n.start(t0);
+    voice.key = key;
+    this.all.add(voice);
+    sources[0].onended = () => { for (const n of nodes) n.disconnect(); this.all.delete(voice); };
     return voice;
   }
 }

@@ -420,6 +420,8 @@ Le tempo global (en-tête) pilote toutes les boucles. Chacune démarre sur la me
 
 **Métronome** (à côté du Tap) : un clic sur chaque temps de la grille, plus aigu sur le 1er temps de la mesure, avec quatre voyants qui battent la mesure. Son menu **▾** règle quand il clique (tout le temps, ou seulement pendant l'enregistrement), un **décompte d'une mesure avant REC** et son volume. Le clic part directement vers les haut-parleurs : il n'est jamais dans l'export WAV, les stems ni les enregistrements.
 
+**CPU** (en-tête, à côté du vumètre) : deux petites barres. **Audio**, c'est la charge du moteur audio du navigateur : affichée en pourcentage quand le navigateur la mesure (rares sont ceux qui le font pour l'instant) ; sinon la barre reste sur **OK** et ne passe au rouge (**retard**) que si le moteur décroche, c'est-à-dire quand le son devient haché. **Interface**, c'est la part du temps où la page est trop occupée pour s'afficher. L'infobulle compte aussi les voix et les sons qui jouent. Si ça monte trop : coupe ou supprime des pistes, mets moins d'effets de piste (les effets 3D coûtent le plus), ferme le visualiseur.
+
 ## Potentiomètres
 
 Il n'y a pas de fenêtre de potards globale : **chaque instrument a ses potards dans sa propre fenêtre** (synthé, synthé à oscillateurs, fenêtre des pads et éditeur de pad, TR-909 sous sa grille, TB-303, platines, designer de kick, visualiseur), et la table de mixage a une section **Master** (EQ du master, effets globaux et volumes).

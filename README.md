@@ -420,6 +420,8 @@ The global tempo (header) drives every loop. Each loop starts on the next bar an
 
 **Metronome** (next to Tap): a click on every beat of the grid, higher on the first beat of the bar, with four lights that beat the bar. Its **▾** menu sets when it clicks (all the time, or only while recording), a **one-bar count-in before REC** and its volume. The click goes straight to the speakers: it is never in the WAV export, the stems or the recordings.
 
+**CPU** (header, next to the level meter): two small bars. **Audio** is the load of the browser's audio engine: shown as a percentage when the browser measures it (few do so far); otherwise the bar stays at **OK** and only lights up red (**lags**) when the engine falls behind, which is when the sound gets choppy. **Interface** is the share of time the page is too busy to draw. The tooltip also counts the voices and sounds playing. If it gets too high: mute or remove tracks, use fewer track effects (the 3D ones cost the most), close the visualizer.
+
 ## Knobs
 
 There is no global knob window: **each instrument has its knobs in its own window** (synth, oscillator synth, pads window and pad editor, TR-909 under its grid, TB-303, turntables, kick designer, visualizer), and the mixer has a **Master** section (master EQ, global effects and volumes).

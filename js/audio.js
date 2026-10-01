@@ -328,15 +328,19 @@ export class Engine {
     }
 
     // Vibrato (potard « Vibrato »), qui arrive après un instant comme sur un instrument joué.
+    // Une note de la timeline sans vibrato n'en a pas besoin (au clavier, le potard peut le monter pendant la note).
     const lfos = [];
-    const vib = ctx.createOscillator();
-    vib.frequency.value = c.vibRate;
-    const vibGain = ctx.createGain();
-    vibGain.gain.setValueAtTime(0, t);
-    vibGain.gain.linearRampToValueAtTime((p.vibrato ?? 0) * (c.vibRange ?? 0.5) * 100, t + c.vibDelay + 0.3);
-    vib.connect(vibGain);
-    for (const o of oscs) vibGain.connect(o.osc.detune);
-    lfos.push(vib);
+    let vibGain = null;
+    if (!patch || (p.vibrato ?? 0) > 0) {
+      const vib = ctx.createOscillator();
+      vib.frequency.value = c.vibRate;
+      vibGain = ctx.createGain();
+      vibGain.gain.setValueAtTime(0, t);
+      vibGain.gain.linearRampToValueAtTime((p.vibrato ?? 0) * (c.vibRange ?? 0.5) * 100, t + c.vibDelay + 0.3);
+      vib.connect(vibGain);
+      for (const o of oscs) vibGain.connect(o.osc.detune);
+      lfos.push(vib);
+    }
     if (c.lfoRate) {
       const lfo = ctx.createOscillator();
       lfo.frequency.value = c.lfoRate;
@@ -370,6 +374,8 @@ export class Engine {
     const end = t + rel * 1.5 + 0.05;
     for (const o of voice.oscs) o.osc.stop(end);
     for (const l of voice.lfos) l.stop(end);
+    // Voix éteinte : on la débranche (le moteur n'a plus à la parcourir).
+    if (voice.oscs[0]) voice.oscs[0].osc.onended = () => { try { voice.amp.disconnect(); voice.filter.disconnect(); } catch { /* déjà fait */ } };
   }
 
   // `when` : instant de départ (séquenceur) ; `key` : identifiant de la voix (le séquenceur

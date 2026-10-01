@@ -110,16 +110,34 @@ function buildGroup(ctx, engine, b) {
   const gain = v => { const g = ctx.createGain(); g.gain.value = v; return g; };
   const params = [];   // paramètres automatisés (remis à zéro à l'arrêt) : [AudioParam, valeur neutre]
   const neutral = (param, v) => { params.push([param, v]); param.value = v; return param; };
+  const timers = [];
+  let unwire = null;   // débranche le côté traité (arrêt de la lecture)
   // Mélange sec / traité : hors du bloc, 100 % sec (exactement transparent).
+  // Le côté traité n'est branché (donc calculé) qu'autour de ses blocs : un effet muet coûte autant qu'un effet
+  // qui joue (la 3D surtout). Rendu hors ligne (export) : branché tout le temps, les minuteries n'y ont pas de sens.
   const crossfade = wetIn => {
     const dry = gain(1), wet = gain(0);
     input.connect(dry).connect(output);
-    input.connect(wetIn);
+    const offline = typeof OfflineAudioContext !== 'undefined' && ctx instanceof OfflineAudioContext;
+    let wired = false, open = 0;
+    const wire = v => {
+      if (v === wired) return;
+      wired = v;
+      if (v) input.connect(wetIn); else { try { input.disconnect(wetIn); } catch { /* déjà débranché */ } }
+    };
+    if (offline) wire(true);
+    else unwire = () => { for (const id of timers) clearTimeout(id); timers.length = 0; open = 0; wire(false); };
     neutral(dry.gain, 1);
     neutral(wet.gain, 0);
     return { dry, wet, open(t0, t1, fade = RAMP) {
       dry.gain.setTargetAtTime(0, t0, fade); wet.gain.setTargetAtTime(1, t0, fade);
       dry.gain.setTargetAtTime(1, t1, RAMP); wet.gain.setTargetAtTime(0, t1, RAMP);
+      if (offline) return;
+      // Branché 1,5 s avant (une minuterie peut prendre du retard), débranché une fois le côté traité retombé à zéro.
+      const now = ctx.currentTime;
+      open++;
+      timers.push(setTimeout(() => wire(true), Math.max(0, (t0 - now - 1.5) * 1000)));
+      timers.push(setTimeout(() => { open = Math.max(0, open - 1); if (!open) wire(false); }, Math.max(0, (t1 - now + 0.5) * 1000)));
     } };
   };
   let play = () => {};
@@ -337,6 +355,7 @@ function buildGroup(ctx, engine, b) {
     input, output, play,
     // Retour aux valeurs neutres ; une courbe en cours peut refuser .value : on repasse alors par setValueAtTime.
     reset() {
+      unwire?.();
       const now = ctx.currentTime;
       for (const [param, v] of params) {
         try { param.cancelScheduledValues(0); param.value = v; } catch {

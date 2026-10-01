@@ -21,6 +21,7 @@ import { Patch, BOX_TYPES, BOX_ORDER, SOURCE_COLORS, boxDefaults, defaultPatch, 
 import { makeZip } from './zip.js';
 import { packFile, readFile, FILE_EXT } from './project.js';
 import { Metronome, defaultMetroState, mergeMetroState } from './metronome.js';
+import { CpuMeter } from './cpumeter.js';
 import { Visualizer, VIZ_MODES, VIZ_2D, VIZ_3D, VIZ_FILTERS } from './visualizer.js';
 import { FX_TYPES as TFX_TYPES, FX_BANK, FX_FAMILY_COLORS, fxDefaults, bankName } from './trackfx.js';
 import { KICK_PARAMS, KICK_PRESETS, KICK_CATS, KICK_PRESET_CAT, kickDefaults, kickFmt, kickSteps, defaultKickState, mergeKickState, renderKick as synthKick } from './kickdesign.js';
@@ -169,6 +170,7 @@ async function start() {
   buildOsc();
   buildViz();
   buildMetro();
+  buildCpu();
   buildPatch();
   buildMixer();
   buildSidechain();
@@ -5500,6 +5502,33 @@ function renderViz() {
 }
 
 // ---------- Métronome ----------
+
+// Compteur de charge de l'en-tête : barres Audio / Interface, détail dans l'infobulle.
+let cpuMeter = null;
+function buildCpu() {
+  const box = $('#cpu');
+  const rows = Object.fromEntries([...box.querySelectorAll('.cpu-row')].map(r => [r.dataset.k, { em: r.querySelector('em'), txt: r.querySelector('small') }]));
+  const voices = () => engine.voices.size + engine.padVoices.size + oscSynth.all.size + timeline.sources.length;
+  const level = v => (v >= 0.85 ? 'hot' : v >= 0.6 ? 'warn' : 'ok');
+  cpuMeter = new CpuMeter(engine.ctx, voices, m => {
+    const show = (k, v, text) => {
+      rows[k].em.style.width = `${Math.round(Math.min(1, v) * 100)}%`;
+      rows[k].em.className = level(v);
+      rows[k].txt.textContent = text;
+    };
+    // Sans mesure du navigateur, la barre audio ne bouge que si le moteur décroche.
+    show('audio', m.precise ? m.audio : m.audio > 0 ? Math.max(0.85, m.audio) : 0, m.precise ? `${Math.round(m.audio * 100)}%` : m.audio > 0 ? t('cpu.lag') : t('cpu.ok'));
+    show('ui', m.ui, `${Math.round(m.ui * 100)}%`);
+    box.classList.toggle('hot', (m.precise ? m.audio >= 0.85 || m.underrun > 0 : m.audio > 0) || m.ui >= 0.85);
+    box.title = [
+      m.precise ? t('cpu.audioLoad', { n: Math.round(m.audio * 100) }) : m.audio > 0 ? t('cpu.audioLag', { n: Math.round(m.audio * 100) }) : t('cpu.audioOk'),
+      t('cpu.uiLoad', { n: Math.round(m.ui * 100) }),
+      t('cpu.voices', { n: m.voices }),
+      m.precise ? '' : t('cpu.noMeasure'),
+      t('cpu.help'),
+    ].filter(Boolean).join('\n');
+  });
+}
 
 function buildMetro() {
   metro = new Metronome(engine, () => state.metro, () => state.metro.on && (state.metro.when === 'always' || !!tlRec));

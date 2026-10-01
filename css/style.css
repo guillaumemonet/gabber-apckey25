@@ -78,6 +78,18 @@ header {
 .status.on .dot { background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2); }
 .status.on { color: var(--text); }
 #meter { background: var(--bg); border-radius: 3px; }
+.cpu { display: inline-flex; align-items: center; gap: 6px; padding: 2px 7px; border: 1px solid var(--line, #333); border-radius: 6px; cursor: default; }
+.cpu.hot { border-color: #e5484d; }
+.cpu-name { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); }
+.cpu-bars { display: flex; flex-direction: column; gap: 2px; }
+.cpu-row { display: grid; grid-template-columns: 52px 46px 34px; align-items: center; gap: 5px; font-size: 9.5px; line-height: 1; color: var(--muted); }
+.cpu-row b { font-weight: 600; }
+.cpu-row i { height: 5px; border-radius: 3px; background: var(--bg); overflow: hidden; }
+.cpu-row em { display: block; height: 100%; width: 0; border-radius: 3px; transition: width .3s; }
+.cpu-row em.ok { background: #46a758; }
+.cpu-row em.warn { background: #ffc53d; }
+.cpu-row em.hot { background: #e5484d; }
+.cpu-row small { font-size: 9.5px; text-align: right; font-variant-numeric: tabular-nums; }
 .tempo { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; }
 .tempo input { width: 70px; text-align: center; font-weight: 700; }
 #ed-bpm { width: 120px; }
