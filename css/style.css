@@ -358,7 +358,7 @@ footer { padding: 4px 20px 8px; }
 .plugin-group { display: flex; align-items: center; gap: 4px; padding-right: 8px; margin-right: 2px; border-right: 1px solid var(--line); }
 .plugin-group:last-child { border-right: none; }
 .plugin-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-right: 2px; }
-.apc-page { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.apc-page { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); white-space: nowrap; }
 .apc-page select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; }
 .mini-knobs.row-knobs { grid-template-columns: repeat(8, 1fr); }
 .tr-knobs { margin-top: 12px; }
