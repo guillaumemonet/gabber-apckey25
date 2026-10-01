@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=54">
+  <link rel="stylesheet" href="css/style.css?v=53">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -309,42 +309,76 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/acid.js": "./js/acid.js?v=54",
-      "./js/apc.js": "./js/apc.js?v=54",
-      "./js/audio.js": "./js/audio.js?v=54",
-      "./js/decks.js": "./js/decks.js?v=54",
-      "./js/chords.js": "./js/chords.js?v=54",
-      "./js/help.js": "./js/help.js?v=54",
-      "./js/history.js": "./js/history.js?v=54",
-      "./js/i18n.js": "./js/i18n.js?v=54",
-      "./js/kickdesign.js": "./js/kickdesign.js?v=54",
-      "./js/kit.js": "./js/kit.js?v=54",
-      "./js/kits.js": "./js/kits.js?v=54",
-      "./js/metronome.js": "./js/metronome.js?v=54",
-      "./js/library.js": "./js/library.js?v=54",
-      "./js/main.js": "./js/main.js?v=54",
-      "./js/mixer.js": "./js/mixer.js?v=54",
-      "./js/notes.js": "./js/notes.js?v=54",
-      "./js/osc.js": "./js/osc.js?v=54",
-      "./js/params.js": "./js/params.js?v=54",
-      "./js/patch.js": "./js/patch.js?v=54",
-      "./js/performer.js": "./js/performer.js?v=54",
-      "./js/pianoroll.js": "./js/pianoroll.js?v=54",
-      "./js/presets.js": "./js/presets.js?v=54",
-      "./js/project.js": "./js/project.js?v=54",
-      "./js/sidechain.js": "./js/sidechain.js?v=54",
-      "./js/recorder.js": "./js/recorder.js?v=54",
-      "./js/timeline.js": "./js/timeline.js?v=54",
-      "./js/storage.js": "./js/storage.js?v=54",
-      "./js/tr909.js": "./js/tr909.js?v=54",
-      "./js/trackfx.js": "./js/trackfx.js?v=54",
-      "./js/visualizer.js": "./js/visualizer.js?v=54",
-      "./js/viz3d.js": "./js/viz3d.js?v=54",
-      "./js/windows.js": "./js/windows.js?v=54",
-      "./js/zip.js": "./js/zip.js?v=54"
+      "./js/acid.js": "./js/acid.js?v=53",
+      "./js/apc.js": "./js/apc.js?v=53",
+      "./js/audio.js": "./js/audio.js?v=53",
+      "./js/decks.js": "./js/decks.js?v=53",
+      "./js/chords.js": "./js/chords.js?v=53",
+      "./js/help.js": "./js/help.js?v=53",
+      "./js/history.js": "./js/history.js?v=53",
+      "./js/i18n.js": "./js/i18n.js?v=53",
+      "./js/kickdesign.js": "./js/kickdesign.js?v=53",
+      "./js/kit.js": "./js/kit.js?v=53",
+      "./js/kits.js": "./js/kits.js?v=53",
+      "./js/metronome.js": "./js/metronome.js?v=53",
+      "./js/library.js": "./js/library.js?v=53",
+      "./js/main.js": "./js/main.js?v=53",
+      "./js/mixer.js": "./js/mixer.js?v=53",
+      "./js/notes.js": "./js/notes.js?v=53",
+      "./js/osc.js": "./js/osc.js?v=53",
+      "./js/params.js": "./js/params.js?v=53",
+      "./js/patch.js": "./js/patch.js?v=53",
+      "./js/performer.js": "./js/performer.js?v=53",
+      "./js/pianoroll.js": "./js/pianoroll.js?v=53",
+      "./js/presets.js": "./js/presets.js?v=53",
+      "./js/project.js": "./js/project.js?v=53",
+      "./js/sidechain.js": "./js/sidechain.js?v=53",
+      "./js/recorder.js": "./js/recorder.js?v=53",
+      "./js/timeline.js": "./js/timeline.js?v=53",
+      "./js/storage.js": "./js/storage.js?v=53",
+      "./js/tr909.js": "./js/tr909.js?v=53",
+      "./js/trackfx.js": "./js/trackfx.js?v=53",
+      "./js/visualizer.js": "./js/visualizer.js?v=53",
+      "./js/viz3d.js": "./js/viz3d.js?v=53",
+      "./js/windows.js": "./js/windows.js?v=53",
+      "./js/zip.js": "./js/zip.js?v=53"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=54"></script>
+  <script type="module" src="js/__main_test.js"></script>
+<script>
+window.confirm = () => true;
+const log = (k, v) => fetch('/__log?' + encodeURIComponent(k) + '=' + encodeURIComponent(typeof v === 'string' ? v : JSON.stringify(v)));
+window.addEventListener('error', e => log('ERROR', e.message + ' @' + e.filename + ':' + e.lineno));
+window.addEventListener('unhandledrejection', e => log('REJECT', String(e.reason && e.reason.stack || e.reason)));
+const wait = ms => new Promise(r => setTimeout(r, ms));
+(async () => {
+  try {
+    await wait(800);
+    document.querySelector('#start-btn').click();
+    for (let i = 0; i < 150 && !window.__app?.apc; i++) await wait(200);
+    await wait(500);
+    const A = window.__app, S = A.state;
+    const t0 = performance.now();
+    const blob = await (await fetch('/__track.gabber')).blob();
+    await A.loadFile(new File([blob], 'track.gabber'));
+    const ms = Math.round(performance.now() - t0);
+    const clips = S.tl.tracks.flatMap(t => t.clips);
+    const missing = clips.filter(c => !A.clipBuffer(c.sampleId)).length;
+    log('loaded', { ms, bpm: S.bpm, bars: S.tl.bars, clips: clips.length, missing, userSounds: S.userSounds.length, loops: S.userSounds.filter(u => u.loop).length,
+      tracks: S.tl.tracks.slice(0, 6).map(t => ({ n: t.clips.length, mute: t.mute })), mine: document.querySelectorAll('.lib-cat').length });
+    const peak = async () => { let p = 0; for (let i = 0; i < 12; i++) { p = Math.max(p, A.masterPeak()); await wait(50); } return +p.toFixed(3); };
+    // Le morceau reconstruit (original muet), puis l'original seul.
+    S.tl.playhead = 30 * 4;
+    A.tlToggle(); await wait(700); const rebuilt = await peak(); A.tlToggle();
+    for (let i = 1; i < 5; i++) S.tl.tracks[i].mute = true;
+    S.tl.tracks[0].mute = false;
+    A.tlToggle(); await wait(700); const original = await peak(); A.tlToggle();
+    log('play', { rebuilt, original });
+    log('DONE', 1);
+  } catch (e) { log('FAIL', String(e.stack || e)); }
+})();
+</script>
+
 </body>
 </html>

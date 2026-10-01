@@ -15,6 +15,9 @@ export const TL_TRACKS = 16;        // pistes au départ
 export const MIN_TRACKS = 4;
 export const MAX_TRACKS = 64;
 export const BEATS_PER_BAR = 4;
+// Les notes et les sons ne sont créés qu'un peu avant de jouer (secondes) : tout créer d'avance
+// (des milliers de nœuds audio pour un morceau entier) écroulerait le moteur audio.
+const LOOKAHEAD = 1.5;
 // Réglages d'une piste (ses potards) : volume, panoramique, filtres passe-bas / passe-haut, envois delay et reverb.
 export const TRACK_DEFAULTS = { vol: 1, pan: 0, lp: 20000, hp: 20, dly: 0, rev: 0 };
 const num = (v, lo, hi, d) => (Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d);
@@ -91,6 +94,7 @@ export class Timeline {
     this.getPatch = () => undefined;   // preset d'un bloc -> { cfg, values } ; branché par l'application
     this.getOsc = () => null;          // bloc du synthé à oscillateurs -> { synth, values } ; branché par l'application
     this.offs = [];             // fins de notes programmées : { note, key, time }
+    this.ons = [];              // départs à créer, au fil de la lecture : { time, run }
     this.padHits = new Set();   // voix de pads programmées (toutes coupées à l'arrêt)
     this.chains = new Map();    // piste -> Map(destination -> TrackChain) : effets de piste
     this.strips = new Map();    // piste -> Map(destination -> tranche : filtres, volume, pano, envois)
@@ -133,6 +137,7 @@ export class Timeline {
     this.cycleChains.clear();
     // Les coups de pad déjà joués (d'un cycle précédent) sont oubliés.
     for (const h of this.padHits) if (h.v.startAt < this.ctx.currentTime - 10) this.padHits.delete(h);
+    const jobs = [];
     st.tracks.forEach((track, ti) => {
       if (track.mute) return;
       for (const clip of track.clips) {
@@ -149,8 +154,11 @@ export class Timeline {
             if (at < beat - 1e-6 || at >= len) continue;
             const when = time + (at - beat) * bd;
             const key = `tl:${clip.id}:${n.i}`;
-            syn.noteOn(n.note, n.vel, when, key, patch, this.trackIn(ti, dest), n.from);
-            this.offs.push({ note: n.note, key, time: when + n.len * bd - 0.005, syn });
+            const out = this.trackIn(ti, dest);
+            jobs.push({ time: when, run: () => {
+              syn.noteOn(n.note, n.vel, when, key, patch, out, n.from);
+              this.offs.push({ note: n.note, key, time: when + n.len * bd - 0.005, syn });
+            } });
           }
           continue;
         }
@@ -161,8 +169,11 @@ export class Timeline {
           const pad = this.getPad(clip.bank, clip.pad);
           const key = this.padKey(clip.bank, clip.pad);
           if (pad?.buffer) {
-            const v = this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1, out: this.trackIn(ti, this.engine.padOut(pad) ?? this.engine.padBus) });
-            if (v) this.padHits.add({ key, v });
+            const out = this.trackIn(ti, this.engine.padOut(pad) ?? this.engine.padBus);
+            jobs.push({ time: when, run: () => {
+              const v = this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1, out });
+              if (v) this.padHits.add({ key, v });
+            } });
             if (this.isKickPad(pad)) this.onKick(when);
           }
           continue;
@@ -174,36 +185,44 @@ export class Timeline {
         const rate = clip.bpm ? this.engine.bpm / clip.bpm : 1;
         const into = Math.max(0, beat - clip.start) * bd * rate;   // secondes déjà écoulées dans le son
         if (!clip.loop && into >= buf.duration) continue;
-        const src = this.ctx.createBufferSource();
-        src.buffer = buf;
-        src.playbackRate.value = rate;
-        if (clip.loop) { src.loop = true; src.loopStart = 0; src.loopEnd = buf.duration; }
-        const gain = this.ctx.createGain();
-        const level = clip.gain ?? 1;
-        src.connect(gain);
-        // Un son mono est centré ici (même loi que le panoramique du mixeur) : son niveau ne change pas
-        // quand un effet de piste stéréo (3D, auto-pan…) fait passer la chaîne de la piste en stéréo.
-        let node = gain;
-        if (buf.numberOfChannels === 1) { node = this.ctx.createStereoPanner(); gain.connect(node); }
-        node.connect(this.trackIn(ti, this.duckOutput && this.isDucked(clip) ? this.duckOutput : this.output));
         const when = time + Math.max(0, clip.start - beat) * bd;
         let stopAt = time + (end - beat) * bd;
         if (st.loop && !this.recording) stopAt = Math.min(stopAt, endTime);
-        gain.gain.setValueAtTime(level, when);
-        gain.gain.setValueAtTime(level, Math.max(when, stopAt - 0.006));
-        gain.gain.linearRampToValueAtTime(0, stopAt);   // fin du bloc sans clic
-        src.start(when, clip.loop ? into % buf.duration : into);
+        const out = this.trackIn(ti, this.duckOutput && this.isDucked(clip) ? this.duckOutput : this.output);
         this.scheduleKicks(clip, time, beat, Math.min(end, st.loop && !this.recording ? len : Infinity));
-        src.stop(stopAt + 0.01);
-        src.onended = () => { this.sources = this.sources.filter(s => s.src !== src); };
-        this.sources.push({ src, gain });
+        jobs.push({ time: when, run: () => this.startClip(clip, buf, rate, into, when, stopAt, out) });
       }
     });
+    this.ons = this.ons.concat(jobs).sort((a, b) => a.time - b.time);
+    this.flush(this.ctx.currentTime + 0.1);
     clearTimeout(this.timer);
     if (this.recording) return;   // l'enregistrement continue au-delà de la fin
     const lead = (endTime - this.ctx.currentTime - 0.25) * 1000;
     if (st.loop) this.timer = setTimeout(() => { if (this.playing) this.scheduleCycle(endTime, 0); }, Math.max(0, lead));
     else this.timer = setTimeout(() => this.stop(), Math.max(0, (endTime - this.ctx.currentTime) * 1000));
+  }
+
+  // Crée la source d'un bloc audio (juste avant qu'il joue).
+  startClip(clip, buf, rate, into, when, stopAt, out) {
+    const src = this.ctx.createBufferSource();
+    src.buffer = buf;
+    src.playbackRate.value = rate;
+    if (clip.loop) { src.loop = true; src.loopStart = 0; src.loopEnd = buf.duration; }
+    const gain = this.ctx.createGain();
+    const level = clip.gain ?? 1;
+    src.connect(gain);
+    // Un son mono est centré ici (même loi que le panoramique du mixeur) : son niveau ne change pas
+    // quand un effet de piste stéréo (3D, auto-pan…) fait passer la chaîne de la piste en stéréo.
+    let node = gain;
+    if (buf.numberOfChannels === 1) { node = this.ctx.createStereoPanner(); gain.connect(node); }
+    node.connect(out);
+    gain.gain.setValueAtTime(level, when);
+    gain.gain.setValueAtTime(level, Math.max(when, stopAt - 0.006));
+    gain.gain.linearRampToValueAtTime(0, stopAt);   // fin du bloc sans clic
+    src.start(when, clip.loop ? into % buf.duration : into);
+    src.stop(stopAt + 0.01);
+    src.onended = () => { this.sources = this.sources.filter(s => s.src !== src); };
+    this.sources.push({ src, gain });
   }
 
   // Entrée de la piste `ti` vers la destination `dest` : sa chaîne d'effets si elle en a, sinon la destination.
@@ -288,11 +307,21 @@ export class Timeline {
     }
   }
 
+  // Crée les départs jusqu'à `horizon` + LOOKAHEAD et envoie les fins de notes jusqu'à `horizon`, dans l'ordre du temps
+  // (une note finie libère sa voix avant qu'une suivante n'en demande une).
   flush(horizon) {
-    this.offs.sort((a, b) => a.time - b.time);
-    while (this.offs.length && this.offs[0].time < horizon) {
-      const o = this.offs.shift();
-      (o.syn ?? this.engine).noteOff(o.note, false, o.time, o.key);
+    const until = horizon + LOOKAHEAD;
+    for (;;) {
+      this.offs.sort((a, b) => a.time - b.time);
+      const on = this.ons[0]?.time < until ? this.ons[0] : null;
+      const off = this.offs[0]?.time < horizon ? this.offs[0] : null;
+      if (off && (!on || off.time <= on.time)) {
+        this.offs.shift();
+        (off.syn ?? this.engine).noteOff(off.note, false, off.time, off.key);
+      } else if (on) {
+        this.ons.shift();
+        try { on.run(); } catch (err) { console.warn('Timeline', err); }
+      } else break;
     }
   }
 
@@ -312,6 +341,7 @@ export class Timeline {
     this.playing = false;
     clearTimeout(this.timer);
     clearInterval(this.ticker);
+    this.ons = [];
     const safe = fn => { try { fn(); } catch (err) { console.warn('Timeline stop', err); } };
     for (const o of this.offs) safe(() => (o.syn ?? this.engine).noteOff(o.note, true, undefined, o.key));
     this.offs = [];
