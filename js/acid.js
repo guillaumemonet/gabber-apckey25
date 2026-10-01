@@ -16,6 +16,7 @@ const PARAMS = {
   env: { def: 0.6, val: p => p, fmt: v => `${Math.round(v * 100)}%` },
   decay: { def: 0.35, val: p => 0.06 * Math.pow(2 / 0.06, p), fmt: v => (v < 1 ? `${Math.round(v * 1000)}ms` : `${v.toFixed(2)}s`) },
   accent: { def: 0.6, val: p => p, fmt: v => `${Math.round(v * 100)}%` },
+  slide: { def: 0.46, val: p => 0.015 * Math.pow(20, p), fmt: v => `${Math.round(v * 1000)}ms` },   // durée du glissé entre deux notes liées
   drive: { def: 0.35, val: p => p, fmt: v => `${Math.round(v * 100)}%` },
   shape: { def: 0.5, val: p => shapeIndex(p), fmt: v => t('tr.shapes')[v], steps: SHAPES.length },
   volume: { def: 0.75, val: p => p, fmt: v => `${Math.round(v * 100)}%` },
@@ -25,6 +26,29 @@ export const ACID_KNOBS = ['cutoff', 'reso', 'env', 'decay', 'accent', 'drive', 
 export const acidValue = (id, p) => PARAMS[id].val(p);
 export const acidFmt = (id, p) => PARAMS[id].fmt(PARAMS[id].val(p));
 export const acidSteps = id => PARAMS[id].steps;
+
+// Presets de son (réglages des potards + onde), rangés par catégorie. Positions 0..1 des potards ;
+// ce qui n'est pas donné garde la valeur par défaut. Les tiens s'y ajoutent (state.acid.user).
+export const ACID_CATS = ['acid', 'bass', 'lead', 'fx'];
+const S = (id, cat, wave, v) => ({ id, cat, wave, v });
+export const ACID_SOUNDS = [
+  S('classic', 'acid', 'sawtooth', {}),
+  S('squelch', 'acid', 'sawtooth', { cutoff: 0.25, reso: 0.85, env: 0.8, decay: 0.3, accent: 0.75, drive: 0.3, slide: 0.5 }),
+  S('screamer', 'acid', 'sawtooth', { cutoff: 0.45, reso: 0.95, env: 0.9, decay: 0.22, accent: 0.9, drive: 0.75, shape: 0.25, slide: 0.4 }),
+  S('rotterdam', 'acid', 'sawtooth', { cutoff: 0.3, reso: 0.7, env: 0.7, decay: 0.28, accent: 0.8, drive: 0.9, shape: 0.5, volume: 0.7 }),
+  S('hoover', 'acid', 'square', { cutoff: 0.4, reso: 0.6, env: 0.5, decay: 0.6, accent: 0.5, drive: 0.55, shape: 0.75, slide: 0.8 }),
+  S('rubber', 'bass', 'square', { cutoff: 0.2, reso: 0.35, env: 0.35, decay: 0.5, accent: 0.4, drive: 0.15, shape: 0, slide: 0.4 }),
+  S('sub', 'bass', 'square', { cutoff: 0.1, reso: 0.15, env: 0.15, decay: 0.7, accent: 0.3, drive: 0.1, shape: 0, volume: 0.85 }),
+  S('dark', 'bass', 'sawtooth', { cutoff: 0.18, reso: 0.55, env: 0.45, decay: 0.3, accent: 0.55, drive: 0.4, shape: 0.5 }),
+  S('sawlead', 'lead', 'sawtooth', { tune: 1, cutoff: 0.55, reso: 0.55, env: 0.5, decay: 0.55, accent: 0.6, drive: 0.45, slide: 0.55 }),
+  S('squeal', 'lead', 'sawtooth', { tune: 1, cutoff: 0.5, reso: 0.95, env: 0.85, decay: 0.4, accent: 0.8, drive: 0.5, shape: 0.25 }),
+  S('gabberlead', 'lead', 'square', { tune: 1, cutoff: 0.5, reso: 0.7, env: 0.6, decay: 0.35, accent: 0.7, drive: 0.95, shape: 0.25 }),
+  S('laser', 'fx', 'sawtooth', { tune: 1, cutoff: 0.3, reso: 0.95, env: 1, decay: 0, accent: 1, drive: 0.6, slide: 0.3 }),
+  S('siren', 'fx', 'square', { tune: 0.75, cutoff: 0.5, reso: 0.85, env: 0.3, decay: 1, accent: 0.5, drive: 0.4, slide: 1 }),
+  S('crush', 'fx', 'sawtooth', { cutoff: 0.4, reso: 0.7, env: 0.7, decay: 0.3, accent: 0.7, drive: 0.8, shape: 1 }),
+  S('zap', 'fx', 'sawtooth', { tune: 0.25, cutoff: 0.15, reso: 1, env: 1, decay: 0.1, accent: 1, drive: 0.6, shape: 0.75 }),
+];
+export const soundParams = v => ({ ...Object.fromEntries(ACID_PARAMS.map(id => [id, PARAMS[id].def])), ...v });
 
 export function acidKnobDefs() {
   return ACID_KNOBS.map(id => ({ id, acid: true, label: t(`acid.p.${id}`), min: 0, max: 1, def: PARAMS[id].def, steps: PARAMS[id].steps ? PARAMS[id].steps : undefined, fmt: v => acidFmt(id, v) }));
@@ -57,6 +81,8 @@ export function defaultAcidState() {
   return {
     params: Object.fromEntries(ACID_PARAMS.map(id => [id, PARAMS[id].def])),
     wave: 'sawtooth',
+    sound: 'classic',  // preset de son en cours (null = réglage perso)
+    user: [],          // presets perso : { id: 'u:…', name, cat, wave, params }
     link: true,        // suit l'horloge de la 909
     pattern: 0,
     patterns: Array.from({ length: ACID_PATTERNS }, (_, k) => (PRESETS[k] ? presetPattern(PRESETS[k]) : emptyPattern())),
@@ -68,6 +94,14 @@ export function mergeAcidState(saved) {
   if (!saved || typeof saved !== 'object') return base;
   for (const id of ACID_PARAMS) if (Number.isFinite(saved.params?.[id])) base.params[id] = Math.min(1, Math.max(0, saved.params[id]));
   if (saved.wave === 'square' || saved.wave === 'sawtooth') base.wave = saved.wave;
+  if (typeof saved.sound === 'string' || saved.sound === null) base.sound = saved.sound;
+  else if (saved.params) base.sound = null;   // ancienne sauvegarde : ses réglages sont gardés tels quels
+  if (Array.isArray(saved.user)) {
+    base.user = saved.user.filter(u => typeof u?.id === 'string' && u.id.startsWith('u:') && typeof u.name === 'string' && u.params).map(u => ({
+      id: u.id, name: u.name.slice(0, 24), cat: ACID_CATS.includes(u.cat) ? u.cat : 'acid', wave: u.wave === 'square' ? 'square' : 'sawtooth',
+      params: soundParams(Object.fromEntries(ACID_PARAMS.filter(id => Number.isFinite(u.params[id])).map(id => [id, Math.min(1, Math.max(0, u.params[id]))]))),
+    }));
+  }
   if (typeof saved.link === 'boolean') base.link = saved.link;
   if (Number.isInteger(saved.pattern) && saved.pattern >= 0 && saved.pattern < ACID_PATTERNS) base.pattern = saved.pattern;
   if (Array.isArray(saved.patterns)) {
@@ -230,7 +264,7 @@ export class Acid303 {
     const f = this.osc.frequency;
     const acc = s.acc ? this.p('accent') : 0;
     if (tied) {
-      f.setTargetAtTime(freq, time, 0.018);   // glissé d'environ 60 ms
+      f.setTargetAtTime(freq, time, this.p('slide') / 3);   // glissé (potard Slide)
     } else {
       f.setValueAtTime(freq, time);
       // Enveloppe du filtre : pic au-dessus de la coupure, puis retour (plus court et plus haut avec l'accent).

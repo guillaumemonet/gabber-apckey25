@@ -28,7 +28,7 @@ import { Decks, DECK_IDS, DECK_KNOBS, deckKnobDefs, defaultDecksState, mergeDeck
 import { PianoRoll, ROLL_GRIDS, PAT_LENGTHS } from './pianoroll.js';
 import { OscSynth, OSC_PARAMS, OSC_PRESETS, OSC_KNOBS, OSC_WAVES, FILTER_TYPES, oscKnobDefs, oscValues, oscDefaults, oscFmt, oscToPos, presetPositions, defaultOscState, mergeOscState } from './osc.js';
 import { clipEvents, patLen, toSeq, mergeNotes } from './notes.js';
-import { Acid303, ACID_PATTERNS, ACID_ROWS, ACID_BASE, ACID_PARAMS, acidKnobDefs, acidFmt, acidSteps, defaultAcidState, mergeAcidState, randomPattern } from './acid.js';
+import { Acid303, ACID_PATTERNS, ACID_ROWS, ACID_BASE, ACID_PARAMS, ACID_CATS, ACID_SOUNDS, soundParams, acidKnobDefs, acidFmt, acidSteps, defaultAcidState, mergeAcidState, randomPattern } from './acid.js';
 
 translatePage();
 
@@ -480,8 +480,10 @@ function turnKnob(index, { delta, value }, page = state.page) {
   } else if (page === 'tr') {
     if (def.id === 'volume') drum.setVolume(target.volume);
   } else if (def.acid) {
+    state.acid.sound = null;
     acid.update();
     renderAcidKnobs();
+    acidPresets?.render();
   } else if (def.osc) {
     oscChanged();
   } else if (def.viz) {
@@ -3920,7 +3922,7 @@ function buildAcid() {
   const prevStop = drum.onStop;
   drum.onStop = () => { prevStop(); acid.clockStopped(); renderAcid(); };
   $('#acid-play').addEventListener('click', toggleAcid);
-  $('#acid-wave').addEventListener('click', () => { state.acid.wave = state.acid.wave === 'sawtooth' ? 'square' : 'sawtooth'; acid.update(); renderAcid(); save(); });
+  $('#acid-wave').addEventListener('click', () => { state.acid.wave = state.acid.wave === 'sawtooth' ? 'square' : 'sawtooth'; acidSoundChanged(); });
   $('#acid-link').addEventListener('click', () => { state.acid.link = !state.acid.link; if (!state.acid.link) acid.clockStopped(); renderAcid(); save(); });
   $('#acid-rec').addEventListener('click', () => { acidStepRec = !acidStepRec; acidCursor = 0; renderAcid(); });
   $('#acid-rest').addEventListener('click', () => acidWrite(null));
@@ -3938,6 +3940,7 @@ function buildAcid() {
     $('#acid-patterns').appendChild(btn);
   }
   buildAcidKnobs();
+  buildAcidPresets();
   const grid = $('#acid-grid');
   // En-tête : numéros des pas (tête de lecture, curseur de saisie).
   grid.appendChild(document.createElement('span'));
@@ -4038,10 +4041,7 @@ function buildAcidKnobs() {
     const turn = pos => {
       const steps = acidSteps(id);
       state.acid.params[id] = Math.min(1, Math.max(0, steps ? Math.round(pos * (steps - 1)) / (steps - 1) : pos));
-      acid.update();
-      renderAcidKnobs();
-      if (state.page === 'acid') renderKnobs();
-      save();
+      acidSoundChanged();
     };
     let lastY = null;
     el.addEventListener('pointerdown', e => { lastY = e.clientY; try { el.setPointerCapture(e.pointerId); } catch { /* pointeur déjà relâché */ } });
@@ -5085,7 +5085,7 @@ const TOOL_IO = {
   },
   acid: {
     get: () => ({ acid: state.acid }),
-    set: d => { acid.stop(); state.acid = mergeAcidState(d.acid); acid.update(); renderAcid(); renderAcidKnobs(); },
+    set: d => { acid.stop(); state.acid = mergeAcidState(d.acid); acid.update(); renderAcid(); renderAcidKnobs(); acidPresets?.render(); },
   },
   osc: {
     get: () => ({ osc: state.osc }),
@@ -5510,6 +5510,97 @@ function openMetroOptions(anchor) {
   box.style.top = `${r.bottom + 6}px`;
   fxEditing = { box, metro: true };
   setTimeout(() => window.addEventListener('pointerdown', fxOutside, true), 0);
+}
+
+// ---------- Barre de presets (instruments) ----------
+
+// Un menu par catégories (presets fournis, puis « Mes presets »), Enregistrer sous un nom et une catégorie, Supprimer.
+// cfg : { cats, catLabel(cat), builtins: [{ id, cat, name }], user(): [{ id, cat, name }], current(): id | null,
+//         apply(id), save(name, cat) -> id, remove(id) }
+function presetBar(wrap, cfg) {
+  wrap.classList.add('preset-bar');
+  wrap.innerHTML = `<select class="pb-sel" title="${t('pb.title')}"></select>
+    <input class="pb-name" maxlength="24" spellcheck="false" placeholder="${t('pb.namePh')}">
+    <select class="pb-cat" title="${t('pb.cat')}"></select>
+    <button class="pb-save" data-icon="save" title="${t('pb.save.title')}">${t('pb.save')}</button>
+    <button class="pb-del icon-only" data-icon="trash" title="${t('pb.del')}" aria-label="${t('pb.del')}"></button>`;
+  const sel = wrap.querySelector('.pb-sel'), name = wrap.querySelector('.pb-name'), cat = wrap.querySelector('.pb-cat');
+  for (const c of cfg.cats) cat.add(new Option(cfg.catLabel(c), c));
+  name.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') wrap.querySelector('.pb-save').click(); });
+  const render = () => {
+    sel.innerHTML = '';
+    sel.add(new Option(t('pb.custom'), ''));
+    for (const c of cfg.cats) {
+      const g = document.createElement('optgroup');
+      g.label = cfg.catLabel(c);
+      for (const p of cfg.builtins.filter(p => p.cat === c)) g.appendChild(new Option(p.name, p.id));
+      for (const p of cfg.user().filter(p => p.cat === c)) g.appendChild(new Option(`★ ${p.name}`, p.id));
+      sel.appendChild(g);
+    }
+    sel.value = cfg.current() ?? '';
+    sel.options[0].hidden = cfg.current() != null;
+    const mine = cfg.user().find(u => u.id === cfg.current());
+    wrap.querySelector('.pb-del').disabled = !mine;
+    if (mine) cat.value = mine.cat;
+    else { const b = cfg.builtins.find(p => p.id === cfg.current()); if (b) cat.value = b.cat; }
+  };
+  sel.addEventListener('change', () => { if (sel.value) cfg.apply(sel.value); render(); });
+  wrap.querySelector('.pb-save').addEventListener('click', () => {
+    const n = (name.value.trim() || t('pb.defaultName', { n: cfg.user().length + 1 })).slice(0, 24);
+    cfg.save(n, cat.value);
+    name.value = '';
+    render();
+    toast(t('pb.saved', { name: n }));
+  });
+  wrap.querySelector('.pb-del').addEventListener('click', () => {
+    const id = cfg.current();
+    if (!cfg.user().some(u => u.id === id)) return;
+    cfg.remove(id);
+    render();
+  });
+  render();
+  return { render };
+}
+
+// Presets de son de la TB-303.
+let acidPresets = null;
+function buildAcidPresets() {
+  acidPresets = presetBar($('#acid-presets'), {
+    cats: ACID_CATS,
+    catLabel: c => t(`acid.cat.${c}`),
+    builtins: ACID_SOUNDS.map(s => ({ id: s.id, cat: s.cat, name: t(`acid.snd.${s.id}`) })),
+    user: () => state.acid.user,
+    current: () => state.acid.sound,
+    apply: id => {
+      const u = state.acid.user.find(x => x.id === id), b = ACID_SOUNDS.find(x => x.id === id);
+      if (!u && !b) return;
+      state.acid.params = u ? { ...u.params } : soundParams(b.v);
+      state.acid.wave = (u ?? b).wave;
+      state.acid.sound = id;
+      acidSoundChanged(false);
+    },
+    save: (name, cat) => {
+      const list = state.acid.user;
+      let u = list.find(x => x.name === name);
+      if (!u) { u = { id: `u:${crypto.randomUUID()}`, name, cat }; list.push(u); }
+      Object.assign(u, { cat, wave: state.acid.wave, params: { ...state.acid.params } });
+      state.acid.sound = u.id;
+      save();
+      return u.id;
+    },
+    remove: id => { state.acid.user = state.acid.user.filter(x => x.id !== id); state.acid.sound = null; save(); },
+  });
+}
+
+// Un réglage de la TB-303 a changé : le son suit ; s'il vient des potards, le preset devient « perso ».
+function acidSoundChanged(custom = true) {
+  if (custom) state.acid.sound = null;
+  acid.update();
+  renderAcid();
+  renderAcidKnobs();
+  if (state.page === 'acid') renderKnobs();
+  acidPresets?.render();
+  save();
 }
 
 // ---------- Divers ----------
