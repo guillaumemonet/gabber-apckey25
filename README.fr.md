@@ -495,7 +495,7 @@ Ce qui est prévu, dans cet ordre :
 
 Ensuite : **plusieurs exemplaires** de la TB-303 et de la TR-909 (chacun câblé où tu veux dans la fenêtre Câblage, tous synchronisés), et un **élément MIDI associé à chaque fenêtre**.
 
-Autres idées gardées pour plus tard : un **découpeur de breaks** (un break coupé en 16 tranches sur les pads), un **designer de lead** (hoover, screech), une **TR-808**, une **entrée audio** pour réenregistrer n'importe quoi sur un pad, le **MIDI learn** pour d'autres contrôleurs, des **marqueurs, sections, zone de boucle et rampes de tempo** dans la timeline, l'enregistrement d'un outil dans la timeline **après** ses boîtes à effets, et une **version en ligne** jouable sans rien installer.
+Autres idées gardées pour plus tard : un **découpeur de breaks** (un break coupé en 16 tranches sur les pads), un **designer de lead** (hoover, screech), une **TR-808**, une **entrée audio** pour réenregistrer n'importe quoi sur un pad, le **MIDI learn** pour d'autres contrôleurs, des **marqueurs, sections, zone de boucle et rampes de tempo** dans la timeline, l'enregistrement d'un outil dans la timeline **après** ses boîtes à effets, une **version en ligne** jouable sans rien installer, et un **générateur de boucles par IA** (un modèle de musique open source qui tourne sur ta machine : des boucles au tempo et dans la tonalité de la session, une couche ajoutée à ton morceau).
 
 Les idées et suggestions sont les bienvenues dans les [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 

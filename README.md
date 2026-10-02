@@ -495,7 +495,7 @@ What is planned, in this order:
 
 Then: **several instances** of the TB-303 and TR-909 (each one wired where you want in the Patch window, all in sync), and a **MIDI element attached to each window**.
 
-Other ideas kept for later: a **break slicer** (a break cut into 16 slices on the pads), a **lead designer** (hoover, screech), a **TR-808**, an **audio input** to resample anything onto a pad, **MIDI learn** for other controllers, timeline **markers, sections, loop region and tempo ramps**, recording a tool into the timeline **after** its effect boxes, and an **online version** playable without installing anything.
+Other ideas kept for later: a **break slicer** (a break cut into 16 slices on the pads), a **lead designer** (hoover, screech), a **TR-808**, an **audio input** to resample anything onto a pad, **MIDI learn** for other controllers, timeline **markers, sections, loop region and tempo ramps**, recording a tool into the timeline **after** its effect boxes, an **online version** playable without installing anything, and an **AI loop generator** (an open-source music model running on your own computer: loops in the session's tempo and key, a layer added to your song).
 
 Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 
