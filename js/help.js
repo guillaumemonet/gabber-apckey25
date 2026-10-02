@@ -118,7 +118,8 @@ const HELP = {
         <li><b>Load</b>: drag a sound from the library (or an audio file) onto a deck, or click a sound in the library then <b>Load</b>.</li>
         <li><b>▶ / ❚❚</b> play / pause. <b>Cue</b>: while playing, back to the cue point and pause; when stopped, sets the cue point. Click the waveform to jump.</li>
         <li><b>Sync</b>: the deck follows the global tempo (when the sound's tempo is known: library loops, or guessed for long files) and starts on the next bar. Without Sync, the <b>Pitch</b> slider changes the speed by ±8 % (double-click = 0).</li>
-        <li><b>Scratch</b>: hold the record with the mouse and move it, forwards or backwards; release it to let it play again.</li>
+        <li><b>Scratch</b>: hold the record with the mouse and move it, forwards or backwards; release it to let it play again. The record follows the position of your hand, like a real one.</li>
+        <li><b>Auto transition</b>: from the deck that plays to the other one: it starts on the next phrase, in phase, comes in without bass, the basses swap on the middle bar, then the old sound leaves through a high-pass filter and stops (16 bars after a calm intro, 8 otherwise). Touch the decks to take over.</li>
         <li><b>Volume, Bass, Mid, Treble</b> (all the way left = cut) and <b>Filter</b> (left = low-pass, right = high-pass) per deck, and the <b>crossfader</b> between A and B.</li>
         <li>On the APC: <b>Shift + REC</b> twice opens the turntable knob page (A volume, A bass, A filter, B volume, B bass, B filter, crossfader, master). The decks have their own mixer channel (K6) and can be recorded into the timeline (source Decks).</li>
       </ul>`,
@@ -300,7 +301,8 @@ const HELP = {
         <li><b>Charger</b> : glisse un son de la bibliothèque (ou un fichier audio) sur un deck, ou clique sur un son de la bibliothèque puis sur <b>Charger</b>.</li>
         <li><b>▶ / ❚❚</b> lecture / pause. <b>Cue</b> : en lecture, retour au point de cue et pause ; à l'arrêt, place le point de cue. Clic sur la forme d'onde pour s'y rendre.</li>
         <li><b>Sync</b> : le deck suit le tempo global (quand le tempo du son est connu : boucles de la bibliothèque, ou deviné pour les longs fichiers) et démarre à la mesure suivante. Sans Sync, le curseur <b>Pitch</b> change la vitesse de ±8 % (double-clic = 0).</li>
-        <li><b>Scratch</b> : tiens le disque à la souris et bouge-le, en avant ou en arrière ; relâche-le pour qu'il reparte.</li>
+        <li><b>Scratch</b> : tiens le disque à la souris et bouge-le, en avant ou en arrière ; relâche-le pour qu'il reparte. Le disque suit la position de ta main, comme un vrai.</li>
+        <li><b>Transition auto</b> : du deck qui joue vers l'autre : départ sur la prochaine phrase, en phase, entrée sans basses, échange des basses sur la mesure du milieu, puis l'ancien son part au filtre passe-haut et s'arrête (16 mesures après une intro calme, 8 sinon). Touche les platines pour reprendre la main.</li>
         <li><b>Volume, Basses, Médiums, Aigus</b> (tout à gauche = coupé) et <b>Filtre</b> (à gauche = passe-bas, à droite = passe-haut) pour chaque deck, et le <b>crossfader</b> entre A et B.</li>
         <li>Sur l'APC : <b>Maj + REC</b> deux fois ouvre la page de potards des platines (volume A, basses A, filtre A, volume B, basses B, filtre B, crossfader, master). Les platines ont leur voie de mixage (K6) et peuvent être enregistrées dans la timeline (source Platines).</li>
       </ul>`,

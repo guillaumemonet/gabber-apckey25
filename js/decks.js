@@ -3,7 +3,7 @@
 import { t } from './i18n.js';
 
 export const DECK_IDS = ['A', 'B'];
-const WORKLET = 'js/deck-worklet.js?v=1';
+const WORKLET = 'js/deck-worklet.js?v=2';
 const RPM = 100 / 3;   // 33 ⅓ tours par minute : un tour de vinyle = 1,8 s de son à vitesse normale
 
 // Réglages d'un deck (positions 0..1, sauf pitch en fraction : ±0,08).
@@ -62,15 +62,25 @@ class Deck {
     this.buffer = null;
     this.playing = false;
     this.pos = 0;              // position (secondes), renvoyée par le lecteur
+    this.at = 0;               // instant (horloge audio) de cette position
+    this.speed = 0;            // vitesse à cet instant (1 = normale)
     this.scratching = false;
     this.node.port.onmessage = e => {
-      if (e.data.pos !== undefined) { this.pos = e.data.pos; decks.onPos(this.id); }
+      if (e.data.pos !== undefined) { this.pos = e.data.pos; this.at = e.data.at ?? this.ctx.currentTime; this.speed = e.data.speed ?? 0; decks.onPos(this.id); }
       if (e.data.ended) { this.playing = false; decks.onChange(this.id); }
     };
   }
 
   get st() { return this.decks.st[this.id]; }
   get duration() { return this.buffer?.duration ?? 0; }
+  // Position estimée à l'instant `t` (horloge audio), entre deux rapports du lecteur.
+  posAt(t = this.ctx.currentTime) {
+    const d = this.duration;
+    if (!d) return 0;
+    let p = this.pos + Math.max(0, Math.min(0.1, t - this.at)) * this.speed;
+    if (this.st.loop) p = ((p % d) + d) % d; else p = Math.max(0, Math.min(d, p));
+    return p;
+  }
 
   // Vitesse de lecture : synchro sur le tempo global (si le tempo du son est connu), sinon pitch.
   baseRate() {
@@ -89,26 +99,27 @@ class Deck {
 
   seek(sec) {
     this.pos = Math.max(0, Math.min(this.duration, sec));
+    this.at = this.ctx.currentTime;
     this.node.port.postMessage({ pos: this.pos, sampleRate: this.buffer?.sampleRate });
   }
 
   // Lecture : avec la synchro, le son part au début de la mesure suivante de la grille (s'il joue déjà quelque chose).
-  play() {
+  play(at) {
     if (!this.buffer || this.playing) return;
     this.playing = true;
-    let startAt;
-    if (this.st.sync && this.st.bpm) {
+    let startAt = at;
+    if (startAt === undefined && this.st.sync && this.st.bpm) {
       const e = this.decks.engine;
       const busy = e.seqRunning || this.decks.busy() || [...e.padVoices.values()].some(v => v.mode === 'loop');
       if (busy && e.origin !== null) startAt = e.nextBar();
     }
-    this.node.port.postMessage({ rate: this.baseRate(), startAt, scratch: false });
+    this.node.port.postMessage({ rate: this.baseRate(), startAt });
     this.decks.onChange(this.id);
   }
 
   pause() {
     this.playing = false;
-    this.node.port.postMessage({ rate: 0, scratch: false });
+    this.node.port.postMessage({ rate: 0 });
     this.decks.onChange(this.id);
   }
 
@@ -119,16 +130,23 @@ class Deck {
     this.decks.onChange(this.id);
   }
 
-  // Scratch : la main tient le disque (vitesse = celle du geste), puis le relâche.
-  scratchStart() { this.scratching = true; this.node.port.postMessage({ scratch: true, rate: 0 }); }
-  scratchMove(rate) { if (this.scratching) this.node.port.postMessage({ rate }); }
+  // Scratch : la main pose le disque, le fait tourner (de `sec` secondes de son, en avant ou en arrière), puis le relâche.
+  scratchStart() { this.scratching = true; this.node.port.postMessage({ hold: true }); }
+  scratchMove(sec) { if (this.scratching) this.node.port.postMessage({ scrub: sec }); }
   scratchEnd() {
     this.scratching = false;
-    this.node.port.postMessage({ scratch: false, rate: this.playing ? this.baseRate() : 0 });
+    this.node.port.postMessage({ hold: false, rate: this.playing ? this.baseRate() : 0 });
   }
 
   // Réglages : égaliseur, filtre DJ (gauche = passe-bas, droite = passe-haut), volume, vitesse.
   update() {
+    this.updateTone();
+    this.node.port.postMessage({ loop: this.st.loop });
+    if (this.playing && !this.scratching) this.node.port.postMessage({ rate: this.baseRate() });
+  }
+
+  // Égaliseur, filtre et volume seulement (sans toucher à la vitesse : un départ programmé reste à son instant).
+  updateTone() {
     const s = this.st;
     const now = this.ctx.currentTime;
     this.low.gain.setTargetAtTime(eqDb(s.low), now, 0.01);
@@ -138,8 +156,6 @@ class Deck {
     this.lp.frequency.setTargetAtTime(f < 0.48 ? 200 * Math.pow(100, f / 0.48) : 20000, now, 0.02);
     this.hp.frequency.setTargetAtTime(f > 0.52 ? 10 * Math.pow(400, (f - 0.52) / 0.48) : 10, now, 0.02);
     this.vol.gain.setTargetAtTime(s.vol * s.vol * 1.2, now, 0.01);
-    this.node.port.postMessage({ loop: s.loop });
-    if (this.playing && !this.scratching) this.node.port.postMessage({ rate: this.baseRate() });
   }
 }
 
@@ -164,11 +180,16 @@ export class Decks {
   get playing() { return DECK_IDS.some(id => this.decks[id].playing); }
 
   update() {
+    this.updateXfade();
+    for (const d of Object.values(this.decks)) d.update();
+  }
+
+  // Crossfader à puissance constante.
+  updateXfade() {
     const x = this.st.xfade;
     const now = this.ctx.currentTime;
     this.decks.A.xf.gain.setTargetAtTime(Math.cos(x * Math.PI / 2), now, 0.01);
     this.decks.B.xf.gain.setTargetAtTime(Math.sin(x * Math.PI / 2), now, 0.01);
-    for (const d of Object.values(this.decks)) d.update();
   }
 
   stopAll() { for (const d of Object.values(this.decks)) if (d.playing) d.pause(); }
@@ -185,3 +206,4 @@ export function guessBpm(duration, knownBpm, globalBpm) {
 
 export const vinylTurns = sec => (sec * RPM) / 60;   // tours du disque pour une durée de son
 export const rateFromSpin = turnsPerSecond => (turnsPerSecond * 60) / RPM;
+export const secFromTurns = turns => (turns * 60) / RPM;   // secondes de son pour des tours de disque

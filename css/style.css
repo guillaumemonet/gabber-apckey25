@@ -269,25 +269,32 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 20
 .strip-dest.off { color: #ff6b6b; }
 /* Platines */
 .decks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.deck { border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.deck { border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; min-width: 0;
+  background: linear-gradient(160deg, #23252b 0%, #17181c 60%, #131418 100%); box-shadow: inset 0 1px 0 #ffffff10, 0 4px 14px #0006; }
 .deck.dragover { border-color: var(--accent-2); box-shadow: 0 0 0 2px var(--accent-2) inset; }
 .deck-head { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
 .deck-id { font-size: 16px; color: var(--accent-2); }
 .deck[data-deck="B"] .deck-id { color: #ff4fd8; }
 .deck-name { flex: 1; min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.deck-wave { width: 100%; height: 44px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; }
+.deck-wave { width: 100%; height: 22px; background: #0b0c10; border: 1px solid var(--line); border-radius: 5px; cursor: pointer; display: block; }
+.deck-zoom { width: 100%; height: 58px; background: #0b0c10; border: 1px solid var(--line); border-radius: 6px; display: block; }
 .deck-body { display: flex; gap: 10px; align-items: flex-start; }
-.deck-vinyl { width: 150px; height: 150px; flex: none; cursor: grab; touch-action: none; border-radius: 50%; }
+.deck-vinyl { width: 196px; height: 176px; flex: none; cursor: grab; touch-action: none; }
 .deck-vinyl:active { cursor: grabbing; }
 .deck-side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
 .deck-buttons { display: flex; flex-wrap: wrap; gap: 4px; }
-.deck-buttons button { padding: 4px 9px; font-size: 12px; }
+.deck-buttons button { padding: 4px 7px; font-size: 12px; }
 .deck-buttons button.active:not(.primary) { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
 .deck-pitch { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
 .deck-pitch input { flex: 1; }
 .deck-pitch em { font-style: normal; min-width: 46px; text-align: right; }
 .mini-knobs.deck-knobs { grid-template-columns: repeat(5, 1fr); }
-.deck-xfade { display: flex; align-items: center; gap: 10px; margin: 12px auto 0; max-width: 420px; font-weight: 700; }
+.deck-mix { display: grid; grid-template-columns: 1fr minmax(240px, 420px) 1fr; align-items: center; gap: 12px; margin-top: 12px; }
+.deck-mix #deck-auto { justify-self: end; position: relative; overflow: hidden; }
+.deck-mix #deck-auto.active { border-color: var(--accent-2); color: var(--text); }
+.deck-mix #deck-auto.active::after { content: ''; position: absolute; left: 0; bottom: 0; height: 3px; width: var(--p, 0%); background: var(--accent-2); }
+#deck-auto-info { font-variant-numeric: tabular-nums; }
+.deck-xfade { display: flex; align-items: center; gap: 10px; font-weight: 700; }
 .deck-xfade input { flex: 1; }
 @media (max-width: 900px) { .decks { grid-template-columns: 1fr; } }
 /* Designer de kick */
