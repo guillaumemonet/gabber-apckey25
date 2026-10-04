@@ -12,6 +12,7 @@ export const LIB_CATS = [
   { id: 'pad', color: 37 },
   { id: 'voice', color: 13 },
   { id: 'fx', color: 3 },
+  { id: 'guitar', color: 108 },
   { id: 'mine', color: 21 },
   { id: 'rec', color: 53 },
 ];
@@ -21,6 +22,7 @@ export const catColor = cat => (LIB_CATS.find(c => c.id === cat) ?? LIB_CATS[1])
 export function guessCat(name = '') {
   const n = name.toLowerCase();
   const has = (...w) => w.some(x => n.includes(x));
+  if (has('guitar', 'guitare')) return 'guitar';
   if (has('kick', '808', 'bd ', 'doef', 'rotterdam', 'terror')) return 'kick';
   if (has('bass', 'basse', 'reese')) return 'bass';
   if (has('hoover', 'screech', 'acid', 'lead', 'bell', 'cloche', 'arp')) return 'lead';

@@ -34,7 +34,7 @@ import { Acid303, ACID_PATTERNS, ACID_ROWS, ACID_BASE, ACID_PARAMS, ACID_CATS, A
 
 translatePage();
 
-const BANKS = 15;   // SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = banques 6-10, une 2e fois = 11-15
+const BANKS = 20;   // SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = banques 6-10, une 2e fois = 11-15, une 3e fois = 16-20
 const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (EQ aussi via SUSTAIN)
 const UI_PAGES = [...PAGE_ORDER, 'tr', 'acid', 'decks', 'osc', 'viz', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 const $ = sel => document.querySelector(sel);
@@ -618,9 +618,9 @@ function bindController() {
       if (trMode) toggleTrMode(false);   // choisir une banque ramène la grille aux pads
       if (sceneMode) toggleSceneMode(false);
       const k = +name.slice(5) - 1;
-      const b = shiftHeld ? (state.bank === k + 5 ? k + 10 : k + 5) : k;
+      const b = shiftHeld ? (state.bank === k + 5 ? k + 10 : state.bank === k + 10 ? k + 15 : k + 5) : k;
       setBank(b);
-      if (shiftHeld) toast(t('bank.toast', { n: b + 1 }));   // la LED clignote pour 6-10 comme pour 11-15
+      if (shiftHeld) toast(t('bank.toast', { n: b + 1 }));   // la LED clignote pour 6-10 comme pour 11-20
     }
     else if (name.startsWith('track')) setPage((shiftHeld ? MIX_PAGES : PAGE_ORDER)[+name.slice(5) - 1]);
     else if (name === 'stopAll') { if (shiftHeld) toggleSceneMode(); else panic(); }
@@ -686,7 +686,7 @@ function renderLeds() {
     }
     apc.setPad(i, pad?.color ?? 0, led);
   }
-  // Banques 1-5 : LED fixe ; banques 6-15 : LED clignotante.
+  // Banques 1-5 : LED fixe ; banques 6-20 : LED clignotante.
   BTN.scene.forEach((n, b) => apc.setButton(n, b === state.bank % 5 ? (state.bank >= 5 ? 2 : 1) : 0));
   BTN.track.forEach((n, t) => apc.setButton(n, t < 4
     ? (PAGE_ORDER[t] === state.page ? 1 : MIX_PAGES[t] === state.page ? 2 : 0)
@@ -761,7 +761,7 @@ function buildBanks() {
   for (let b = 0; b < BANKS; b++) {
     const btn = document.createElement('button');
     btn.textContent = `${b + 1}`;
-    btn.title = b < 5 ? t('bank.title1', { n: b + 1 }) : b < 10 ? t('bank.title2', { n: b + 1, m: b - 4 }) : t('bank.title3', { n: b + 1, m: b - 9 });
+    btn.title = b < 5 ? t('bank.title1', { n: b + 1 }) : b < 10 ? t('bank.title2', { n: b + 1, m: b - 4 }) : b < 15 ? t('bank.title3', { n: b + 1, m: b - 9 }) : t('bank.title4', { n: b + 1, m: b - 14 });
     btn.addEventListener('click', () => setBank(b));
     wrap.appendChild(btn);
   }

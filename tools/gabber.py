@@ -670,6 +670,13 @@ KICKS = {
                  'Build-up': WAVE_BUILD, 'Full drop': four(4)},
     'Hardstyle': {'Hardstyle beat': four(), 'Reverse bass loop': four(), 'Reverse bass prog': four(4), 'Rawstyle loop': [0, 4, 8, 12, 14, 15],
                   'Kick build-up': MAIN_BUILD, 'Full drop': four(4)},
+    'Anthems': {'Guitar + kick': four(4), 'Anthem beat': four(4), 'Anthem beat ride': four(4),
+                'Anthem gallop beat': [b * 16 + s for b in range(4) for s in GALLOP],
+                'Kick roll build': list(range(0, 16, 4)) + list(range(16, 32, 2)) + list(range(32, 48)) + [48 + i / 2 for i in range(32)],
+                'Half-time beat': [b * 16 + s for b in range(4) for s in (0, 10)], 'Off-kick beat': [b * 16 + s for b in range(4) for s in (0, 4, 8, 12, 14)],
+                'Festival anthem': four(4), 'Guitar anthem': four(4), 'Anthem riff drop': four(4), 'Anthem screech drop': four(4),
+                'Anthem build': list(range(0, 16, 4)) + list(range(16, 32, 2)) + list(range(32, 48)) + [48 + i / 2 for i in range(32)],
+                'Guitar breakdown drop': [b * 16 + s for b in range(4) for s in (0, 10)], 'Anthem finale': four(4)},
 }
 
 
@@ -807,7 +814,8 @@ def build(bpm=190):
     ]
     return [('Gabber', bank1), ('Gabber 2', bank2), ('Hardcore', build_hardcore(bpm)), ('Oldschool', build_oldschool(bpm)),
             ('Mainstream', build_mainstream(bpm)), ('New wave', build_newwave(bpm)), ('Hardstyle', build_hardstyle(150), 150),
-            ('Melodies', build_melodies(bpm)), ('Hardstyle melodies', build_hardstyle_melodies(150), 150)]
+            ('Melodies', build_melodies(bpm)), ('Hardstyle melodies', build_hardstyle_melodies(150), 150),
+            ('Anthems', build_anthems(bpm))]
 
 
 def build_oldschool(bpm=190):
@@ -1741,3 +1749,235 @@ def build_hardstyle_melodies(bpm=150):
         mel = melody_loop(bpm, compose(seed, prog, rh, lo, hi), kind, 4, 0.85 if kind in ('pluck', 'rawscreech') else 0.95)
         themes.append((name, GREEN, mix(mel, chords_loop(bpm, prog, pad) * 0.5, bass_line(bpm, prog, bass) * 0.75)))
     return [(name, color, LOOP, sig, 4 if len(sig) > 3 * 240 / bpm * SR else 2) for name, color, sig in themes]
+
+
+# ---------------------------------------------------------------- anthems (style grandes scènes hardcore) et guitares
+
+def guitar_string(note, dur, damp=0.9965, bright=0.7, mute=False, seed=None):
+    """Corde pincée (Karplus-Strong, calculée par blocs d'une période) : `mute` = étouffée à la paume."""
+    r = np.random.default_rng(seed) if seed is not None else rng
+    f = hz(note)
+    N = max(2, int(round(SR / f)))
+    n = int(dur * SR) + N + 2
+    exc = r.uniform(-1, 1, N)
+    # Attaque plus ou moins brillante : lissage de l'excitation.
+    for _ in range(int((1 - bright) * 6) + (3 if mute else 0)):
+        exc = 0.5 * (exc + np.roll(exc, 1))
+    y = np.zeros(n)
+    y[:N] = exc
+    d = 0.93 if mute else damp
+    for s in range(N, n, N):
+        prev = y[s - N:s]
+        prev1 = y[s - N - 1:s - 1] if s - N - 1 >= 0 else np.concatenate([[0.0], y[:N - 1]])
+        y[s:s + N] = (d * 0.5 * (prev + prev1))[:len(y[s:s + N])]
+    y = y[:int(dur * SR)]
+    return fade(y, fin=0.0005, fout=0.008)
+
+
+def power_chord(root, dur, mute=False, seed=None, strum=0.006, octave=True):
+    """Quinte (racine, quinte, octave) grattée de haut en bas."""
+    notes = [root, root + 7] + ([root + 12] if octave else [])
+    n = int((dur + strum * 3) * SR)
+    x = np.zeros(n)
+    for k, nt in enumerate(notes):
+        s = guitar_string(nt, dur, mute=mute, seed=None if seed is None else seed + k)
+        o = int(k * strum * SR)
+        x[o:o + len(s)] += s[:n - o]
+    return x[:int(dur * SR)]
+
+
+def amp(x, gain=18.0, tight=True):
+    """Ampli saturé + baffle 4x12 : resserrage des basses, distorsion asymétrique, corps dans le bas-médium,
+    creux du « fizz » vers 3 kHz et coupure du haut-parleur (pas d'aigus agressifs)."""
+    if tight:
+        x = biquad(x, 'hp', 110, 0.7)
+    x = biquad(x, 'peak', 900, 0.8, 4)
+    y = np.tanh(gain * x + 0.15) - np.tanh(0.15)
+    y = np.tanh(1.6 * y)
+    y = biquad(y, 'peak', 120, 0.9, 4)      # résonance du baffle
+    y = biquad(y, 'peak', 250, 0.8, 2)      # corps
+    y = biquad(y, 'peak', 3200, 1.0, -7)    # creux du « fizz »
+    y = biquad(biquad(y, 'lp', 4200, 0.8), 'lp', 5600, 0.7)
+    return biquad(y, 'hp', 70, 0.7)
+
+
+def guitar_take(bpm, bars, hits, seed):
+    """Une prise de guitare : hits = (pas, racine, durée en pas, étouffé, accord?). Rendue puis passée dans l'ampli."""
+    step = step_len(bpm)
+    r = np.random.default_rng(seed)
+    ev = []
+    for k, (st, root, du, mute, chord) in enumerate(hits):
+        human = r.uniform(-0.004, 0.004) / step   # léger décalage humain
+        d = du * step * (0.92 if mute else 0.98)
+        sig = power_chord(root, d, mute, seed=seed * 1000 + k) if chord else guitar_string(root, d, mute=mute, seed=seed * 1000 + k)
+        ev.append((max(0, st + human), sig * (0.85 if mute else 1.0)))
+    return amp(normalize(render(bpm, bars, ev, choke=True)))
+
+
+def guitar_loop(bpm, bars, hits):
+    """Guitare doublée (deux prises gauche / droite), comme en studio : stéréo."""
+    L = guitar_take(bpm, bars, hits, 11)
+    R = guitar_take(bpm, bars, hits, 23)
+    return normalize(np.stack([L, R], axis=1))
+
+
+def to_stereo(x):
+    return x if x.ndim == 2 else np.stack([x, x], axis=1)
+
+
+def mix_st(*parts):
+    """Mélange de boucles mono ou stéréo (gain compris), saturation douce et normalisation."""
+    n = max(len(p) for p, _ in parts)
+    out = np.zeros((n, 2))
+    for p, g in parts:
+        s = to_stereo(p)
+        out[:len(s)] += g * s
+    return normalize(np.tanh(1.2 * normalize(out, 1.0)), 0.89)
+
+
+def anthem_lead(note, dur):
+    """Lead d'anthem : supersaw à l'octave + hoover + scie saturée, le gros son des hymnes de festival."""
+    a = supersaw([note, note + 12], dur, attack=0.004, release=0.18, cutoff=7500, verb=0.22)
+    b = hoover(note, dur, bend=False)
+    n = max(len(a), len(b))
+    x = np.zeros(n)
+    x[:len(a)] += a
+    x[:len(b)] += 0.55 * b
+    return fade(normalize(np.tanh(1.6 * x)), fout=0.05)
+
+
+def build_anthems(bpm=190):
+    """Anthems : leads d'hymnes, guitares saturées, couches à superposer, rythmiques, anthems complets.
+    Tout en fa mineur sur la même suite d'accords (Fm - Db - Eb - Cm) : les boucles se superposent entre elles."""
+    reseed('Anthems')
+    MAGENTA, PINK, VIOLET, CYAN, BLUE, GREEN, RED, ORANGE, YELLOW, COPPER = 53, 57, 49, 37, 41, 21, 5, 9, 13, 108
+    LOOP = 2
+    prog = 'epic'
+    roots = [ROOT_NOTE[c] for c in PROGS[prog]]   # fa, réb, mib, do : basses et guitare accordée bas
+    step = step_len(bpm)
+    inst_cache = {}
+
+    def lead(seed, rh, kind='anthem', lo=64, hi=84, p=prog, legato=0.95):
+        notes = compose(seed, p, rh, lo, hi)
+        if kind != 'anthem':
+            return melody_loop(bpm, notes, kind, 4, legato)
+        ev = []
+        for st, n, du in notes:
+            key = (n, du)
+            if key not in inst_cache:
+                inst_cache[key] = anthem_lead(n, du * step * legato)
+            ev.append((st, inst_cache[key], 0.9))
+        return normalize(render(bpm, 4, ev, choke=True))
+
+    # ---- batterie d'anthem : kick à queue, clap, charleys, crash ----
+    kick = tail_kick(41, drive=16, tail=0.42, dur=0.6, bend=0.35, formant=1200, bite=7)
+    k_short = fade(kick[:int(step * 4 * SR)], fout=0.01)
+    cl = clap()
+    hh = hat(0.05)
+    oh = hat(0.16, 3)
+    cr = crash909()
+    rd = ride()
+    def drums(kicks=None, claps=True, hats=True, crash=True, ride_on=False, bars=4):
+        ev = [(s, k_short, 1.0) for s in (kicks if kicks is not None else four(bars))]
+        k = normalize(render(bpm, bars, ev, choke=True)) if ev else np.zeros(int(round(bars * 240 / bpm * SR)))
+        extra = []
+        if claps:
+            extra += [(b * 16 + s, cl, 0.55) for b in range(bars) for s in (4, 12)]
+        if hats:
+            extra += [(b * 16 + s, oh, 0.4) for b in range(bars) for s in (2, 6, 10, 14)]
+            extra += [(b * 16 + s, hh, 0.25) for b in range(bars) for s in (1, 3, 5, 7, 9, 11, 13, 15)]
+        if ride_on:
+            extra += [(b * 16 + s, rd, 0.3) for b in range(bars) for s in range(0, 16, 2)]
+        if crash:
+            extra += [(0, cr, 0.5)]
+        top = render(bpm, bars, extra) if extra else 0
+        return normalize(k + 0.8 * top)
+
+    # ---- rangée 1 : leads d'anthem ----
+    leads = [
+        ('Anthem lead', MAGENTA, lead(501, 'anthem')),
+        ('Anthem hook', MAGENTA, lead(502, 'hook')),
+        ('Anthem dotted', MAGENTA, lead(503, 'dotted')),
+        ('Anthem long', MAGENTA, lead(504, 'long')),
+        ('Anthem gallop', MAGENTA, lead(505, 'gallop', legato=0.85)),
+        ('Anthem hoover', MAGENTA, lead(506, 'anthem', 'hoover')),
+        ('Anthem screech', MAGENTA, lead(507, 'hook', 'screech', 70, 86)),
+        ('Anthem horn', MAGENTA, lead(508, 'long', 'horn')),
+    ]
+
+    # ---- rangée 2 : guitares saturées (doublées en stéréo) ----
+    G = lambda hits: guitar_loop(bpm, 4, hits)
+    chug = [(b * 16 + s, roots[b], 1, True, False) for b in range(4) for s in range(16) if s not in (0, 8)] + \
+           [(b * 16 + s, roots[b], 2, False, True) for b in range(4) for s in (0, 8)]
+    power = [(b * 16, roots[b], 10, False, True) for b in range(4)] + [(b * 16 + 10, roots[b], 6, False, True) for b in range(4)]
+    gallop = [(b * 16 + s, roots[b], 1, True, False) for b in range(4) for s in GALLOP if s != 0] + [(b * 16, roots[b], 1, False, True) for b in range(4)]
+    stabs = [(b * 16 + s, roots[b], 1.5, False, True) for b in range(4) for s in (2, 6, 10, 14)]
+    # Riff : la racine étouffée et des notes de la gamme en accents (fa mineur, une octave au-dessus).
+    riff_bar = [(0, 0, 2, False, True), (2, 0, 1, True, False), (3, 0, 1, True, False), (4, 3, 2, False, False), (6, 0, 1, True, False),
+                (7, 0, 1, True, False), (8, 5, 2, False, False), (10, 0, 1, True, False), (11, 6, 2, False, False), (13, 0, 1, True, False), (14, 3, 2, False, False)]
+    # Les notes du riff sont des degrés de la gamme au-dessus de la racine de l'accord (pas de fausse note).
+    deg = {0: 0, 3: 2, 5: 3, 6: 4}
+    riff = [(b * 16 + s, scale_step(roots[b], deg[d], scale_pcs(PROGS[prog][b])), du, m, c) for b in range(4) for s, d, du, m, c in riff_bar]
+    breakdown = [(b * 16 + s, roots[b], du, m, True) for b in range(4) for s, du, m in ((0, 3, False), (3, 1, True), (6, 2, False), (8, 1, True), (11, 3, False))]
+    glead_notes = compose(509, prog, 'anthem', 64, 79)
+    glead = guitar_loop(bpm, 4, [(st, n, du, False, False) for st, n, du in glead_notes])
+    guitars = [
+        ('Guitar chug', COPPER, G(chug)),
+        ('Guitar power chords', COPPER, G(power)),
+        ('Guitar gallop', COPPER, G(gallop)),
+        ('Guitar riff', COPPER, G(riff)),
+        ('Guitar stabs', COPPER, G(stabs)),
+        ('Guitar breakdown', COPPER, G(breakdown)),
+        ('Guitar lead', COPPER, glead),
+    ]
+    guitars.append(('Guitar + kick', COPPER, mix_st((guitars[0][2], 0.8), (drums(claps=False, hats=False, crash=False), 0.9))))
+
+    # ---- rangée 3 : couches à superposer (même suite d'accords) ----
+    sub = []
+    for b, r in enumerate(roots):
+        t = t_of(step * 16)
+        sub.append((b * 16, fade(np.sin(2 * np.pi * hz(r) * t) * np.clip(t / 0.02, 0, 1), fout=0.03), 0.9))
+    layers = [
+        ('Layer pad', VIOLET, chords_loop(bpm, prog, 'pad')),
+        ('Layer strings', VIOLET, chords_loop(bpm, prog, 'strings')),
+        ('Layer choir', CYAN, chords_loop(bpm, prog, 'choir')),
+        ('Layer stabs', PINK, chords_loop(bpm, prog, 'stab', (0, 3, 6, 10, 12))),
+        ('Layer arp', PINK, melody_loop(bpm, arpeggio(prog, (0, 1, 2, 3, 2, 1, 0, 2)), 'pluck', 4, 0.9, choke=False)),
+        ('Layer bells', PINK, melody_loop(bpm, compose(510, prog, 'long', 72, 88), 'bells', 4)),
+        ('Layer offbeat bass', BLUE, bass_line(bpm, prog)),
+        ('Layer sub bass', BLUE, normalize(render(bpm, 4, sub, choke=True))),
+    ]
+
+    # ---- rangée 4 : rythmiques d'anthem ----
+    build = list(range(0, 16, 4)) + list(range(16, 32, 2)) + list(range(32, 48)) + [48 + i / 2 for i in range(32)]
+    loop_n = int(round(4 * 240 / bpm * SR))
+    rs = np.zeros(loop_n)
+    rz = riser(4 * 240 / bpm)[:loop_n]
+    rs[:len(rz)] = rz
+    roll_build = normalize(normalize(render(bpm, 4, [(s, k_short, 1.0) for s in build], choke=True)) + 0.5 * rs)
+    stomp = [(b * 16 + s, tom(41, drive=3, dur=0.35), 0.9) for b in range(4) for s in (0, 8)] + [(b * 16 + s, cl, 0.8) for b in range(4) for s in (4, 12)]
+    toms = [(b * 16 + s, tom(n, drive=4, dur=0.3), 0.8) for b in range(4) for s, n in ((0, 45), (3, 45), (6, 41), (8, 48), (11, 45), (14, 41))]
+    beats = [
+        ('Anthem beat', RED, drums()),
+        ('Anthem beat ride', RED, drums(ride_on=True)),
+        ('Anthem gallop beat', RED, drums(kicks=[b * 16 + s for b in range(4) for s in GALLOP], hats=False)),
+        ('Kick roll build', RED, roll_build),
+        ('Half-time beat', RED, drums(kicks=[b * 16 + s for b in range(4) for s in (0, 10)], hats=True, crash=True)),
+        ('Off-kick beat', RED, drums(kicks=[b * 16 + s for b in range(4) for s in (0, 4, 8, 12, 14)])),
+        ('Clap stomp', ORANGE, normalize(reverb(render(bpm, 4, stomp), 1.0, 0.25)[:loop_n])),
+        ('Tribal toms', ORANGE, normalize(render(bpm, 4, toms))),
+    ]
+
+    # ---- rangée 5 : anthems complets (lead + guitare / accords + basse + batterie) ----
+    full = [
+        ('Festival anthem', mix_st((leads[0][2], 0.75), (layers[0][2], 0.4), (layers[6][2], 0.55), (beats[0][2], 0.85))),
+        ('Guitar anthem', mix_st((leads[1][2], 0.7), (guitars[1][2], 0.55), (layers[6][2], 0.45), (beats[0][2], 0.85))),
+        ('Anthem riff drop', mix_st((guitars[3][2], 0.7), (leads[5][2], 0.55), (beats[1][2], 0.85))),
+        ('Anthem screech drop', mix_st((leads[6][2], 0.65), (layers[1][2], 0.4), (layers[6][2], 0.5), (beats[0][2], 0.85))),
+        ('Anthem break', mix_st((leads[3][2], 0.6), (layers[2][2], 0.6), (layers[1][2], 0.5), (layers[5][2], 0.35))),
+        ('Anthem build', mix_st((layers[4][2], 0.5), (layers[0][2], 0.45), (beats[3][2], 0.9))),
+        ('Guitar breakdown drop', mix_st((guitars[5][2], 0.75), (layers[2][2], 0.4), (beats[4][2], 0.85))),
+        ('Anthem finale', mix_st((leads[2][2], 0.65), (guitars[0][2], 0.45), (layers[0][2], 0.35), (layers[6][2], 0.45), (beats[1][2], 0.85))),
+    ]
+    sounds = leads + guitars + layers + beats + [(n, GREEN, s) for n, s in full]
+    return [(name, color, LOOP, sig, 4) for name, color, sig in sounds]

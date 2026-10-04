@@ -11,7 +11,7 @@ const HELP = {
         <li><b>✎</b> (shown when the mouse is over a pad) opens the <b>pad editor</b>: name, colour, playback mode, knobs, loop tempo.</li>
         <li><b>Drop an audio file</b> (WAV, MP3, FLAC, OGG…) on a pad to load it.</li>
         <li>Playback modes: <b>one-shot</b> (plays to the end), <b>hold</b> (as long as the pad is pressed), <b>loop</b> (starts on the next bar, press again to stop).</li>
-        <li><b>Banks 1-15</b> (column on the right). APC: SCENE LAUNCH 1-5 = banks 1-5, Shift + SCENE LAUNCH = 6-10, a second time = 11-15.</li>
+        <li><b>Banks 1-20</b> (columns on the right). APC: SCENE LAUNCH 1-5 = banks 1-5, Shift + SCENE LAUNCH = 6-10, a second time = 11-15, a third time = 16-20.</li>
         <li><b>Export bank / Export all / Import…</b>: <code>.apckit</code> files with the sounds and their settings.</li>
       </ul>`,
     editor: `
@@ -194,7 +194,7 @@ const HELP = {
         <li><b>✎</b> (visible au survol d'un pad) ouvre l'<b>éditeur de pad</b> : nom, couleur, mode de lecture, potards, tempo de boucle.</li>
         <li><b>Glisse un fichier audio</b> (WAV, MP3, FLAC, OGG…) sur un pad pour le charger.</li>
         <li>Modes : <b>one-shot</b> (joue jusqu'au bout), <b>maintenu</b> (tant que le pad est appuyé), <b>boucle</b> (démarre à la mesure suivante, un nouvel appui l'arrête).</li>
-        <li><b>Banques 1 à 15</b> (colonne de droite). APC : SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = 6-10, une deuxième fois = 11-15.</li>
+        <li><b>Banques 1 à 20</b> (colonnes de droite). APC : SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = 6-10, une deuxième fois = 11-15, une troisième fois = 16-20.</li>
         <li><b>Exporter la banque / Exporter tout / Importer…</b> : fichiers <code>.apckit</code> avec les sons et leurs réglages.</li>
       </ul>`,
     editor: `

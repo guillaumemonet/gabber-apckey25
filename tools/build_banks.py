@@ -234,7 +234,7 @@ def pretty(name):
 
 
 # Catégories de la bibliothèque (façon eJay) : défaut par rangée de chaque banque, affiné par le nom.
-CATEGORIES = ['kick', 'drums', 'bass', 'lead', 'keys', 'pad', 'voice', 'fx']
+CATEGORIES = ['kick', 'drums', 'bass', 'lead', 'keys', 'pad', 'voice', 'fx', 'guitar']
 ROW_CATS = {
     'Batterie': ['kick', 'drums', 'drums', 'drums', 'drums'],
     'Électro': ['kick', 'drums', 'drums', 'fx', 'fx'],
@@ -250,6 +250,7 @@ ROW_CATS = {
     'Hardstyle': ['kick', 'drums', 'lead', 'fx', 'drums'],
     'Melodies': ['lead', 'keys', 'lead', 'pad', 'lead'],
     'Hardstyle melodies': ['lead', 'lead', 'keys', 'pad', 'lead'],
+    'Anthems': ['lead', 'guitar', 'pad', 'drums', 'lead'],
 }
 
 
@@ -258,6 +259,8 @@ def categorize(bank, row, name, mode):
     has = lambda *words: any(w in n for w in words)
     if mode != 2 and has('kick') and not has('bass'):   # « Screech kick » reste un kick
         return 'kick'
+    if has('guitar'):
+        return 'guitar'
     if has('choir', 'chœur', 'vox', 'voctone', 'shout'):
         return 'voice'
     if has('hoover', 'screech', 'acid', 'arp', 'horn', 'lead', 'highkey', 'supersaw', 'pluck'):

@@ -9,11 +9,11 @@
 GabberKey is built around a **timeline**: drag sounds from a library sorted by category onto tracks, the blocks snap to the bar and everything plays at the same tempo. The other tools (sampler pads, TR-909, synth, mixer, effects…) are **plugins** that open in windows, and the Akai APC Key 25 (mk1 or mk2) plays them live. Nothing to install except a web browser:
 
 - **Timeline**: 16 tracks to start (up to 64), each with its own knobs (volume, pan, filters, sends); drag, lengthen (loops repeat), copy and move blocks; play the pads or the keyboard while recording and every hit becomes a block, live, and the synth notes one note block; edit the notes in a **piano roll**; record the TR-909 as audio; select several blocks and copy / paste them.
-- **Sound library**: 558 sounds sorted into Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices and FX, plus your own sounds and recordings; click to listen, drag to place.
+- **Sound library**: 598 sounds sorted into Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices, FX and Guitars, plus your own sounds and recordings; click to listen, drag to place.
   - nine **synthesised hardcore / gabber / hardstyle banks** (no duplicates), including two banks of **80 melodies**: distorted Rotterdam and terror kicks, hoovers, rave stabs, screeches, hardcore basses, dramatic strings, oldschool rave pianos, breakbeats, dark mainstream kicks and leads, modern uptempo kicks with raw tails, supersaws, shouts, FX and loops at 190 BPM;
   - five banks of **public-domain (CC0)** samples.
 - **Plugins** in movable, magnetic windows:
-  - **40-pad sampler** with 15 banks, pad LEDs synced to the screen, and drag & drop of your own sounds;
+  - **40-pad sampler** with 20 banks, pad LEDs synced to the screen, and drag & drop of your own sounds;
   - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
   - **Piano roll**: edit the notes of the synth blocks (pitch, length, velocity, copy / paste, quantize, step input from the APC keyboard);
   - **Kick designer**: build your own distorted kick from 12 knobs and 8 presets, then send it to a pad or the library;
@@ -78,7 +78,7 @@ The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot onc
 |---|---|
 | **Pads** | Play the sound (the last pad hit becomes the selected pad) |
 | **Shift + pad** | Select a pad without playing it |
-| **SCENE LAUNCH 1-5** | Banks 1-5 · **Shift +** SCENE LAUNCH = banks 6-10, press it again for banks 11-15 (the LED blinks for banks 6-15; the screen shows the bank number) |
+| **SCENE LAUNCH 1-5** | Banks 1-5 · **Shift +** SCENE LAUNCH = banks 6-10, press it again for banks 11-15, a third time for banks 16-20 (the LED blinks for banks 6-20; the screen shows the bank number) |
 | **Track buttons 1 / 2 / 3 / 4** | Knob page: Synth / Effects / Selected pad / EQ |
 | **Track buttons 5 / 6 / 7 / 8** (hold) | Roll 1/8 · Roll 1/16 · Roll 1/32 · Filter down |
 | **Shift + track 5 / 6 / 7 / 8** | Roll 1/4 · Tape stop · Filter up · Pump (on/off) |
@@ -118,6 +118,7 @@ Everything can also be done with the mouse. On the computer keyboard, the middle
 | 13 | **Hardstyle** (hardstyle / rawstyle, **150 BPM**): hardstyle, raw, screech, euphoric, zaag and punch kicks, tuned kicks C# and G#, **reverse basses** (F, C#, D#, G#), big clap, china crash, raw screeches, euphoric lead and chord, pluck, pitch lead, raw stab and hoover, shouts ("hey", "raw", "go"), pitch riser, uplifter, deep sub drop, impact, air horn, loops (hardstyle beat, the offbeat **reverse bass** groove, reverse bass over a chord progression, rawstyle loop, kick build-up, screech riff, euphoric melody, 4-bar drop) |
 | 14 | **Melodies** (hardcore / gabber, 190 BPM, F minor): 40 melodic loops with no drums, to layer on any beat: themes (hoover, screech, horn, dark lead, mentasm, acid), emotional themes (piano, strings, staccato, bells, choir, pluck, supersaw), 2-bar hooks, chord / arpeggio / bass-line loops, and 8 full themes (melody + chords + bass) over the classic progressions Fm–Db–Eb–Cm, Fm–Db–Ab–Eb, Fm–Bbm–Db–C and Fm–Eb–Db–C |
 | 15 | **Hardstyle melodies** (150 BPM): 40 loops: euphoric supersaw leads, raw screech melodies, raw leads and hoover, plucks, piano and bells intros, choir and strings, euphoric chords, reverse-bass lines, and 8 full anthems (lead + chords + reverse bass) |
+| 16 | **Anthems** (190 BPM, F minor, 4-bar loops, all over the same chords Fm–Db–Eb–Cm so they **layer** with each other): big anthem leads (supersaw + hoover layered an octave apart, plus hoover, screech and horn versions), **distorted guitars** double-tracked in stereo (chugs, power chords, gallop, riff, offbeat stabs, breakdown, lead, guitar + kick), layers to stack (pad, strings, choir, stabs, arpeggio, bells, offbeat bass, sub bass), anthem drum loops (beat, ride, gallop, kick-roll build-up, half-time, off-kick, clap stomp, tribal toms), and 8 full anthems (lead / guitar + chords + bass + drums) |
 
 To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. Under the pad grid, **8 knobs** set the selected pad (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs when the Pads window is active. The **✎ pencil** that appears when the mouse is over a pad opens the **pad editor** on it: name, LED colour, playback mode (**One-shot**, **Hold** or **Loop**) and the pad's **8 knobs** (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs.
 
@@ -172,7 +173,7 @@ Click **Demo** in the timeline toolbar and choose a song. Press ▶ to listen, t
 
 The main screen: the **sound library** on the left, the **timeline** on the right (16 tracks and 32 bars to start, − / + to change the length and the number of tracks, from 4 to 64, zoom, **Loop**).
 
-- **Library**: two tabs. **Sounds**: pick a category (Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices, Sound FX, My sounds, Recordings). **Effects**: the track effects, by family (Volume, Filter, Space, Time, Saturation, 3D). Or search by name. **Click** a sound to listen to it (and pick it); the badge shows its length in bars (loops) or "1-shot".
+- **Library**: two tabs. **Sounds**: pick a category (Kicks, Drums, Bass, Leads, Stabs / keys, Pads / strings, Voices, Sound FX, Guitars, My sounds, Recordings). **Effects**: the track effects, by family (Volume, Filter, Space, Time, Saturation, 3D, and your Curves from the effect designer). Or search by name. **Click** a sound to listen to it (and pick it); the badge shows its length in bars (loops) or "1-shot".
 - **Place**: drag a sound onto a track. It snaps to the start of the bar (hold **Shift** to place it on a beat). Clicking an empty cell places the last sound picked.
 - **Edit blocks**: drag a block to move it (to another bar or track), drag its **right edge** to lengthen or shorten it (a loop repeats to fill the block), **Alt + drag** copies it, **double-click** listens to it (a note block opens in the **piano roll**), **right-click** or **Delete** removes it. Each track has a mute.
 - **Name and colour**: double-click a track's name to rename it; its panel (dial button) also has the name and a background colour for the track.
