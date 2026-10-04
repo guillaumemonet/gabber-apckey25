@@ -426,6 +426,7 @@ function setPage(page) {
 }
 
 function panic() {
+  stopTlPreview();
   drum.stop();
   acid.stop();
   decks.stopAll();
@@ -1571,6 +1572,7 @@ async function ensureBuffer(id) { if (!clipBuffer(id)) await loadBuffers([id]); 
 
 function tlToggle() {
   if (tlRec) return tlStopRec();
+  stopTlPreview();
   try {
     if (timeline.playing) timeline.stop(); else timeline.play(state.tl.playhead);
   } finally {   // le bouton et la tête de lecture suivent toujours l'état réel
@@ -2056,15 +2058,25 @@ function clipEl(track, clip) {
   label.textContent = clip.name;
   const grip = document.createElement('div');
   grip.className = 'tl-grip';
-  el.append(cv, label, grip);
+  // ▶ (au survol) : écouter le bloc seul ; pendant l'écoute, une barre avance sur le bloc.
+  const play = document.createElement('button');
+  play.className = 'tl-play icon-only';
+  play.dataset.icon = tlPrev?.clipId === clip.id ? 'stop' : 'play';
+  play.title = t('tl.playClip');
+  play.addEventListener('pointerdown', e => e.stopPropagation());
+  play.addEventListener('click', e => { e.stopPropagation(); tlPreviewClip(track, clip); });
+  el.append(cv, label, play, grip);
+  if (tlPrev?.clipId === clip.id) {
+    el.classList.add('previewing');
+    const bar = document.createElement('i');
+    bar.className = 'tl-prev-bar';
+    bar.style.animationDuration = `${tlPrev.dur}s`;
+    bar.style.animationDelay = `${-(engine.ctx.currentTime - tlPrev.start)}s`;
+    el.appendChild(bar);
+  }
   el._obj = clip;
   requestAnimationFrame(() => drawClip(cv, clip));
   el.addEventListener('contextmenu', e => { e.preventDefault(); tlDelete(track, clip); });
-  el.addEventListener('dblclick', () => {
-    if (clip.type === 'note') openRoll(clip, true);
-    else if (clip.type === 'pad' && state.banks[clip.bank]?.[clip.pad]) engine.playPad(padKey(clip.bank, clip.pad), state.banks[clip.bank][clip.pad], { oneShot: true });
-    else previewSample({ sampleId: clip.sampleId, name: clip.name });
-  });
 
   // Glisser le bloc (Alt = copie) ; glisser son bord droit = longueur (une boucle se répète).
   el.addEventListener('pointerdown', e => {
@@ -2202,6 +2214,7 @@ function tlGroupDown(e, obj, track) {
     if (moved) { for (const x of orig) growSong({ start: x.obj.start, len: blockLen(x.obj) }); save(); }
     else if (!isFxBlock(lead) && lead.type === 'note' && wm.isOpen('roll') && state.roll.clip !== lead.id) openRoll(lead, false);
     renderTl();
+    if (!moved && !e.altKey) tlTap(o.cur, lead);
   };
   window.addEventListener('pointermove', onMove);
   window.addEventListener('pointerup', onUp);
@@ -3378,6 +3391,52 @@ function curveSvg(c, len) {
   svg.classList.add('tl-fx-curve');
   svg.innerHTML = `<polyline points="${pts.join(' ')}" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/>`;
   return svg;
+}
+
+// ---------- Écoute d'un bloc de la timeline ----------
+
+// Le bloc seul, tel qu'il sonne dans le morceau : au tempo, sur toute sa longueur, avec les potards de sa piste
+// (sans ses effets de piste). Un deuxième appui l'arrête. Elle a sa propre petite timeline : le morceau n'est pas dérangé.
+let tlPrev = null;   // { tl, clipId, start, dur }
+async function tlPreviewClip(track, clip) {
+  const again = tlPrev?.clipId === clip.id;
+  stopTlPreview();
+  if (again) return;
+  if (clip.sampleId && !(await ensureBuffer(clip.sampleId))) { toast(t('lib.loadFail'), 3000); return; }
+  const beats = timeline.clipBeats(clip);
+  const one = { ...clip, id: `prev-${clip.id}`, start: 0 };
+  // Longueur = celle du bloc : l'écoute s'arrête pile à sa fin.
+  const st = { bars: beats / BEATS_PER_BAR, loop: false, playhead: 0, tracks: [{ ...state.tl.tracks[track], mute: false, clips: [one], fx: [] }] };
+  const tl = new Timeline(engine, () => st, clipBuffer, mixer.input('tl'));
+  Object.assign(tl, { getPad: timeline.getPad, padKey, getPatch: presetPatch, getOsc: c => oscFor(c, oscSynth), keyPrefix: 'tlp:' });
+  tl.onStop = () => { if (tlPrev?.tl === tl) { tlPrev = null; renderTl(); } };
+  const origin = engine.origin;
+  tl.play(0);
+  if (origin !== null) engine.origin = origin;   // la grille des boucles et de la 909 reste celle du morceau
+  tlPrev = { tl, clipId: clip.id, start: engine.ctx.currentTime, dur: (beats * 60) / state.bpm };
+  renderTl();
+}
+
+function stopTlPreview() {
+  if (!tlPrev) return;
+  const { tl } = tlPrev;
+  tlPrev = null;
+  tl.stop(true);
+  renderTl();
+}
+
+// Double-clic sur un bloc (détecté à la main : le premier clic redessine la timeline).
+let tlLastTap = { obj: null, t: 0 };
+function tlTap(track, obj) {
+  const now = performance.now();
+  if (tlLastTap.obj !== obj || now - tlLastTap.t > 380) { tlLastTap = { obj, t: now }; return; }
+  tlLastTap = { obj: null, t: 0 };
+  if (isFxBlock(obj)) {
+    const el = [...document.querySelectorAll('.tl-fx')].find(x => x._obj === obj);
+    openFxEditor(track, obj, el ?? document.body);
+  } else if (obj.type === 'note') openRoll(obj, true);
+  else if (obj.type === 'pad' && state.banks[obj.bank]?.[obj.pad]) engine.playPad(padKey(obj.bank, obj.pad), state.banks[obj.bank][obj.pad], { oneShot: true });
+  else tlPreviewClip(track, obj);
 }
 
 // ---------- Démo ----------
@@ -5370,7 +5429,6 @@ function fxEl(track, block, row) {
   if (svg) el.appendChild(svg);
   el.append(label, grip);
   el.addEventListener('contextmenu', e => { e.preventDefault(); tlDeleteFx(track, block); });
-  el.addEventListener('dblclick', e => { e.stopPropagation(); openFxEditor(track, block, el); });
   el.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
     e.stopPropagation();

@@ -96,6 +96,7 @@ export class Timeline {
     this.offs = [];             // fins de notes programmées : { note, key, time }
     this.ons = [];              // départs à créer, au fil de la lecture : { time, run }
     this.synths = new Set();    // synthés qui ont reçu des notes (coupés net à l'arrêt)
+    this.keyPrefix = 'tl:';     // préfixe des voix de synthé (une écoute de bloc a le sien : elle ne coupe pas le morceau)
     this.padHits = new Set();   // voix de pads programmées (toutes coupées à l'arrêt)
     this.chains = new Map();    // piste -> Map(destination -> TrackChain) : effets de piste
     this.strips = new Map();    // piste -> Map(destination -> tranche : filtres, volume, pano, envois)
@@ -154,7 +155,7 @@ export class Timeline {
             const at = clip.start + n.t;
             if (at < beat - 1e-6 || at >= len) continue;
             const when = time + (at - beat) * bd;
-            const key = `tl:${clip.id}:${n.i}`;
+            const key = `${this.keyPrefix}${clip.id}:${n.i}`;
             const out = this.trackIn(ti, dest);
             jobs.push({ time: when, run: () => {
               this.synths.add(syn);
@@ -371,7 +372,7 @@ export class Timeline {
     const safe = fn => { try { fn(); } catch (err) { console.warn('Timeline stop', err); } };
     for (const o of this.offs) safe(() => (o.syn ?? this.engine).noteOff(o.note, true, undefined, o.key));
     this.offs = [];
-    for (const syn of this.synths) safe(() => syn.cut?.('tl:'));
+    for (const syn of this.synths) safe(() => syn.cut?.(this.keyPrefix));
     this.synths.clear();
     for (const { key, v } of this.padHits) {
       safe(() => {
