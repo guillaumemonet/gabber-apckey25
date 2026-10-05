@@ -324,6 +324,7 @@ async function importLibrary() {
       if (!state.libBanks.includes(bank.name)) state.libBanks.push(bank.name);
       return;
     }
+    if (state.libBanks.includes(bank.name)) return;
     const isFree = b => b > 0 && b < BANKS && !state.banks[b].some(Boolean);
     const slot = isFree(k + 1) ? k + 1 : state.banks.findIndex((_, b) => isFree(b));
     if (slot < 0) return;   // aucune banque libre : réessayé au prochain démarrage
@@ -549,6 +550,49 @@ async function loadFileIntoPad(file, i) {
   renderLeds();
   renderLibrary();
   save();
+}
+
+// Un son de la bibliothèque lâché sur un pad : il remplace son son (les réglages du pad restent, le mode suit le son :
+// boucle calée sur le tempo pour une boucle, un coup sinon).
+async function loadItemIntoPad(item, i) {
+  const buffer = await ensureBuffer(item.sampleId);
+  if (!buffer) { toast(t('lib.loadFail'), 3000); return; }
+  const b = state.bank;
+  const old = state.banks[b][i];
+  engine.stopPad(padKey(b, i));
+  const pad = newPad(item.name.slice(0, 24), catColor(item.cat), item.sampleId, buffer, item.bpm || 0);
+  if (old) pad.p = { ...old.p };
+  pad.p.mode = (item.loop ? 2 : 0) / (PAGES.pad.params[7].steps - 1);
+  state.banks[b][i] = pad;
+  if (old?.sampleId?.startsWith('user:') && !sampleInUse(old.sampleId)) store.deleteSample(old.sampleId).catch(() => {});
+  selectPad(i);
+  renderPad(i);
+  renderEditor();
+  renderLeds();
+  save();
+  toast(t('pad.dropped', { n: i + 1, name: pad.name }), 2000);
+}
+
+// Un son importé sert-il encore quelque part (pads, timeline, bibliothèque, platines) ?
+const sampleInUse = id => state.banks.some(bk => bk.some(p => p?.sampleId === id)) || state.tl.tracks.some(tr => tr.clips.some(c => c.sampleId === id))
+  || state.userSounds.some(u => u.sampleId === id) || DECK_IDS.some(d => state.decks[d]?.sampleId === id);
+
+// Vide la banque affichée (les sons de la bibliothèque y restent ; un son importé qui ne sert plus ailleurs est effacé).
+function clearBank() {
+  const b = state.bank;
+  const n = state.banks[b].filter(Boolean).length;
+  if (!n) { toast(t('bank.empty', { n: b + 1 }), 2500); return; }
+  if (!confirm(t('bank.clearConfirm', { n: b + 1, count: n }))) return;
+  const olds = state.banks[b];
+  olds.forEach((_, i) => engine.stopPad(padKey(b, i)));
+  state.banks[b] = new Array(40).fill(null);
+  for (const p of olds) if (p?.sampleId?.startsWith('user:') && !sampleInUse(p.sampleId)) store.deleteSample(p.sampleId).catch(() => {});
+  renderPads();
+  renderEditor();
+  renderKnobs();
+  renderLeds();
+  save();
+  toast(t('bank.cleared', { n: b + 1 }), 2500);
 }
 
 function clearPad(i) {
@@ -3619,11 +3663,13 @@ function startLibDrag(e, item) {
     }
     ghost.style.left = `${ev.clientX + 12}px`;
     ghost.style.top = `${ev.clientY + 8}px`;
-    const deckEl = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.deck');
-    for (const d of document.querySelectorAll('.deck.dragover')) if (d !== deckEl) d.classList.remove('dragover');
-    deckEl?.classList.add('dragover');
-    target = deckEl && item.kind !== 'fx' ? { deck: deckEl.dataset.deck } : tlTarget(ev);
-    if (target && !target.deck) {
+    const under = document.elementFromPoint(ev.clientX, ev.clientY);
+    const deckEl = item.kind !== 'fx' ? under?.closest('.deck') : null;
+    const padEl = item.kind !== 'fx' ? under?.closest('#pads .pad') : null;
+    for (const d of document.querySelectorAll('.deck.dragover, #pads .pad.dragover')) if (d !== deckEl && d !== padEl) d.classList.remove('dragover');
+    (deckEl ?? padEl)?.classList.add('dragover');
+    target = deckEl ? { deck: deckEl.dataset.deck } : padEl ? { pad: padEls.indexOf(padEl) } : tlTarget(ev);
+    if (target && !target.deck && target.pad === undefined) {
       const bars = item.kind === 'fx' ? item.len / BEATS_PER_BAR : item.loop && item.bars ? item.bars : 1;
       Object.assign(drop.style, { left: `${target.beat * beatPx()}px`, width: `${bars * state.tl.zoom}px` });
       target.lane.appendChild(drop);
@@ -3636,8 +3682,9 @@ function startLibDrag(e, item) {
     ghost?.remove();
     libSelected = item;
     if (!ghost) { if (item.kind !== 'fx') previewSample(item); renderLibrary(); return; }
-    for (const d of document.querySelectorAll('.deck.dragover')) d.classList.remove('dragover');
+    for (const d of document.querySelectorAll('.deck.dragover, #pads .pad.dragover')) d.classList.remove('dragover');
     if (target?.deck) loadDeck(target.deck, item);
+    else if (target?.pad >= 0) loadItemIntoPad(item, target.pad);
     else if (target) (item.kind === 'fx' ? tlPlaceFx : tlPlaceItem)(item, target.track, target.beat);
     renderLibrary();
   };
@@ -5883,6 +5930,7 @@ function replaceBank(b, pads) {
 }
 
 function bindKits() {
+  $('#bank-clear').addEventListener('click', clearBank);
   $('#kit-export-bank').addEventListener('click', async () => {
     toast(t('kit.exportingBank'));
     const blob = await packBanks([state.banks[state.bank]], padBytes, { kind: 'bank', bpm: state.bpm });
