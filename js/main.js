@@ -64,6 +64,7 @@ const state = {
   decks: defaultDecksState(),         // platines : sons chargés et réglages des deux decks
   patch: defaultPatch(),              // câblage : boîtes à effets et câbles (tout sur le master par défaut)
   userSounds: [],                     // sons créés dans l'application (kicks du designer) : { sampleId, name, cat }
+  padQuant: 0,                        // départ des pads joués à la main : 0 = libre, sinon grille en temps (1, 2, 3, 4, 8, 16)
   curves: [],                         // tes courbes du designer d'effet (js/curves.js) : { id: 'u:…', name, target, beats, points… }
   roll: defaultRoll(),                // piano roll : bloc édité, grille, saisie pas à pas
   osc: defaultOscState(),             // synthé à oscillateurs : réglages, preset, presets perso
@@ -132,6 +133,7 @@ async function start() {
   patch = new Patch(engine, mixer, () => state.patch);   // sorties des voies -> master ou boîtes à effets
   drum.setDestinations(Object.fromEntries(['bd', 'snare', 'toms', 'hats', 'cym'].map(g => [g, mixer.input('tr')])));
   timeline = new Timeline(engine, () => state.tl, clipBuffer, mixer.input('tl'));
+  engine.gridBusy = () => timeline.playing;
   timeline.getPad = (b, i) => state.banks[b]?.[i];
   timeline.padKey = padKey;
   timeline.getPatch = presetPatch;
@@ -263,6 +265,7 @@ async function restore() {
     state.synthDirty = !!saved.synthDirty;
     state.keys = saved.keys === 'osc' ? 'osc' : 'synth';
     state.metro = mergeMetroState(saved.metro);
+    state.padQuant = PAD_QUANTS.includes(saved.padQuant) ? saved.padQuant : 0;
     state.curves = (Array.isArray(saved.curves) ? saved.curves : []).map(cleanCurve).filter(c => c?.id?.startsWith('u:'));
     state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
     for (let b = 0; b < BANKS; b++) {
@@ -366,6 +369,7 @@ function stateSnapshot() {
     patch: state.patch,
     userSounds: state.userSounds,
     curves: state.curves,
+    padQuant: state.padQuant,
     roll: state.roll,
     osc: state.osc,
     synthUser: state.synthUser,
@@ -393,9 +397,21 @@ function save() {
 function triggerPad(i) {
   selectPad(i);
   const pad = state.banks[state.bank][i];
-  engine.playPad(padKey(state.bank, i), pad);
-  if (pad?.buffer && padCat(pad) === 'kick' && engine.padMode(pad) !== 'loop') sidechain.kick();
-  tlRecordPad(state.bank, i);
+  const v = engine.playPad(padKey(state.bank, i), pad);
+  if (pad?.buffer && padCat(pad) === 'kick' && engine.padMode(pad) !== 'loop') sidechain.kick(v?.startAt);
+  if (v) tlRecordPad(state.bank, i, v.startAt);
+}
+
+// Pad en attente (départ ou arrêt calé sur la grille) : il clignote vite, à l'écran et sur l'APC.
+const padPending = key => { const v = engine.padVoices.get(key), now = engine.ctx.currentTime; return !!v && (v.startAt > now + 0.02 || v.stopAt > now); };
+let pendingTimer = null;
+function watchPending() {
+  if (pendingTimer) return;
+  pendingTimer = setInterval(() => {
+    const any = [...engine.padVoices.keys()].some(padPending);
+    renderLeds();
+    if (!any) { clearInterval(pendingTimer); pendingTimer = null; renderPads(); }
+  }, 70);
 }
 
 function releasePad(i) {
@@ -446,6 +462,7 @@ function panic() {
 
 function onPadState(key, isPlaying, mode) {
   if (isPlaying) playing.set(key, mode); else playing.delete(key);
+  if (padPending(key)) watchPending();
   if (Math.floor(key / 40) !== state.bank) return;
   renderPad(key % 40);
   renderLeds();
@@ -726,7 +743,8 @@ function renderLeds() {
     const mode = playing.get(padKey(state.bank, i));
     let led = 'off';
     if (pad?.buffer) {
-      if (mode) led = mode === 'loop' ? 'pulse' : 'on';
+      if (padPending(padKey(state.bank, i))) led = Math.floor(performance.now() / 110) % 2 ? 'on' : 'off';   // clignotement rapide
+      else if (mode) led = mode === 'loop' ? 'pulse' : 'on';
       else led = state.page === 'pad' && i === state.selected ? 'on' : 'dim';
     }
     apc.setPad(i, pad?.color ?? 0, led);
@@ -784,7 +802,8 @@ function renderPad(i) {
   const el = padEls[i];
   const mode = playing.get(padKey(state.bank, i));
   el.classList.toggle('empty', !pad);
-  el.classList.toggle('playing', !!mode);
+  el.classList.toggle('playing', !!mode && !padPending(padKey(state.bank, i)));
+  el.classList.toggle('pending', padPending(padKey(state.bank, i)));
   el.classList.toggle('selected', i === state.selected);
   el.classList.toggle('loop', !!pad && MODES[toValue(PAGES.pad.params[7], pad.p.mode)] === 'loop');
   el.style.setProperty('--c', pad ? PALETTE[uiColor(pad.color)] : '#444');
@@ -2405,12 +2424,14 @@ function recPosition() {
   return snapRec(timeline.length ? pos % timeline.length : pos);
 }
 
-function tlRecordPad(bank, i) {
+function tlRecordPad(bank, i, at) {
   const ti = tlRec?.events.pads;
   if (ti === undefined || !timeline.playing) return;
   const pad = state.banks[bank][i];
   if (!pad?.buffer) return;
-  const start = recPosition();
+  // Départ calé sur la grille : le coup est posé là où il sonne vraiment, pas à l'instant de l'appui.
+  const ahead = at ? Math.max(0, at - engine.ctx.currentTime) / timeline.beatDur : 0;
+  const start = ahead ? snapRec((timeline.position() + ahead) % (timeline.length || Infinity)) : recPosition();
   const len = Math.max(REC_GRID, Math.ceil(pad.buffer.duration / timeline.beatDur / REC_GRID) * REC_GRID);
   const clip = { id: crypto.randomUUID(), type: 'pad', bank, pad: i, sampleId: pad.sampleId, name: pad.name, color: pad.color, cat: 'drums', start, len, loop: false };
   state.tl.tracks[freeTrack(start, len, ti, 'pads')].clips.push(clip);
@@ -5929,8 +5950,14 @@ function replaceBank(b, pads) {
   state.banks[b] = pads;
 }
 
+const PAD_QUANTS = [0, 1, 2, 3, 4, 8, 16];
 function bindKits() {
   $('#bank-clear').addEventListener('click', clearBank);
+  const pq = $('#pad-quant');
+  for (const q of PAD_QUANTS) pq.add(new Option(q === 0 ? t('pq.free') : q === 1 ? t('pq.beat1') : q < 4 ? t('pq.beats', { n: q }) : q === 4 ? t('pq.bar') : t('pq.bars', { n: q / 4 }), q));
+  pq.value = state.padQuant;
+  engine.padQuant = state.padQuant;
+  pq.addEventListener('change', () => { state.padQuant = engine.padQuant = +pq.value; save(); });
   $('#kit-export-bank').addEventListener('click', async () => {
     toast(t('kit.exportingBank'));
     const blob = await packBanks([state.banks[state.bank]], padBytes, { kind: 'bank', bpm: state.bpm });

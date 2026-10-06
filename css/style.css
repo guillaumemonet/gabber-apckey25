@@ -167,6 +167,9 @@ main {
 .pad.playing .name { color: #000; text-shadow: none; }
 .pad.selected { outline: 2px solid #fff; outline-offset: 2px; }
 .pad.dragover { outline: 2px dashed var(--accent-2); outline-offset: 2px; }
+.pad.pending { animation: pad-pending 0.22s steps(2, jump-none) infinite; }
+@keyframes pad-pending { from { filter: brightness(1.9); box-shadow: 0 0 0 2px #fff inset; } to { filter: brightness(0.7); box-shadow: none; } }
+.pad-quant { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); white-space: nowrap; }
 .pad.loop::after {
   content: "↻"; position: absolute; top: 3px; right: 6px; font-size: 12px; color: rgba(255,255,255,.7);
 }

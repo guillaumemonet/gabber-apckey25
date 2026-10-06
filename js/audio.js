@@ -59,6 +59,9 @@ export class Engine {
     this.sustain = false;
     this.padVoices = new Map();   // index pad -> voix sampler
     this.onPadState = () => {};
+    // Départ des pads : 0 = libre, sinon calé sur une grille de `padQuant` temps (2 = deux temps, 4 = une mesure…).
+    this.padQuant = 0;
+    this.gridBusy = () => false;   // la timeline joue (branché par l'application) : la grille est la sienne
     this.bpm = 120;
     this.origin = null;           // instant (ctx) du temps 1 de la mesure de référence
     this.seqs = new Set();        // séquenceurs en marche (TR-909, TB-303) : la grille des mesures est occupée
@@ -456,6 +459,15 @@ export class Engine {
     return this.origin + Math.ceil((t - this.origin) / bar - 1e-6) * bar;
   }
 
+  // Prochain multiple de `beats` temps sur la grille ; si rien ne tourne, maintenant (et la grille part de là).
+  quantTime(beats) {
+    const t = this.ctx.currentTime + 0.01;
+    const busy = this.seqRunning || this.gridBusy() || this.padVoices.size > 0;   // un pad sonne encore (ou attend)
+    if (!busy || this.origin === null) { this.origin = t; return t; }
+    const q = (beats * 60) / this.bpm;
+    return this.origin + Math.ceil((t - this.origin) / q - 1e-6) * q;
+  }
+
   // Prochain instant de la grille (div = 16 pour les doubles-croches).
   gridTime(div) {
     const t = this.ctx.currentTime + 0.005;
@@ -544,9 +556,16 @@ export class Engine {
   playPad(index, pad, opts = {}) {
     if (!pad?.buffer) return;
     const mode = opts.oneShot ? 'oneshot' : this.padMode(pad);
-    if (mode === 'loop' && this.padVoices.has(index)) { this.stopPad(index); return; }
+    // Joué à la main (pas par la timeline ni le séquenceur) : départ et arrêt calés sur la grille choisie.
+    const q = opts.when === undefined && !opts.oneShot ? this.padQuant : 0;
+    if (mode === 'loop' && this.padVoices.has(index)) {
+      const v = this.padVoices.get(index);
+      if (!q) this.stopPad(index);
+      else if (!(v.stopAt > this.ctx.currentTime)) this.stopPadAt(index, Math.max(this.quantTime(q), v.startAt + 0.01));
+      return;
+    }
     const { ctx } = this;
-    const t = Math.max(ctx.currentTime, opts.when ?? 0);
+    const t = q ? this.quantTime(q) : Math.max(ctx.currentTime, opts.when ?? 0);
     this.stopPad(index, 0.005, t);
 
     const src = ctx.createBufferSource();
@@ -556,7 +575,7 @@ export class Engine {
     src.loop = mode === 'loop';
     const offset = this.padValue(pad, 'start') * pad.buffer.duration;
     if (src.loop) { src.loopStart = offset; src.loopEnd = pad.buffer.duration; }
-    const startAt = src.loop ? this.nextBar() : t;
+    const startAt = q ? t : src.loop ? this.nextBar() : t;
 
     const filter = ctx.createBiquadFilter();
     filter.type = 'lowpass';
@@ -586,7 +605,26 @@ export class Engine {
     src.start(startAt, offset);
     this.padVoices.set(index, voice);
     this.onPadState(index, true, mode);
+    // En attente du départ : l'affichage repasse en « joue » à l'instant où le son part.
+    if (startAt > ctx.currentTime + 0.02) setTimeout(() => { if (this.padVoices.get(index) === voice) this.onPadState(index, true, mode); }, (startAt - ctx.currentTime) * 1000 + 5);
     return voice;
+  }
+
+  // Arrêt programmé à l'instant `when` (grille) : la voix reste là jusqu'à cet instant (le pad clignote en attendant).
+  stopPadAt(index, when, fade = 0.01) {
+    const v = this.padVoices.get(index);
+    if (!v) return;
+    v.stopAt = when;
+    v.amp.gain.cancelScheduledValues(when);
+    v.amp.gain.setValueAtTime(v.amp.gain.value, when);
+    v.amp.gain.linearRampToValueAtTime(0, when + fade);
+    try { v.src.stop(when + fade + 0.01); } catch { /* déjà arrêtée */ }
+    this.onPadState(index, true, v.mode);
+    setTimeout(() => {
+      if (this.padVoices.get(index) !== v) return;
+      this.padVoices.delete(index);
+      this.onPadState(index, false);
+    }, (when - this.ctx.currentTime) * 1000 + 5);
   }
 
   // Coupe une voix de pad précise, même si un coup plus récent du même pad l'a remplacée
@@ -603,7 +641,10 @@ export class Engine {
 
   releasePad(index) {
     const v = this.padVoices.get(index);
-    if (v && v.mode === 'hold') this.stopPad(index);
+    if (!v || v.mode !== 'hold') return;
+    // Calé : le son tenu s'arrête sur la grille, au plus tôt une division après son départ.
+    if (this.padQuant) this.stopPadAt(index, Math.max(this.quantTime(this.padQuant), v.startAt + (this.padQuant * 60) / this.bpm));
+    else this.stopPad(index);
   }
 
   stopPad(index, fade = 0.03, when) {
