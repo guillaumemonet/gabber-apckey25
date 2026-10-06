@@ -445,8 +445,53 @@ export class Engine {
     if (this.origin !== null) this.origin = t - ((t - this.origin) * this.bpm / 60) * 60 / bpm;
     this.bpm = bpm;
     for (const v of this.padVoices.values()) {
-      if (v.syncBpm) v.src.playbackRate.setTargetAtTime(v.pitchRate * bpm / v.syncBpm, t, 0.01);
+      if (v.syncBpm) { this.retrack(v, t, v.pitchRate * bpm / v.syncBpm); v.src.playbackRate.setTargetAtTime(v.track.rate, t, 0.01); }
     }
+  }
+
+  // Position d'une voix de pad dans son son (secondes) à l'instant t, d'après sa vitesse.
+  padPos(v, t) {
+    const { pos, rate } = v.track;
+    let p = pos + (t - v.track.t) * rate;   // t peut précéder le repère (départ programmé un peu plus tard)
+    if (v.src.loop) {
+      const a = v.src.loopStart, b = v.src.loopEnd || v.src.buffer.duration;
+      if (b > a && p >= b) p = a + ((p - a) % (b - a));   // avant le départ, p peut être sous le début : il y reviendra
+    }
+    return p;
+  }
+  retrack(v, t, rate) { v.track = { t, pos: this.padPos(v, t), rate }; }
+
+  // Début changé pendant qu'une boucle joue : le son passe tout de suite à la nouvelle position (fondu de 8 ms).
+  // Boucle calée : décalage de phase, la grille est gardée ; boucle libre : reprise à partir du nouveau début.
+  movePadStart(index, pad) {
+    const v = this.padVoices.get(index);
+    if (!v || v.mode !== 'loop' || v.stopAt) return;
+    const dur = pad.buffer.duration;
+    const offset = this.padValue(pad, 'start') * dur;
+    if (Math.abs(offset - v.offset) < 0.002) return;
+    const { ctx } = this;
+    const t = Math.max(ctx.currentTime + 0.01, v.startAt);
+    let pos = v.synced ? this.padPos(v, t) + (offset - v.offset) : t > v.startAt ? Math.max(offset, this.padPos(v, t)) : offset;
+    pos = v.synced ? ((pos % dur) + dur) % dur : Math.min(dur - 0.001, pos);
+    const src = ctx.createBufferSource();
+    src.buffer = pad.buffer;
+    src.loop = true;
+    src.loopStart = v.synced ? 0 : offset;
+    src.loopEnd = dur;
+    src.playbackRate.value = v.track.rate;
+    const g = ctx.createGain();
+    src.connect(g).connect(v.filter);
+    const fade = 0.008;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(1, t + fade);
+    const old = v.src, oldG = v.srcGain;
+    old.onended = null;
+    oldG.gain.setValueAtTime(1, t);
+    oldG.gain.linearRampToValueAtTime(0, t + fade);
+    try { old.stop(t + fade + 0.005); } catch { /* déjà arrêtée */ }
+    src.onended = v.ended;
+    src.start(t, pos);
+    Object.assign(v, { src, srcGain: g, offset, track: { t, pos, rate: v.track.rate } });
   }
 
   // Début de la prochaine mesure ; sans boucle en cours, on démarre tout de suite.
@@ -574,7 +619,10 @@ export class Engine {
     src.playbackRate.value = pitchRate * this.syncRate(pad, mode);
     src.loop = mode === 'loop';
     const offset = this.padValue(pad, 'start') * pad.buffer.duration;
-    if (src.loop) { src.loopStart = offset; src.loopEnd = pad.buffer.duration; }
+    // Boucle calée au tempo : Début déplace le point de départ dans la boucle, qui garde toute sa longueur (elle reste
+    // calée sur les mesures) ; boucle libre : elle reprend à partir de Début.
+    const synced = src.loop && !!pad.bpm;
+    if (src.loop) { src.loopStart = synced ? 0 : offset; src.loopEnd = pad.buffer.duration; }
     const startAt = q ? t : src.loop ? this.nextBar() : t;
 
     const filter = ctx.createBiquadFilter();
@@ -589,19 +637,22 @@ export class Engine {
     const rSend = ctx.createGain();
     rSend.gain.value = this.padValue(pad, 'rSend');
 
-    src.connect(filter).connect(amp).connect(pan).connect(opts.out ?? this.padOut(pad) ?? this.padBus);   // out : chaîne d'effets d'une piste
+    const srcGain = ctx.createGain();   // fondu de la source seule (changement de Début en cours de lecture)
+    src.connect(srcGain).connect(filter).connect(amp).connect(pan).connect(opts.out ?? this.padOut(pad) ?? this.padBus);   // out : chaîne d'effets d'une piste
     pan.connect(dSend).connect(this.delayIn);
     pan.connect(rSend).connect(this.reverbIn);
 
     // startBeat : temps de la grille où la boucle démarre (pour placer ses kicks, voir js/sidechain.js).
     const startBeat = this.origin === null ? 0 : (startAt - this.origin) * this.bpm / 60;
-    const voice = { src, amp, filter, pan, dSend, rSend, mode, pitchRate, syncBpm: src.loop ? pad.bpm : 0, pad, startBeat, startAt };
-    src.onended = () => {
+    const voice = { src, srcGain, amp, filter, pan, dSend, rSend, mode, pitchRate, syncBpm: src.loop ? pad.bpm : 0, pad, startBeat, startAt,
+      offset, synced, track: { t: startAt, pos: offset, rate: src.playbackRate.value } };
+    voice.ended = () => {
       if (this.padVoices.get(index) === voice) {
         this.padVoices.delete(index);
         this.onPadState(index, false);
       }
     };
+    src.onended = voice.ended;
     src.start(startAt, offset);
     this.padVoices.set(index, voice);
     this.onPadState(index, true, mode);
@@ -669,7 +720,9 @@ export class Engine {
     if (!v) return;
     const t = this.ctx.currentTime;
     v.pitchRate = Math.pow(2, this.padValue(pad, 'pitch') / 12);
-    v.src.playbackRate.setTargetAtTime(v.pitchRate * (v.syncBpm ? this.bpm / v.syncBpm : 1), t, 0.01);
+    this.retrack(v, t, v.pitchRate * (v.syncBpm ? this.bpm / v.syncBpm : 1));
+    v.src.playbackRate.setTargetAtTime(v.track.rate, t, 0.01);
+    this.movePadStart(index, pad);
     v.filter.frequency.setTargetAtTime(this.padValue(pad, 'cutoff'), t, 0.02);
     v.amp.gain.setTargetAtTime(this.padValue(pad, 'volume'), t, 0.02);
     v.pan.pan.setTargetAtTime(this.padValue(pad, 'pan'), t, 0.02);
