@@ -13,6 +13,7 @@ Usage :  tools\\.venv\\Scripts\\python tools\\build_banks.py [--bpm 120] [--forc
 Sortie : sounds/<banque>/*.flac + sounds/banks.json (lu par l'application).
 """
 import argparse
+import re
 import json
 import shutil
 import sys
@@ -285,9 +286,15 @@ def main():
 
     if args.force and CACHE.exists():
         shutil.rmtree(CACHE)
-    if OUT.exists():
-        shutil.rmtree(OUT)
-    OUT.mkdir(parents=True)
+    # Les banques « externes » (rendues hors de ce script, dans leurs propres dossiers) et les drapeaux d'archive
+    # sont gardés : seules les banques bankN fabriquées ici sont refaites.
+    old = json.loads((OUT / 'banks.json').read_text(encoding='utf-8')) if (OUT / 'banks.json').exists() else {'banks': []}
+    external = [b for b in old['banks'] if b.get('external')]
+    archived = {b['name'] for b in old['banks'] if b.get('archive')}
+    OUT.mkdir(parents=True, exist_ok=True)
+    for d in OUT.iterdir():
+        if d.is_dir() and re.fullmatch(r'bank\d+', d.name):
+            shutil.rmtree(d)
 
     manifest = {'bpm': args.bpm, 'source': 'Sonic Pi samples (CC0)', 'banks': []}
     for b, (bank_name, rows) in enumerate(BANKS):
@@ -334,12 +341,17 @@ def main():
             pads.append(pad)
         manifest['banks'].append({'name': bank_name, 'pads': pads})
 
+    for b in manifest['banks']:
+        if b['name'] in archived:
+            b['archive'] = True
+    manifest['banks'] += external
     (OUT / 'banks.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding='utf-8')
     (OUT / 'CREDITS.md').write_text(
         '# Credits\n\nBanks 2-6 use samples from Sonic Pi (https://github.com/sonic-pi-net/sonic-pi, etc/samples),\n'
         'dedicated to the public domain (CC0) by their authors on freesound.org, Arovane and The Black Dog.\n'
         'They were processed (normalisation, trimming, tempo matching) by tools/build_banks.py.\n\n'
-        'The Gabber, Hardcore, Oldschool, Mainstream, New wave, Hardstyle and melody banks are fully synthesised by tools/gabber.py (no external samples).\n',
+        'The Gabber, Hardcore, Oldschool, Mainstream, New wave, Hardstyle and melody banks are fully synthesised by tools/gabber.py (no external samples).\n'
+        '\n\nThe Anthem banks (sounds/anthem-*) were made with the free and open-source synthesizer Surge XT (https://surge-synthesizer.github.io), using its factory presets and community presets by Luna, Argitoth and others, and processed (mixing, mastering) outside this repository.\n',
         encoding='utf-8')
     total = sum(p is not None for bank in manifest['banks'] for p in bank['pads'])
     print(f'\n{total} sounds written to {OUT}')

@@ -285,7 +285,8 @@
      "mode": 0,
      "cat": "drums"
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Électro",
@@ -570,7 +571,8 @@
      "mode": 0,
      "cat": "fx"
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Boucles",
@@ -909,7 +911,8 @@
     },
     null,
     null
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Textures",
@@ -1194,7 +1197,8 @@
      "mode": 0,
      "cat": "fx"
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Tabla & divers",
@@ -1479,7 +1483,8 @@
      "mode": 0,
      "cat": "fx"
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Gabber",
@@ -1871,7 +1876,8 @@
      "bpm": 190,
      "bars": 1
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Gabber 2",
@@ -2239,7 +2245,8 @@
      "mode": 0,
      "cat": "keys"
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Hardcore",
@@ -2658,7 +2665,8 @@
      "mode": 0,
      "cat": "fx"
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Oldschool",
@@ -3022,7 +3030,8 @@
       60
      ]
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Mainstream",
@@ -3392,7 +3401,8 @@
       60
      ]
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "New wave",
@@ -3782,7 +3792,8 @@
       60
      ]
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Hardstyle",
@@ -4173,7 +4184,8 @@
       60
      ]
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Melodies",
@@ -4538,7 +4550,8 @@
      "bpm": 190,
      "bars": 4
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Hardstyle melodies",
@@ -4903,7 +4916,8 @@
      "bpm": 150,
      "bars": 4
     }
-   ]
+   ],
+   "archive": true
   },
   {
    "name": "Anthems",
@@ -5595,6 +5609,1633 @@
      "color": 21,
      "mode": 2,
      "cat": "lead",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    }
+   ],
+   "archive": true
+  },
+  {
+   "name": "Anthem drums",
+   "external": true,
+   "pads": [
+    {
+     "file": "anthem-drums/01.flac",
+     "name": "Mainstream",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/02.flac",
+     "name": "Mainstream long",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/03.flac",
+     "name": "Raw zaag",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/04.flac",
+     "name": "Angry screech",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/05.flac",
+     "name": "Uptempo punch",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/06.flac",
+     "name": "Terror short",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/07.flac",
+     "name": "Surge 909 kick",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/08.flac",
+     "name": "Surge tech kick",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/09.flac",
+     "name": "Mainstream kick F",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/10.flac",
+     "name": "Mainstream kick G",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/11.flac",
+     "name": "Mainstream kick G#",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/12.flac",
+     "name": "Mainstream kick A#",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/13.flac",
+     "name": "Mainstream kick C",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/14.flac",
+     "name": "Mainstream kick C#",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/15.flac",
+     "name": "Mainstream kick D#",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/16.flac",
+     "name": "Mainstream kick F+",
+     "color": 9,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/17.flac",
+     "name": "Clap",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "anthem-drums/18.flac",
+     "name": "Snare",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "anthem-drums/19.flac",
+     "name": "Closed hat",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "anthem-drums/20.flac",
+     "name": "Open hat",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "anthem-drums/21.flac",
+     "name": "Ride",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "anthem-drums/22.flac",
+     "name": "Crash",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "anthem-drums/23.flac",
+     "name": "Reverse crash",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "anthem-drums/24.flac",
+     "name": "Impact",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "anthem-drums/25.flac",
+     "name": "Mainstream beat",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drums/26.flac",
+     "name": "Raw beat",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drums/27.flac",
+     "name": "Angry beat",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drums/28.flac",
+     "name": "Uptempo beat",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drums/29.flac",
+     "name": "Terror gallop",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0.0,
+      3.0,
+      4.0,
+      7.0,
+      8.0,
+      11.0,
+      12.0,
+      14.0,
+      15.0,
+      16.0,
+      19.0,
+      20.0,
+      23.0,
+      24.0,
+      27.0,
+      28.0,
+      30.0,
+      31.0,
+      32.0,
+      35.0,
+      36.0,
+      39.0,
+      40.0,
+      43.0,
+      44.0,
+      46.0,
+      47.0,
+      48.0,
+      51.0,
+      52.0,
+      55.0,
+      56.0,
+      59.0,
+      60.0,
+      62.0,
+      63.0
+     ]
+    },
+    {
+     "file": "anthem-drums/30.flac",
+     "name": "Half-time beat",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      10.0,
+      16,
+      26.0,
+      32,
+      42.0,
+      48,
+      58.0
+     ]
+    },
+    {
+     "file": "anthem-drums/31.flac",
+     "name": "Kick roll build",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32.0,
+      34.0,
+      36.0,
+      38.0,
+      40.0,
+      42.0,
+      44.0,
+      46.0,
+      48.0,
+      49.0,
+      50.0,
+      51.0,
+      52.0,
+      53.0,
+      54.0,
+      55.0,
+      56.0,
+      57.0,
+      58.0,
+      59.0,
+      60.0,
+      61.0,
+      62.0,
+      63.0
+     ]
+    },
+    {
+     "file": "anthem-drums/32.flac",
+     "name": "Snare build",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drums/33.flac",
+     "name": "Riser",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "anthem-drums/34.flac",
+     "name": "Riser short",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "anthem-drums/35.flac",
+     "name": "Downlifter",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "anthem-drums/36.flac",
+     "name": "Sub drop",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "anthem-drums/37.flac",
+     "name": "Kick boom",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/38.flac",
+     "name": "Kick tail F",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/39.flac",
+     "name": "Kick screech long",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "anthem-drums/40.flac",
+     "name": "Kick zaag long",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    }
+   ]
+  },
+  {
+   "name": "Anthem leads",
+   "external": true,
+   "pads": [
+    {
+     "file": "anthem-leads/01.flac",
+     "name": "Anthem hook",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/02.flac",
+     "name": "Anthem epic",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/03.flac",
+     "name": "Anthem euphoric",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/04.flac",
+     "name": "Anthem dark",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/05.flac",
+     "name": "Anthem andalusian",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/06.flac",
+     "name": "Anthem gallop",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/07.flac",
+     "name": "Anthem offbeat",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/08.flac",
+     "name": "Anthem run",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/09.flac",
+     "name": "Hook supersaw",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/10.flac",
+     "name": "Hook trance",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/11.flac",
+     "name": "Hook dotted",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/12.flac",
+     "name": "Hook octave",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/13.flac",
+     "name": "Hook rise",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/14.flac",
+     "name": "Hook call",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/15.flac",
+     "name": "Hook stab",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/16.flac",
+     "name": "Hook answer",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/17.flac",
+     "name": "Screech riff",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/18.flac",
+     "name": "Screech gallop",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/19.flac",
+     "name": "Screech run",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/20.flac",
+     "name": "Screech offbeat",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/21.flac",
+     "name": "Screech dotted",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/22.flac",
+     "name": "Screech call",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/23.flac",
+     "name": "Screech stab",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/24.flac",
+     "name": "Screech eighths",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-leads/25.flac",
+     "name": "Supersaw F",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/26.flac",
+     "name": "Supersaw G",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/27.flac",
+     "name": "Supersaw G#",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/28.flac",
+     "name": "Supersaw A#",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/29.flac",
+     "name": "Supersaw C",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/30.flac",
+     "name": "Supersaw C#",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/31.flac",
+     "name": "Supersaw D#",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/32.flac",
+     "name": "Supersaw F+",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/33.flac",
+     "name": "Screech F",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/34.flac",
+     "name": "Screech G",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/35.flac",
+     "name": "Screech G#",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/36.flac",
+     "name": "Screech A#",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/37.flac",
+     "name": "Screech C",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/38.flac",
+     "name": "Screech C#",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/39.flac",
+     "name": "Screech D#",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "anthem-leads/40.flac",
+     "name": "Screech F+",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    }
+   ]
+  },
+  {
+   "name": "Anthem chords",
+   "external": true,
+   "pads": [
+    {
+     "file": "anthem-chords/01.flac",
+     "name": "Strings epic",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/02.flac",
+     "name": "Strings euphoric",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/03.flac",
+     "name": "Strings dark",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/04.flac",
+     "name": "Strings andalusian",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/05.flac",
+     "name": "Strings staccato epic",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/06.flac",
+     "name": "Strings staccato euphoric",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/07.flac",
+     "name": "Strings staccato dark",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/08.flac",
+     "name": "Strings staccato andalusian",
+     "color": 49,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/09.flac",
+     "name": "Super pad epic",
+     "color": 37,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/10.flac",
+     "name": "Super pad euphoric",
+     "color": 37,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/11.flac",
+     "name": "Super pad dark",
+     "color": 37,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/12.flac",
+     "name": "Super pad andalusian",
+     "color": 37,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/13.flac",
+     "name": "Pumping pad epic",
+     "color": 37,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/14.flac",
+     "name": "Pumping pad euphoric",
+     "color": 37,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/15.flac",
+     "name": "Pumping pad dark",
+     "color": 37,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/16.flac",
+     "name": "Pumping pad andalusian",
+     "color": 37,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/17.flac",
+     "name": "Brass stabs epic",
+     "color": 9,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/18.flac",
+     "name": "Brass stabs euphoric",
+     "color": 9,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/19.flac",
+     "name": "Brass stabs dark",
+     "color": 9,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/20.flac",
+     "name": "Brass stabs andalusian",
+     "color": 9,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/21.flac",
+     "name": "Brass chords epic",
+     "color": 9,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/22.flac",
+     "name": "Brass chords euphoric",
+     "color": 9,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/23.flac",
+     "name": "Brass chords dark",
+     "color": 9,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/24.flac",
+     "name": "Brass chords andalusian",
+     "color": 9,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/25.flac",
+     "name": "Jump stabs epic",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/26.flac",
+     "name": "Jump stabs euphoric",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/27.flac",
+     "name": "Jump stabs dark",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/28.flac",
+     "name": "Jump stabs andalusian",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-chords/29.flac",
+     "name": "Jump hit Fm",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-chords/30.flac",
+     "name": "Jump hit Db",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-chords/31.flac",
+     "name": "Jump hit Eb",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-chords/32.flac",
+     "name": "Jump hit Cm",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-chords/33.flac",
+     "name": "Strings Fm",
+     "color": 49,
+     "mode": 1,
+     "cat": "pad"
+    },
+    {
+     "file": "anthem-chords/34.flac",
+     "name": "Strings Db",
+     "color": 49,
+     "mode": 1,
+     "cat": "pad"
+    },
+    {
+     "file": "anthem-chords/35.flac",
+     "name": "Strings Eb",
+     "color": 49,
+     "mode": 1,
+     "cat": "pad"
+    },
+    {
+     "file": "anthem-chords/36.flac",
+     "name": "Strings Cm",
+     "color": 49,
+     "mode": 1,
+     "cat": "pad"
+    },
+    {
+     "file": "anthem-chords/37.flac",
+     "name": "Strings Ab",
+     "color": 49,
+     "mode": 1,
+     "cat": "pad"
+    },
+    {
+     "file": "anthem-chords/38.flac",
+     "name": "Strings Bbm",
+     "color": 49,
+     "mode": 1,
+     "cat": "pad"
+    },
+    {
+     "file": "anthem-chords/39.flac",
+     "name": "Strings C",
+     "color": 49,
+     "mode": 1,
+     "cat": "pad"
+    },
+    {
+     "file": "anthem-chords/40.flac",
+     "name": "Strings Gdim",
+     "color": 49,
+     "mode": 1,
+     "cat": "pad"
+    }
+   ]
+  },
+  {
+   "name": "Anthem bass & drops",
+   "external": true,
+   "pads": [
+    {
+     "file": "anthem-drops/01.flac",
+     "name": "Pluck arp epic",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/02.flac",
+     "name": "Pluck arp euphoric",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/03.flac",
+     "name": "Pluck arp dark",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/04.flac",
+     "name": "Pluck arp andalusian",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/05.flac",
+     "name": "Pluck hook epic",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/06.flac",
+     "name": "Pluck hook euphoric",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/07.flac",
+     "name": "Pluck hook dark",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/08.flac",
+     "name": "Pluck hook andalusian",
+     "color": 57,
+     "mode": 2,
+     "cat": "keys",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/09.flac",
+     "name": "Offbeat bass epic",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/10.flac",
+     "name": "Offbeat bass euphoric",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/11.flac",
+     "name": "Offbeat bass dark",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/12.flac",
+     "name": "Offbeat bass andalusian",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/13.flac",
+     "name": "Rolling bass epic",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/14.flac",
+     "name": "Rolling bass euphoric",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/15.flac",
+     "name": "Rolling bass dark",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/16.flac",
+     "name": "Rolling bass andalusian",
+     "color": 41,
+     "mode": 2,
+     "cat": "bass",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/17.flac",
+     "name": "Pluck F",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-drops/18.flac",
+     "name": "Pluck G",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-drops/19.flac",
+     "name": "Pluck G#",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-drops/20.flac",
+     "name": "Pluck A#",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-drops/21.flac",
+     "name": "Pluck C",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-drops/22.flac",
+     "name": "Pluck C#",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-drops/23.flac",
+     "name": "Pluck D#",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-drops/24.flac",
+     "name": "Pluck F+",
+     "color": 57,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "anthem-drops/25.flac",
+     "name": "Break epic",
+     "color": 21,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/26.flac",
+     "name": "Break euphoric",
+     "color": 21,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/27.flac",
+     "name": "Break dark",
+     "color": 21,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/28.flac",
+     "name": "Break andalusian",
+     "color": 21,
+     "mode": 2,
+     "cat": "pad",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/29.flac",
+     "name": "Drop epic",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drops/30.flac",
+     "name": "Drop euphoric",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drops/31.flac",
+     "name": "Drop dark",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drops/32.flac",
+     "name": "Drop andalusian",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drops/33.flac",
+     "name": "Build epic",
+     "color": 21,
+     "mode": 2,
+     "cat": "fx",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/34.flac",
+     "name": "Build euphoric",
+     "color": 21,
+     "mode": 2,
+     "cat": "fx",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/35.flac",
+     "name": "Build dark",
+     "color": 21,
+     "mode": 2,
+     "cat": "fx",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/36.flac",
+     "name": "Build andalusian",
+     "color": 21,
+     "mode": 2,
+     "cat": "fx",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-drops/37.flac",
+     "name": "Raw drop epic",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drops/38.flac",
+     "name": "Raw drop euphoric",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drops/39.flac",
+     "name": "Raw drop dark",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 4,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60
+     ]
+    },
+    {
+     "file": "anthem-drops/40.flac",
+     "name": "Raw drop andalusian",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
      "bpm": 190,
      "bars": 4,
      "kicks": [

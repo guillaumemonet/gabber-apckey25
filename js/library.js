@@ -33,18 +33,25 @@ export function guessCat(name = '') {
   return 'drums';
 }
 
+// Archives : les anciennes banques (banks.json : archive) et le kit de départ, masqués par défaut ;
+// leurs voix et leurs guitares restent visibles (les nouvelles banques n'en ont pas).
+const ALWAYS_SHOWN = new Set(['voice', 'guitar']);
+
 // Construit la liste des sons : { sampleId, name, cat, bpm, bars, loop }.
 // userSounds : sons créés dans l'application (designer de kick) : { sampleId, name, cat }.
-export function libraryItems({ manifest, kit, banks, tl, userSounds = [] }) {
+// archives : montrer aussi les sons archivés. Les nouvelles banques passent en tête de chaque catégorie.
+export function libraryItems({ manifest, kit, banks, tl, userSounds = [], archives = false }) {
   const items = new Map();
-  const add = item => { if (!items.has(item.sampleId)) items.set(item.sampleId, item); };
-  kit?.forEach((s, i) => add({ sampleId: `builtin:${i}`, name: soundName(s.name), cat: guessCat(s.name), bpm: 0, bars: 0, loop: false }));
-  for (const bank of manifest?.banks ?? []) {
+  const add = item => { if (!items.has(item.sampleId) && (archives || !item.archive)) items.set(item.sampleId, item); };
+  const rank = b => (b.external ? 0 : b.archive ? 2 : 1);
+  for (const bank of [...(manifest?.banks ?? [])].sort((a, b) => rank(a) - rank(b))) {
     for (const p of bank.pads) {
       if (!p) continue;
-      add({ sampleId: `lib:${p.file}`, name: soundName(p.name), cat: p.cat ?? guessCat(p.name), bpm: p.bpm || 0, bars: p.bars || 0, loop: p.mode === 2 });
+      const cat = p.cat ?? guessCat(p.name);
+      add({ sampleId: `lib:${p.file}`, name: soundName(p.name), cat, bpm: p.bpm || 0, bars: p.bars || 0, loop: p.mode === 2, archive: !!bank.archive && !ALWAYS_SHOWN.has(cat) });
     }
   }
+  kit?.forEach((s, i) => add({ sampleId: `builtin:${i}`, name: soundName(s.name), cat: guessCat(s.name), bpm: 0, bars: 0, loop: false, archive: true }));
   // Sons perso : un kick du designer (coup), ou une boucle importée avec son tempo et sa longueur en mesures.
   for (const s of userSounds) add({ sampleId: s.sampleId, name: s.name, cat: s.cat, bpm: s.bpm || 0, bars: s.bars || 0, loop: !!s.loop, own: true });
   for (const pad of banks.flat()) {

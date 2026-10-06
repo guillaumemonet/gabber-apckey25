@@ -64,6 +64,7 @@ const state = {
   decks: defaultDecksState(),         // platines : sons chargés et réglages des deux decks
   patch: defaultPatch(),              // câblage : boîtes à effets et câbles (tout sur le master par défaut)
   userSounds: [],                     // sons créés dans l'application (kicks du designer) : { sampleId, name, cat }
+  libArchives: false,                 // bibliothèque : montrer aussi les anciens sons (archives)
   padQuant: 0,                        // départ des pads joués à la main : 0 = libre, sinon grille en temps (1, 2, 3, 4, 8, 16)
   curves: [],                         // tes courbes du designer d'effet (js/curves.js) : { id: 'u:…', name, target, beats, points… }
   roll: defaultRoll(),                // piano roll : bloc édité, grille, saisie pas à pas
@@ -266,6 +267,7 @@ async function restore() {
     state.keys = saved.keys === 'osc' ? 'osc' : 'synth';
     state.metro = mergeMetroState(saved.metro);
     state.padQuant = PAD_QUANTS.includes(saved.padQuant) ? saved.padQuant : 0;
+    state.libArchives = !!saved.libArchives;
     state.curves = (Array.isArray(saved.curves) ? saved.curves : []).map(cleanCurve).filter(c => c?.id?.startsWith('u:'));
     state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
     for (let b = 0; b < BANKS; b++) {
@@ -370,6 +372,7 @@ function stateSnapshot() {
     userSounds: state.userSounds,
     curves: state.curves,
     padQuant: state.padQuant,
+    libArchives: state.libArchives,
     roll: state.roll,
     osc: state.osc,
     synthUser: state.synthUser,
@@ -3610,6 +3613,7 @@ function previewSample(item) {
 function buildLibrary() {
   for (const b of $('#lib-tabs').children) b.addEventListener('click', () => setLibTab(b.dataset.tab));
   $('#lib-search').addEventListener('input', e => { libQuery = e.target.value.trim().toLowerCase(); renderLibrary(); });
+  $('#lib-archives').addEventListener('change', e => { state.libArchives = e.target.checked; renderLibrary(); save(); });
   renderLibrary();
 }
 
@@ -3623,7 +3627,8 @@ function renderLibrary() {
   const list = $('#lib-list');
   if (!list || !kit) return;
   // Deux onglets : les sons (par catégorie) et les effets de piste (par famille).
-  const items = libTab === 'fx' ? fxItems() : libraryItems({ manifest: libManifest, kit, banks: state.banks, tl: state.tl, userSounds: state.userSounds });
+  const items = libTab === 'fx' ? fxItems() : libraryItems({ manifest: libManifest, kit, banks: state.banks, tl: state.tl, userSounds: state.userSounds, archives: state.libArchives });
+  $('#lib-archives').checked = state.libArchives;
   for (const b of $('#lib-tabs').children) b.classList.toggle('active', b.dataset.tab === libTab);
   const cats = libTab === 'fx' ? FX_FAMILIES.map(id => ({ id, color: FX_FAMILY_COLORS[id], label: t(`tfx.family.${id}`) })) : LIB_CATS.map(c => ({ ...c, label: t(`lib.cat.${c.id}`) }));
   const counts = Object.fromEntries(cats.map(c => [c.id, items.filter(i => i.cat === c.id).length]));
