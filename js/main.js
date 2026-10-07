@@ -1820,7 +1820,9 @@ function buildTl() {
       for (const clip of tlRec.open.values()) growHeldNote(clip);
       if ((tlRec.dirty || tlRec.open.size) && performance.now() - lastRecRender > 100) { tlRec.dirty = false; lastRecRender = performance.now(); renderTl(); }
     }
-    const x = TL_HEAD + timeline.position() * beatPx();
+    const pos = timeline.position();
+    renderTlTime(pos);
+    const x = TL_HEAD + pos * beatPx();
     line.style.left = `${x}px`;
     // Pendant la lecture, la vue suit la tête de lecture.
     if (timeline.playing && (x > scroll.scrollLeft + scroll.clientWidth - 60 || x < scroll.scrollLeft + TL_HEAD)) scroll.scrollLeft = x - 200;
@@ -2029,7 +2031,23 @@ function renderTrackHeads() {
   });
 }
 
+// Temps de lecture : temps écoulé depuis le début du morceau, mesure.temps, durée totale (fin du dernier bloc).
+let tlTimeKey = '';
+let tlSongBeats = 0;
+const fmtTime = (s, tenths) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}${tenths ? `.${Math.floor((s * 10) % 10)}` : ''}`;
+function renderTlTime(pos) {
+  const bd = 60 / state.bpm;
+  const key = `${Math.floor(pos * bd * 10)}|${Math.floor(pos)}|${tlSongBeats}|${state.bpm}`;
+  if (key === tlTimeKey) return;
+  tlTimeKey = key;
+  const el = $('#tl-time');
+  el.querySelector('b').textContent = fmtTime(pos * bd, true);
+  el.querySelector('small').textContent = `${Math.floor(pos / BEATS_PER_BAR) + 1}.${Math.floor(pos % BEATS_PER_BAR) + 1}`;
+  el.querySelector('em').textContent = `/ ${fmtTime(tlSongBeats * bd, false)}`;
+}
+
 function renderTl() {
+  tlSongBeats = songEndBeats();
   const st = state.tl;
   const grid = $('#tl-grid');
   if (!grid.querySelector('.tl-ruler')) return;
