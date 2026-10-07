@@ -174,6 +174,10 @@ Clique sur **Démo** dans la barre de la timeline et choisis un morceau. Appuie 
   - les **potards de piste** : volume, panoramique, filtres, envois delay et reverb.
 
   Intro aux cordes et sirène, montée (ligne acid, roulement de caisse claire, « hey ! »), premier drop, break au piano avec un pluck qui tourne autour de toi en 3D, second drop avec supersaw, final. À écouter : [`demo/gabberkey-demo-2.ogg`](demo/gabberkey-demo-2.ogg). C'est un fichier morceau ([`demo/gabberkey-demo-2.gabber`](demo/gabberkey-demo-2.gabber)) : les prises 909 / 303 et le kick du designer voyagent dedans.
+- **Démos 3, 4 et 5**, faites uniquement avec la nouvelle bibliothèque **Anthem** (64 mesures à 190 BPM en fa mineur, environ 1:20 chacune), avec des effets de piste, des courbes du designer d'effet et de la 3D :
+  - **Anthem** (grille épique Fm–Db–Eb–Cm) : intro aux cordes, montée au pluck qui s'ouvre au filtre passe-haut, un premier drop avec le lead d'hymne supersaw, basse et nappe pompées par des courbes de pompe sidechain, un break avec le pluck qui tourne en 3D, une montée en roulement de kick, et un second drop avec le beat en colère, le hook supersaw, les cuivres et un screech découpé en gate 3-3-2. À écouter : [`demo/gabberkey-demo-3.ogg`](demo/gabberkey-demo-3.ogg).
+  - **Raw** (grille sombre Fm–Bbm–Db–C) : kicks zaag longs, montée en distorsion, riffs de screech avec une courbe wobble, basse roulante au filtre pompant, break en galop terror, la nappe sombre en spirale 3D, stabs en ping-pong et un drop raw. À écouter : [`demo/gabberkey-demo-4.ogg`](demo/gabberkey-demo-4.ogg).
+  - **Euphoric** (grille euphorique Fm–Db–Ab–Eb) : beat uptempo, lead euphorique, hooks trance avec une courbe d'écho à contretemps, une nappe qui gonfle et respire, un pluck qui arrive en zoom 3D, et une mélodie jouée avec les kicks accordés avant le dernier drop. À écouter : [`demo/gabberkey-demo-5.ogg`](demo/gabberkey-demo-5.ogg).
 
 ## Timeline et bibliothèque de sons
 

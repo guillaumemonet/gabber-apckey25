@@ -3528,7 +3528,7 @@ function tlTap(track, obj) {
 // ---------- Démo ----------
 
 // Le bouton Démo propose les deux morceaux : boucles de la bibliothèque, ou un morceau fait avec tous les outils.
-const DEMOS = [{ id: 1, icon: 'lib', load: () => loadDemo() }, { id: 2, icon: 'star', load: () => loadDemo2() }];
+const DEMOS = [{ id: 1, icon: 'lib', load: () => loadDemo() }, ...[2, 3, 4, 5].map(id => ({ id, icon: id === 2 ? 'star' : 'wand', load: () => loadDemoFile(id) }))];
 function openDemoMenu(anchor) {
   const was = fxEditing?.demo;
   closeFxEditor();
@@ -3549,16 +3549,20 @@ function openDemoMenu(anchor) {
 }
 
 // Démo 2 : un fichier morceau (.gabber) avec ses prises 909 / 303 et le kick du designer embarqués.
-async function loadDemo2() {
+// Démos 2 à 5 : des fichiers morceau (.gabber) ; la 2 embarque ses prises 909 / 303, les autres n'utilisent que la bibliothèque Anthem.
+const loadDemo2 = () => loadDemoFile(2);
+async function loadDemoFile(n) {
   if (state.tl.tracks.some(tr => tr.clips.length || tr.fx.length) && !confirm(t('tl.demoConfirm'))) return;
-  const blob = await fetch('demo/gabberkey-demo-2.gabber', { cache: 'no-cache' }).then(r => (r.ok ? r.blob() : null)).catch(() => null);
+  const name = `gabberkey-demo-${n}.gabber`;
+  const blob = await fetch(`demo/${name}`, { cache: 'no-cache' }).then(r => (r.ok ? r.blob() : null)).catch(() => null);
   if (!blob) { toast(t('lib.loadFail'), 3000); return; }
-  await loadFile(new File([blob], 'gabberkey-demo-2.gabber'), true);
+  await loadFile(new File([blob], name), true);
   // Noms des sons et des effets dans la langue de l'interface.
   refreshLibNames();
   for (const tr of state.tl.tracks) for (const b of tr.fx) {
     const m = FX_BANK.find(x => x.fx === b.fx && Object.entries(x.p ?? {}).every(([k, v]) => b.p[k] === v));
     if (m) b.name = bankName(m);
+    if (b.fx === 'curve') b.name = curveName(b.p.curve);
   }
   renderTl();
   save();
