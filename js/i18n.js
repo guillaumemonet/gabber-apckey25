@@ -1624,7 +1624,7 @@ const STRINGS = {
     'demo.3': 'Démo 3 : Anthem',
     'demo.3.desc': 'Un hymne mainstream avec la nouvelle bibliothèque Anthem : grille épique, lead et hook supersaw, cordes, cuivres, pluck en 3D, courbes de pompe, deux drops, 64 mesures.',
     'demo.4': 'Démo 4 : Raw',
-    'demo.4.desc': 'Sombre et raw : cordes sombres, beat raw qui s'ouvre au filtre, basse roulante et lead sombre pompés par le kick, cordes en spirale 3D, un screech avec une courbe wobble dans le dernier drop, 64 mesures.',
+    'demo.4.desc': 'Sombre et raw : cordes sombres, beat raw qui s\'ouvre au filtre, basse roulante et lead sombre pompés par le kick, cordes en spirale 3D, un screech avec une courbe wobble dans le dernier drop, 64 mesures.',
     'demo.5': 'Démo 5 : Euphoric',
     'demo.5.desc': 'Uptempo euphorique : une mélodie jouée avec des kicks accordés, lead euphorique, hooks trance avec une courbe d\'écho, nappes qui respirent, cuivres, 64 mesures.',
     'win.roll': 'Piano roll',
