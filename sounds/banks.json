@@ -7258,6 +7258,344 @@
      ]
     }
    ]
+  },
+  {
+   "name": "Anthem guitars & choirs",
+   "external": true,
+   "pads": [
+    {
+     "file": "anthem-guitars/01.flac",
+     "name": "Guitar chug epic",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/02.flac",
+     "name": "Guitar gallop dark",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/03.flac",
+     "name": "Guitar power chords euphoric",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/04.flac",
+     "name": "Guitar riff andalusian",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/05.flac",
+     "name": "Guitar chug overdrive euphoric",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/06.flac",
+     "name": "Guitar stabs overdrive epic",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/07.flac",
+     "name": "Guitar breakdown overdrive dark",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/08.flac",
+     "name": "Guitar power chords overdrive andalusian",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/09.flac",
+     "name": "Guitar lead shrill epic",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/10.flac",
+     "name": "Guitar lead shrill euphoric",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/11.flac",
+     "name": "Guitar gallop shrill epic",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/12.flac",
+     "name": "Guitar chug shrill dark",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/13.flac",
+     "name": "Guitar power chords crunch epic",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/14.flac",
+     "name": "Guitar chug crunch andalusian",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/15.flac",
+     "name": "Guitar riff crunch euphoric",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/16.flac",
+     "name": "Guitar stabs crunch dark",
+     "color": 108,
+     "mode": 2,
+     "cat": "guitar",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/17.flac",
+     "name": "Power chord F",
+     "color": 108,
+     "mode": 1,
+     "cat": "guitar"
+    },
+    {
+     "file": "anthem-guitars/18.flac",
+     "name": "Power chord G",
+     "color": 108,
+     "mode": 1,
+     "cat": "guitar"
+    },
+    {
+     "file": "anthem-guitars/19.flac",
+     "name": "Power chord G#",
+     "color": 108,
+     "mode": 1,
+     "cat": "guitar"
+    },
+    {
+     "file": "anthem-guitars/20.flac",
+     "name": "Power chord A#",
+     "color": 108,
+     "mode": 1,
+     "cat": "guitar"
+    },
+    {
+     "file": "anthem-guitars/21.flac",
+     "name": "Power chord C",
+     "color": 108,
+     "mode": 1,
+     "cat": "guitar"
+    },
+    {
+     "file": "anthem-guitars/22.flac",
+     "name": "Power chord C#",
+     "color": 108,
+     "mode": 1,
+     "cat": "guitar"
+    },
+    {
+     "file": "anthem-guitars/23.flac",
+     "name": "Power chord D#",
+     "color": 108,
+     "mode": 1,
+     "cat": "guitar"
+    },
+    {
+     "file": "anthem-guitars/24.flac",
+     "name": "Power chord F+",
+     "color": 108,
+     "mode": 1,
+     "cat": "guitar"
+    },
+    {
+     "file": "anthem-guitars/25.flac",
+     "name": "Deep choir epic",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/26.flac",
+     "name": "Deep choir euphoric",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/27.flac",
+     "name": "Digital choir dark",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/28.flac",
+     "name": "Digital choir andalusian",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/29.flac",
+     "name": "Space choir epic",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/30.flac",
+     "name": "Space choir euphoric",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/31.flac",
+     "name": "Gregorian choir dark",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/32.flac",
+     "name": "Gregorian choir epic",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/33.flac",
+     "name": "Ghost voices andalusian",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/34.flac",
+     "name": "Ghost voices euphoric",
+     "color": 37,
+     "mode": 2,
+     "cat": "voice",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-guitars/35.flac",
+     "name": "Choir Fm",
+     "color": 37,
+     "mode": 1,
+     "cat": "voice"
+    },
+    {
+     "file": "anthem-guitars/36.flac",
+     "name": "Choir Db",
+     "color": 37,
+     "mode": 1,
+     "cat": "voice"
+    },
+    {
+     "file": "anthem-guitars/37.flac",
+     "name": "Choir Eb",
+     "color": 37,
+     "mode": 1,
+     "cat": "voice"
+    },
+    {
+     "file": "anthem-guitars/38.flac",
+     "name": "Choir Cm",
+     "color": 37,
+     "mode": 1,
+     "cat": "voice"
+    },
+    {
+     "file": "anthem-guitars/39.flac",
+     "name": "Choir Ab",
+     "color": 37,
+     "mode": 1,
+     "cat": "voice"
+    },
+    {
+     "file": "anthem-guitars/40.flac",
+     "name": "Choir Bbm",
+     "color": 37,
+     "mode": 1,
+     "cat": "voice"
+    }
+   ]
   }
  ]
 }

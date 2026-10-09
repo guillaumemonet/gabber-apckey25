@@ -34,8 +34,8 @@ export function guessCat(name = '') {
 }
 
 // Archives : les anciennes banques (banks.json : archive) et le kit de départ, masqués par défaut ;
-// leurs voix et leurs guitares restent visibles (les nouvelles banques n'en ont pas).
-const ALWAYS_SHOWN = new Set(['voice', 'guitar']);
+// leurs voix restent visibles (les cris : les nouvelles banques n'en ont pas).
+const ALWAYS_SHOWN = new Set(['voice']);
 
 // Construit la liste des sons : { sampleId, name, cat, bpm, bars, loop }.
 // userSounds : sons créés dans l'application (designer de kick) : { sampleId, name, cat }.

@@ -12,7 +12,7 @@ const HELP = {
         <li><b>Drag a sound from the library</b> onto a pad to replace its sound, or <b>drop an audio file</b> (WAV, MP3, FLAC, OGG…) on it. <b>Clear bank</b> empties the displayed bank.</li>
         <li><b>Start</b>: Free, or pads locked to the grid (1, 2, 3 beats, 1, 2, 4 bars): a pad starts on the next division, a loop pressed again stops at the end of it; it blinks fast while it waits.</li>
         <li>Playback modes: <b>one-shot</b> (plays to the end), <b>hold</b> (as long as the pad is pressed), <b>loop</b> (starts on the next bar, press again to stop).</li>
-        <li><b>Banks 1-20</b> (columns on the right). APC: SCENE LAUNCH 1-5 = banks 1-5, Shift + SCENE LAUNCH = 6-10, a second time = 11-15, a third time = 16-20.</li>
+        <li><b>Banks 1-25</b> (columns on the right). APC: SCENE LAUNCH 1-5 = banks 1-5, Shift + SCENE LAUNCH = 6-10, then 11-15, 16-20 and 21-25 on each new press.</li>
         <li><b>Export bank / Export all / Import…</b>: <code>.apckit</code> files with the sounds and their settings.</li>
       </ul>`,
     editor: `
@@ -196,7 +196,7 @@ const HELP = {
         <li><b>Glisse un son de la bibliothèque</b> sur un pad pour remplacer son son, ou <b>un fichier audio</b> (WAV, MP3, FLAC, OGG…). <b>Vider la banque</b> vide la banque affichée.</li>
         <li><b>Départ</b> : Libre, ou pads calés sur la grille (1, 2, 3 temps, 1, 2, 4 mesures) : un pad part à la division suivante, une boucle rappuyée s'arrête à la fin de celle-ci ; il clignote vite pendant l'attente.</li>
         <li>Modes : <b>one-shot</b> (joue jusqu'au bout), <b>maintenu</b> (tant que le pad est appuyé), <b>boucle</b> (démarre à la mesure suivante, un nouvel appui l'arrête).</li>
-        <li><b>Banques 1 à 20</b> (colonnes de droite). APC : SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = 6-10, une deuxième fois = 11-15, une troisième fois = 16-20.</li>
+        <li><b>Banques 1 à 25</b> (colonnes de droite). APC : SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = 6-10, puis 11-15, 16-20 et 21-25 à chaque nouvel appui.</li>
         <li><b>Exporter la banque / Exporter tout / Importer…</b> : fichiers <code>.apckit</code> avec les sons et leurs réglages.</li>
       </ul>`,
     editor: `
