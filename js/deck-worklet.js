@@ -34,7 +34,11 @@ class DeckProcessor extends AudioWorkletProcessor {
       this.pos = 0;
     }
     const sr = sampleRate * this.ratio;
-    if (m.pos !== undefined) { this.pos = Math.max(0, Math.min(this.len - 1, m.pos * (m.sampleRate || sr))); this.goal = this.pos; }
+    if (m.pos !== undefined) {
+      this.pos = Math.max(0, Math.min(this.len - 1, m.pos * (m.sampleRate || sr)));
+      this.goal = this.pos;
+      if (this.target === 0 && !this.pending) this.rate = 0;   // placé à l'arrêt (cue) : le disque ne glisse plus
+    }
     if (m.loop !== undefined) this.loop = m.loop;
     if (m.hold === true && !this.hold) {
       this.hold = true;

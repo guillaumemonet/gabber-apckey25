@@ -1,7 +1,7 @@
 // Aide de chaque fenêtre (bouton ? de la barre de titre), en français et en anglais.
 import { lang } from './i18n.js';
 
-const HELP = {
+export const HELP = {
   en: {
     pads: `
       <p>The 40-pad sampler, laid out like the APC grid (pads 1-8 at the bottom).</p>
@@ -191,9 +191,9 @@ const HELP = {
       <p>Le sampler de 40 pads, disposé comme la grille de l'APC (pads 1 à 8 en bas).</p>
       <ul>
         <li><b>Clic</b> sur un pad (ou frappe sur l'APC) pour le jouer ; <b>Maj + clic</b> le sélectionne sans le jouer.</li>
-        <li><b>Potards</b> sous la grille : volume, hauteur, panoramique, filtre, point de départ, envois delay et reverb, et mode du pad sélectionné (aussi sur les potards K1-K8 de l'APC quand cette fenêtre est active).</li>
-        <li><b>✎</b> (visible au survol d'un pad) ouvre l'<b>éditeur de pad</b> : nom, couleur, mode de lecture, potards, tempo de boucle.</li>
-        <li><b>Glisse un son de la bibliothèque</b> sur un pad pour remplacer son son, ou <b>un fichier audio</b> (WAV, MP3, FLAC, OGG…). <b>Vider la banque</b> vide la banque affichée.</li>
+        <li><b>Potentiomètres</b> sous la grille : volume, hauteur, panoramique, filtre, point de départ, envois delay et reverb, et mode du pad sélectionné (aussi sur les potentiomètres K1-K8 de l'APC quand cette fenêtre est active).</li>
+        <li><b>✎</b> (visible au survol d'un pad) ouvre l'<b>éditeur de pad</b> : nom, couleur, mode de lecture, potentiomètres, tempo de boucle.</li>
+        <li><b>Glissez un son de la bibliothèque</b> sur un pad pour remplacer son son, ou <b>un fichier audio</b> (WAV, MP3, FLAC, OGG…). <b>Vider la banque</b> vide la banque affichée.</li>
         <li><b>Départ</b> : Libre, ou pads calés sur la grille (1, 2, 3 temps, 1, 2, 4 mesures) : un pad part à la division suivante, une boucle rappuyée s'arrête à la fin de celle-ci ; il clignote vite pendant l'attente.</li>
         <li>Modes : <b>one-shot</b> (joue jusqu'au bout), <b>maintenu</b> (tant que le pad est appuyé), <b>boucle</b> (démarre à la mesure suivante, un nouvel appui l'arrête).</li>
         <li><b>Banques 1 à 25</b> (colonnes de droite). APC : SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = 6-10, puis 11-15, 16-20 et 21-25 à chaque nouvel appui.</li>
@@ -203,9 +203,9 @@ const HELP = {
       <p>Les réglages du pad sélectionné.</p>
       <ul>
         <li><b>Nom</b> et <b>couleur de la LED</b> (avec un mk1, seules ses 3 couleurs sont proposées).</li>
-        <li><b>Charger un son…</b>, <b>Jouer</b>, <b>Vider</b>. Tu peux aussi glisser un fichier audio ici.</li>
+        <li><b>Charger un son…</b>, <b>Jouer</b>, <b>Vider</b>. Vous pouvez aussi glisser un fichier audio ici.</li>
         <li><b>Mode</b> : one-shot, maintenu ou boucle.</li>
-        <li><b>8 potards</b> : volume, hauteur, panoramique, filtre, point de départ, envois delay et reverb, mode. Ils sont aussi sur les potards de l'APC (page Pad, bouton de piste 3). Double-clic = valeur par défaut.</li>
+        <li><b>8 potentiomètres</b> : volume, hauteur, panoramique, filtre, point de départ, envois delay et reverb, mode. Ils sont aussi sur les potentiomètres de l'APC (page Pad, bouton de piste 3). Double-clic = valeur par défaut.</li>
         <li><b>Tempo de la boucle</b> : tempo d'origine du son, pour que la boucle suive le tempo global. <b>Auto</b> le devine, en supposant que le fichier dure un nombre entier de mesures.</li>
       </ul>`,
     tr: `
@@ -213,9 +213,9 @@ const HELP = {
       <ul>
         <li><b>Clic sur un pas</b> : note → accent → silence. <b>Clic sur le nom d'un instrument</b> pour le jouer et le choisir.</li>
         <li><b>Patterns 1 à 8</b> (4 préréglés : gabber, rave, breakbeat, roulement de kick). Un changement attend la mesure suivante.</li>
-        <li><b>Kits de son</b> (menu au-dessus de la grille) : les réglages des 11 instruments d'un coup : Hardcore (Gabber, Rotterdam, Terror, Industriel), Classique (909 propre, House, Techno), FX (Lo-fi écrasé, Replié). Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et <b>Enregistrer</b> pour garder le tien (★), la corbeille le supprime.</li>
+        <li><b>Kits de son</b> (menu au-dessus de la grille) : les réglages des 11 instruments d'un coup : Hardcore (Gabber, Rotterdam, Terror, Industriel), Classique (909 propre, House, Techno), FX (Lo-fi écrasé, Replié). Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
         <li><b>Accent</b> : de combien les pas accentués sont plus forts.</li>
-        <li><b>Potards</b> (sous la grille, aussi sur les potards K1-K8 de l'APC quand cette fenêtre est active) : K1-K4 = paramètres de l'instrument choisi, K5 = <b>drive</b>, K6 = <b>forme</b> de distorsion (douce, dure, lampe, repli, crush), K7 = shuffle, K8 = volume 909.</li>
+        <li><b>Potentiomètres</b> (sous la grille, aussi sur les potentiomètres K1-K8 de l'APC quand cette fenêtre est active) : K1-K4 = paramètres de l'instrument choisi, K5 = <b>drive</b>, K6 = <b>forme</b> de distorsion (douce, dure, lampe, repli, crush), K7 = shuffle, K8 = volume 909.</li>
         <li><b>Grille de l'APC</b> (Maj + PLAY) : rangées 1-2 = les 16 pas, rangées 3-4 = instruments, Accent, Effacer, Muet, rangée 5 = patterns. Un bouton SCENE LAUNCH ramène les pads.</li>
         <li>La grosse caisse déclenche aussi le <b>sidechain</b> (fenêtre Mixeur).</li>
       </ul>`,
@@ -223,25 +223,25 @@ const HELP = {
       <p>Une ligne de basse acid façon TB-303 : oscillateur, filtre passe-bas 24 dB résonant piloté par une enveloppe, accent, slide et distorsion.</p>
       <ul>
         <li><b>Grille</b> : une colonne par double-croche, une ligne par note de fa à fa aigu. Clic sur une case pour poser une note, un second clic pour un silence. Les lignes <b>Oct + / Oct −</b> décalent un pas d'une octave ; <b>Accent</b> le rend plus fort et plus claquant ; <b>Slide</b> glisse vers la note suivante sans relancer l'enveloppe.</li>
-        <li><b>Presets de son</b> (menu au-dessus des potards) : 15 sons tout prêts en 4 catégories (Acid : classique, squelch, screamer, Rotterdam, hoover ; Basse : caoutchouc, sub, roulante sombre ; Lead : lead scie, couinement, lead gabber ; FX : laser, sirène, écrasée, zap). Tourne un potard et le son devient perso ; tape un nom, choisis une catégorie et <b>Enregistrer</b> pour le garder (★ dans le menu), la corbeille le supprime.</li>
-        <li><b>Potards</b> : accord, coupure, résonance, quantité d'enveloppe, déclin, accent, <b>slide</b> (durée du glissé entre notes liées), drive, forme de distorsion (les 5 formes de la 909), volume. Sur l'APC : <b>Maj + REC</b> ouvre la page de potards TB-303 (K1-K8). Double-clic = valeur par défaut.</li>
+        <li><b>Presets de son</b> (menu au-dessus des potentiomètres) : 15 sons tout prêts en 4 catégories (Acid : classique, squelch, screamer, Rotterdam, hoover ; Basse : caoutchouc, sub, roulante sombre ; Lead : lead scie, couinement, lead gabber ; FX : laser, sirène, écrasée, zap). Tournez un potentiomètre et le son devient personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour le garder (★ dans le menu), la corbeille le supprime.</li>
+        <li><b>Potentiomètres</b> : accord, coupure, résonance, quantité d'enveloppe, déclin, accent, <b>slide</b> (durée du glissé entre notes liées), drive, forme de distorsion (les 5 formes de la 909), volume. Sur l'APC : <b>Maj + REC</b> ouvre la page de potentiomètres TB-303 (K1-K8). Double-clic = valeur par défaut.</li>
         <li><b>Patterns 1 à 8</b> (4 lignes toutes prêtes en fa mineur). Un changement attend la mesure suivante. <b>Aléatoire</b> écrit une nouvelle ligne en fa mineur, <b>Effacer</b> vide le pattern.</li>
-        <li><b>Suivre la 909</b> : la 303 joue sur l'horloge de la TR-909 (shuffle compris) ; ▶ lance les deux. Désactive-le pour jouer la 303 seule.</li>
-        <li><b>Saisie</b> : joue les notes au clavier de l'APC (ou de l'ordinateur) ; chacune va dans le pas choisi et le curseur avance. Une frappe forte ajoute un accent, <b>Silence</b> laisse un pas vide. Clic sur un numéro de pas pour déplacer le curseur.</li>
+        <li><b>Suivre la 909</b> : la 303 joue sur l'horloge de la TR-909 (shuffle compris) ; ▶ lance les deux. Désactivez-le pour jouer la 303 seule.</li>
+        <li><b>Saisie</b> : jouez les notes au clavier de l'APC (ou de l'ordinateur) ; chacune va dans le pas choisi et le curseur avance. Une frappe forte ajoute un accent, <b>Silence</b> laisse un pas vide. Clic sur un numéro de pas pour déplacer le curseur.</li>
         <li>La 303 a sa propre <b>voie de mixage</b> (K5 sur les pages mixeur), est baissée par le <b>sidechain</b> avec les sons mélodiques, et peut être <b>enregistrée</b> dans la timeline (source TB-303).</li>
       </ul>`,
     osc: `
-      <p>Un synthé façon analogique pour fabriquer tes propres sons, joué au clavier de l'APC.</p>
+      <p>Un synthé façon analogique pour fabriquer vos propres sons, joué au clavier de l'APC.</p>
       <ul>
-        <li><b>Clavier</b> : le clavier de l'APC (et celui de l'ordinateur) joue le synthé de la fenêtre active : clique sur cette fenêtre (ou <b>Jouer au clavier</b>) pour le jouer, clique sur la fenêtre Synthé pour revenir. Les accords et l'arpégiateur marchent aussi.</li>
+        <li><b>Clavier</b> : le clavier de l'APC (et celui de l'ordinateur) joue le synthé de la fenêtre active : cliquez sur cette fenêtre (ou <b>Jouer au clavier</b>) pour le jouer, cliquez sur la fenêtre Synthé pour revenir. Les accords et l'arpégiateur marchent aussi.</li>
         <li><b>Osc 1 à 3</b> : onde (scie, impulsion, triangle, sinus), octave, demi-ton, désaccord fin, niveau, <b>largeur</b> de l'impulsion, <b>unisson</b> (jusqu'à 7 copies désaccordées) et leur désaccord. Un oscillateur au niveau 0 est éteint.</li>
         <li><b>Bruit, anneau, FM, hauteur</b> : bruit blanc, modulation en anneau (osc 1 × osc 2), FM de l'osc 1 par l'osc 3 (l'osc 3 peut rester muet), et une enveloppe de hauteur (chaque note part plus haut ou plus bas et glisse jusqu'à sa hauteur : lasers, hoovers).</li>
         <li><b>Filtre</b> : passe-bas, passe-haut ou passe-bande, 12 ou 24 dB, coupure, résonance, quantité d'enveloppe (négative = ferme), suivi du clavier, saturation avant le filtre.</li>
-        <li><b>Enveloppes</b> : ADSR du filtre et du volume, dessinées au-dessus de leurs potards.</li>
+        <li><b>Enveloppes</b> : ADSR du filtre et du volume, dessinées au-dessus de leurs potentiomètres.</li>
         <li><b>LFO</b> : sinus, triangle, scie ou carré, calé sur le tempo (1/1 à 1/32, triolets), sur la hauteur, le filtre, la largeur d'impulsion ou le volume.</li>
         <li><b>Voix</b> : poly (8 notes), mono ou legato (pas de nouvelle attaque entre notes liées), glissé, largeur stéréo de l'unisson, volume.</li>
-        <li><b>Presets</b> : 12 sons tout prêts (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser), en boutons et dans un menu par catégorie (Lead, Basse, Nappe, FX). Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et <b>Enregistrer</b> pour garder le tien (★), la corbeille le supprime.</li>
-        <li><b>Potards de l'APC</b> : les potards marqués K1-K8 (coupure, résonance, enveloppe du filtre, déclin du filtre, saturation, quantité du LFO, relâche, volume) suivent les potards de l'APC quand cette fenêtre est active.</li>
+        <li><b>Presets</b> : 12 sons tout prêts (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser), en boutons et dans un menu par catégorie (Lead, Basse, Nappe, FX). Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
+        <li><b>Potentiomètres de l'APC</b> : les potentiomètres marqués K1-K8 (coupure, résonance, enveloppe du filtre, déclin du filtre, saturation, quantité du LFO, relâche, volume) suivent les potentiomètres de l'APC quand cette fenêtre est active.</li>
         <li>Il a sa propre <b>voie de mixage</b> (K7 sur les pages mixeur), se câble dans la fenêtre <b>Câblage</b> et est baissé par le <b>sidechain</b> comme le synthé. Ses enregistrements deviennent des blocs de notes avec son son ; dans le <b>piano roll</b>, tout bloc de notes peut prendre un de ses presets.</li>
       </ul>`,
     viz: `
@@ -252,20 +252,20 @@ const HELP = {
         <li><b>Milk</b> : chaque image est réinjectée, zoomée et tournée, sous un cercle fait de la forme d'onde et des formes qui tournent : tourbillons et traînées, le tout qui cogne à chaque kick.</li>
         <li><b>Vumètres</b> : deux vumètres à aiguille façon hi-fi (gauche / droite, avec voyant de crête) et une barre de LED par voie de mixage et pour le master.</li>
         <li><b>3D (WebGL)</b> : <b>Tunnel 3D</b> (des anneaux de néon qui défilent au tempo, des rayons éclairés par le spectre), <b>Paysage 3D</b> (on survole une grille synthwave dont le relief est le spectre des deux dernières mesures, graves au milieu, sous un soleil rayé qui pulse sur les kicks) et <b>Blob 3D</b> (une sphère déformée par les graves, les médiums et le spectre, éclairée en néon).</li>
-        <li><b>Texte qui cogne</b> : les mots que tu tapes (séparés par des virgules), un par mesure, écrasés sur chaque kick avec des couleurs séparées.</li>
-        <li><b>Hyperespace</b> (des étoiles qui filent vers toi, avec un saut à chaque kick), <b>Fractale 3D</b> (un vol dans une éponge de Menger infinie qui se replie avec la musique) et <b>Lasers</b> (des faisceaux qui balaient la fumée au-dessus d'une foule qui saute).</li>
-        <li><b>Particules</b> (une sphère de points qui éclate à chaque kick), <b>Barres Amiga</b> (barres de couleur et défileur sinusoïdal avec tes mots) et <b>Spectrogramme</b> (le son qui défile en cascade de couleurs).</li>
-        <li>D'autres modes 3D / GPU : <b>Ville de spectre</b> (l'historique du spectre en tours de néon qui arrivent vers toi), <b>Mur de LED</b> (un écran de scène dont le motif change à chaque mesure), <b>Metaballs</b>, <b>Plasma</b>, <b>Rotozoomer</b>, <b>Fluide</b> (de l'encre remuée par le son, une giclée à chaque kick) et <b>Réaction-diffusion</b> (des motifs organiques qui poussent tout seuls).</li>
+        <li><b>Texte qui cogne</b> : les mots que vous tapez (séparés par des virgules), un par mesure, écrasés sur chaque kick avec des couleurs séparées.</li>
+        <li><b>Hyperespace</b> (des étoiles qui filent vers vous, avec un saut à chaque kick), <b>Fractale 3D</b> (un vol dans une éponge de Menger infinie qui se replie avec la musique) et <b>Lasers</b> (des faisceaux qui balaient la fumée au-dessus d'une foule qui saute).</li>
+        <li><b>Particules</b> (une sphère de points qui éclate à chaque kick), <b>Barres Amiga</b> (barres de couleur et défileur sinusoïdal avec vos mots) et <b>Spectrogramme</b> (le son qui défile en cascade de couleurs).</li>
+        <li>D'autres modes 3D / GPU : <b>Ville de spectre</b> (l'historique du spectre en tours de néon qui arrivent vers vous), <b>Mur de LED</b> (un écran de scène dont le motif change à chaque mesure), <b>Metaballs</b>, <b>Plasma</b>, <b>Rotozoomer</b>, <b>Fluide</b> (de l'encre remuée par le son, une giclée à chaque kick) et <b>Réaction-diffusion</b> (des motifs organiques qui poussent tout seuls).</li>
         <li><b>Filtres</b>, empilables sur n'importe quel mode : <b>CRT</b> (lignes de balayage, verre bombé, franges de couleur), <b>Kaléido</b> (6 à 12 branches), <b>Glitch</b> et <b>Strobo</b> (flashs blancs sur les kicks, 3 par seconde au plus ; attention aux lumières clignotantes). Changer de mode fait une transition (fondu, zoom ou bandes).</li>
-        <li><b>Potards</b> sous l'image, aussi sur les potards de l'APC quand la fenêtre est active (page Visualiseur) : vitesse, teinte, force des flashs, sensibilité, puis la quantité de chaque filtre.</li>
+        <li><b>Potentiomètres</b> sous l'image, aussi sur les potentiomètres de l'APC quand la fenêtre est active (page Visualiseur) : vitesse, teinte, force des flashs, sensibilité, puis la quantité de chaque filtre.</li>
         <li><b>Drop</b> : quand les graves reviennent après un break de plus de 2 mesures, l'image explose (et change de mode en Auto).</li>
-        <li><b>Projecteur</b> : ouvre les visuels seuls dans une deuxième fenêtre. Glisse-la sur l'écran du projecteur et double-clique pour le plein écran ; tu continues de jouer dans la fenêtre principale. Les touches 1-9 / ← / → y marchent aussi.</li>
+        <li><b>Projecteur</b> : ouvre les visuels seuls dans une deuxième fenêtre. Glissez-la sur l'écran du projecteur et double-cliquez pour le plein écran ; vous continuez de jouer dans la fenêtre principale. Les touches 1-9 / ← / → y marchent aussi.</li>
         <li>Les couleurs avancent avec le tempo (un cran par temps) et chaque <b>kick</b> (909, pads, blocs, boucles) fait un flash.</li>
         <li><b>Auto</b> change de mode toutes les 8 mesures. <b>Plein écran</b> (ou F, ou un double-clic) : un clic passe au mode suivant, Échap pour sortir.</li>
         <li>Touches quand la fenêtre est active : 1 à 9 et 0 = mode, ← / → = précédent / suivant, F = plein écran. Rien n'est dessiné quand la fenêtre est fermée.</li>
       </ul>`,
     roll: `
-      <p>Édite les notes d'un bloc de notes de la timeline : hauteur, début, durée et vélocité.</p>
+      <p>Éditez les notes d'un bloc de notes de la timeline : hauteur, début, durée et vélocité.</p>
       <ul>
         <li><b>Ouvrir un bloc</b> : double-clic sur un bloc de notes de la timeline (quand cette fenêtre est ouverte, un clic suffit), ou <b>+ Nouveau bloc</b> (1 mesure à la tête de lecture, sur la piste armée). Un enregistrement du synthé devient un seul bloc de notes.</li>
         <li><b>Notes</b> : clic dans le vide pour poser une note (glisser pour sa durée), glisser une note pour la déplacer (<b>Alt</b> = copie), glisser son bord droit pour sa durée, <b>clic droit</b> (ou glisser en clic droit) pour effacer. <b>Maj + glisser</b> sélectionne un groupe, Maj + clic ajoute une note à la sélection.</li>
@@ -277,70 +277,70 @@ const HELP = {
         <li><b>Pas à pas</b> : les notes jouées au clavier de l'APC (ou de l'ordinateur) sont posées au curseur (accords compris), qui avance d'une case.</li>
       </ul>`,
     curve: `
-      <p>Dessine comment un réglage d'une piste bouge sur 1, 2 ou 4 temps : la forme se répète en boucle, calée sur le tempo, tant que son bloc dure sur la timeline.</p>
+      <p>Dessinez comment un réglage d'une piste bouge sur 1, 2 ou 4 temps : la forme se répète en boucle, calée sur le tempo, tant que son bloc dure sur la timeline.</p>
       <ul>
         <li><b>Réglage</b> : volume (pompe sidechain, gate, stutter faits main), filtre passe-bas ou passe-haut, panoramique, saturation, envoi reverb ou envoi delay.</li>
-        <li><b>Édition</b> : clic pour ajouter un point, glisse-le (aimanté à la grille : 1/4 à 1/32 et triolets, <b>Maj</b> = libre), double-clic ou clic droit pour le supprimer. Le losange entre deux points courbe le trait (glisse-le vers le haut ou le bas) ; double-clic dessus pour un palier : la valeur reste jusqu'au point suivant.</li>
+        <li><b>Édition</b> : clic pour ajouter un point, glissez-le (aimanté à la grille : 1/4 à 1/32 et triolets, <b>Maj</b> = libre), double-clic ou clic droit pour le supprimer. Le losange entre deux points courbe le trait (glissez-le vers le haut ou le bas) ; double-clic dessus pour un palier : la valeur reste jusqu'au point suivant.</li>
         <li><b>Profondeur</b> ramène la courbe vers « sans effet » (pointillés), <b>Lissage</b> arrondit les paliers (pas de clic). Pour les filtres : la coupure extrême et la résonance.</li>
         <li><b>Écouter</b> joue une boucle de la bibliothèque (batterie, basse, cordes ou hoover) à travers la courbe ; chaque retouche s'entend tout de suite.</li>
-        <li><b>Formes de départ</b> : pompes sidechain, gate trance, gate 3-3-2, stutter, respiration, wobble, dent de scie filtre, balayage passe-haut, ping-pong, balancier, impulsion saturée, queue de reverb, écho à contretemps. Modifie-en une, puis <b>Enregistrer dans la bibliothèque</b> : elle devient ta courbe (★).</li>
-        <li><b>Tes courbes</b> sont dans la bibliothèque, <b>Effets › Courbes</b> : glisse-en une sur une piste comme un effet de piste, ou clique sur <b>Sur la timeline</b>. Retoucher ta courbe change tous ses blocs d'un coup, même pendant la lecture. Double-clic sur un bloc de courbe pour l'ouvrir ici.</li>
-        <li>Tes courbes sont sauvegardées avec le projet, voyagent dans les fichiers morceau et sont dans l'export WAV.</li>
+        <li><b>Formes de départ</b> : pompes sidechain, gate trance, gate 3-3-2, stutter, respiration, wobble, dent de scie filtre, balayage passe-haut, ping-pong, balancier, impulsion saturée, queue de reverb, écho à contretemps. Modifiez-en une, puis <b>Enregistrer dans la bibliothèque</b> : elle devient votre courbe (★).</li>
+        <li><b>Vos courbes</b> sont dans la bibliothèque, <b>Effets › Courbes</b> : glissez-en une sur une piste comme un effet de piste, ou cliquez sur <b>Sur la timeline</b>. Retoucher votre courbe change tous ses blocs d'un coup, même pendant la lecture. Double-clic sur un bloc de courbe pour l'ouvrir ici.</li>
+        <li>Vos courbes sont sauvegardées avec le projet, voyagent dans les fichiers morceau et sont dans l'export WAV.</li>
       </ul>`,
     kick: `
-      <p>Fabrique ton propre kick gabber / hardcore, calculé en quelques millisecondes, puis utilise-le partout.</p>
+      <p>Fabriquez votre propre kick gabber / hardcore, calculé en quelques millisecondes, puis utilisez-le partout.</p>
       <ul>
-        <li><b>Presets</b> : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore. Pars de l'un d'eux, puis sculpte-le. Le menu sous les boutons les range par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec tes propres kicks. Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et <b>Enregistrer</b> pour garder le tien (★), la corbeille le supprime.</li>
+        <li><b>Presets</b> : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore. Partez de l'un d'eux, puis sculptez-le. Le menu sous les boutons les range par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
         <li><b>Queue</b> : <b>Note</b> (fa = la tonalité des banques), <b>Punch</b> et <b>Chute</b> (de combien la hauteur part haut et à quelle vitesse elle tombe), <b>Plongée</b> (de combien elle continue de descendre), <b>Longueur</b>, <b>Zaag</b> (scie pour une queue brute qui bourdonne).</li>
         <li><b>Distorsion</b> : <b>Drive</b> et <b>Forme</b> (les 5 formes de la 909), puis <b>Formant</b> et <b>Mordant</b>, qui font « parler » la queue.</li>
         <li><b>Attaque</b> : <b>Clic</b> (bruit) et <b>Attaque</b> (couche courte et percutante).</li>
-        <li><b>Écoute auto</b> joue le kick à chaque potard relâché. La forme d'onde et la longueur s'affichent sous les potards.</li>
+        <li><b>Écoute auto</b> joue le kick à chaque potentiomètre relâché. La forme d'onde et la longueur s'affichent sous les potentiomètres.</li>
         <li><b>→ Pad</b> le met sur le pad sélectionné, <b>→ Bibliothèque</b> l'ajoute à la catégorie Kicks de la bibliothèque (à glisser sur la timeline ; clic droit dessus pour le retirer), <b>⤓ WAV</b> le télécharge.</li>
       </ul>`,
     decks: `
-      <p>Deux platines pour mixer et scratcher n'importe quel son : boucles de la bibliothèque, tes enregistrements, tes propres fichiers.</p>
+      <p>Deux platines pour mixer et scratcher n'importe quel son : boucles de la bibliothèque, vos enregistrements, vos propres fichiers.</p>
       <ul>
-        <li><b>Charger</b> : glisse un son de la bibliothèque (ou un fichier audio) sur un deck, ou clique sur un son de la bibliothèque puis sur <b>Charger</b>.</li>
+        <li><b>Charger</b> : glissez un son de la bibliothèque (ou un fichier audio) sur un deck, ou cliquez sur un son de la bibliothèque puis sur <b>Charger</b>.</li>
         <li><b>▶ / ❚❚</b> lecture / pause. <b>Cue</b> : en lecture, retour au point de cue et pause ; à l'arrêt, place le point de cue. Clic sur la forme d'onde pour s'y rendre.</li>
         <li><b>Sync</b> : le deck suit le tempo global (quand le tempo du son est connu : boucles de la bibliothèque, ou deviné pour les longs fichiers) et démarre à la mesure suivante. Sans Sync, le curseur <b>Pitch</b> change la vitesse de ±8 % (double-clic = 0).</li>
-        <li><b>Scratch</b> : tiens le disque à la souris et bouge-le, en avant ou en arrière ; relâche-le pour qu'il reparte. Le disque suit la position de ta main, comme un vrai.</li>
-        <li><b>Transition auto</b> : du deck qui joue vers l'autre : départ sur la prochaine phrase, en phase, entrée sans basses, échange des basses sur la mesure du milieu, puis l'ancien son part au filtre passe-haut et s'arrête (16 mesures après une intro calme, 8 sinon). Touche les platines pour reprendre la main.</li>
+        <li><b>Scratch</b> : tenez le disque à la souris et bougez-le, en avant ou en arrière ; relâchez-le pour qu'il reparte. Le disque suit la position de votre main, comme un vrai.</li>
+        <li><b>Transition auto</b> : du deck qui joue vers l'autre : départ sur la prochaine phrase, en phase, entrée sans basses, échange des basses sur la mesure du milieu, puis l'ancien son part au filtre passe-haut et s'arrête (16 mesures après une intro calme, 8 sinon). Touchez les platines pour reprendre la main.</li>
         <li><b>Volume, Basses, Médiums, Aigus</b> (tout à gauche = coupé) et <b>Filtre</b> (à gauche = passe-bas, à droite = passe-haut) pour chaque deck, et le <b>crossfader</b> entre A et B.</li>
-        <li>Sur l'APC : <b>Maj + REC</b> deux fois ouvre la page de potards des platines (volume A, basses A, filtre A, volume B, basses B, filtre B, crossfader, master). Les platines ont leur voie de mixage (K6) et peuvent être enregistrées dans la timeline (source Platines).</li>
+        <li>Sur l'APC : <b>Maj + REC</b> deux fois ouvre la page de potentiomètres des platines (volume A, basses A, filtre A, volume B, basses B, filtre B, crossfader, master). Les platines ont leur voie de mixage (K6) et peuvent être enregistrées dans la timeline (source Platines).</li>
       </ul>`,
     patch: `
-      <p>Relie librement les outils et des boîtes à effets. Par défaut, chaque outil va directement au master : rien ne change tant que tu n'y touches pas.</p>
+      <p>Reliez librement les outils et des boîtes à effets. Par défaut, chaque outil va directement au master : rien ne change tant que vous n'y touchez pas.</p>
       <ul>
         <li>À gauche, un bloc par <b>outil</b> (sa voie de mixage : pads, synthé, TR-909, timeline, TB-303, platines). À droite, le <b>Master</b>.</li>
         <li><b>+ Distorsion, + PCF, + Filtre, + Delay, + Reverb, + Compresseur, + Bitcrusher</b> ajoutent une <b>boîte à effet</b>. Double-clic sur une boîte pour ses réglages ; ✕ la retire.</li>
-        <li><b>Câbler</b> : tire depuis une sortie (prise de droite) vers une boîte ou vers le master. Une sortie peut aller à plusieurs endroits, et une boîte peut recevoir plusieurs sources (elles sont mélangées). Un câble qui créerait une boucle est refusé.</li>
+        <li><b>Câbler</b> : tirez depuis une sortie (prise de droite) vers une boîte ou vers le master. Une sortie peut aller à plusieurs endroits, et une boîte peut recevoir plusieurs sources (elles sont mélangées). Un câble qui créerait une boucle est refusé.</li>
         <li><b>Débrancher</b> : clic sur un câble. Un outil qui ne va nulle part est muet (le mixeur l'indique en rouge sous son nom).</li>
         <li>La boîte <b>PCF</b> suit en permanence la grille du tempo, le <b>Delay</b> et le LFO du <b>Filtre</b> se règlent en valeurs de note : tout reste calé. L'export WAV reconstruit exactement le même câblage.</li>
         <li><b>Tout sur le master</b> recâble chaque outil directement sur le master.</li>
       </ul>`,
     piano: `
-      <p>Le synthé du clavier : 35 presets en 10 familles, 8 potards d'expression, mode accords, arpégiateur et générateur de nappes.</p>
+      <p>Le synthé du clavier : 35 presets en 10 familles, 8 potentiomètres d'expression, mode accords, arpégiateur et générateur de nappes.</p>
       <ul>
         <li><b>Familles et presets</b> : clic, ou sur l'APC <b>Maj + touche blanche</b> = preset de la famille, <b>Maj + do# / ré#</b> = famille précédente / suivante.</li>
-        <li><b>8 potards</b> adaptés à la famille (brillance, résonance, attaque, relâche, largeur, vibrato, ensemble ou saturation, glissé, désaccord, réverb). Double-clic = retour à la valeur du preset.</li>
-        <li><b>Tes presets</b> (menu sous les presets, par famille) : un preset perso garde son son de départ et tes 8 potards. Tourner un potard rend le son perso ; tape un nom, choisis une catégorie et <b>Enregistrer</b> pour garder le tien (★), la corbeille le supprime.</li>
+        <li><b>8 potentiomètres</b> adaptés à la famille (brillance, résonance, attaque, relâche, largeur, vibrato, ensemble ou saturation, glissé, désaccord, réverb). Double-clic = retour à la valeur du preset.</li>
+        <li><b>Vos presets</b> (menu sous les presets, par famille) : un preset personnel garde son son de départ et vos 8 potentiomètres. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
         <li><b>Accords</b> : une touche joue un accord complet ; <b>Dans la tonalité (fa mineur)</b> construit sur chaque touche l'accord juste de la gamme. APC : Maj + fa#.</li>
         <li><b>Arpège</b> : les notes tenues sont jouées l'une après l'autre, calées sur le tempo (1/8, 1/16, 1/32 ; ordre ; 1 à 3 octaves ; durée des notes ; <b>Tenue</b>). APC : Maj + sol# = oui / non, Maj + la# = vitesse.</li>
-        <li><b>Générateur de nappes → timeline</b> : tape une suite d'accords (<code>Fm Db Eb Cm</code>), choisis le son, le registre, les mesures par accord, les répétitions, le rythme et la basse, puis <b>Générer</b> : les blocs d'accords sont posés à partir de la tête de lecture, chacun avec son propre preset.</li>
+        <li><b>Générateur de nappes → timeline</b> : tapez une suite d'accords (<code>Fm Db Eb Cm</code>), choisissez le son, le registre, les mesures par accord, les répétitions, le rythme et la basse, puis <b>Générer</b> : les blocs d'accords sont posés à partir de la tête de lecture, chacun avec son propre preset.</li>
         <li>Clavier de l'ordinateur : rangée du milieu (Q S D F… en AZERTY), W / X = octave.</li>
       </ul>`,
     knobs: `
-      <p>Les 8 potards à l'écran suivent les potards K1-K8 de l'APC, page par page.</p>
+      <p>Les 8 potentiomètres à l'écran suivent les potentiomètres K1-K8 de l'APC, page par page.</p>
       <ul>
-        <li><b>Synthé</b> : les 8 potards d'expression de la famille du synthé.</li>
+        <li><b>Synthé</b> : les 8 potentiomètres d'expression de la famille du synthé.</li>
         <li><b>Effets</b> : temps, répétitions et envoi du delay, envoi et taille de la reverb, volume du synthé, volume des pads, volume général.</li>
-        <li><b>Pad</b> : les potards du pad sélectionné.</li>
+        <li><b>Pad</b> : les potentiomètres du pad sélectionné.</li>
         <li><b>EQ</b> : 5 bandes (±15 dB), passe-bas, passe-haut, gain de sortie. SUSTAIN sur l'APC l'ouvre (maintenu = le temps de l'appui).</li>
         <li>Pages <b>TR-909</b> et <b>mixeur</b> (Maj + piste 1-4 sur l'APC).</li>
-        <li>APC : boutons de piste 1-4 = Synthé / Effets / Pad / EQ. <b>Maj + potard</b> = réglage fin ; double-clic à l'écran = valeur par défaut.</li>
+        <li>APC : boutons de piste 1-4 = Synthé / Effets / Pad / EQ. <b>Maj + potentiomètre</b> = réglage fin ; double-clic à l'écran = valeur par défaut.</li>
       </ul>`,
     perf: `
-      <p>Effets en direct sur tout le mix, calés sur la grille. Maintiens pour les utiliser (Pump est en marche / arrêt).</p>
+      <p>Effets en direct sur tout le mix, calés sur la grille. Maintenez pour les utiliser (Pump est en marche / arrêt).</p>
       <ul>
         <li><b>Rolls</b> 1/4, 1/8, 1/16, 1/32 : répètent le son, à partir de la double-croche suivante.</li>
         <li><b>Filtre ↓ / ↑</b> : balayage passe-bas ou passe-haut sur une mesure.</li>
@@ -366,8 +366,8 @@ const HELP = {
     monitor: `
       <p>Tous les messages MIDI reçus de l'APC, pour vérifier la connexion.</p>
       <ul>
-        <li>Les ports utilisés sont affichés en haut. Si les pads et le clavier sont inversés, utilise le bouton d'inversion.</li>
-        <li>Rien n'arrive ? Débranche et rebranche l'APC, puis recharge la page (Windows peut bloquer son pilote MIDI).</li>
+        <li>Les ports utilisés sont affichés en haut. Si les pads et le clavier sont inversés, utilisez le bouton d'inversion.</li>
+        <li>Rien n'arrive ? Débranchez et rebranchez l'APC, puis rechargez la page (Windows peut bloquer son pilote MIDI).</li>
       </ul>`,
   },
 };

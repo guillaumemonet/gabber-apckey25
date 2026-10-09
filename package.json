@@ -1,0 +1,11 @@
+{
+  "name": "gabberkey",
+  "private": true,
+  "description": "GabberKey: a complete music studio in the browser",
+  "type": "module",
+  "scripts": {
+    "check": "node tests/check.js",
+    "test": "node tests/check.js && node tests/run.js",
+    "test:browser": "node tests/run.js"
+  }
+}

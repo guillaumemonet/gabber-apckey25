@@ -45,7 +45,7 @@ const state = {
   bank: 0,
   page: 'synth',
   selected: 0,
-  bpm: 120,
+  bpm: 190,         // tempo d'un nouveau projet : celui de la bibliothèque Anthem et des démos
   preset: 'init',   // preset du synthé (identifiant, voir js/presets.js)
   libBanks: [],     // noms des banques de la bibliothèque déjà importées
   model: null,      // dernier modèle d'APC vu ('mk1' | 'mk2')
@@ -241,7 +241,7 @@ async function restore() {
     Object.assign(state.globals, saved.globals);
     state.bank = Math.min(saved.bank ?? 0, BANKS - 1);
     state.page = saved.page ?? 'synth';
-    state.bpm = saved.bpm ?? 120;
+    state.bpm = Number.isFinite(saved.bpm) ? saved.bpm : 190;
     state.preset = migratePreset(saved.preset);
     // Anciennes sauvegardes : les 5 premières banques de la bibliothèque étaient déjà importées.
     state.libBanks = saved.libBanks ?? (saved.libImported ? ['Batterie', 'Électro', 'Boucles', 'Textures', 'Tabla & divers'] : []);
@@ -320,7 +320,6 @@ async function importLibrary() {
   if (!lib) return [];
   libManifest = lib;   // sert aussi à la bibliothèque de sons
   const modeDef = PAGES.pad.params[7];
-  const firstImport = !state.libBanks.length;
   const added = [];
   lib.banks.forEach((bank, k) => {
     const folder = `lib:${bank.pads.find(Boolean)?.file.split('/')[0]}/`;
@@ -342,7 +341,7 @@ async function importLibrary() {
     if (!state.libBanks.includes(bank.name)) state.libBanks.push(bank.name);
     added.push({ name: bank.name, bank: slot + 1 });
   });
-  if (firstImport && lib.bpm) state.bpm = lib.bpm;
+  // (le tempo du projet n'est jamais changé par l'import : un nouveau projet part à 190, une sauvegarde garde le sien)
   return added;
 }
 

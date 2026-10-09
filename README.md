@@ -595,7 +595,13 @@ tools/build_banks.py  sound bank builder
 tools/gabber.py       gabber sound synthesis
 tools/icons.py        button icons (generates the CSS)
 sounds/               generated banks + banks.json
+tests/                tests (run.js, harness.js, check.js, specs/)
+docs/dev/             developer documentation
 ```
+
+## Tests
+
+`npm test` checks the code (syntax, translations, help pages, sound files) and then runs about 50 tests in Firefox (headless), each checking one area of the app: pads, instruments, timeline, effects, files, decks, visualizer, library. They also run on GitHub on every push. Requirements: Node.js 18+ and Firefox, nothing to install. Details and how to write a test: [docs/dev/tests.md](docs/dev/tests.md) (in French).
 
 ## Credits
 

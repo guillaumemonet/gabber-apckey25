@@ -3,7 +3,7 @@
 import { t } from './i18n.js';
 
 export const DECK_IDS = ['A', 'B'];
-const WORKLET = 'js/deck-worklet.js?v=2';
+const WORKLET = 'js/deck-worklet.js?v=3';
 const RPM = 100 / 3;   // 33 ⅓ tours par minute : un tour de vinyle = 1,8 s de son à vitesse normale
 
 // Réglages d'un deck (positions 0..1, sauf pitch en fraction : ±0,08).
