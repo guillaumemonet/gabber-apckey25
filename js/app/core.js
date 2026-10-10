@@ -91,6 +91,7 @@ export const state = {
   metro: defaultMetroState(),         // métronome : allumé, quand, décompte, volume
   master: defaultMasterState(),       // chaîne master : compresseur, limiteur (js/audio.js)
   midiMap: [],                        // MIDI learn : [{ port, ch, kind, n, target }] (js/app/midi-ui.js)
+  midiClock: { out: '', in: '' },     // horloge MIDI : sortie qui la reçoit, entrée suivie (noms des ports)
 };
 export const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 export let shiftHeld = false;

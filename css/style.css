@@ -894,3 +894,6 @@ header button, header .status { white-space: nowrap; }
 .learn-row button { padding: 2px 8px; font-size: 11px; }
 .learn-btn.active { background: var(--accent-2); border-color: var(--accent-2); color: #111; }
 @media (max-width: 900px) { .learn-list { grid-template-columns: 1fr; } }
+.midi-clock { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.midi-clock label { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+.midi-clock select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 2px 4px; max-width: 200px; }

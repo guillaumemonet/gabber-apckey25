@@ -145,6 +145,7 @@ export class Timeline {
     this.cycles = [];         // débuts de lecture programmés : { time, beat }
     this.timer = null;
     this.onStop = () => {};
+    this.onTransport = () => {};   // (lecture ?, temps, instant audio) : départ / arrêt (horloge MIDI) ; branché par l'application
     this.getPad = () => null;   // (banque, pad) -> pad ; branché par l'application
     this.loadPad = () => {};    // décode le son d'un pad (chargement à la demande) ; branché par l'application
     this.padKey = null;
@@ -192,6 +193,7 @@ export class Timeline {
     this.cycles = [];
     this.scheduleCycle(start, beat);
     this.ticker = setInterval(() => this.flush(this.ctx.currentTime + 0.1), 30);
+    try { this.onTransport(true, beat, start); } catch (err) { console.warn('Timeline', err); }
     return start;
   }
 
@@ -630,6 +632,7 @@ export class Timeline {
     for (const m of this.chains.values()) for (const c of m.values()) safe(() => c.reset());
     for (const [ti, m] of this.strips) for (const s of m.values()) safe(() => this.resetAutomation(s, ti));
     safe(() => this.onHalt());
+    if (was) safe(() => this.onTransport(false));
     if (was && !silent) this.onStop();
   }
 }

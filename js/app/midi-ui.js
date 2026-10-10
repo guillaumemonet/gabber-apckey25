@@ -5,6 +5,7 @@
 import { t } from '../i18n.js';
 import { CHANNELS } from '../mixer.js';
 import { MidiHub } from '../midi.js';
+import { ClockFollower, ClockSender } from '../midiclock.js';
 import { toValue } from '../params.js';
 import { BUS_COUNT } from '../timeline.js';
 import { turnKnob } from './actions.js';
@@ -13,6 +14,7 @@ import { monitorLog, setStatus } from './controller.js';
 import { $, apc, engine, mixer, oscSynth, state, timeline } from './core.js';
 import { masterDef, renderMixer, renderStrip } from './mixer-ui.js';
 import { save } from './save.js';
+import { setBpm } from './tempo.js';
 import { renderTl, tlRecToggle, tlToggle } from './tl.js';
 
 export const midiHub = new MidiHub();
@@ -104,7 +106,23 @@ export function stopLearn() {
   renderMidi();
 }
 
+// Horloge MIDI : envoi vers une sortie, ou tempo et lecture suivis depuis une entrée (state.midiClock = { out, in }).
+export let clockSender = null;
+export const clockFollower = new ClockFollower({
+  onTempo: bpm => setBpm(bpm),
+  onStart: () => { state.tl.playhead = 0; if (!timeline.playing) tlToggle(); },
+  onContinue: () => { if (!timeline.playing) tlToggle(); },
+  onStop: () => { if (timeline.playing) tlToggle(); },
+});
+function linkClockOut() {
+  clockSender.port = midiHub.outputs.find(p => p.name === state.midiClock.out) ?? null;
+  if (clockSender.port) clockSender.port.open?.().catch(() => {});
+}
+
 export async function initMidi() {
+  clockSender = new ClockSender(engine.ctx, () => engine.bpm);
+  timeline.onTransport = (on, beat, at) => { if (on) clockSender.start(beat, at); else clockSender.stop(); };
+  midiHub.addEventListener('realtime', ({ detail: d }) => { if (d.port === state.midiClock.in) clockFollower.message(d.byte, d.ms); });
   buildMidi();
   midiHub.isCommand = (port, ch, n) => state.midiMap.some(m => m.kind === 'note' && same(m, { port, ch, kind: 'note', n }));
   midiHub.addEventListener('key', e => apc.dispatchEvent(new CustomEvent('key', { detail: e.detail })));   // même chemin que le clavier de l'APC
@@ -113,6 +131,7 @@ export async function initMidi() {
   midiHub.addEventListener('button', ({ detail: d }) => onControl({ port: d.port, ch: d.ch, kind: 'note', n: d.note }, d.on ? 127 : 0, d.on));
   midiHub.addEventListener('raw', e => monitorLog(e.detail));
   midiHub.addEventListener('connection', ({ detail }) => {
+    linkClockOut();
     renderMidi();
     if (!apc?.connected && detail.inputs.length) setStatus(true, t('status.midi', { name: detail.inputs[0] }));
   });
@@ -122,7 +141,11 @@ export async function initMidi() {
 
 function buildMidi() {
   const box = $('#midi-learn');
-  box.innerHTML = `<div class="midi-devices hint"></div><div class="learn-head"><b>${t('learn.title')}</b><span class="hint">${t('learn.hint')}</span></div><div class="learn-list"></div>`;
+  box.innerHTML = `<div class="midi-devices hint"></div>
+    <div class="midi-clock"><b>${t('clock.title')}</b><label>${t('clock.out')}<select class="clock-out"></select></label><label>${t('clock.in')}<select class="clock-in"></select></label></div>
+    <div class="learn-head"><b>${t('learn.title')}</b><span class="hint">${t('learn.hint')}</span></div><div class="learn-list"></div>`;
+  box.querySelector('.clock-out').addEventListener('change', e => { state.midiClock.out = e.target.value; linkClockOut(); save(); });
+  box.querySelector('.clock-in').addEventListener('change', e => { state.midiClock.in = e.target.value; save(); });
   renderMidi();
 }
 
@@ -131,6 +154,15 @@ export function renderMidi() {
   if (!box) return;
   const ins = midiHub.inputs.map(p => p.name);
   box.querySelector('.midi-devices').textContent = ins.length ? t('learn.devices', { list: ins.join(', ') }) : t('learn.noDevice');
+  // Choix de l'horloge (un appareil absent reste affiché tant qu'il est choisi).
+  const fill = (sel, names, cur) => {
+    sel.innerHTML = '';
+    sel.add(new Option(t('clock.none'), ''));
+    for (const n of new Set([...names, ...(cur ? [cur] : [])])) sel.add(new Option(n, n));
+    sel.value = cur;
+  };
+  fill(box.querySelector('.clock-out'), midiHub.outputs.map(p => p.name), state.midiClock.out);
+  fill(box.querySelector('.clock-in'), ins, state.midiClock.in);
   const list = box.querySelector('.learn-list');
   list.innerHTML = '';
   for (const tg of LEARN_TARGETS) {

@@ -62,6 +62,7 @@ The APC Key 25 is not the only option: **any MIDI keyboard or controller** plugg
 - **MIDI learn**: in the MIDI window, click **Learn** next to a target, then move a knob or fader, or press a button on the device. Esc cancels; the bin removes an assignment.
 - **Targets**: knobs **K1 to K8 of the active page** (exactly like the APC knobs: synth, effects, pads, mixer…), the **mixer faders**, the **master volume**, the **bus volumes**, and the transport: **play / stop**, **stop**, **record**, **loop**.
 - A control drives only one target (assigning it again removes it from the old one). A key or pad assigned to a button no longer plays a note.
+- **MIDI clock**: **Send to** a device (drum machine, sequencer, other software): it receives the clock (24 pulses per beat), Start, Stop and the position, and follows the timeline even when you jump to a marker. **Follow** a device: GabberKey takes its tempo and starts / stops with it.
 - Assignments are saved with the project. At the bottom of the window, the **monitor** shows the last messages received from each device.
 
 ---

@@ -62,6 +62,7 @@ L'APC Key 25 n'est pas le seul appareil possible : **n'importe quel clavier ou c
 - **MIDI learn** : dans la fenêtre MIDI, cliquez sur **Apprendre** à côté d'une cible, puis tournez un potentiomètre, bougez un fader ou appuyez sur un bouton de l'appareil. Échap annule ; la corbeille retire une assignation.
 - **Cibles** : les potentiomètres **K1 à K8 de la page active** (exactement comme ceux de l'APC : synthé, effets, pads, mixeur…), les **faders du mixeur**, le **volume général**, les **volumes des bus**, et le transport : **lecture / arrêt**, **arrêt**, **enregistrer**, **boucle**.
 - Une commande ne pilote qu'une cible (la réassigner la retire de l'ancienne). Une touche ou un pad assigné à un bouton ne joue plus de note.
+- **Horloge MIDI** : **Envoyer vers** un appareil (boîte à rythmes, séquenceur, autre logiciel) : il reçoit l'horloge (24 impulsions par temps), Start, Stop et la position, et suit la timeline même quand on saute à un marqueur. **Suivre** un appareil : GabberKey prend son tempo et démarre / s'arrête avec lui.
 - Les assignations sont enregistrées avec le projet. En bas de la fenêtre, le **moniteur** affiche les derniers messages reçus de chaque appareil.
 
 ---
