@@ -56,6 +56,13 @@ export default async function (t, A) {
   t.ok(!A.draft('lead').edited, 'Nouvelle idée repart des réglages');
   A.stopGenPreview();
 
+  // Écouter joue toute la suite (8 mesures ≈ 10 s), pas seulement les deux premiers accords.
+  t.$('#gen-listen').click();
+  await t.wait(6000);
+  t.ok(A.genPreviewing(), 'Écouter joue toujours après 5 mesures (toute la suite)');
+  t.$('#gen-listen').click();
+  t.ok(!A.genPreviewing(), 'un deuxième clic arrête');
+
   // Le brouillon est enregistré avec le projet.
   t.ok(A.stateSnapshot().gen.draft.lead.seq.length > 0, 'brouillons enregistrés avec le projet');
 }

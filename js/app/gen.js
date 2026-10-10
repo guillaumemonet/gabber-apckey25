@@ -220,38 +220,52 @@ function onGenChange() {
 // ---- Écoute ----
 
 // Voix de l'écoute en cours (le moteur les oublie dès que leur fin est programmée : on les garde pour pouvoir les couper).
-let preview = [], previewEnd = 0, previewT0 = 0;
-export const genPreviewing = () => preview.length > 0 && engine.ctx.currentTime < previewEnd;
+let preview = [], previewEnd = 0, previewT0 = 0, previewTimer = 0;
+export const genPreviewing = () => engine.ctx.currentTime < previewEnd && (preview.length > 0 || !!previewTimer);
 // Coupe l'écoute ; renvoie true si elle jouait encore.
 export function stopGenPreview() {
   const was = genPreviewing();
+  clearInterval(previewTimer);
+  previewTimer = 0;
   for (const v of preview) engine.releaseVoice(v, 0.01);
   preview = [];
+  previewEnd = 0;
   return was;
 }
+// Notes programmées au fil de l'écoute (un peu d'avance) : un long arpège ne crée pas des centaines de voix d'un coup.
 function playNotes(notes, preset) {
   const patch = presetPatch(preset);
   const t0 = previewT0, bd = 60 / state.bpm;
-  notes.forEach((n, k) => {
-    const key = `gen:${k}`;
-    engine.noteOn(n.note, n.vel, t0 + n.t * bd, key, patch);
-    const v = engine.voices.get(key);
-    engine.noteOff(n.note, false, t0 + (n.t + n.len) * bd, key);
-    if (v) preview.push(v);
-  });
+  const queue = notes.map((n, k) => ({ ...n, k })).sort((a, b) => a.t - b.t);
+  let next = 0;
+  const pump = () => {
+    const horizon = engine.ctx.currentTime + 0.4;
+    while (next < queue.length && t0 + queue[next].t * bd < horizon) {
+      const n = queue[next++], key = `gen:${n.k}`;
+      engine.noteOn(n.note, n.vel, t0 + n.t * bd, key, patch);
+      const v = engine.voices.get(key);
+      engine.noteOff(n.note, false, t0 + (n.t + n.len) * bd, key);
+      if (v) preview.push(v);
+    }
+    // Voix finies : oubliées (elles se sont arrêtées d'elles-mêmes).
+    if (preview.length > 64) preview = preview.slice(-64);
+    if (next >= queue.length) { clearInterval(previewTimer); previewTimer = 0; }
+  };
+  pump();
+  if (next < queue.length) previewTimer = setInterval(pump, 100);
 }
 
-// Accords : le premier accord ; mélodie : les deux premiers accords (au plus 4 mesures).
+// Toute la suite d'accords du brouillon affiché (un deuxième clic arrête).
 export function previewGen() {
   if (stopGenPreview()) return;
   const g = state.gen;
   const { chords } = progression();
   if (!chords.length) return;
-  // Les deux premiers accords (au plus 4 mesures) du brouillon affiché.
-  const end = Math.min(2 * g.bars, 4) * BEATS_PER_BAR;
+  const d = draft(g.tab);
+  const end = d.pat;
   previewT0 = engine.ctx.currentTime + 0.05;
-  previewEnd = previewT0 + end * 60 / state.bpm;
-  playNotes(draft(g.tab).seq.filter(n => n.t < end).map(n => ({ ...n, len: Math.min(n.len, end - n.t) })), g.tab === 'lead' ? leadPreset() : genPreset());
+  previewEnd = previewT0 + end * 60 / state.bpm + 0.3;
+  playNotes(d.seq.filter(n => n.t < end).map(n => ({ ...n, len: Math.min(n.len, end - n.t) })), g.tab === 'lead' ? leadPreset() : genPreset());
 }
 
 // ---- Fenêtre ----
