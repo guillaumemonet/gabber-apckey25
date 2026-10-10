@@ -5,6 +5,7 @@ import { WINDOWS } from '../windows.js';
 import { $, viz, wm } from './core.js';
 import { curvePreviewStop, renderCurveCanvas } from './curve-ui.js';
 import { drawDeckWave } from './decks-ui.js';
+import { renderGenRoll, stopGenPreview } from './gen.js';
 import { renderPatch } from './patch-ui.js';
 import { buildPiano } from './piano.js';
 import { pianoRoll, rollStop } from './roll-ui.js';
@@ -56,5 +57,7 @@ export function onWindowToggle(id, open) {
   if (!open && id === 'roll') rollStop();
   if (!open && id === 'curve') curvePreviewStop();
   if (open && id === 'curve') requestAnimationFrame(renderCurveCanvas);
+  if (open && id === 'gen') requestAnimationFrame(() => renderGenRoll(true));
+  if (!open && id === 'gen') stopGenPreview();
   if (id === 'viz') { if (open) viz.addOutput($('#viz-canvas')); else viz.removeOutput($('#viz-canvas')); }
 }

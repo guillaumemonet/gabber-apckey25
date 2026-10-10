@@ -35,7 +35,7 @@ export let tlRecorder = null;
 export let tlRec = null;                // enregistrement en cours : { beat, time, events, audio, open, notes, startedDrum, startedAcid, bpm }
 export let tlSel = null;                // bloc sélectionné : { track, clip }
 
-export const TL_HEAD = 176;   // largeur des en-têtes de piste (px) : la 1re colonne de .tl dans css/style.css
+export const TL_HEAD = 204;   // largeur des en-têtes de piste (px) : la 1re colonne de .tl dans css/style.css
 export const beatPx = () => state.tl.zoom / BEATS_PER_BAR;
 export const snapBeat = (v, fine) => (fine ? Math.round(v) : Math.round(v / BEATS_PER_BAR) * BEATS_PER_BAR);
 

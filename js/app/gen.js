@@ -1,16 +1,21 @@
 // Fenêtre Générateur : à partir d'une suite d'accords, pose sur la timeline des blocs d'accords (cordes, nappes,
 // chœurs…, avec une basse) ou une mélodie (lead) qui suit les accords (js/melody.js).
+// Chaque onglet a son brouillon (un passage de la suite) affiché dans un piano roll sous les réglages : les réglages
+// le recalculent tant qu'il n'a pas été retouché à la main ; Écouter et Générer utilisent le brouillon tel qu'il est.
 import { PROGRESSIONS, bassNote, parseProgression, voiceChords } from '../chords.js';
 import { t } from '../i18n.js';
 import { catColor } from '../library.js';
 import { LEAD_DENSITIES, LEAD_REGISTERS, LEAD_STYLES, generateLead } from '../melody.js';
 import { PAGES } from '../params.js';
+import { PianoRoll } from '../pianoroll.js';
+import { PALETTE } from '../apc.js';
 import { PRESETS, presetById } from '../presets.js';
 import { BEATS_PER_BAR } from '../timeline.js';
-import { $, engine, state, timeline } from './core.js';
+import { $, engine, state, timeline, uiColor } from './core.js';
 import { toast } from './misc.js';
 import { save } from './save.js';
 import { armedTrack, renderTl } from './tl.js';
+import { noteLabel } from './tl-record.js';
 
 // ---------- Générateur ----------
 
@@ -20,7 +25,16 @@ export const GEN_REGISTERS = { low: 55, mid: 62, high: 69 };
 export const GEN_RHYTHMS = ['hold', 'beats', 'offbeat', 'eighths'];
 export const GEN_BASS = { none: null, sub: { preset: 'sub_bass', rhythm: 'hold' }, offbeat: { preset: 'bass', rhythm: 'offbeat' }, reese: { preset: 'reese', rhythm: 'hold' } };
 export const defaultLead = () => ({ preset: 'hardstyle_lead', register: 'high', style: 'anthem', density: 'mid', double: false, seed: 1 });
-export const defaultGen = () => ({ tab: 'chords', prog: PROGRESSIONS[0], preset: 'epic_strings', register: 'mid', bars: 2, repeat: 2, rhythm: 'hold', bass: 'none', lead: defaultLead() });
+export const defaultGen = () => ({ tab: 'chords', prog: PROGRESSIONS[0], preset: 'epic_strings', register: 'mid', bars: 2, repeat: 2, rhythm: 'hold', bass: 'none', lead: defaultLead(),
+  draft: { chords: null, lead: null } });   // brouillons : { seq, edited } (notes d'un passage de la suite)
+
+// Brouillon d'une sauvegarde : notes valides seulement.
+function cleanDraft(d) {
+  if (!d || !Array.isArray(d.seq)) return null;
+  const seq = d.seq.filter(n => [n?.t, n?.len, n?.note].every(Number.isFinite) && n.t >= 0 && n.len > 0 && n.note >= 0 && n.note <= 127)
+    .map(n => ({ t: n.t, len: n.len, note: Math.round(n.note), vel: Number.isFinite(n.vel) ? Math.min(1, Math.max(0, n.vel)) : 0.85 }));
+  return { seq, edited: !!d.edited, pat: 0, len: 0 };
+}
 
 export function mergeGen(saved) {
   const g = defaultGen();
@@ -42,6 +56,7 @@ export function mergeGen(saved) {
     g.lead.double = !!l.double;
     if (Number.isInteger(l.seed) && l.seed > 0) g.lead.seed = l.seed;
   }
+  g.draft = { chords: cleanDraft(saved.draft?.chords), lead: cleanDraft(saved.draft?.lead) };
   return g;
 }
 
@@ -100,10 +115,21 @@ export function generatePads() {
   const g = state.gen;
   const { chords, bad } = progression();
   if (!chords.length) return;
-  const voiced = voiceChords(chords, GEN_REGISTERS[g.register]);
   const chordBeats = g.bars * BEATS_PER_BAR;
   const start = genStart();
   const total = chordBeats * chords.length * g.repeat;
+  const seq = draft('chords').seq;
+  // Un bloc de notes par accord (et par répétition) : les notes du brouillon qui tombent dans cet accord.
+  const chordBlocks = [];
+  for (let r = 0; r < g.repeat; r++) {
+    chords.forEach((c, i) => {
+      const t0 = i * chordBeats;
+      const notes = seq.filter(n => n.t >= t0 - 1e-6 && n.t < t0 + chordBeats - 1e-6).map(n => ({ ...n, t: +(n.t - t0).toFixed(4) }));
+      if (!notes.length) return;
+      chordBlocks.push({ id: crypto.randomUUID(), type: 'note', seq: notes, pat: chordBeats, preset: genPreset(), name: c.name, cat: 'pad', color: catColor('pad'),
+        start: start + (r * chords.length + i) * chordBeats, len: chordBeats, loop: false });
+    });
+  }
   const blocks = (notesOf, rhythm, preset, cat) => {
     const out = [];
     for (let r = 0; r < g.repeat; r++) {
@@ -119,7 +145,7 @@ export function generatePads() {
   const bass = GEN_BASS[g.bass];
   const lanes = freeLanes(start, total, bass ? 2 : 1);
   if (!lanes) return;
-  state.tl.tracks[lanes[0]].clips.push(...blocks(i => voiced[i], g.rhythm, genPreset(), 'pad'));
+  state.tl.tracks[lanes[0]].clips.push(...chordBlocks);
   if (bass) state.tl.tracks[lanes[1]].clips.push(...blocks(i => [bassNote(chords[i])], bass.rhythm, bass.preset, 'bass'));
   growSong(start + total);
   renderTl();
@@ -146,7 +172,7 @@ export function generateLeadClip() {
   const total = phrase * g.repeat;
   const lanes = freeLanes(start, total, 1);
   if (!lanes) return;
-  const clip = { id: crypto.randomUUID(), type: 'note', seq: leadSeq(chords), pat: phrase, preset: leadPreset(), name: t(`gen.style.${g.lead.style}`),
+  const clip = { id: crypto.randomUUID(), type: 'note', seq: draft('lead').seq.filter(n => n.t < phrase - 1e-6).map(n => ({ ...n })), pat: phrase, preset: leadPreset(), name: t(`gen.style.${g.lead.style}`),
     cat: 'lead', color: catColor('lead'), start, len: total, loop: false };
   state.tl.tracks[lanes[0]].clips.push(clip);
   growSong(start + total);
@@ -156,10 +182,45 @@ export function generateLeadClip() {
   toast(bad.length ? `${msg} · ${t('gen.bad', { list: bad.join(' ') })}` : msg, 4000);
 }
 
+// ---- Brouillons ----
+
+const phraseBeats = n => n * state.gen.bars * BEATS_PER_BAR;
+// Notes des accords sur un passage de la suite (rythme et registre choisis).
+export function chordsSeq(chords) {
+  const g = state.gen, cb = g.bars * BEATS_PER_BAR;
+  const voiced = voiceChords(chords, GEN_REGISTERS[g.register]);
+  return chords.flatMap((c, i) => genHits(g.rhythm, cb).flatMap(([o, len]) => voiced[i].map(note => ({ t: i * cb + o, len, note, vel: 0.8 }))))
+    .sort((a, b) => a.t - b.t || a.note - b.note);
+}
+// Brouillon d'un onglet (calculé au besoin) ; sa longueur suit la suite d'accords.
+export function draft(tab) {
+  const g = state.gen;
+  if (!g.draft[tab]) refreshDraft(tab, true);
+  const d = g.draft[tab];
+  d.pat = d.len = Math.max(BEATS_PER_BAR, phraseBeats(parseProgression(g.prog).chords.length));
+  return d;
+}
+// Recalcule un brouillon à partir des réglages (pas s'il a été retouché à la main, sauf `force`).
+export function refreshDraft(tab, force = false) {
+  const g = state.gen, d = g.draft[tab];
+  if (d?.edited && !force) return;
+  const { chords } = parseProgression(g.prog);
+  const seq = !chords.length ? [] : tab === 'lead' ? leadSeq(chords) : chordsSeq(chords);
+  g.draft[tab] = { seq, edited: false, pat: 0, len: 0 };
+}
+// Un réglage a changé : les brouillons non retouchés suivent.
+function onGenChange() {
+  refreshDraft('chords');
+  refreshDraft('lead');
+  save();
+  renderGenInfo();
+  renderGenRoll(true);
+}
+
 // ---- Écoute ----
 
 // Voix de l'écoute en cours (le moteur les oublie dès que leur fin est programmée : on les garde pour pouvoir les couper).
-let preview = [], previewEnd = 0;
+let preview = [], previewEnd = 0, previewT0 = 0;
 export const genPreviewing = () => preview.length > 0 && engine.ctx.currentTime < previewEnd;
 // Coupe l'écoute ; renvoie true si elle jouait encore.
 export function stopGenPreview() {
@@ -170,14 +231,13 @@ export function stopGenPreview() {
 }
 function playNotes(notes, preset) {
   const patch = presetPatch(preset);
-  const t0 = engine.ctx.currentTime + 0.05, bd = 60 / state.bpm;
+  const t0 = previewT0, bd = 60 / state.bpm;
   notes.forEach((n, k) => {
     const key = `gen:${k}`;
     engine.noteOn(n.note, n.vel, t0 + n.t * bd, key, patch);
     const v = engine.voices.get(key);
     engine.noteOff(n.note, false, t0 + (n.t + n.len) * bd, key);
     if (v) preview.push(v);
-    previewEnd = Math.max(previewEnd, t0 + (n.t + n.len) * bd + 0.3);
   });
 }
 
@@ -187,12 +247,11 @@ export function previewGen() {
   const g = state.gen;
   const { chords } = progression();
   if (!chords.length) return;
-  if (g.tab === 'lead') {
-    const end = Math.min(2 * g.bars, 4) * BEATS_PER_BAR;
-    playNotes(leadSeq(chords).filter(n => n.t < end).map(n => ({ ...n, len: Math.min(n.len, end - n.t) })), leadPreset());
-  } else {
-    playNotes(voiceChords(chords, GEN_REGISTERS[g.register])[0].map(note => ({ t: 0, len: 4, note, vel: 0.8 })), genPreset());
-  }
+  // Les deux premiers accords (au plus 4 mesures) du brouillon affiché.
+  const end = Math.min(2 * g.bars, 4) * BEATS_PER_BAR;
+  previewT0 = engine.ctx.currentTime + 0.05;
+  previewEnd = previewT0 + end * 60 / state.bpm;
+  playNotes(draft(g.tab).seq.filter(n => n.t < end).map(n => ({ ...n, len: Math.min(n.len, end - n.t) })), g.tab === 'lead' ? leadPreset() : genPreset());
 }
 
 // ---- Fenêtre ----
@@ -217,7 +276,7 @@ function select(obj, key, options, cast = v => v) {
   el.dataset.key = key;
   for (const [v, text] of options) el.add(new Option(text, v));
   el.value = obj()[key];
-  el.addEventListener('change', () => { obj()[key] = cast(el.value); save(); renderGenInfo(); });
+  el.addEventListener('change', () => { obj()[key] = cast(el.value); onGenChange(); });
   return el;
 }
 // Presets des familles proposées, ou le preset joué au clavier.
@@ -242,7 +301,7 @@ export function buildGen() {
   const tabs = document.createElement('div');
   tabs.className = 'gen-tabs';
   for (const id of ['chords', 'lead']) {
-    tabs.appendChild(button(t(`gen.tab.${id}`), () => { stopGenPreview(); state.gen.tab = id; save(); renderGen(); })).dataset.tab = id;
+    tabs.appendChild(button(t(`gen.tab.${id}`), () => { stopGenPreview(); state.gen.tab = id; save(); renderGen(); renderGenRoll(true); })).dataset.tab = id;
   }
   // Commun : suite d'accords, mesures par accord, répétitions.
   const prog = document.createElement('input');
@@ -250,10 +309,10 @@ export function buildGen() {
   prog.id = 'gen-prog';
   prog.spellcheck = false;
   prog.title = t('gen.progHint');
-  prog.addEventListener('input', () => { state.gen.prog = prog.value; save(); renderGenInfo(); });
+  prog.addEventListener('input', () => { state.gen.prog = prog.value; onGenChange(); });
   const chips = document.createElement('div');
   chips.className = 'gen-chips';
-  for (const p of PROGRESSIONS) chips.appendChild(button(p, () => { prog.value = state.gen.prog = p; save(); renderGenInfo(); }));
+  for (const p of PROGRESSIONS) chips.appendChild(button(p, () => { prog.value = state.gen.prog = p; onGenChange(); }));
   const row1 = document.createElement('div');
   row1.className = 'gen-row';
   row1.append(field(t('gen.prog'), prog), chips);
@@ -280,11 +339,13 @@ export function buildGen() {
   const dbl = document.createElement('input');
   dbl.type = 'checkbox';
   dbl.id = 'gen-double';
-  dbl.addEventListener('change', () => { state.gen.lead.double = dbl.checked; save(); });
+  dbl.addEventListener('change', () => { state.gen.lead.double = dbl.checked; onGenChange(); });
   const idea = button(t('gen.idea'), () => {
     stopGenPreview();
     state.gen.lead.seed = 1 + Math.floor(Math.random() * 1e6);
+    refreshDraft('lead', true);
     save();
+    renderGenRoll(true);
     previewGen();
   });
   idea.id = 'gen-idea';
@@ -306,8 +367,56 @@ export function buildGen() {
   actions.append(listen, go);
   const info = document.createElement('span');
   info.className = 'hint gen-info';
-  box.append(tabs, row1, row2, chords, lead, actions, info);
+  // Brouillon : barre (retouché ? recalculer) et piano roll.
+  const bar = document.createElement('div');
+  bar.className = 'gen-row gen-rollbar';
+  const edited = document.createElement('span');
+  edited.className = 'hint gen-edited';
+  const redo = button(t('gen.recompute'), () => { stopGenPreview(); refreshDraft(state.gen.tab, true); save(); renderGenRoll(true); });
+  redo.id = 'gen-recompute';
+  redo.dataset.icon = 'reset';
+  bar.append(edited, redo);
+  const wrap = document.createElement('div');
+  wrap.className = 'gen-roll';
+  const cv = document.createElement('canvas');
+  cv.id = 'gen-canvas';
+  cv.tabIndex = 0;
+  wrap.appendChild(cv);
+  box.append(tabs, row1, row2, chords, lead, actions, info, bar, wrap);
+  const held = new Map();
+  genRoll = new PianoRoll(cv, {
+    clip: () => draft(state.gen.tab),
+    changed: () => { state.gen.draft[state.gen.tab].edited = true; save(); renderGenEdited(); },
+    noteOn: (n, v) => { held.set(n, true); engine.noteOn(n, v, undefined, `genroll:${n}`, presetPatch(state.gen.tab === 'lead' ? leadPreset() : genPreset())); },
+    noteOff: n => { held.delete(n); engine.noteOff(n, false, undefined, `genroll:${n}`); },
+    playhead: () => (genPreviewing() ? (engine.ctx.currentTime - previewT0) / (60 / state.bpm) : null),
+    color: () => PALETTE[uiColor(catColor(state.gen.tab === 'lead' ? 'lead' : 'pad'))],
+    noteName: noteLabel,
+  });
+  // Raccourcis du piano roll (copier, coller, supprimer, transposer…) quand il a le focus.
+  cv.addEventListener('keydown', e => { if (genRoll.key(e)) { e.preventDefault(); e.stopPropagation(); } });
+  cv.addEventListener('pointerdown', () => cv.focus());
+  (function frame() {
+    if (genPreviewing() || wasPreviewing) genRoll.draw();
+    wasPreviewing = genPreviewing();
+    requestAnimationFrame(frame);
+  })();
   renderGen();
+}
+
+export let genRoll = null;
+let wasPreviewing = false;
+
+// Piano roll du brouillon de l'onglet affiché (`fit` : recadré sur les notes).
+export function renderGenRoll(fit = false) {
+  if (!genRoll) return;
+  if (fit) genRoll.fit(); else genRoll.draw();
+  renderGenEdited();
+}
+function renderGenEdited() {
+  const d = draft(state.gen.tab);
+  $('#gen .gen-edited').textContent = d.edited ? t('gen.edited') : t('gen.draftHint');
+  $('#gen-recompute').disabled = !d.edited;
 }
 
 // Réglages affichés (après le chargement d'un projet, d'un fichier…).

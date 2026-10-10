@@ -23,7 +23,7 @@ export default async function (t, A) {
   const pads = all().filter(c => c.preset === 'thunder_pad');
   const bass = all().filter(c => c.preset === 'bass');
   t.eq(pads.map(c => [c.name, c.start, c.len]), [['Fm', 0, 8], ['Db', 8, 8], ['Eb', 16, 8], ['Cm7', 24, 8]], 'un bloc par accord, 2 mesures chacun');
-  t.ok(pads.every(c => c.notes?.length >= 3), 'chaque bloc joue l\'accord', pads.map(c => c.notes));
+  t.ok(pads.every(c => c.seq?.length >= 3), 'chaque bloc joue l\'accord (notes du brouillon)', pads.map(c => c.seq?.length));
   t.ok(bass.length >= 4 && bass.every(c => c.notes.length === 1 && c.start < 32), 'basse en contretemps sur la même durée', bass.length);
   const padTrack = S.tl.tracks.findIndex(tr => tr.clips.includes(pads[0]));
   const bassTrack = S.tl.tracks.findIndex(tr => tr.clips.includes(bass[0]));

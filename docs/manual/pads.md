@@ -6,7 +6,7 @@ The 40-pad sampler, the 25 banks, loops locked to the tempo.
 
 ## Banks
 
-[![The 40 pads of the Hardstyle bank and the pad editor](../screenshots/pads-en.png)](../screenshots/pads-en.png)
+[![The 40 pads of the Anthem drums bank and the pad editor](../screenshots/pads-en.png)](../screenshots/pads-en.png)
 
 | Bank | Content |
 |---|---|

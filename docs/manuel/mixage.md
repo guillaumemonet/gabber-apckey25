@@ -20,7 +20,7 @@ Dessinez comment un réglage d'une piste bouge sur **1, 2 ou 4 temps** : la form
 
 ## Table de mixage
 
-[![Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](../screenshots/mixer-fr.png)](../screenshots/mixer-fr.png)
+[![Table de mixage : voies, effets d'insert, sidechain et chaîne master avec la sonie en LUFS](../screenshots/mixer-fr.png)](../screenshots/mixer-fr.png)
 
 Une voie par outil : **Pads**, **Synthé**, **TR-909**, **Timeline**, **TB-303**, **Platines** et **Synthé à oscillateurs**, puis le master (effets de performance, égaliseur général et limiteur). Le niveau de chaque son reste dans son outil (volume des pads, niveaux des instruments de la 909) ; la table de mixage équilibre les outils entre eux.
 

@@ -30,7 +30,7 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
 
 ### Track effects
 
-[![Timeline with an effects line under each track, the Effects tab of the library and the settings of a PCF](../screenshots/tlfx-en.png)](../screenshots/tlfx-en.png)
+[![Timeline of demo 2 with an effects line under each track and the Effects tab of the library](../screenshots/tlfx-en.png)](../screenshots/tlfx-en.png)
 
 Each track has two parts: the **sounds** on top, and a thin **effects line** underneath. Drag an effect from the **Track FX** category of the library onto a track: it acts on **everything the track plays** (audio blocks, synth notes and chords, pad hits) **for the length of the block**, in time with the tempo. Effects add up: a fade in and a PCF at the same time both apply; overlapping effect blocks stack on several lines.
 
@@ -51,7 +51,7 @@ Each track has two parts: the **sounds** on top, and a thin **effects line** und
 
 ## Piano roll
 
-[![Piano roll: a hardstyle lead melody over two bars, with its chords, the velocity lane and the toolbar](../screenshots/roll-en.png)](../screenshots/roll-en.png)
+[![Piano roll: the hoover hook of demo 2, with the velocity lane and the toolbar](../screenshots/roll-en.png)](../screenshots/roll-en.png)
 
 Edits the notes of a **note block** of the timeline (synth recordings, generated pads, chords, arpeggios, or a new block).
 

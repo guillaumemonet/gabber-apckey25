@@ -152,6 +152,7 @@ export const HELP = {
         <li><b>Melody (lead)</b>: a lead that follows the chords. <b>Style</b>: Anthem (a hook replayed on each chord, strong beats on the chord notes), Arpeggio, Hardcore riff (short notes, octaves and fifths), Call and response (a phrase that rises, an answer that falls). <b>Density</b>, <b>register</b> and <b>octave doubling</b>.</li>
         <li><b>New idea</b> draws another melody and plays it; <b>Listen</b> plays exactly what <b>Generate</b> will lay down (click again to stop).</li>
         <li>The melody is a single note block, repeated over the whole length: double-click it to edit it in the piano roll.</li>
+        <li><b>Notes</b>: the piano roll under the settings shows the draft of the tab (one pass of the progression); edit it before laying it. Once edited by hand, the settings no longer change it: <b>Recompute</b> starts again from the settings. Listen and Generate use the draft as shown.</li>
         <li>Blocks are laid from the playhead bar, on the first track that is free for the whole length, starting from the armed track; the song gets longer if needed.</li>
       </ul>`,
     knobs: `
@@ -345,6 +346,7 @@ export const HELP = {
         <li><b>Mélodie (lead)</b> : une mélodie qui suit les accords. <b>Style</b> : Hymne (un motif repris sur chaque accord, temps forts sur les notes de l'accord), Arpège, Riff hardcore (notes courtes, octaves et quintes), Question / réponse (une phrase qui monte, une réponse qui descend). <b>Densité</b>, <b>registre</b> et <b>doublage à l'octave</b>.</li>
         <li><b>Nouvelle idée</b> tire une autre mélodie et la fait écouter ; <b>Écouter</b> joue exactement ce que <b>Générer</b> posera (un deuxième clic arrête).</li>
         <li>La mélodie est un seul bloc de notes, répété sur toute la durée : double-cliquez dessus pour la retoucher dans le piano roll.</li>
+        <li><b>Notes</b> : le piano roll sous les réglages montre le brouillon de l'onglet (un passage de la suite) ; modifiez-le avant de le poser. Retouché à la main, les réglages ne le changent plus : <b>Recalculer</b> repart des réglages. Écouter et Générer utilisent le brouillon tel qu'il est.</li>
         <li>Les blocs sont posés à partir de la mesure de la tête de lecture, sur la première piste libre sur toute la durée, en partant de la piste armée ; le morceau s'allonge si besoin.</li>
       </ul>`,
     knobs: `

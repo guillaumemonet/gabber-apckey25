@@ -13,7 +13,8 @@ const grs = [];
 const TARGET = [-8, -6];           // sonie intégrée visée pour du hardcore (LUFS)
 
 const num = (v, d = 1) => new Intl.NumberFormat(document.documentElement.lang || 'fr', { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
-export const fmtLufs = v => (Number.isFinite(v) ? `${num(v)} LUFS` : '−∞ LUFS');
+// En dessous de -70 LUFS (silence), la norme ne mesure plus rien : un tiret.
+export const fmtLufs = v => (Number.isFinite(v) && v > -70 ? `${num(v)} LUFS` : '— LUFS');
 export const fmtDb = v => (Number.isFinite(v) ? `${num(v)} dB` : '−∞ dB');
 const UNITS = { threshold: 'dB', knee: 'dB', makeup: 'dB', gain: 'dB', ceiling: 'dB', attack: 'ms', release: 'ms', ratio: ':1' };
 const fmtParam = (k, v) => (k === 'ratio' ? `${num(v, 1)}:1` : `${num(v, k === 'attack' || k === 'ceiling' ? 1 : k === 'release' ? 0 : 1)} ${UNITS[k]}`);
@@ -25,7 +26,7 @@ export function buildMaster() {
   const groups = Object.keys(MASTER_PARAMS).map(g => {
     const sliders = Object.entries(MASTER_PARAMS[g]).map(([k, [min, max, step]]) =>
       `<label class="fx-param"><span>${t(`master.${k}`)}</span><input type="range" data-g="${g}" data-k="${k}" min="${min}" max="${max}" step="${step}"><em></em></label>`).join('');
-    return `<div class="mc-group" data-group="${g}"><div class="mc-head"><b>${t(`master.${g}`)}</b><button class="mc-on" data-g="${g}">${t('master.on')}</button></div>${sliders}</div>`;
+    return `<div class="mc-group" data-group="${g}"><div class="mc-head"><b>${t(`master.${g}`)}</b><button class="mc-on" data-g="${g}">${t('master.on')}</button></div><div class="mc-params">${sliders}</div></div>`;
   }).join('');
   box.innerHTML = `${groups}
     <div class="mc-group mc-meters">

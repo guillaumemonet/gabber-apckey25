@@ -20,7 +20,7 @@ Draw how a setting of a track moves over **1, 2 or 4 beats**: the shape repeats 
 
 ## Mixer
 
-[![Mixer: channels, insert effects and sidechain, with the performance effects](../screenshots/mixer-en.png)](../screenshots/mixer-en.png)
+[![Mixer: channels, insert effects, sidechain and the master chain with the LUFS loudness](../screenshots/mixer-en.png)](../screenshots/mixer-en.png)
 
 One channel per tool: **Pads**, **Synth**, **TR-909**, **Timeline**, **TB-303**, **Decks** and **Oscillator synth**, then the master (performance effects, master EQ and limiter). The level of each sound stays in its tool (pad volume, 909 instrument levels); the mixer balances the tools.
 

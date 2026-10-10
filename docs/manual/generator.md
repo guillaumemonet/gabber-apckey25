@@ -2,6 +2,8 @@
 
 ← [Instruments](instruments.md) · [Contents](README.md) · [Mixing and effects](mixing.md) →
 
+[![Generator window, Melody tab: the melody settings and its draft in the piano roll](../screenshots/gen-en.png)](../screenshots/gen-en.png)
+
 The **Generator** window (plugin bar, Tools group) starts from a chord progression and lays on the timeline, in two tabs, either **chord blocks** (strings, pads, choirs…) or a **melody (lead)** that follows those chords.
 
 **Chords**
@@ -22,6 +24,12 @@ A chord block works like any other block: move it, lengthen it, copy it (Alt), o
 - **Sound** (supersaw, leads, hoovers, stabs or the current synth preset), **density** (sparse, medium, dense), **register** (middle, high), **octave doubling**.
 - **New idea** draws another melody and plays it; **Listen** plays exactly what **Generate** will lay down (click again to stop).
 - The melody is laid as **a single note block**, repeated over the whole length: double-click it to edit it note by note in the piano roll.
+
+**Editing the notes before laying them**
+
+- Below the settings, a **piano roll** shows the **draft** of the displayed tab: the notes of one pass of the progression (the chords in the Chords tab, the melody in the Melody tab). Edit it like the [piano roll](timeline.md): click = add a note, drag = move, right edge = length, right-click = delete, Shift + drag = select; Ctrl+C / Ctrl+V / Delete / arrow keys when it has the focus.
+- As long as the draft has not been edited, every setting recomputes it. Once **edited by hand**, the settings no longer change it: **Recompute** starts again from the settings (so does New idea, for the melody).
+- **Listen** and **Generate** use the draft as shown. Chords are laid as one note block per chord (each keeps its name), the melody as a single block. The draft is saved with the project.
 
 ---
 

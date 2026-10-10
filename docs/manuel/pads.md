@@ -6,7 +6,7 @@ Le sampler 40 pads, les 25 banques, les boucles calées sur le tempo.
 
 ## Banques
 
-[![Les 40 pads de la banque Hardstyle et l'éditeur de pad](../screenshots/pads-fr.png)](../screenshots/pads-fr.png)
+[![Les 40 pads de la banque Anthem drums et l'éditeur de pad](../screenshots/pads-fr.png)](../screenshots/pads-fr.png)
 
 | Banque | Contenu |
 |---|---|

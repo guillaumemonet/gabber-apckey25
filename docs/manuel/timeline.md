@@ -30,7 +30,7 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
 
 ### Effets de piste
 
-[![Timeline avec une ligne d'effets sous chaque piste, l'onglet Effets de la bibliothèque et les réglages d'un PCF](../screenshots/tlfx-fr.png)](../screenshots/tlfx-fr.png)
+[![Timeline de la démo 2 avec une ligne d'effets sous chaque piste et l'onglet Effets de la bibliothèque](../screenshots/tlfx-fr.png)](../screenshots/tlfx-fr.png)
 
 Chaque piste a deux parties : les **sons** en haut, et une fine **ligne d'effets** en dessous. Glissez un effet de la catégorie **Effets de piste** de la bibliothèque sur une piste : il agit sur **tout ce que joue la piste** (blocs audio, notes et accords du synthé, coups de pads) **pendant la durée du bloc**, calé sur le tempo. Les effets se cumulent : un fondu d'entrée et un PCF en même temps s'appliquent tous les deux ; les blocs d'effet qui se chevauchent s'empilent sur plusieurs lignes.
 
@@ -51,7 +51,7 @@ Chaque piste a deux parties : les **sons** en haut, et une fine **ligne d'effets
 
 ## Piano roll
 
-[![Piano roll : une mélodie de lead hardstyle sur deux mesures, avec ses accords, la bande des vélocités et la barre d'outils](../screenshots/roll-fr.png)](../screenshots/roll-fr.png)
+[![Piano roll : le hook de hoover de la démo 2, avec la bande des vélocités et la barre d'outils](../screenshots/roll-fr.png)](../screenshots/roll-fr.png)
 
 Éditez les notes d'un **bloc de notes** de la timeline (enregistrements du synthé, nappes générées, accords, arpèges, ou un nouveau bloc).
 
