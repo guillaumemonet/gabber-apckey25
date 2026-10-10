@@ -24,7 +24,7 @@ export default async function (t, A) {
   await t.wait(50);
   const box = t.$('.track-knobs');
   t.ok(box, 'le panneau de potentiomètres s\'ouvre');
-  t.eq(box.querySelectorAll('.knob').length, 6, '6 potentiomètres : volume, pano, filtres, delay, réverbe');
+  t.eq(box.querySelectorAll('.knob').length, 7, '7 potentiomètres : volume, pano, filtres, delay, réverbe, saturation');
   S.tl.playhead = 16;
   A.tlToggle();
   await t.wait(900);

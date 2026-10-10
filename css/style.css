@@ -642,8 +642,8 @@ header button, header .status { white-space: nowrap; }
 .tl-head .tl-knobs { padding: 2px 5px; }
 .tl-head .tl-knobs.active { background: var(--accent-2); border-color: var(--accent-2); color: #111; }
 .tl-head .tl-knobs.open { outline: 2px solid var(--accent-2); outline-offset: 1px; }
-.track-knobs { width: 420px; }
-.track-knob-row { grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 8px 10px 4px; }
+.track-knobs { width: 480px; }
+.track-knob-row { grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 8px 10px 4px; }
 .track-knob-row .knob .label, .track-knob-row .knob .value { font-size: 10px; }
 .track-knob-foot { justify-content: flex-end; padding: 0 10px 10px; }
 .track-inserts { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px 10px; border-top: 1px solid var(--line); }
@@ -914,3 +914,6 @@ header button, header .status { white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) { .ln-slot.playing { animation: none; } }
 .ln-row { font-size: 11px; padding: 4px 6px; }
 .cm-transpose em { font-style: normal; min-width: 26px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text); align-self: center; }
+/* Effets d'insert dans les voies étroites (mixeur, bus) : la règle de l'éditeur d'effets (libellés larges) ne doit pas écraser le curseur. */
+.strip .fx-param { grid-template-columns: 38px minmax(50px, 1fr) 38px; gap: 3px; }
+.strip .fx-param em { font-size: 10px; }

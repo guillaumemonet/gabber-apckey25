@@ -11,6 +11,7 @@
 import { TrackChain, cleanFx } from './trackfx.js';
 import { clipEvents, monoLine } from './notes.js';
 import { buildInsert, cleanInsert } from './mixer.js';
+import { distCurve } from './tr909.js';
 
 export const TL_TRACKS = 16;        // pistes au départ
 export const MIN_TRACKS = 4;
@@ -20,7 +21,7 @@ export const BEATS_PER_BAR = 4;
 // (des milliers de nœuds audio pour un morceau entier) écroulerait le moteur audio.
 const LOOKAHEAD = 1.5;
 // Réglages d'une piste (ses potentiomètres) : volume, panoramique, filtres passe-bas / passe-haut, envois delay et reverb.
-export const TRACK_DEFAULTS = { vol: 1, pan: 0, lp: 20000, hp: 20, dly: 0, rev: 0 };
+export const TRACK_DEFAULTS = { vol: 1, pan: 0, lp: 20000, hp: 20, dly: 0, rev: 0, drive: 0 };
 const num = (v, lo, hi, d) => (Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d);
 // Instruments qu'une piste peut enregistrer (null = « Auto » : le choix « Enregistrer » de la barre de la timeline).
 export const REC_SOURCES = ['pads', 'synth', 'osc', 'tr', 'acid', 'decks'];
@@ -85,7 +86,7 @@ export function cleanTrack(tr) {
     clips: Array.isArray(tr?.clips) ? tr.clips : [],
     fx: Array.isArray(tr?.fx) ? tr.fx.map(cleanFx).filter(Boolean) : [],
     vol: num(tr?.vol, 0, 1.5, 1), pan: num(tr?.pan, -1, 1, 0), lp: num(tr?.lp, 200, 20000, 20000), hp: num(tr?.hp, 20, 2000, 20),
-    dly: num(tr?.dly, 0, 1, 0), rev: num(tr?.rev, 0, 1, 0),
+    dly: num(tr?.dly, 0, 1, 0), rev: num(tr?.rev, 0, 1, 0), drive: num(tr?.drive, 0, 1, 0),
     name: typeof tr?.name === 'string' ? tr.name.slice(0, 24) : '',
     color: typeof tr?.color === 'string' && /^#[0-9a-f]{6}$/i.test(tr.color) ? tr.color : null,
     arm: !!tr?.arm,
@@ -432,12 +433,13 @@ export class Timeline {
     let s = m.get(dest);
     if (!s) {
       const c = this.ctx;
-      s = { input: c.createGain(), hp: c.createBiquadFilter(), lp: c.createBiquadFilter(), gain: c.createGain(), mute: c.createGain(),
-        pan: c.createStereoPanner(), dly: c.createGain(), rev: c.createGain(), inserts: [] };
+      s = { input: c.createGain(), hp: c.createBiquadFilter(), lp: c.createBiquadFilter(), shaper: c.createWaveShaper(), dtrim: c.createGain(),
+        gain: c.createGain(), mute: c.createGain(), pan: c.createStereoPanner(), dly: c.createGain(), rev: c.createGain(), inserts: [] };
+      s.shaper.oversample = '2x';
       s.hp.type = 'highpass';
       s.lp.type = 'lowpass';
       s.hp.Q.value = s.lp.Q.value = 0.707;
-      s.hp.connect(s.lp).connect(s.gain).connect(s.mute).connect(s.pan);
+      s.hp.connect(s.lp).connect(s.shaper).connect(s.dtrim).connect(s.gain).connect(s.mute).connect(s.pan);
       s.dest = dest;
       s.pan.connect(this.trackOut(ti, dest));
       // Envois pris avant le panoramique : la reverb et le delay restent larges même pour une piste calée d'un côté.
@@ -552,6 +554,10 @@ export class Timeline {
     set(s.pan.pan, tr.pan ?? 0);
     set(s.dly.gain, tr.dly ?? 0);
     set(s.rev.gain, tr.rev ?? 0);
+    // Saturation « tube » (celle de la 909) : transparente à 0, niveau compensé quand elle monte.
+    const drive = tr.drive ?? 0;
+    s.shaper.curve = drive > 0.005 ? distCurve(drive, 'tube') : null;
+    set(s.dtrim.gain, 1 - drive * 0.35);
   }
 
   // Potentiomètres d'une piste tournés (ou « Annuler ») : le son suit tout de suite.

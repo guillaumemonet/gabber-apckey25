@@ -323,6 +323,7 @@ export const TRACK_KNOBS = [
   { id: 'hp', min: 20, max: 2000, def: 20, curve: 'exp', fmt: v => (v <= 20.5 ? '—' : v >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${Math.round(v)}Hz`) },
   { id: 'dly', min: 0, max: 1, def: 0, fmt: v => `${Math.round(v * 100)}%` },
   { id: 'rev', min: 0, max: 1, def: 0, fmt: v => `${Math.round(v * 100)}%` },
+  { id: 'drive', min: 0, max: 1, def: 0, fmt: v => `${Math.round(v * 100)}%` },
 ];
 export const trackTouched = tr => tr.inserts?.length > 0 || TRACK_KNOBS.some(d => Math.abs((tr[d.id] ?? d.def) - d.def) > 1e-6);
 
