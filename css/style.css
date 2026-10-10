@@ -435,7 +435,7 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 
 /* Timeline */
 .tl-scroll { flex: 1; min-height: 0; overflow: auto; border-radius: 6px; background: var(--bg); }
-.tl { position: relative; display: grid; grid-template-columns: 204px var(--w); grid-template-rows: 24px; grid-auto-rows: auto; row-gap: 2px; width: max-content; user-select: none; }
+.tl { position: relative; display: grid; grid-template-columns: 204px var(--w); grid-template-rows: 44px; grid-auto-rows: auto; row-gap: 2px; width: max-content; user-select: none; }
 .tl-corner { position: sticky; left: 0; top: 0; z-index: 5; background: var(--panel); }
 .tl-ruler { position: sticky; top: 0; z-index: 4; cursor: pointer; background-color: var(--panel); border-bottom: 1px solid var(--line);
   background-image: repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px var(--bar)); }
@@ -859,3 +859,11 @@ header button, header .status { white-space: nowrap; }
 .cm-transpose { display: flex; gap: 4px; }
 .cm-transpose button { flex: 1; padding: 3px 0; font-size: 11px; }
 .clip-menu hr { border: none; border-top: 1px solid var(--line); margin: 4px 0; }
+/* Marqueurs de la timeline (sous les numéros de mesure) */
+.tl-corner { display: flex; align-items: flex-end; padding: 0 6px 4px 8px; }
+#tl-marker-add { padding: 1px 8px; font-size: 11px; }
+.tl-marker { position: absolute; top: 22px; height: 18px; display: flex; align-items: center; padding: 0 6px 0 4px; max-width: 160px; font-size: 11px; font-weight: 600; color: #111; background: #ffd23f; border-radius: 0 4px 4px 0; cursor: grab; white-space: nowrap; z-index: 2; }
+.tl-ruler .tl-marker span { position: static; top: auto; padding: 0; border: none; color: inherit; font-size: inherit; line-height: inherit; overflow: hidden; text-overflow: ellipsis; }
+.tl-marker::before { content: ""; position: absolute; left: 0; top: -4px; bottom: 0; width: 2px; background: #ffd23f; }
+.tl-marker-edit { position: absolute; left: 4px; top: 0; width: 140px; font: inherit; font-size: 11px; padding: 0 4px; border: 1px solid var(--accent-2); border-radius: 4px; background: var(--bg); color: var(--text); }
+.tl-mline { position: absolute; top: 44px; bottom: 0; width: 0; border-left: 1px dashed rgba(255, 210, 63, .7); pointer-events: none; z-index: 5; }

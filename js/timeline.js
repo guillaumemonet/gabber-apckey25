@@ -76,7 +76,8 @@ export function defaultTlState() {
     source: 'pads',     // outil enregistré : pads, synth (blocs posés en jouant), tr (audio)
     armed: 0,           // piste qui reçoit l'enregistrement
     tracks: Array.from({ length: TL_TRACKS }, (_, i) => ({ ...newTrack(), arm: i === 0 })),
-    buses: cleanBuses(null),   // bus A à D   // fx : blocs d'effet (js/trackfx.js), potentiomètres, nom, couleur, armement, instrument
+    buses: cleanBuses(null),   // bus A à D
+    markers: [],               // repères nommés : { id, beat, name } (js/app/markers.js)   // fx : blocs d'effet (js/trackfx.js), potentiomètres, nom, couleur, armement, instrument
   };
 }
 
@@ -92,6 +93,8 @@ export function mergeTlState(saved) {
     base.tracks = Array.from({ length: n }, (_, i) => cleanTrack(saved.tracks[i]));
   }
   base.buses = cleanBuses(saved.buses);
+  base.markers = (Array.isArray(saved.markers) ? saved.markers : []).filter(m => Number.isFinite(m?.beat) && m.beat >= 0).slice(0, 64)
+    .map(m => ({ id: typeof m.id === 'string' ? m.id : crypto.randomUUID(), beat: +m.beat, name: String(m.name ?? '').slice(0, 32) })).sort((a, b) => a.beat - b.beat);
   base.armed = Math.min(base.tracks.length - 1, Math.max(0, base.armed | 0));
   // Anciennes sauvegardes : une seule piste armée (armed) ; maintenant chaque piste a son bouton.
   if (!base.tracks.some(tr => tr.arm)) base.tracks[base.armed].arm = true;

@@ -14,6 +14,7 @@ import { openDemoMenu } from './demo.js';
 import { exportSong, songEndBeats } from './export.js';
 import { BUS_COLORS, BUS_LETTERS, busName, renderBuses } from './buses-ui.js';
 import { openClipMenu } from './clip-menu.js';
+import { renderMarkers } from './markers.js';
 import { fxOptions, renderInsertRack } from './inserts-ui.js';
 import { arcPath } from './knobs.js';
 import { renderLibrary } from './library-ui.js';
@@ -506,6 +507,7 @@ export function renderTl() {
   grid.style.setProperty('--w', `${st.bars * st.zoom}px`);
   const every = st.zoom < 30 ? 4 : st.zoom < 50 ? 2 : 1;
   $('#tl-ruler').innerHTML = Array.from({ length: st.bars }, (_, b) => (b % every ? '' : `<span style="left:${b * st.zoom}px">${b + 1}</span>`)).join('');
+  renderMarkers();
   $('#tl-bars').textContent = t('tl.bars', { n: st.bars });
   $('#tl-source').value = st.source;
   $('#tl-loop').classList.toggle('active', st.loop);

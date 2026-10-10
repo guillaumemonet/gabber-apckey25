@@ -10,18 +10,20 @@ import { toast } from './misc.js';
 import { save } from './save.js';
 import { loadTlBuffers, renderTl, tlRec } from './tl.js';
 import { renderBuses } from './buses-ui.js';
+import { cleanMarkers } from './markers.js';
 import { tlSelect } from './tl-select.js';
 
 // ---------- Annuler / rétablir (timeline) ----------
 
 // Instantané de la timeline : pistes (muets et blocs) et longueur. La position de lecture n'en fait pas partie.
-export const tlSnapshot = () => JSON.stringify({ bars: state.tl.bars, tracks: state.tl.tracks });
+export const tlSnapshot = () => JSON.stringify({ bars: state.tl.bars, tracks: state.tl.tracks, markers: state.tl.markers });
 
 export function initHistory() {
   provide({ tlHistory: new History(tlSnapshot, snap => {
     const s = JSON.parse(snap);
     state.tl.bars = s.bars;
     state.tl.tracks = s.tracks.map(cleanTrack);
+    state.tl.markers = cleanMarkers(s.markers);
     timeline.updateAllTracks();
     renderBuses();
     tlSelect(null, null);

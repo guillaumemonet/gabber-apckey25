@@ -31,6 +31,17 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
   - **■ Arrêter rec** (ou REC à nouveau) termine l'enregistrement.
 - **Lire** : ▶ (ou PLAY sur l'APC) joue depuis la tête de lecture, et le même bouton arrête ; la vue suit la tête de lecture. Les boucles faites à un autre tempo suivent le tempo global. La timeline a sa propre voie dans la table de mixage.
 
+### Marqueurs
+
+[![Timeline de la démo 3 avec des marqueurs Intro, Montée et Drop 1 sous les numéros de mesure](../screenshots/markers-fr.png)](../screenshots/markers-fr.png)
+
+Des repères nommés (intro, montée, drop, break…) sous les numéros de mesure, avec un trait pointillé sur toutes les pistes.
+
+- **+ Marqueur** (coin de la règle) en pose un au début de la mesure de la tête de lecture ; un **double-clic dans la règle** en pose un à cette mesure.
+- **Clic** sur un marqueur : la tête de lecture y va (la lecture repart de là si elle tournait). **Glisser** : le déplacer, calé à la mesure (Maj = au temps). **Double-clic** : le renommer. **Clic droit** : le supprimer.
+- **Alt+← / Alt+→** : marqueur précédent / suivant (après un clic dans la timeline).
+- Les marqueurs s'annulent avec Ctrl+Z et sont enregistrés avec le projet et dans les fichiers morceau.
+
 ### Effets de piste
 
 [![Timeline de la démo 2 avec une ligne d'effets sous chaque piste et l'onglet Effets de la bibliothèque](../screenshots/tlfx-fr.png)](../screenshots/tlfx-fr.png)

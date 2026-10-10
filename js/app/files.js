@@ -209,7 +209,7 @@ export async function saveFile(kind) {
     ids = songSampleIds();
     // Les sons importés qu'il utilise voyagent avec lui (ils reviennent dans « Mes sons » à l'ouverture).
     const used = new Set(state.tl.tracks.flatMap(tr => tr.fx.filter(b => b.fx === 'curve').map(b => b.p.curve)));
-    data = { bpm: state.bpm, tl: { bars: state.tl.bars, loop: state.tl.loop, zoom: state.tl.zoom, tracks: state.tl.tracks, buses: state.tl.buses }, userSounds: state.userSounds.filter(u => ids.includes(u.sampleId)),
+    data = { bpm: state.bpm, tl: { bars: state.tl.bars, loop: state.tl.loop, zoom: state.tl.zoom, tracks: state.tl.tracks, buses: state.tl.buses, markers: state.tl.markers }, userSounds: state.userSounds.filter(u => ids.includes(u.sampleId)),
       curves: state.curves.filter(c => used.has(c.id)) };
   } else data = TOOL_IO[kind].get();
   toast(t('file.saving'));
@@ -252,6 +252,7 @@ export async function loadFile(file, demo = false) {
     state.tl.playhead = 0;
     state.tl.tracks = tl.tracks;
     state.tl.buses = tl.buses;
+    state.tl.markers = tl.markers;
     timeline.updateAllTracks();
     renderBuses();
     for (const u of Array.isArray(f.data.userSounds) ? f.data.userSounds : []) {

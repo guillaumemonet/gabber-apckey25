@@ -33,6 +33,7 @@ import { buildLibrary } from './app/library-ui.js';
 import { buildCpu, buildMetro } from './app/metro-ui.js';
 import { drawMeter, renderAll, toast } from './app/misc.js';
 import { buildBuses } from './app/buses-ui.js';
+import { buildMarkers } from './app/markers.js';
 import { buildMaster } from './app/master-ui.js';
 import { buildMixer } from './app/mixer-ui.js';
 import { buildOsc, oscFor, setKeys } from './app/osc-ui.js';
@@ -155,6 +156,7 @@ async function start() {
   buildMaster();
   buildSidechain();
   buildTl();
+  buildMarkers();
   buildRoll();
   initHistory();
   buildGen();

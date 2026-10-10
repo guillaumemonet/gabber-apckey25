@@ -31,6 +31,17 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
   - **■ Stop rec** (or REC again) ends the recording.
 - **Play**: ▶ (or PLAY on the APC) plays from the playhead, and the same button stops; the view follows the playhead. Loops recorded at another tempo follow the global tempo. The timeline has its own channel in the mixer.
 
+### Markers
+
+[![Timeline of demo 3 with Intro, Build-up and Drop 1 markers under the bar numbers](../screenshots/markers-en.png)](../screenshots/markers-en.png)
+
+Named landmarks (intro, build-up, drop, break…) under the bar numbers, with a dotted line across every track.
+
+- **+ Marker** (corner of the ruler) adds one at the start of the playhead's bar; a **double-click in the ruler** adds one at that bar.
+- **Click** a marker: the playhead goes there (playback restarts from there if it was running). **Drag**: move it, snapped to the bar (Shift = to the beat). **Double-click**: rename it. **Right-click**: delete it.
+- **Alt+← / Alt+→**: previous / next marker (after a click in the timeline).
+- Markers can be undone with Ctrl+Z and are saved with the project and in song files.
+
 ### Track effects
 
 [![Timeline of demo 2 with an effects line under each track and the Effects tab of the library](../screenshots/tlfx-en.png)](../screenshots/tlfx-en.png)
