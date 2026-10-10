@@ -6,6 +6,7 @@ import { PROGRESSIONS, bassNote, parseProgression, voiceChords } from '../chords
 import { t } from '../i18n.js';
 import { catColor } from '../library.js';
 import { LEAD_DENSITIES, LEAD_REGISTERS, LEAD_STYLES, generateLead } from '../melody.js';
+import { FEATURES, learnTaste, suggestLeads, suggestProgressions } from '../suggest.js';
 import { PAGES } from '../params.js';
 import { PianoRoll } from '../pianoroll.js';
 import { PALETTE } from '../apc.js';
@@ -26,7 +27,8 @@ export const GEN_RHYTHMS = ['hold', 'beats', 'offbeat', 'eighths'];
 export const GEN_BASS = { none: null, sub: { preset: 'sub_bass', rhythm: 'hold' }, offbeat: { preset: 'bass', rhythm: 'offbeat' }, reese: { preset: 'reese', rhythm: 'hold' } };
 export const defaultLead = () => ({ preset: 'hardstyle_lead', register: 'high', style: 'anthem', density: 'mid', double: false, seed: 1 });
 export const defaultGen = () => ({ tab: 'chords', prog: PROGRESSIONS[0], preset: 'epic_strings', register: 'mid', bars: 2, repeat: 2, rhythm: 'hold', bass: 'none', lead: defaultLead(),
-  draft: { chords: null, lead: null } });   // brouillons : { seq, edited } (notes d'un passage de la suite)
+  draft: { chords: null, lead: null },   // brouillons : { seq, edited } (notes d'un passage de la suite)
+  taste: null });                        // goût appris par les suggestions : { n, mean } (js/suggest.js)
 
 // Brouillon d'une sauvegarde : notes valides seulement.
 function cleanDraft(d) {
@@ -57,6 +59,7 @@ export function mergeGen(saved) {
     if (Number.isInteger(l.seed) && l.seed > 0) g.lead.seed = l.seed;
   }
   g.draft = { chords: cleanDraft(saved.draft?.chords), lead: cleanDraft(saved.draft?.lead) };
+  if (Number.isInteger(saved.taste?.n) && saved.taste.n > 0 && saved.taste.mean && FEATURES.every(k => Number.isFinite(saved.taste.mean[k]))) g.taste = { n: saved.taste.n, mean: { ...saved.taste.mean } };
   return g;
 }
 
@@ -315,7 +318,7 @@ export function buildGen() {
   const tabs = document.createElement('div');
   tabs.className = 'gen-tabs';
   for (const id of ['chords', 'lead']) {
-    tabs.appendChild(button(t(`gen.tab.${id}`), () => { stopGenPreview(); state.gen.tab = id; save(); renderGen(); renderGenRoll(true); })).dataset.tab = id;
+    tabs.appendChild(button(t(`gen.tab.${id}`), () => { stopGenPreview(); state.gen.tab = id; $('#gen .gen-sugs').hidden = true; save(); renderGen(); renderGenRoll(true); })).dataset.tab = id;
   }
   // Commun : suite d'accords, mesures par accord, répétitions.
   const prog = document.createElement('input');
@@ -364,7 +367,11 @@ export function buildGen() {
   });
   idea.id = 'gen-idea';
   idea.dataset.icon = 'wand';
-  lead.append(
+  const sug = button(t('gen.suggest'), showLeadSuggestions);
+  sug.id = 'gen-suggest';
+  sug.dataset.icon = 'star';
+  sug.title = t('gen.suggestTitle');
+  lead.append(sug,
     field(t('gen.sound'), soundSelect(L, LEAD_SOUNDS)),
     field(t('gen.style'), select(L, 'style', LEAD_STYLES.map(k => [k, t(`gen.style.${k}`)]))),
     field(t('gen.density'), select(L, 'density', LEAD_DENSITIES.map(k => [k, t(`gen.dens.${k}`)]))),
@@ -396,7 +403,15 @@ export function buildGen() {
   cv.id = 'gen-canvas';
   cv.tabIndex = 0;
   wrap.appendChild(cv);
-  box.append(tabs, row1, row2, chords, lead, actions, info, bar, wrap);
+  // Suggestions : suites d'accords (onglet Accords), mélodies (onglet Mélodie).
+  const progSug = button(t('gen.suggestProg'), showProgSuggestions);
+  progSug.id = 'gen-suggest-prog';
+  progSug.dataset.icon = 'star';
+  chords.appendChild(progSug);
+  const sugBox = document.createElement('div');
+  sugBox.className = 'gen-sugs';
+  sugBox.hidden = true;
+  box.append(tabs, row1, row2, chords, lead, actions, sugBox, info, bar, wrap);
   const held = new Map();
   genRoll = new PianoRoll(cv, {
     clip: () => draft(state.gen.tab),
@@ -434,6 +449,68 @@ function renderGenEdited() {
 }
 
 // Réglages affichés (après le chargement d'un projet, d'un fichier…).
+// ---- Suggestions (sans réseau de neurones : règles de l'hymne et goût appris, js/suggest.js) ----
+
+export let leadSuggestions = [];
+export function showLeadSuggestions() {
+  stopGenPreview();
+  const g = state.gen, { chords } = progression();
+  if (!chords.length) return;
+  leadSuggestions = suggestLeads(chords, { style: g.lead.style, register: g.lead.register, beatsPerChord: g.bars * BEATS_PER_BAR, double: g.lead.double },
+    g.taste, 3, 120, 1 + Math.floor(Math.random() * 1e5));
+  const box = $('#gen .gen-sugs');
+  box.innerHTML = `<div class="hint">${t('gen.sugHint', { n: g.taste?.n ?? 0 })}</div>`;
+  leadSuggestions.forEach((s, k) => {
+    const card = document.createElement('div');
+    card.className = 'gen-sug';
+    card.innerHTML = `<b>${t('gen.sugName', { n: k + 1 })}</b><span class="hint">${t('gen.sugScore', { s: Math.round(s.score * 100) })}</span>`;
+    const listen = button(t('gen.listen'), () => {
+      if (stopGenPreview()) return;
+      previewT0 = engine.ctx.currentTime + 0.05;
+      const end = g.bars * BEATS_PER_BAR * chords.length;
+      previewEnd = previewT0 + end * 60 / state.bpm + 0.3;
+      playNotes(s.seq, leadPreset());
+    });
+    listen.dataset.icon = 'play';
+    const pick = button(t('gen.sugPick'), () => chooseLeadSuggestion(k), 'primary');
+    card.append(listen, pick);
+    box.appendChild(card);
+  });
+  box.hidden = false;
+}
+// La suggestion choisie devient le brouillon de la mélodie, et le goût apprend d'elle.
+export function chooseLeadSuggestion(k) {
+  const s = leadSuggestions[k];
+  if (!s) return;
+  stopGenPreview();
+  const g = state.gen;
+  g.lead.seed = s.seed;
+  g.lead.density = s.density;
+  refreshDraft('lead', true);
+  g.taste = learnTaste(g.taste, s.features);
+  $('#gen .gen-sugs').hidden = true;
+  save();
+  renderGen();
+  renderGenRoll(true);
+  toast(t('gen.sugChosen', { n: k + 1 }), 2500);
+}
+// Suites d'accords d'hymne dans la tonalité de la suite actuelle (fa mineur par défaut).
+export function showProgSuggestions() {
+  const { chords } = parseProgression(state.gen.prog);
+  const tonic = chords[0]?.root ?? 5;
+  const box = $('#gen .gen-sugs');
+  box.innerHTML = `<div class="hint">${t('gen.progSugHint')}</div>`;
+  const row = document.createElement('div');
+  row.className = 'gen-chips';
+  for (const p of suggestProgressions(tonic, 8)) {
+    const b = button(p.text, () => { state.gen.prog = p.text; $('#gen-prog').value = p.text; box.hidden = true; onGenChange(); });
+    b.title = p.degrees.join(' – ');
+    row.appendChild(b);
+  }
+  box.appendChild(row);
+  box.hidden = false;
+}
+
 export function renderGen() {
   const box = $('#gen');
   if (!box) return;

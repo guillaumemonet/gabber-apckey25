@@ -31,6 +31,12 @@ Un bloc d'accord se manipule comme les autres : le déplacer, l'allonger, le cop
 - Tant que le brouillon n'a pas été retouché, chaque réglage le recalcule. Une fois **retouché à la main**, les réglages ne le changent plus : **Recalculer** repart des réglages (Nouvelle idée aussi, pour la mélodie).
 - **Écouter** et **Générer** utilisent le brouillon tel qu'il est affiché. Les accords sont posés en un bloc de notes par accord (chacun garde son nom), la mélodie en un seul bloc. Le brouillon est enregistré avec le projet.
 
+**Suggestions (sans réseau de neurones)**
+
+- **Suggestions** (onglet Mélodie) : le Générateur essaie une centaine de mélodies sur votre suite et vous propose les **trois meilleures**, différentes entre elles. La note vient de règles de hook d'hymne : temps forts sur les notes de l'accord, mouvements surtout conjoints, peu de grands sauts, ambitus d'environ une octave, motif repris d'un accord à l'autre, sommet vers la fin de la phrase, fin sur la fondamentale.
+- **Écouter** une idée, puis **Choisir** : elle devient le brouillon de la mélodie. Chaque choix **apprend votre goût** (la moyenne des traits des idées choisies) : les suggestions suivantes s'en rapprochent de plus en plus. Le goût est enregistré avec le projet.
+- **Suggérer des suites** (onglet Accords) : des suites d'accords d'hymne dans la tonalité de votre suite, construites à partir des enchaînements les plus courants du hardcore et du hardstyle en mineur (i, VI, VII, III, iv, v, V) ; un clic en utilise une.
+
 ---
 
 ← [Instruments](instruments.md) · [Sommaire](README.md) · [Mixage et effets](mixage.md) →

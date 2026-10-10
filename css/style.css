@@ -917,3 +917,9 @@ header button, header .status { white-space: nowrap; }
 /* Effets d'insert dans les voies étroites (mixeur, bus) : la règle de l'éditeur d'effets (libellés larges) ne doit pas écraser le curseur. */
 .strip .fx-param { grid-template-columns: 38px minmax(50px, 1fr) 38px; gap: 3px; }
 .strip .fx-param em { font-size: 10px; }
+/* Suggestions du Générateur */
+.gen-sugs { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border: 1px dashed var(--accent-2); border-radius: 8px; }
+.gen-sugs[hidden] { display: none; }
+.gen-sug { display: flex; align-items: center; gap: 10px; }
+.gen-sug b { min-width: 60px; }
+.gen-sug .hint { flex: 1; }
