@@ -13,12 +13,14 @@ export default async function (t, A) {
   t.ok(secs >= 78 && secs <= 90, 'durée du morceau ≈ 64 mesures à 190 BPM', total);
   // Lecture depuis la mesure 9 : 32 temps = 10,1 s.
   A.timeline.play(32);
+  const w0 = performance.now();
   await t.wait(1500);
   const [t1, pos1] = parts();
+  const waited = (performance.now() - w0) / 1000;   // attente réelle (plus longue sur une machine chargée)
   A.timeline.stop();
   const [mm, ss] = t1.split(':');
   const el = +mm * 60 + +ss;
-  t.ok(el >= 10.1 && el <= 13, 'le temps suit la lecture', t1);
+  t.ok(Math.abs(el - (10.1 + waited)) < 0.6, 'le temps suit la lecture', [t1, +(10.1 + waited).toFixed(1)]);
   t.ok(/^(9|10|11)\.\d$/.test(pos1), 'mesure.temps suit la lecture', pos1);
   // À l'arrêt, le compteur suit la tête de lecture déplacée.
   S.tl.playhead = 16;

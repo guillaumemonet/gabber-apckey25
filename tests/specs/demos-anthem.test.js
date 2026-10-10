@@ -4,12 +4,14 @@ const missing = A => [...new Set(A.state.tl.tracks.flatMap(tr => tr.clips.map(c 
 export default async function (t, A) {
   const S = A.state;
   for (const n of [3, 4, 5]) {
+    const prev = S.tl.tracks;   // la démo précédente a aussi 64 mesures de sons Anthem : on attend que les pistes changent
     t.$('#tl-demo').click();
     await t.wait(100);
     t.$(`.demo-pick[data-demo="${n}"]`).click();
-    t.ok(await t.until(() => S.tl.bars === 64 && S.tl.tracks.some(tr => tr.clips.some(c => c.sampleId?.startsWith('lib:anthem-'))), 20000), `démo ${n} chargée`);
+    t.ok(await t.until(() => S.tl.tracks !== prev && S.tl.bars === 64 && S.tl.tracks.some(tr => tr.clips.some(c => c.sampleId?.startsWith('lib:anthem-'))), 20000), `démo ${n} chargée`);
     await t.until(() => !missing(A).length, 15000);
     t.eq(missing(A), [], `démo ${n} : tous les sons sont là`);
+    await t.wait(300);   // fin du chargement (noms traduits, enregistrement)
     t.ok(S.tl.tracks.every(tr => tr.clips.every(c => !c.sampleId || c.sampleId.startsWith('lib:anthem-'))), `démo ${n} : uniquement la bibliothèque Anthem`);
     const fx = S.tl.tracks.flatMap(tr => tr.fx);
     t.ok(fx.length >= 10, `démo ${n} : des effets de piste`, fx.length);
