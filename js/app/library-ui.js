@@ -10,6 +10,7 @@ import { deleteCurve, openCurve } from './curve-ui.js';
 import { loadDeck } from './decks-ui.js';
 import { removeUserSound } from './kick-ui.js';
 import { padEls } from './pads.js';
+import { slotFromLibrary } from './launcher.js';
 import { save } from './save.js';
 import { beatPx, ensureBuffer, tlPlaceItem, tlTarget } from './tl.js';
 import { FX_FAMILIES, fxColor, fxItems, tlPlaceFx } from './trackfx-ui.js';
@@ -130,10 +131,11 @@ export function startLibDrag(e, item) {
     const under = document.elementFromPoint(ev.clientX, ev.clientY);
     const deckEl = item.kind !== 'fx' ? under?.closest('.deck') : null;
     const padEl = item.kind !== 'fx' ? under?.closest('#pads .pad') : null;
-    for (const d of document.querySelectorAll('.deck.dragover, #pads .pad.dragover')) if (d !== deckEl && d !== padEl) d.classList.remove('dragover');
-    (deckEl ?? padEl)?.classList.add('dragover');
-    target = deckEl ? { deck: deckEl.dataset.deck } : padEl ? { pad: padEls.indexOf(padEl) } : tlTarget(ev);
-    if (target && !target.deck && target.pad === undefined) {
+    const slotEl = item.kind !== 'fx' ? under?.closest('.ln-slot') : null;
+    for (const d of document.querySelectorAll('.deck.dragover, #pads .pad.dragover, .ln-slot.dragover')) if (d !== deckEl && d !== padEl && d !== slotEl) d.classList.remove('dragover');
+    (deckEl ?? padEl ?? slotEl)?.classList.add('dragover');
+    target = deckEl ? { deck: deckEl.dataset.deck } : padEl ? { pad: padEls.indexOf(padEl) } : slotEl ? { slot: [+slotEl.dataset.row, +slotEl.dataset.col] } : tlTarget(ev);
+    if (target && !target.deck && target.pad === undefined && !target.slot) {
       const bars = item.kind === 'fx' ? item.len / BEATS_PER_BAR : item.loop && item.bars ? item.bars : 1;
       Object.assign(drop.style, { left: `${target.beat * beatPx()}px`, width: `${bars * state.tl.zoom}px` });
       target.lane.appendChild(drop);
@@ -146,8 +148,9 @@ export function startLibDrag(e, item) {
     ghost?.remove();
     libSelected = item;
     if (!ghost) { if (item.kind !== 'fx') previewSample(item); renderLibrary(); return; }
-    for (const d of document.querySelectorAll('.deck.dragover, #pads .pad.dragover')) d.classList.remove('dragover');
-    if (target?.deck) loadDeck(target.deck, item);
+    for (const d of document.querySelectorAll('.deck.dragover, #pads .pad.dragover, .ln-slot.dragover')) d.classList.remove('dragover');
+    if (target?.slot) slotFromLibrary(...target.slot, item);
+    else if (target?.deck) loadDeck(target.deck, item);
     else if (target?.pad >= 0) loadItemIntoPad(item, target.pad);
     else if (target) (item.kind === 'fx' ? tlPlaceFx : tlPlaceItem)(item, target.track, target.beat);
     renderLibrary();

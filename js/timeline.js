@@ -182,11 +182,12 @@ export class Timeline {
   }
   clipBeats(clip) { return clip.len ?? Math.max(1, Math.ceil(this.naturalBeats(clip))); }
 
-  // Démarre la lecture au temps `beat` ; renvoie l'instant (horloge audio) où ce temps sonne.
-  play(beat = this.st.playhead) {
+  // Démarre la lecture au temps `beat`, maintenant ou à l'instant audio `at` (lanceur de clips : à la mesure suivante) ;
+  // renvoie l'instant (horloge audio) où ce temps sonne.
+  play(beat = this.st.playhead, at = null) {
     this.stop(true);
     this.updateAllTracks();
-    const start = this.ctx.currentTime + 0.08;
+    const start = Math.max(this.ctx.currentTime + 0.03, at ?? this.ctx.currentTime + 0.08);
     // Boucles des pads et 909 calées sur les mesures de la timeline.
     this.engine.origin = start - beat * this.beatDur;
     this.playing = true;

@@ -25,6 +25,7 @@ import { mergeRoll } from './roll-ui.js';
 import { mergeScenes } from './scenes.js';
 import { tlRec } from './tl.js';
 import { loadPad, padsInUse } from './sounds.js';
+import { cleanLauncher } from './launcher.js';
 import { cleanMidiMap } from './midi-ui.js';
 import { mergeViz } from './viz-ui.js';
 
@@ -69,6 +70,7 @@ export async function restore() {
     state.metro = mergeMetroState(saved.metro);
     state.master = mergeMasterState(saved.master);
     state.midiMap = cleanMidiMap(saved.midiMap);
+    state.launcher = cleanLauncher(saved.launcher);
     state.midiClock = { out: typeof saved.midiClock?.out === 'string' ? saved.midiClock.out : '', in: typeof saved.midiClock?.in === 'string' ? saved.midiClock.in : '' };
     state.padQuant = PAD_QUANTS.includes(saved.padQuant) ? saved.padQuant : 0;
     state.libArchives = !!saved.libArchives;
@@ -180,6 +182,7 @@ export function stateSnapshot() {
     metro: state.metro,
     master: state.master,
     midiMap: state.midiMap,
+    launcher: state.launcher,
     midiClock: state.midiClock,
     banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
   };

@@ -897,3 +897,19 @@ header button, header .status { white-space: nowrap; }
 .midi-clock { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); }
 .midi-clock label { display: flex; align-items: center; gap: 6px; color: var(--muted); }
 .midi-clock select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 2px 4px; max-width: 200px; }
+/* Lanceur de clips */
+.ln-bar { gap: 8px; margin-bottom: 8px; }
+#ln-mode.active { background: var(--accent-2); border-color: var(--accent-2); color: #111; }
+.launcher { display: grid; grid-template-columns: repeat(8, minmax(80px, 1fr)) 84px; gap: 4px; }
+.ln-head { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); min-width: 0; }
+.ln-head span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ln-stop { padding: 2px 5px; }
+.ln-stop.active { color: var(--accent); border-color: var(--accent); }
+.ln-slot { --c: #3a3c44; height: 44px; padding: 4px 6px; font-size: 11px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-radius: 6px; border: 1px dashed var(--line); background: var(--bg); color: var(--muted); }
+.ln-slot.full { border: 1px solid color-mix(in srgb, var(--c) 80%, #fff); background: color-mix(in srgb, var(--c) 35%, #111); color: #fff; font-weight: 600; }
+.ln-slot.playing { box-shadow: inset 0 0 0 2px #fff; background: color-mix(in srgb, var(--c) 70%, #111); animation: ln-pulse .9s ease-in-out infinite alternate; }
+.ln-slot.pending { background: #fff; color: #111; }
+.ln-slot.dragover { outline: 2px solid var(--accent-2); }
+@keyframes ln-pulse { from { filter: brightness(1); } to { filter: brightness(1.35); } }
+@media (prefers-reduced-motion: reduce) { .ln-slot.playing { animation: none; } }
+.ln-row { font-size: 11px; padding: 4px 6px; }

@@ -25,7 +25,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters, up to 4 insert effects, a **sidechain** triggered by the kicks, **4 buses** to process tracks together, and a **master chain** (compressor, limiter, LUFS loudness); every timeline track also has its own solo and insert effects;
   - **Patch**: wire the tools and **effect boxes** (distortion, PCF, filter, delay, reverb, compressor, bitcrusher) freely, everything in sync with the tempo;
   - **Visualizer** in the Winamp spirit: 21 modes (LED spectrum, oscilloscope, Milk swirls, hi-fi VU meters, text slam, particles, Amiga bars, spectrogram, and 3D / GPU modes: tunnel, synthwave landscape, blob, hyperspace, fractal, lasers, spectrum city, LED wall, metaballs, plasma, rotozoomer, fluid, reaction-diffusion), stackable filters (CRT, kaleidoscope, glitch, strobe), and a projector window for a second screen;
-  - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **MIDI learn** for any other MIDI keyboard or controller, with a MIDI monitor.
+  - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **clip launcher** (also on the APC's 40 pads), **MIDI clock**, **MIDI learn** for any other MIDI keyboard or controller, with a MIDI monitor.
 - **Save and open** the whole project, the song or the settings of each tool (`.gabber` files), **fast WAV export and stems**, **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
 
@@ -65,7 +65,7 @@ The complete guide is in [docs/manual](docs/manual/README.md); every window in t
 5. **[Instruments](docs/manual/instruments.md)**: TR-909, TB-303, Synth, Oscillator synth, Kick designer
 6. **[Generator: chords and melody](docs/manual/generator.md)**
 7. **[Mixing and effects](docs/manual/mixing.md)**: Effect designer, Mixer, Buses, Master chain and loudness, Patch
-8. **[Live: turntables, scenes, visualizer](docs/manual/live.md)**: Turntables, Scenes, Visualizer, Plugin windows
+8. **[Live: turntables, scenes, visualizer](docs/manual/live.md)**: Turntables, Clip launcher, Scenes, Visualizer, Plugin windows
 9. **[Files and recording](docs/manual/files.md)**: Saving and opening, Recording and kits
 10. **[Troubleshooting](docs/manual/troubleshooting.md)**: Troubleshooting, Rebuilding the sound banks (optional)
 
@@ -74,10 +74,10 @@ The complete guide is in [docs/manual](docs/manual/README.md); every window in t
 Goal: make GabberKey a professional tool, in the studio and on stage, step by step.
 
 1. **Foundations**: automated tests, code split into modules, sounds loaded on demand, complete manual. *(done)*
-2. **Pro mixing**: insert effects on every track, buses, a master chain (compressor, limiter, LUFS meter), solo.
-3. **Editing**: split a block, fades, gain, reverse, transpose, context menu, markers, undo / redo everywhere.
-4. **Automation**: setting curves drawn on the timeline.
-5. **Live**: clip launcher, MIDI learn for other controllers, MIDI clock.
+2. **Pro mixing**: insert effects on every track, buses, a master chain (compressor, limiter, LUFS meter), solo. *(done)*
+3. **Editing**: split a block, fades, gain, reverse, transpose, context menu, markers, undo / redo everywhere. *(done)*
+4. **Automation**: setting curves drawn on the timeline. *(done)*
+5. **Live**: clip launcher, MIDI learn for other controllers, MIDI clock. *(done)*
 6. **Key and stretching**: transposition and time-stretching that keeps the pitch (today a 150 BPM loop played at 190 goes up by 4 semitones).
 7. **Inputs**: audio recording (microphone, sound card) and MIDI files.
 

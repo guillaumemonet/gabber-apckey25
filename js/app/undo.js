@@ -9,6 +9,7 @@ import { renderAcid } from './acid-ui.js';
 import { renderBuses } from './buses-ui.js';
 import { $, engine, padKey, provide, state, timeline, tlHistory } from './core.js';
 import { renderLibrary } from './library-ui.js';
+import { cleanLauncher, renderLauncher } from './launcher.js';
 import { cleanMarkers } from './markers.js';
 import { renderAll, toast } from './misc.js';
 import { save } from './save.js';
@@ -28,6 +29,7 @@ const padSnap = p => p && { name: p.name, color: p.color, sampleId: p.sampleId, 
 export const tlSnapshot = () => JSON.stringify({
   bars: state.tl.bars, tracks: state.tl.tracks, markers: state.tl.markers, buses: state.tl.buses,
   pads: state.banks.map(b => b.map(padSnap)), tr: state.tr.patterns, acid: state.acid.patterns, scenes: state.scenes,
+  launcher: state.launcher.slots,
 });
 
 // Pads de l'instantané : un pad dont le son n'a pas changé garde ses potentiomètres ; les autres sont recréés.
@@ -59,6 +61,7 @@ export function initHistory() {
     if (s.tr) { state.tr.patterns = s.tr; renderTr(); }
     if (s.acid) { state.acid.patterns = s.acid; renderAcid(); }
     if (s.scenes) { state.scenes = s.scenes; renderScenes(); }
+    if (s.launcher) { state.launcher = cleanLauncher({ slots: s.launcher }); renderLauncher(); }
     renderAll();
     timeline.updateAllTracks();
     renderBuses();

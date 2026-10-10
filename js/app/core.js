@@ -92,6 +92,7 @@ export const state = {
   master: defaultMasterState(),       // chaîne master : compresseur, limiteur (js/audio.js)
   midiMap: [],                        // MIDI learn : [{ port, ch, kind, n, target }] (js/app/midi-ui.js)
   midiClock: { out: '', in: '' },     // horloge MIDI : sortie qui la reçoit, entrée suivie (noms des ports)
+  launcher: { slots: Array.from({ length: 5 }, () => new Array(8).fill(null)) },   // lanceur de clips (js/app/launcher.js)
 };
 export const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 export let shiftHeld = false;

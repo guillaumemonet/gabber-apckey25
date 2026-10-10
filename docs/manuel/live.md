@@ -19,6 +19,19 @@ Deux decks pour mixer et scratcher n'importe quel son : boucles de la bibliothè
 - Pour chaque deck : **Volume**, **Basses**, **Médiums**, **Aigus** (tout à gauche = coupé) et un **Filtre** DJ (à gauche = passe-bas, à droite = passe-haut) ; un **crossfader** à puissance constante entre A et B.
 - Sur l'APC, **Maj + REC** deux fois ouvre la page de potentiomètres des platines (K1-K3 = volume, basses, filtre du deck A ; K4-K6 = deck B ; K7 = crossfader ; K8 = master). Les platines ont leur voie de mixage (K6 sur les pages mixeur) et peuvent être enregistrées dans la timeline (source Platines).
 
+## Lanceur de clips
+
+[![Lanceur de clips : 8 colonnes (les pistes de la démo 3) et 5 lignes de clips, la première ligne en train de jouer](../screenshots/launcher-fr.png)](../screenshots/launcher-fr.png)
+
+Jouez le morceau en direct, clip par clip, comme sur scène. La fenêtre **Lanceur** (barre des plugins, groupe Studio) a **8 colonnes**, les 8 premières pistes de la timeline, et **5 lignes** de cases.
+
+- **Remplir une case** : glissez-y un son de la bibliothèque, ou clic droit sur un bloc de la timeline › **Envoyer au lanceur** (il va dans la colonne de sa piste, première case libre). Clic droit sur une case pour la vider.
+- **Lancer** : un clic sur une case la fait tourner **en boucle à partir de la mesure suivante**, à la place du clip qui tournait dans sa colonne (une case qui attend sa mesure clignote). Elle passe par les potentiomètres et les effets d'insert de sa piste.
+- **Ligne N** lance toute une ligne ; le carré ■ d'une colonne l'arrête ; **Tout arrêter** arrête tous les clips à la mesure suivante. **Panique** coupe tout immédiatement.
+- Les clips suivent les mesures de la timeline quand elle joue (et la grille de la TR-909) ; sinon, le premier clip lancé part tout de suite et donne les mesures.
+- **Grille APC = lanceur** : les **40 pads** de l'APC deviennent les cases (rangée du haut = ligne 1), **SCENE LAUNCH 1-5** lancent les lignes, **STOP ALL** arrête tous les clips, **Maj + pad** arrête sa colonne. Les LED montrent les cases pleines, celle qui joue (pulsation) et celle qui attend (clignotement rapide).
+- Les cases sont enregistrées avec le projet et s'annulent avec Ctrl+Z.
+
 ## Scènes
 
 [![Fenêtre Scènes avec des scènes enregistrées, et les effets de performance](../screenshots/scenes-fr.png)](../screenshots/scenes-fr.png)
@@ -54,7 +67,7 @@ Un clin d'œil à Winamp, dans le groupe **Studio** : des visualisations de la m
 
 ## Fenêtres des plugins
 
-La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Synthé à oscillateurs, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick, Designer d'effet, Générateur), **Studio** (Mixeur, Câblage, Scènes, Performance, Visualiseur) et **Système** (MIDI : claviers, MIDI learn, moniteur). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
+La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Synthé à oscillateurs, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick, Designer d'effet, Générateur), **Studio** (Mixeur, Bus, Câblage, Lanceur, Scènes, Performance, Visualiseur) et **Système** (MIDI : claviers, MIDI learn, moniteur). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
 - Chaque fenêtre a une barre de titre : le **titre** à gauche, **?** et **✕** à droite.
 - La **fenêtre active** (au premier plan) est mise en valeur ; les fenêtres s'ouvrent et se ferment avec une transition 3D.
 - **Déplacez**-la par sa barre de titre, **redimensionnez**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.

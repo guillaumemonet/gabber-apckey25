@@ -25,6 +25,7 @@ import { renderEditor, renderEditorKnobs, renderPad, renderPads } from './pads.j
 import { PERF, heldRolls, perfActive, renderPerf } from './perf-fx.js';
 import { acidPresets, synthTouched, trPresets } from './presets-bar.js';
 import { save } from './save.js';
+import { haltLauncher } from './launcher.js';
 import { bankLoaded, loadBank, loadPad } from './sounds.js';
 import { padCat } from './sidechain-ui.js';
 import { renderSynthKnobs, synthKnobDefs } from './synth-ui.js';
@@ -102,6 +103,7 @@ export function setPage(page) {
 }
 
 export function panic() {
+  haltLauncher();
   stopTlPreview();
   drum.stop();
   acid.stop();

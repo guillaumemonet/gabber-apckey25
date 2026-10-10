@@ -25,7 +25,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres, jusqu'à 4 effets d'insert, un **sidechain** déclenché par les kicks, **4 bus** pour traiter des pistes ensemble, et une **chaîne master** (compresseur, limiteur, sonie en LUFS) ; chaque piste de la timeline a aussi son solo et ses effets d'insert ;
   - **Câblage** : reliez librement les outils et des **boîtes à effets** (distorsion, PCF, filtre, delay, reverb, compresseur, bitcrusher), tout calé sur le tempo ;
   - **Visualiseur** dans l'esprit Winamp : 21 modes (spectre à LED, oscilloscope, tourbillons Milk, vumètres hi-fi, texte qui cogne, particules, barres Amiga, spectrogramme, et modes 3D / GPU : tunnel, paysage synthwave, blob, hyperespace, fractale, lasers, ville de spectre, mur de LED, metaballs, plasma, rotozoomer, fluide, réaction-diffusion), filtres empilables (CRT, kaléidoscope, glitch, stroboscope), et une fenêtre projecteur pour un deuxième écran ;
-  - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **MIDI learn** pour tout autre clavier ou contrôleur MIDI, avec un moniteur MIDI.
+  - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **lanceur de clips** (aussi sur les 40 pads de l'APC), **horloge MIDI**, **MIDI learn** pour tout autre clavier ou contrôleur MIDI, avec un moniteur MIDI.
 - **Enregistrer et ouvrir** tout le projet, le morceau ou les réglages de chaque outil (fichiers `.gabber`), **export WAV rapide et stems**, **enregistrement WAV** de votre session et **export / import de kits**.
 - Interface en **français ou en anglais**, selon la langue du navigateur.
 
@@ -65,7 +65,7 @@ Le mode d'emploi complet est dans [docs/manuel](docs/manuel/README.md) ; chaque 
 5. **[Instruments](docs/manuel/instruments.md)** : TR-909, TB-303, Synthé, Synthé à oscillateurs, Designer de kick
 6. **[Générateur : accords et mélodie](docs/manuel/generateur.md)**
 7. **[Mixage et effets](docs/manuel/mixage.md)** : Designer d'effet, Table de mixage, Bus, Chaîne master et sonie, Câblage
-8. **[Live : platines, scènes, visualiseur](docs/manuel/live.md)** : Platines, Scènes, Visualiseur, Fenêtres des plugins
+8. **[Live : platines, scènes, visualiseur](docs/manuel/live.md)** : Platines, Lanceur de clips, Scènes, Visualiseur, Fenêtres des plugins
 9. **[Fichiers et enregistrement](docs/manuel/fichiers.md)** : Enregistrer et ouvrir, Enregistrement et kits
 10. **[Dépannage](docs/manuel/depannage.md)** : Dépannage, Régénérer les banques de sons (facultatif)
 
@@ -74,10 +74,10 @@ Le mode d'emploi complet est dans [docs/manuel](docs/manuel/README.md) ; chaque 
 Objectif : faire de GabberKey un outil professionnel, au studio comme en live, étape par étape.
 
 1. **Fondations** : tests automatiques, code découpé en modules, sons chargés à la demande, manuel complet. *(fait)*
-2. **Mixage pro** : effets d'insert sur chaque piste, bus, chaîne de master (compresseur, limiteur, vumètre en LUFS), solo.
-3. **Édition** : couper un bloc, fondus, gain, inversion, transposition, menu contextuel, marqueurs, annuler / rétablir partout.
-4. **Automation** : des courbes de réglages dessinées sur la timeline.
-5. **Live** : lanceur de clips, MIDI learn pour d'autres contrôleurs, horloge MIDI.
+2. **Mixage pro** : effets d'insert sur chaque piste, bus, chaîne de master (compresseur, limiteur, vumètre en LUFS), solo. *(fait)*
+3. **Édition** : couper un bloc, fondus, gain, inversion, transposition, menu contextuel, marqueurs, annuler / rétablir partout. *(fait)*
+4. **Automation** : des courbes de réglages dessinées sur la timeline. *(fait)*
+5. **Live** : lanceur de clips, MIDI learn pour d'autres contrôleurs, horloge MIDI. *(fait)*
 6. **Tonalité et étirement** : transposition et étirement temporel qui garde la hauteur (aujourd'hui, une boucle à 150 BPM jouée à 190 monte de 4 demi-tons).
 7. **Entrées** : enregistrement audio (micro, carte son) et fichiers MIDI.
 

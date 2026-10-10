@@ -19,6 +19,19 @@ Two decks to mix and scratch any sound: library loops, your recordings, your own
 - Per deck: **Volume**, **Bass**, **Mid**, **Treble** (all the way left = cut) and a DJ **Filter** (left = low-pass, right = high-pass); a constant-power **crossfader** between A and B.
 - On the APC, **Shift + REC** twice opens the turntable knob page (K1-K3 = deck A volume, bass, filter; K4-K6 = deck B; K7 = crossfader; K8 = master). The decks have their own mixer channel (K6 on the mixer pages) and can be recorded into the timeline (source Decks).
 
+## Clip launcher
+
+[![Clip launcher: 8 columns (the tracks of demo 3) and 5 rows of clips, the first row playing](../screenshots/launcher-en.png)](../screenshots/launcher-en.png)
+
+Play the song live, clip by clip, like on stage. The **Launcher** window (plugin bar, Studio group) has **8 columns**, the first 8 timeline tracks, and **5 rows** of slots.
+
+- **Fill a slot**: drop a library sound on it, or right-click a timeline block › **Send to the launcher** (it goes to its track's column, first free slot). Right-click a slot to empty it.
+- **Launch**: clicking a slot makes it **loop from the next bar**, in place of the clip playing in its column (a slot waiting for its bar blinks). It goes through its track knobs and insert effects.
+- **Row N** launches a whole row; a column's ■ stops it; **Stop all** stops every clip at the next bar. **Panic** cuts everything at once.
+- Clips follow the timeline bars when it plays (and the TR-909 grid); otherwise the first launched clip starts at once and sets the bars.
+- **APC grid = launcher**: the APC's **40 pads** become the slots (top row = row 1), **SCENE LAUNCH 1-5** launch the rows, **STOP ALL** stops all clips, **Shift + pad** stops its column. The LEDs show full slots, the playing one (pulsing) and the waiting one (fast blink).
+- Slots are saved with the project and can be undone with Ctrl+Z.
+
 ## Scenes
 
 [![Scenes window with stored scenes, and the performance effects](../screenshots/scenes-en.png)](../screenshots/scenes-en.png)
@@ -54,7 +67,7 @@ A nod to Winamp, in the **Studio** group: music visualizations that follow the m
 
 ## Plugin windows
 
-The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Oscillator synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer, Effect designer, Generator), **Studio** (Mixer, Patch, Scenes, Performance, Visualizer) and **System** (MIDI: keyboards, MIDI learn, monitor). Each one opens in a window above the timeline:
+The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Oscillator synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer, Effect designer, Generator), **Studio** (Mixer, Buses, Patch, Launcher, Scenes, Performance, Visualizer) and **System** (MIDI: keyboards, MIDI learn, monitor). Each one opens in a window above the timeline:
 - Each window has a title bar: the **title** on the left, **?** and **✕** on the right.
 - The **active window** (in front) is highlighted; windows open and close with a 3D transition.
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.

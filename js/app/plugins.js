@@ -17,11 +17,11 @@ import { pianoRoll, rollStop } from './roll-ui.js';
 export const PLUGIN_GROUPS = [
   ['instruments', ['pads', 'tr', 'acid', 'piano', 'osc', 'decks']],
   ['tools', ['roll', 'editor', 'kick', 'curve', 'gen']],
-  ['studio', ['mix', 'buses', 'patch', 'scenes', 'perf', 'viz']],
+  ['studio', ['mix', 'buses', 'patch', 'launcher', 'scenes', 'perf', 'viz']],
   ['system', ['monitor']],
 ];
 
-export const PLUGIN_ICONS = { pads: 'pads', tr: 'tr', acid: 'acid', piano: 'keys', osc: 'osc', decks: 'decks', roll: 'roll', editor: 'editor', kick: 'kick', curve: 'curve', gen: 'wand', buses: 'mix', mix: 'mix', patch: 'patch', scenes: 'scenes', perf: 'perf', monitor: 'monitor', viz: 'viz' };
+export const PLUGIN_ICONS = { pads: 'pads', tr: 'tr', acid: 'acid', piano: 'keys', osc: 'osc', decks: 'decks', roll: 'roll', editor: 'editor', kick: 'kick', curve: 'curve', gen: 'wand', buses: 'mix', launcher: 'grid', mix: 'mix', patch: 'patch', scenes: 'scenes', perf: 'perf', monitor: 'monitor', viz: 'viz' };
 
 export function buildPluginBar() {
   const nav = $('#plugins');

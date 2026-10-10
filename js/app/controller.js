@@ -10,6 +10,7 @@ import { buildSwatches, renderEditor, renderPads } from './pads.js';
 import { perfActive, perfDown, perfUp } from './perf-fx.js';
 import { onSustainButton, setPianoKey } from './piano.js';
 import { save } from './save.js';
+import { launchRow, launcherMode, launcherPad, renderLauncherLeds, stopAllClips, toggleLauncherMode } from './launcher.js';
 import { captureScene, launchScene, renderSceneLeds, sceneMode, toggleSceneMode } from './scenes.js';
 import { presetKey } from './synth-ui.js';
 import { tlRec, tlRecToggle, tlToggle } from './tl.js';
@@ -40,8 +41,14 @@ export function bindController() {
     setStatus(false, t('status.portBusy', { port: detail.port, msg: detail.message }));
   });
   apc.addEventListener('roles', renderPorts);
+  // Grille de l'APC passée au lanceur : les modes 909 et scènes s'arrêtent.
+  window.addEventListener('gk-grid-mode', () => {
+    if (launcherMode) { if (trMode) toggleTrMode(false); if (sceneMode) toggleSceneMode(false); }
+    renderLeds();
+  });
 
   apc.addEventListener('pad', ({ detail: { index, pressed } }) => {
+    if (launcherMode) { if (pressed) launcherPad(index, shiftHeld); return; }
     if (sceneMode) { if (pressed) { if (shiftHeld) captureScene(index); else launchScene(index); } return; }
     if (trMode) { if (pressed) trPad(index); return; }
     if (!pressed) return releasePad(index);
@@ -65,8 +72,10 @@ export function bindController() {
     }
     if (!pressed) return;
     // PLAY = timeline (Maj + PLAY = grille 909) ; REC = enregistrement de l'outil choisi dans la timeline.
-    if (name === 'play') { if (shiftHeld) toggleTrMode(); else tlToggle(); return; }
+    if (name === 'play') { if (shiftHeld) { toggleLauncherMode(false); toggleTrMode(); } else tlToggle(); return; }
+    if (name.startsWith('scene') && launcherMode && !shiftHeld) { launchRow(+name.slice(5) - 1); return; }   // lanceur : une ligne
     if (name.startsWith('scene')) {
+      toggleLauncherMode(false);
       if (trMode) toggleTrMode(false);   // choisir une banque ramène la grille aux pads
       if (sceneMode) toggleSceneMode(false);
       const k = +name.slice(5) - 1;
@@ -76,7 +85,7 @@ export function bindController() {
       if (shiftHeld) toast(t('bank.toast', { n: b + 1 }));   // la LED clignote pour toutes les banques 6-25
     }
     else if (name.startsWith('track')) setPage((shiftHeld ? MIX_PAGES : PAGE_ORDER)[+name.slice(5) - 1]);
-    else if (name === 'stopAll') { if (shiftHeld) toggleSceneMode(); else panic(); }
+    else if (name === 'stopAll') { if (launcherMode && !shiftHeld) stopAllClips(); else if (shiftHeld) { toggleLauncherMode(false); toggleSceneMode(); } else panic(); }
     else if (name === 'record') { if (shiftHeld) setPage(state.page === 'acid' ? 'decks' : state.page === 'decks' ? 'synth' : 'acid'); else tlRecToggle(); }
   });
 
@@ -132,7 +141,8 @@ $('#swap-roles').addEventListener('click', () => apc.swapRoles());
 export function renderLeds() {
   if (!apc?.connected) return;
   const bank = state.banks[state.bank];
-  for (let i = 0; i < 40 && !trMode && !sceneMode; i++) {
+  if (launcherMode) { renderLauncherLeds(); }
+  for (let i = 0; i < 40 && !trMode && !sceneMode && !launcherMode; i++) {
     const pad = bank[i];
     const mode = playing.get(padKey(state.bank, i));
     let led = 'off';
