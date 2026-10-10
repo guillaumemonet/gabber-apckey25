@@ -6,8 +6,9 @@ export default async function (t, A) {
   const where = folders.map(f => S.banks.findIndex(b => b.some(p => p?.sampleId?.startsWith(`lib:${f}/`))) + 1);
   t.eq(where, [17, 18, 19, 20, 21], 'les cinq banques Anthem sur les pads 17 à 21');
   t.ok(S.banks[16].filter(Boolean).length === 40, 'banque 17 complète');
-  const total = A.libManifest.banks.reduce((n, b) => n + b.pads.filter(Boolean).length, 0);
-  t.ok(t.$('#start-msg').textContent.includes(`${total}/${total}`), 'tous les sons de la bibliothèque chargés au démarrage', t.$('#start-msg').textContent);
+  const onPads = S.banks.flat().filter(p => p?.sampleId?.startsWith('lib:')).length;
+  t.ok(onPads >= 700, 'les sons de la bibliothèque sont sur les pads', onPads);
+  t.ok(!S.banks[16].some(p => p?.buffer), 'ils ne sont décodés qu’à l’affichage de leur banque (banque 17 pas encore affichée)');
 
   const rows = () => t.$$('#lib-list .lib-item span').map(s => s.textContent);
   const cat = re => t.$$('#lib-cats .lib-cat').find(b => re.test(b.textContent));

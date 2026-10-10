@@ -82,6 +82,7 @@ export class Timeline {
     this.timer = null;
     this.onStop = () => {};
     this.getPad = () => null;   // (banque, pad) -> pad ; branché par l'application
+    this.loadPad = () => {};    // décode le son d'un pad (chargement à la demande) ; branché par l'application
     this.padKey = null;
     // Sidechain (branché par l'application) : kicks d'un bloc en temps depuis son début (null si aucun),
     // pad qui est un kick, instant d'un kick, sortie des sons mélodiques baissés par le sidechain.
@@ -179,7 +180,7 @@ export class Timeline {
               if (v) this.padHits.add({ key, v });
             } });
             if (this.isKickPad(pad)) this.onKick(when);
-          }
+          } else if (pad) this.loadPad(pad);   // pas encore décodé : prêt pour le prochain passage
           continue;
         }
         const buf = this.bufferOf(clip.sampleId);

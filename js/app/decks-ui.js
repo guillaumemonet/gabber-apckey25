@@ -8,7 +8,8 @@ import { arcPath, renderKnobs } from './knobs.js';
 import { libSelected, renderLibrary } from './library-ui.js';
 import { toast } from './misc.js';
 import { save } from './save.js';
-import { bufferCache, ensureBuffer } from './tl.js';
+import { bufferCache } from './sounds.js';
+import { ensureBuffer } from './tl.js';
 
 // ---------- Platines ----------
 

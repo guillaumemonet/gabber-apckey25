@@ -9,7 +9,7 @@ import * as store from '../storage.js';
 import { BEATS_PER_BAR, MAX_TRACKS, MIN_TRACKS, REC_SOURCES, TRACK_DEFAULTS, newTrack } from '../timeline.js';
 import { renderAcid } from './acid-ui.js';
 import { renderLeds } from './controller.js';
-import { $, acid, drum, engine, kit, metro, mixer, state, timeline, uiColor, wm } from './core.js';
+import { $, acid, drum, engine, metro, mixer, state, timeline, uiColor, wm } from './core.js';
 import { openDemoMenu } from './demo.js';
 import { exportSong, songEndBeats } from './export.js';
 import { arcPath } from './knobs.js';
@@ -18,6 +18,7 @@ import { toast } from './misc.js';
 import { oscPresetName } from './osc-ui.js';
 import { drawNoteClip, mergeTake, openRoll, pianoRoll, renderRollBar } from './roll-ui.js';
 import { save } from './save.js';
+import { bufferCache, loadPads, loadSound, padsInUse } from './sounds.js';
 import { stopTlPreview, tlPrev, tlPreviewClip } from './tl-listen.js';
 import { growHeldNote, lastRecRender, setLastRecRender } from './tl-record.js';
 import { setTlFocus, tlGroupDown, tlKey, tlLaneDown, tlPicked, tlSelect } from './tl-select.js';
@@ -28,7 +29,6 @@ import { FX_ROW, closeFxEditor, fxEditing, fxEl, fxOutside, fxRows, setFxEditing
 
 // Pads et synthé : blocs posés en jouant ; TR-909 : enregistrement audio.
 export const TL_SOURCES = REC_SOURCES;   // pads, synthé, synthé à oscillateurs, TR-909, TB-303, platines
-export const bufferCache = new Map();   // sampleId -> AudioBuffer des blocs
 export const peaksCache = new Map();    // sampleId -> crêtes pour dessiner la forme d'onde
 export let tlRecorder = null;
 export let tlRec = null;                // enregistrement en cours : { beat, time, events, audio, open, notes, startedDrum, startedAcid, bpm }
@@ -47,18 +47,15 @@ export function clipBuffer(sampleId) {
   return pad?.buffer ?? null;
 }
 
-// Charge les sons qui ne sont sur aucun pad (enregistrements, sons de la bibliothèque remplacés…).
+// Charge des sons (js/app/sounds.js), sauf ceux déjà décodés pour un pad.
 export async function loadBuffers(ids) {
-  await Promise.all([...new Set(ids)].map(async id => {
-    if (clipBuffer(id)) return;
-    if (id.startsWith('builtin:')) { const b = kit[+id.slice(8)]?.buffer; if (b) bufferCache.set(id, b); return; }
-    let data = null;
-    if (id.startsWith('lib:')) data = await fetch(`sounds/${id.slice(4)}`, { cache: 'no-cache' }).then(r => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
-    else data = (await store.loadSample(id).catch(() => null))?.data?.slice(0);
-    if (data) { const b = await engine.ctx.decodeAudioData(data).catch(() => null); if (b) bufferCache.set(id, b); }
-  }));
+  await Promise.all([...new Set(ids)].map(id => (clipBuffer(id) ? null : loadSound(id))));
 }
-export const loadTlBuffers = () => loadBuffers([...state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)), ...state.userSounds.map(s => s.sampleId)].filter(Boolean));
+// Sons de la timeline : blocs de son, pads joués par les blocs de pads, sons créés dans l'application.
+export const loadTlBuffers = () => Promise.all([
+  loadBuffers([...state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)), ...state.userSounds.map(s => s.sampleId)].filter(Boolean)),
+  loadPads(padsInUse()),
+]);
 export async function ensureBuffer(id) { if (!clipBuffer(id)) await loadBuffers([id]); return clipBuffer(id); }
 
 export function tlToggle() {

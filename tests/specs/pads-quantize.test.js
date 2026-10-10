@@ -5,6 +5,7 @@ export default async function (t, A) {
   A.wm.toggle('pads', true);
   A.setBpm(120);
   A.setBank(15);   // Anthems : pads 25-32 = rythmiques en boucle
+  await t.until(() => A.bankLoaded(15), 15000);   // sons chargés à l'affichage de la banque
   const leds = [];
   Object.defineProperty(A.apc, 'connected', { get: () => true });
   A.apc.setPad = (i, c, m) => { if (i === 25) leds.push(m); };
@@ -51,6 +52,7 @@ export default async function (t, A) {
   // Son court calé sur 1 temps pendant que la boucle 24 tourne.
   sel.value = '1'; sel.dispatchEvent(new Event('change'));
   A.setBank(16);   // Anthem drums : pad 1 = kick (un coup)
+  await t.until(() => A.bankLoaded(16), 15000);
   await t.wait(100);
   press(0);
   const k = E.padVoices.get(16 * 40);

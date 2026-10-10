@@ -8,6 +8,7 @@ import { $, acid, apc, drum, engine, mixer, state } from './core.js';
 import { toast } from './misc.js';
 import { renderMixer } from './mixer-ui.js';
 import { save } from './save.js';
+import { loadPad } from './sounds.js';
 import { applyPreset } from './synth-ui.js';
 import { setBpm } from './tempo.js';
 import { renderTr, toggleTrMode, trMode } from './tr909-ui.js';
@@ -73,7 +74,7 @@ export function launchScene(n) {
   for (const key of sc.loops) {
     if (engine.padVoices.has(key)) continue;
     const pad = state.banks[Math.floor(key / 40)]?.[key % 40];
-    if (pad?.buffer && engine.padMode(pad) === 'loop') engine.playPad(key, pad);   // démarre à la mesure suivante
+    if (pad && engine.padMode(pad) === 'loop') loadPad(pad).then(buf => buf && !engine.padVoices.has(key) && engine.playPad(key, pad));   // démarre à la mesure suivante
   }
   if (sc.running && !drum.running) drum.start();
   if (sc.acid) { acid.selectPattern(sc.acid.pattern); if (sc.acid.running && !acid.playing) acid.start(true); }

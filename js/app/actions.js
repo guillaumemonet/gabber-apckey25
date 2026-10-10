@@ -25,6 +25,7 @@ import { renderEditor, renderEditorKnobs, renderPad, renderPads } from './pads.j
 import { PERF, heldRolls, perfActive, renderPerf } from './perf-fx.js';
 import { acidPresets, synthTouched, trPresets } from './presets-bar.js';
 import { save } from './save.js';
+import { bankLoaded, loadBank, loadPad } from './sounds.js';
 import { padCat } from './sidechain-ui.js';
 import { renderSynthKnobs, synthKnobDefs } from './synth-ui.js';
 import { ensureBuffer, tlRec, tlStopRec } from './tl.js';
@@ -35,9 +36,24 @@ import { applyVizKnobs, renderViz, vizKnobDefs } from './viz-ui.js';
 
 // ---------- Actions (communes souris / contrôleur) ----------
 
+// Pads pas encore chargés (banque qui vient d'être affichée) : touche relâchée avant la fin du décodage.
+export const padWaiting = new Map();   // clé -> relâché ?
 export function triggerPad(i) {
   selectPad(i);
   const pad = state.banks[state.bank][i];
+  if (pad && !pad.buffer) {   // le son part dès qu'il est décodé
+    const b = state.bank, key = padKey(b, i);
+    if (padWaiting.has(key)) return;
+    padWaiting.set(key, false);
+    loadPad(pad).then(buf => {
+      const released = padWaiting.get(key);
+      padWaiting.delete(key);
+      if (!buf || state.bank !== b || state.banks[b][i] !== pad) return;
+      triggerPad(i);
+      if (released) releasePad(i);
+    });
+    return;
+  }
   const v = engine.playPad(padKey(state.bank, i), pad);
   if (pad?.buffer && padCat(pad) === 'kick' && engine.padMode(pad) !== 'loop') sidechain.kick(v?.startAt);
   if (v) tlRecordPad(state.bank, i, v.startAt);
@@ -56,6 +72,7 @@ export function watchPending() {
 }
 
 export function releasePad(i) {
+  if (padWaiting.has(padKey(state.bank, i))) padWaiting.set(padKey(state.bank, i), true);
   engine.releasePad(padKey(state.bank, i));
 }
 
@@ -73,6 +90,7 @@ export function setBank(b) {
   state.bank = b;
   renderAll();
   save();
+  if (!bankLoaded(b)) loadBank(b).then(() => { if (state.bank === b) renderAll(); });   // sons décodés à la demande
 }
 
 export function setPage(page) {

@@ -43,6 +43,7 @@ import { buildKickPresets, buildTrPresets } from './app/presets-bar.js';
 import { buildRoll } from './app/roll-ui.js';
 import { restore, save } from './app/save.js';
 import { buildScenes } from './app/scenes.js';
+import { loadPad } from './app/sounds.js';
 import { buildSidechain, clipKicks, isDuckedSound, padCat, padLoopKicks, soundKicks } from './app/sidechain-ui.js';
 import { buildPresets } from './app/synth-ui.js';
 import { bindTempo } from './app/tempo.js';
@@ -102,6 +103,7 @@ async function start() {
   provide({ timeline: new Timeline(engine, () => state.tl, clipBuffer, mixer.input('tl')) });
   engine.gridBusy = () => timeline.playing;
   timeline.getPad = (b, i) => state.banks[b]?.[i];
+  timeline.loadPad = loadPad;
   timeline.padKey = padKey;
   timeline.getPatch = presetPatch;
   timeline.getOsc = clip => oscFor(clip, oscSynth);

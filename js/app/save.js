@@ -16,13 +16,14 @@ import * as store from '../storage.js';
 import { mergeTlState } from '../timeline.js';
 import { mergeTrState } from '../tr909.js';
 import { mergeWindows } from '../windows.js';
-import { $, BANKS, engine, kit, newPad, setLibAdded, state, tlHistory } from './core.js';
+import { $, BANKS, kit, newPad, setLibAdded, state, tlHistory } from './core.js';
 import { PAD_QUANTS } from './files.js';
 import { defaultGen, mergeGen } from './gen.js';
 import { libManifest, setLibManifest } from './library-ui.js';
 import { mergeRoll } from './roll-ui.js';
 import { mergeScenes } from './scenes.js';
 import { tlRec } from './tl.js';
+import { loadPad, padsInUse } from './sounds.js';
 import { mergeViz } from './viz-ui.js';
 
 // ---------- Sauvegarde ----------
@@ -82,19 +83,13 @@ export async function restore() {
   refreshLibNames();
   setLibAdded(firstRun ? [] : added);   // au premier lancement, tout est nouveau : pas de message
 
-  // Décodage des fichiers (importés par l'utilisateur ou de la bibliothèque) en parallèle.
-  const pending = state.banks.flat().filter(p => p && !p.buffer && /^(user|lib):/.test(p.sampleId));
+  // Sons décodés tout de suite : la banque affichée et les pads joués par la timeline ou les scènes.
+  // Les autres banques se chargent quand on les affiche (js/app/sounds.js).
+  const pending = [...new Set([...state.banks[state.bank], ...padsInUse()])].filter(p => p && !p.buffer);
   let done = 0;
-  await Promise.all(pending.map(async pad => {
-    let data = null;
-    if (pad.sampleId.startsWith('user:')) {
-      data = (await store.loadSample(pad.sampleId).catch(() => null))?.data?.slice(0);
-    } else {
-      data = await fetch(`sounds/${pad.sampleId.slice(4)}`, { cache: 'no-cache' }).then(r => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
-    }
-    if (data) pad.buffer = await engine.ctx.decodeAudioData(data).catch(() => null);
+  await Promise.all(pending.map(pad => loadPad(pad).then(() => {
     $('#start-msg').textContent = t('start.loading', { done: ++done, total: pending.length });
-  }));
+  })));
 }
 
 export function refreshLibNames() {

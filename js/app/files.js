@@ -37,7 +37,8 @@ import { mergeScenes, renderScenes, setCurrentScene, setQueuedScene } from './sc
 import { renderSidechain } from './sidechain-ui.js';
 import { renderPresets, setSynthFamily } from './synth-ui.js';
 import { setBpm } from './tempo.js';
-import { bufferCache, loadTlBuffers, renderTl, tlRec, tlStopRec } from './tl.js';
+import { bufferCache, loadBank, loadPads } from './sounds.js';
+import { loadTlBuffers, renderTl, tlRec, tlStopRec } from './tl.js';
 import { tlSelect } from './tl-select.js';
 import { renderTr } from './tr909-ui.js';
 
@@ -79,12 +80,14 @@ export function bindKits() {
   pq.addEventListener('change', () => { state.padQuant = engine.padQuant = +pq.value; save(); });
   $('#kit-export-bank').addEventListener('click', async () => {
     toast(t('kit.exportingBank'));
+    await loadBank(state.bank);
     const blob = await packBanks([state.banks[state.bank]], padBytes, { kind: 'bank', bpm: state.bpm });
     download(blob, `${t('kit.file.bank', { n: state.bank + 1 })}-${stamp()}.apckit`);
     toast(t('kit.exportedBank'));
   });
   $('#kit-export-all').addEventListener('click', async () => {
     toast(t('kit.exportingAll'));
+    await loadPads(state.banks.flat());
     const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr, mix: state.mix, scenes: state.scenes });
     download(blob, `gabberkey-session-${stamp()}.apckit`);
     toast(t('kit.exportedAll'));

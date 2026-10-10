@@ -11,7 +11,7 @@ import { renderLibrary, showLibrary } from './library-ui.js';
 import { toast } from './misc.js';
 import { kickPresets } from './presets-bar.js';
 import { save } from './save.js';
-import { bufferCache } from './tl.js';
+import { bufferCache } from './sounds.js';
 
 // ---------- Designer de kick ----------
 

@@ -133,7 +133,7 @@ export function renderLeds() {
     const pad = bank[i];
     const mode = playing.get(padKey(state.bank, i));
     let led = 'off';
-    if (pad?.buffer) {
+    if (pad) {   // chargé ou non (une banque se charge quand elle s'affiche)
       if (padPending(padKey(state.bank, i))) led = Math.floor(performance.now() / 110) % 2 ? 'on' : 'off';   // clignotement rapide
       else if (mode) led = mode === 'loop' ? 'pulse' : 'on';
       else led = state.page === 'pad' && i === state.selected ? 'on' : 'dim';

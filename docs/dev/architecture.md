@@ -14,6 +14,7 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 | Module | Rôle |
 |---|---|
 | `core.js` | Socle partagé : l'état (`state`), les moteurs créés au démarrage, constantes et petits utilitaires |
+| `sounds.js` | Sons à la demande : décodage unique de chaque son (`loadSound`), pads et banques chargés quand ils servent (`loadPad`, `loadBank`) |
 | `save.js` | Sauvegarde dans le navigateur, restauration au démarrage, import des banques de la bibliothèque |
 | `actions.js` | Actions communes à la souris et au contrôleur : pads, banques, pages, potentiomètres, quantification |
 | `controller.js` | Contrôleur APC Key 25 : boutons, pads, potentiomètres, clavier, LED |
@@ -62,6 +63,8 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 
 - Les moteurs créés au démarrage (`engine`, `timeline`, `mixer`, `decks`…) sont déclarés dans `core.js` et enregistrés par `provide({ engine: new Engine() })`.
 - Les autres variables ont une fonction `setNom(valeur)` à côté de leur déclaration, par exemple `setTlSel(null)` dans `tl.js`, `setShiftHeld(true)` dans `core.js`.
+
+**Sons.** Un pad peut ne pas encore avoir son son (`pad.buffer` vaut `null`) : seule la banque affichée et les pads joués par la timeline ou les scènes sont décodés au démarrage. Avant d'utiliser `pad.buffer` hors de la banque affichée, appeler `loadPad(pad)` ou `loadBank(b)` (`sounds.js`) ; un même son n'est jamais décodé deux fois.
 
 **État.** Tout ce qui est enregistré (dans le navigateur ou dans un fichier projet) est dans `state` (`core.js`). Après une modification, appeler `save()` (`save.js`) : la sauvegarde est regroupée et différée.
 

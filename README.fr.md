@@ -13,7 +13,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - neuf **banques hardcore / gabber / hardstyle synthétisées** (sans doublons), dont deux banques de **80 mélodies** : kicks Rotterdam et terror distordus, hoovers, stabs rave, screeches, basses hardcore, cordes dramatiques, pianos rave oldschool, breakbeats, kicks et leads mainstream sombres, kicks uptempo modernes à queue brute, supersaws, cris, effets et boucles à 190 BPM ;
   - cinq banques d'échantillons **libres de droits (CC0)**.
 - **Plugins** dans des fenêtres déplaçables et aimantées :
-  - **Sampler 40 pads** avec 25 banques, des LEDs synchronisées avec l'écran, et le glisser-déposer de vos propres sons ;
+  - **Sampler 40 pads** avec 25 banques (les sons d'une banque se chargent quand vous l'affichez : démarrage rapide), des LEDs synchronisées avec l'écran, et le glisser-déposer de vos propres sons ;
   - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
   - **Piano roll** : éditez les notes des blocs du synthé (hauteur, durée, vélocité, copier / coller, quantification, saisie pas à pas au clavier de l'APC) ;
   - **Designer de kick** : fabriquez votre propre kick distordu avec 12 potentiomètres et 8 presets, puis envoyez-le sur un pad ou dans la bibliothèque ;
