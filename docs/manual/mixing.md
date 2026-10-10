@@ -43,6 +43,18 @@ At the top of the mixer window. When it is **On**, every kick ducks the **synth*
 - **Ducks**: choose the synth, the melodic sounds, or both. The meter shows the ducking in real time.
 - The ducking is scheduled at the exact time of each kick (on the audio clock), not detected afterwards: no delay, and it stays in time at any tempo.
 
+### Buses
+
+[![Buses window: four buses with their insert effects, volume and tracks](../screenshots/buses-en.png)](../screenshots/buses-en.png)
+
+The **Buses** window (plugin bar, Studio group) groups tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…
+
+- **Send a track to a bus**: in the track's panel (dial button in its header), choose the **Bus** (A to D). The bus letter shows in the track header, and the bus lists its tracks.
+- Each bus has a **name**, up to 4 **insert effects** (EQ, compressor, distortion, filter, reverb), **pan**, **volume** and a meter; double-click a setting to reset it.
+- **M** mutes every track of the bus, **S** solos it: only its tracks are heard (with the soloed tracks).
+- A bus keeps sending each sound where its tracks sent it (synth, pads, sidechain path…): putting a track in a bus changes neither its level nor its sidechain, it only adds the bus processing.
+- Sending a track to a bus can be undone with Ctrl+Z; buses are saved with the project and in song files, and the WAV export goes through them.
+
 ### Master chain and loudness
 
 Below the mixer channels, the **master chain** processes everything that goes out, in this order:

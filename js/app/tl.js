@@ -12,6 +12,7 @@ import { renderLeds } from './controller.js';
 import { $, acid, drum, engine, metro, mixer, state, timeline, uiColor, wm } from './core.js';
 import { openDemoMenu } from './demo.js';
 import { exportSong, songEndBeats } from './export.js';
+import { BUS_COLORS, BUS_LETTERS, busName, renderBuses } from './buses-ui.js';
 import { fxOptions, renderInsertRack } from './inserts-ui.js';
 import { arcPath } from './knobs.js';
 import { renderLibrary } from './library-ui.js';
@@ -262,7 +263,7 @@ export function buildTrackRows() {
   state.tl.tracks.forEach((_, i) => {
     const head = document.createElement('div');
     head.className = 'tl-head';
-    head.innerHTML = `<i class="tl-src" hidden></i><span class="tl-name" title="${t('tl.renameTitle')}"></span><button class="tl-knobs icon-only" data-icon="dial" title="${t('tl.knobs')}" aria-label="${t('tl.knobs')}"></button><button class="tl-arm" title="${t('tl.arm')}">●</button><button class="tl-mute" title="${t('mix.mute')}">M</button><button class="tl-solo" title="${t('tl.soloTitle')}">S</button>`;
+    head.innerHTML = `<i class="tl-src" hidden></i><span class="tl-name" title="${t('tl.renameTitle')}"></span><b class="tl-bus" hidden></b><button class="tl-knobs icon-only" data-icon="dial" title="${t('tl.knobs')}" aria-label="${t('tl.knobs')}"></button><button class="tl-arm" title="${t('tl.arm')}">●</button><button class="tl-mute" title="${t('mix.mute')}">M</button><button class="tl-solo" title="${t('tl.soloTitle')}">S</button>`;
     head.querySelector('.tl-name').addEventListener('dblclick', e => renameTrack(i, e.currentTarget));
     head.querySelector('.tl-arm').addEventListener('click', () => { const tr = state.tl.tracks[i]; tr.arm = !tr.arm; renderTl(); save(); });
     head.querySelector('.tl-mute').addEventListener('click', () => { state.tl.tracks[i].mute = !state.tl.tracks[i].mute; timeline.updateMutes(); renderTl(); save(); });
@@ -332,6 +333,7 @@ export function openTrackKnobs(i, anchor) {
     <div class="track-meta">
       <label>${t('tl.trackName')}<input class="tk-name" maxlength="24" spellcheck="false"></label>
       <label>${t('tl.trackSrc')}<select class="tk-src"></select></label>
+      <label>${t('tl.trackBus')}<select class="tk-bus"></select></label>
       <div class="tk-colors"><span>${t('tl.trackColor')}</span></div>
     </div>
     <div class="mini-knobs track-knob-row"></div><div class="row track-knob-foot"><button class="tk-reset" data-icon="reset">${t('tl.knobsReset')}</button></div>
@@ -350,6 +352,18 @@ export function openTrackKnobs(i, anchor) {
   for (const src of REC_SOURCES) srcSel.add(new Option(t(`tl.src.${src}`), src));
   srcSel.value = tr.src || '';
   srcSel.addEventListener('change', () => { tr.src = srcSel.value || null; renderTrackHeads(); save(); });
+  const busSel = box.querySelector('.tk-bus');
+  busSel.add(new Option(t('bus.none'), ''));
+  BUS_LETTERS.forEach((l, b) => busSel.add(new Option(busName(b), b)));
+  busSel.value = tr.bus ?? '';
+  busSel.addEventListener('change', () => {
+    tr.bus = busSel.value === '' ? null : +busSel.value;
+    timeline.routeTrack(i);
+    timeline.updateMutes();
+    renderTl();
+    renderBuses();
+    save();
+  });
   const colors = box.querySelector('.tk-colors');
   for (const c of [null, ...TRACK_COLORS]) {
     const b = document.createElement('button');
@@ -454,6 +468,9 @@ export function renderTrackHeads() {
     h.querySelector('.tl-arm').classList.toggle('active', tr.arm);
     h.querySelector('.tl-mute').classList.toggle('active', tr.mute);
     h.querySelector('.tl-solo').classList.toggle('active', !!tr.solo);
+    const bus = h.querySelector('.tl-bus');
+    bus.hidden = tr.bus === null || tr.bus === undefined;
+    if (!bus.hidden) { bus.textContent = BUS_LETTERS[tr.bus]; bus.style.setProperty('--bc', BUS_COLORS[tr.bus]); bus.title = t('tl.inBus', { bus: busName(tr.bus) }); }
     const k = h.querySelector('.tl-knobs');
     k.classList.toggle('active', trackTouched(tr));
     k.classList.toggle('open', fxEditing?.track === i);
@@ -504,7 +521,7 @@ export function renderTl() {
   $('#tl-tracks-less').disabled = st.tracks.length <= MIN_TRACKS;
   $('#tl-tracks-more').disabled = st.tracks.length >= MAX_TRACKS;
   lanes.forEach((lane, i) => {
-    lane.classList.toggle('muted', !trackAudible(st.tracks, i));
+    lane.classList.toggle('muted', !trackAudible(st.tracks, i, st.buses));
     lane.style.setProperty('--tc', st.tracks[i].color || 'transparent');
     lane.classList.toggle('colored', !!st.tracks[i].color);
     lane.querySelectorAll('.tl-clip').forEach(c => c.remove());

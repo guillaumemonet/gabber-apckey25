@@ -43,6 +43,18 @@ En haut de la fenêtre de la table de mixage. Quand il est **Activé**, chaque k
 - **Baisse** : choisissez le synthé, les sons mélodiques, ou les deux. Le témoin montre la baisse en temps réel.
 - La baisse est programmée à l'instant exact de chaque kick (sur l'horloge audio), et non détectée après coup : aucun retard, et elle reste calée à n'importe quel tempo.
 
+### Bus
+
+[![Fenêtre Bus : quatre bus avec leurs effets d'insert, leur volume et leurs pistes](../screenshots/buses-fr.png)](../screenshots/buses-fr.png)
+
+La fenêtre **Bus** (barre des plugins, groupe Studio) regroupe des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…
+
+- **Envoyer une piste vers un bus** : dans le panneau de la piste (bouton cadran de son en-tête), choisissez le **Bus** (A à D). La lettre du bus s'affiche dans l'en-tête de la piste, et le bus liste ses pistes.
+- Chaque bus a un **nom**, jusqu'à 4 **effets d'insert** (égaliseur, compresseur, distorsion, filtre, reverb), un **panoramique**, un **volume** et un vumètre ; double-clic sur un réglage = valeur par défaut.
+- **M** coupe toutes les pistes du bus, **S** le met en solo : on n'entend plus que ses pistes (et les pistes en solo).
+- Le son d'un bus continue vers la même destination que celui de ses pistes (synthé, pads, chemin du sidechain…) : mettre une piste dans un bus ne change ni son niveau ni son sidechain, cela ajoute seulement le traitement du bus.
+- L'envoi d'une piste vers un bus s'annule avec Ctrl+Z ; les bus sont enregistrés avec le projet et dans les fichiers morceau, et l'export WAV passe par eux.
+
 ### Chaîne master et sonie
 
 Sous les voies du mixeur, la **chaîne master** traite tout ce qui sort, dans cet ordre :

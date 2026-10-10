@@ -837,3 +837,11 @@ header button, header .status { white-space: nowrap; }
   #meter { width: 110px; }
 }
 @media (max-width: 1400px) { header { flex-wrap: wrap; row-gap: 8px; } }
+/* Bus (fenêtre Bus, en-têtes de piste) */
+.buses .bus-strip { flex: 1 1 0; min-width: 150px; }
+.bus-strip { border-top: 3px solid var(--bc); }
+.bus-letter { font-weight: 800; font-size: 18px; color: var(--bc); text-align: center; }
+.bus-name { font: inherit; font-size: 12px; text-align: center; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 3px 4px; min-width: 0; }
+.bus-tracks { font-size: 10.5px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 14px; }
+.tl-head .tl-bus { flex: none; font-size: 10px; line-height: 14px; min-width: 14px; text-align: center; border-radius: 3px; background: var(--bc); color: #111; }
+.tl-head .tl-bus[hidden] { display: none; }

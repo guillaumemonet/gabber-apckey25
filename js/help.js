@@ -155,6 +155,15 @@ export const HELP = {
         <li><b>Notes</b>: the piano roll under the settings shows the draft of the tab (one pass of the progression); edit it before laying it. Once edited by hand, the settings no longer change it: <b>Recompute</b> starts again from the settings. Listen and Generate use the draft as shown.</li>
         <li>Blocks are laid from the playhead bar, on the first track that is free for the whole length, starting from the armed track; the song gets longer if needed.</li>
       </ul>`,
+    buses: `
+      <p>Four buses (A to D) group tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…</p>
+      <ul>
+        <li><b>Send a track to a bus</b>: in the track's panel (dial button in its header), choose <b>Bus</b>. The bus letter then shows in the track header; the bus lists its tracks.</li>
+        <li><b>Insert effects</b> (up to 4: EQ, compressor, distortion, filter, reverb), <b>pan</b> and <b>volume</b> act on the whole group; double-click a setting to reset it.</li>
+        <li><b>M</b> mutes every track of the bus, <b>S</b> solos the bus (with the soloed tracks).</li>
+        <li>A bus keeps sending each sound where it went before (synth, pads, sidechain…): putting a track in a bus does not change its level.</li>
+        <li>Buses are saved with the project and in song files, and the WAV export goes through them.</li>
+      </ul>`,
     knobs: `
       <p>The 8 on-screen knobs follow the APC knobs K1-K8, page by page.</p>
       <ul>
@@ -348,6 +357,15 @@ export const HELP = {
         <li>La mélodie est un seul bloc de notes, répété sur toute la durée : double-cliquez dessus pour la retoucher dans le piano roll.</li>
         <li><b>Notes</b> : le piano roll sous les réglages montre le brouillon de l'onglet (un passage de la suite) ; modifiez-le avant de le poser. Retouché à la main, les réglages ne le changent plus : <b>Recalculer</b> repart des réglages. Écouter et Générer utilisent le brouillon tel qu'il est.</li>
         <li>Les blocs sont posés à partir de la mesure de la tête de lecture, sur la première piste libre sur toute la durée, en partant de la piste armée ; le morceau s'allonge si besoin.</li>
+      </ul>`,
+    buses: `
+      <p>Quatre bus (A à D) regroupent des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…</p>
+      <ul>
+        <li><b>Envoyer une piste vers un bus</b> : dans le panneau de la piste (bouton cadran de son en-tête), choisissez le <b>Bus</b>. La lettre du bus s'affiche alors dans l'en-tête de la piste ; le bus liste ses pistes.</li>
+        <li><b>Effets d'insert</b> (jusqu'à 4 : égaliseur, compresseur, distorsion, filtre, reverb), <b>panoramique</b> et <b>volume</b> agissent sur tout le groupe ; double-clic sur un réglage = valeur par défaut.</li>
+        <li><b>M</b> coupe toutes les pistes du bus, <b>S</b> met le bus en solo (avec les pistes en solo).</li>
+        <li>Un bus envoie chaque son là où il allait avant (synthé, pads, sidechain…) : mettre une piste dans un bus ne change pas son niveau.</li>
+        <li>Les bus sont enregistrés avec le projet et dans les fichiers morceau, et l'export WAV passe par eux.</li>
       </ul>`,
     knobs: `
       <p>Les 8 potentiomètres à l'écran suivent les potentiomètres K1-K8 de l'APC, page par page.</p>

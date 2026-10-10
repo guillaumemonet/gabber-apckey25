@@ -63,8 +63,9 @@ export async function renderSong(onlyTrack = null) {
   os.out.connect(sc.osc).connect(m.input('osc'));
   e.padOut = pad => (isDuckedSound(pad.sampleId, padCat(pad)) ? sc.pads : e.padBus);
   // Ce qu'on entend (muet / solo), ou une seule piste pour un stem.
-  const tracks = state.tl.tracks.map((tr, i) => ({ ...tr, solo: false, mute: onlyTrack !== null ? i !== onlyTrack : !trackAudible(state.tl.tracks, i) }));
-  const tlState = { ...state.tl, tracks };
+  const tracks = state.tl.tracks.map((tr, i) => ({ ...tr, solo: false, mute: onlyTrack !== null ? i !== onlyTrack : !trackAudible(state.tl.tracks, i, state.tl.buses) }));
+  const buses = state.tl.buses.map(b => ({ ...b, solo: false, mute: false }));   // muet / solo des bus déjà dans `mute` ci-dessus
+  const tlState = { ...state.tl, tracks, buses };
   const tl = new Timeline(e, () => tlState, clipBuffer, m.input('tl'));
   Object.assign(tl, {
     getPad: (b, i) => state.banks[b]?.[i], padKey, getPatch: presetPatch, getOsc: clip => oscFor(clip, os), duckOutput: sc.tl,
@@ -105,7 +106,7 @@ export async function exportSong(stems) {
       toast(t('export.loudness', { s: ((performance.now() - t0) / 1000).toFixed(1), lufs: fmtLufs(l.integrated), peak: fmtDb(l.peakDb) }), 8000);
       return;
     } else {
-      const list = state.tl.tracks.map((tr, i) => i).filter(i => trackAudible(state.tl.tracks, i) && state.tl.tracks[i].clips.length);
+      const list = state.tl.tracks.map((tr, i) => i).filter(i => trackAudible(state.tl.tracks, i, state.tl.buses) && state.tl.tracks[i].clips.length);
       const files = [];
       for (const [k, i] of list.entries()) {
         toast(t('export.stem', { n: k + 1, total: list.length }), 60000);

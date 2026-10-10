@@ -20,6 +20,7 @@ import * as store from '../storage.js';
 import { mergeTlState } from '../timeline.js';
 import { mergeTrState } from '../tr909.js';
 import { renderAcid, renderAcidKnobs } from './acid-ui.js';
+import { renderBuses } from './buses-ui.js';
 import { clearBank } from './actions.js';
 import { $, BANKS, acid, drum, engine, mixer, padKey, patch, performer, sidechain, state, timeline, wm } from './core.js';
 import { renderCurveEditor } from './curve-ui.js';
@@ -208,7 +209,7 @@ export async function saveFile(kind) {
     ids = songSampleIds();
     // Les sons importés qu'il utilise voyagent avec lui (ils reviennent dans « Mes sons » à l'ouverture).
     const used = new Set(state.tl.tracks.flatMap(tr => tr.fx.filter(b => b.fx === 'curve').map(b => b.p.curve)));
-    data = { bpm: state.bpm, tl: { bars: state.tl.bars, loop: state.tl.loop, zoom: state.tl.zoom, tracks: state.tl.tracks }, userSounds: state.userSounds.filter(u => ids.includes(u.sampleId)),
+    data = { bpm: state.bpm, tl: { bars: state.tl.bars, loop: state.tl.loop, zoom: state.tl.zoom, tracks: state.tl.tracks, buses: state.tl.buses }, userSounds: state.userSounds.filter(u => ids.includes(u.sampleId)),
       curves: state.curves.filter(c => used.has(c.id)) };
   } else data = TOOL_IO[kind].get();
   toast(t('file.saving'));
@@ -250,6 +251,9 @@ export async function loadFile(file, demo = false) {
     state.tl.zoom = tl.zoom;
     state.tl.playhead = 0;
     state.tl.tracks = tl.tracks;
+    state.tl.buses = tl.buses;
+    timeline.updateAllTracks();
+    renderBuses();
     for (const u of Array.isArray(f.data.userSounds) ? f.data.userSounds : []) {
       if (typeof u?.sampleId !== 'string' || !u.sampleId.startsWith('user:') || state.userSounds.some(x => x.sampleId === u.sampleId)) continue;
       const num = (v, lo, hi) => (Number.isFinite(v) && v >= lo && v <= hi ? v : 0);

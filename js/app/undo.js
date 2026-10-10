@@ -9,6 +9,7 @@ import { renderLibrary } from './library-ui.js';
 import { toast } from './misc.js';
 import { save } from './save.js';
 import { loadTlBuffers, renderTl, tlRec } from './tl.js';
+import { renderBuses } from './buses-ui.js';
 import { tlSelect } from './tl-select.js';
 
 // ---------- Annuler / rétablir (timeline) ----------
@@ -22,6 +23,7 @@ export function initHistory() {
     state.tl.bars = s.bars;
     state.tl.tracks = s.tracks.map(cleanTrack);
     timeline.updateAllTracks();
+    renderBuses();
     tlSelect(null, null);
     loadTlBuffers().then(renderTl);
     renderTl();

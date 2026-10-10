@@ -27,8 +27,29 @@ export const REC_SOURCES = ['pads', 'synth', 'osc', 'tr', 'acid', 'decks'];
 export const MAX_INSERTS = 4;
 // Une piste neuve = une piste nettoyée sans réglages : mêmes champs, dans le même ordre (l'historique compare des instantanés JSON).
 export const newTrack = () => cleanTrack(null);
-// Piste qu'on entend : pas muette, et soliste s'il y a des pistes en solo.
-export const trackAudible = (tracks, i) => !!tracks[i] && !tracks[i].mute && (!tracks.some(t => t.solo) || !!tracks[i].solo);
+// Bus : des pistes regroupées pour être traitées ensemble (effets d'insert, volume, pano, muet / solo).
+// Le son d'un bus continue vers la même destination que celui de ses pistes (synthé, pads, sidechain…).
+export const BUS_COUNT = 4;
+export const BUS_DEFAULTS = { vol: 1, pan: 0 };
+export const newBus = () => ({ name: '', ...BUS_DEFAULTS, mute: false, solo: false, inserts: [] });
+export function cleanBus(b) {
+  return {
+    name: typeof b?.name === 'string' ? b.name.slice(0, 24) : '',
+    vol: num(b?.vol, 0, 1.5, 1), pan: num(b?.pan, -1, 1, 0),
+    mute: !!b?.mute, solo: !!b?.solo,
+    inserts: Array.isArray(b?.inserts) ? b.inserts.map(cleanInsert).filter(Boolean).slice(0, MAX_INSERTS) : [],
+  };
+}
+const cleanBuses = list => Array.from({ length: BUS_COUNT }, (_, i) => cleanBus(Array.isArray(list) ? list[i] : null));
+// Piste qu'on entend : ni elle ni son bus ne sont muets ; s'il y a des solos (pistes ou bus), elle ou son bus en fait partie.
+export function trackAudible(tracks, i, buses = []) {
+  const tr = tracks[i];
+  if (!tr) return false;
+  const bus = tr.bus !== null && tr.bus !== undefined ? buses[tr.bus] : null;
+  if (tr.mute || bus?.mute) return false;
+  const anySolo = tracks.some(t => t.solo) || buses.some(b => b?.solo);
+  return !anySolo || !!tr.solo || !!bus?.solo;
+}
 export function cleanTrack(tr) {
   return {
     mute: !!tr?.mute,
@@ -42,6 +63,7 @@ export function cleanTrack(tr) {
     color: typeof tr?.color === 'string' && /^#[0-9a-f]{6}$/i.test(tr.color) ? tr.color : null,
     arm: !!tr?.arm,
     src: REC_SOURCES.includes(tr?.src) ? tr.src : null,
+    bus: Number.isInteger(tr?.bus) && tr.bus >= 0 && tr.bus < BUS_COUNT ? tr.bus : null,
   };
 }
 
@@ -53,7 +75,8 @@ export function defaultTlState() {
     playhead: 0,        // en temps (noires)
     source: 'pads',     // outil enregistré : pads, synth (blocs posés en jouant), tr (audio)
     armed: 0,           // piste qui reçoit l'enregistrement
-    tracks: Array.from({ length: TL_TRACKS }, (_, i) => ({ ...newTrack(), arm: i === 0 })),   // fx : blocs d'effet (js/trackfx.js), potentiomètres, nom, couleur, armement, instrument
+    tracks: Array.from({ length: TL_TRACKS }, (_, i) => ({ ...newTrack(), arm: i === 0 })),
+    buses: cleanBuses(null),   // bus A à D   // fx : blocs d'effet (js/trackfx.js), potentiomètres, nom, couleur, armement, instrument
   };
 }
 
@@ -68,6 +91,7 @@ export function mergeTlState(saved) {
     const n = Math.min(MAX_TRACKS, Math.max(MIN_TRACKS, saved.tracks.length));
     base.tracks = Array.from({ length: n }, (_, i) => cleanTrack(saved.tracks[i]));
   }
+  base.buses = cleanBuses(saved.buses);
   base.armed = Math.min(base.tracks.length - 1, Math.max(0, base.armed | 0));
   // Anciennes sauvegardes : une seule piste armée (armed) ; maintenant chaque piste a son bouton.
   if (!base.tracks.some(tr => tr.arm)) base.tracks[base.armed].arm = true;
@@ -108,6 +132,7 @@ export class Timeline {
     this.padHits = new Set();   // voix de pads programmées (toutes coupées à l'arrêt)
     this.chains = new Map();    // piste -> Map(destination -> TrackChain) : effets de piste
     this.strips = new Map();    // piste -> Map(destination -> tranche : filtres, volume, pano, envois)
+    this.busChains = new Map(); // bus -> Map(destination -> chaîne du bus : inserts, volume, pano)
     this.cycleChains = new Set();
     this.cycle = null;          // cycle en cours de programmation : { time, beat, len, bd }
   }
@@ -288,7 +313,8 @@ export class Timeline {
     }
   }
 
-  audible(ti) { return trackAudible(this.st.tracks, ti); }
+  audible(ti) { return trackAudible(this.st.tracks, ti, this.st.buses ?? []); }
+  get buses() { return this.st.buses ?? []; }
 
   // Tranche de la piste `ti` vers `dest` : effets d'insert -> passe-haut -> passe-bas -> volume -> muet -> pano -> dest,
   // avec envois delay / reverb (après le muet, avant le pano).
@@ -303,7 +329,9 @@ export class Timeline {
       s.hp.type = 'highpass';
       s.lp.type = 'lowpass';
       s.hp.Q.value = s.lp.Q.value = 0.707;
-      s.hp.connect(s.lp).connect(s.gain).connect(s.mute).connect(s.pan).connect(dest);
+      s.hp.connect(s.lp).connect(s.gain).connect(s.mute).connect(s.pan);
+      s.dest = dest;
+      s.pan.connect(this.trackOut(ti, dest));
       // Envois pris avant le panoramique : la reverb et le delay restent larges même pour une piste calée d'un côté.
       s.mute.connect(s.dly).connect(this.engine.delayIn);
       s.mute.connect(s.rev).connect(this.engine.reverbIn);
@@ -315,15 +343,74 @@ export class Timeline {
     return s.input;
   }
 
-  // Effets d'insert de la piste, en série entre l'entrée de la tranche et ses filtres.
-  wireInserts(s, tr) {
+  // Effets d'insert (d'une piste ou d'un bus), en série entre l'entrée de la chaîne et `s.after`.
+  wireInserts(s, owner) {
     s.input.disconnect();
     for (const f of s.inserts) f.output.disconnect();
-    s.inserts = (tr?.inserts ?? []).map(fx => { const node = buildInsert(this.ctx, fx); node.update(fx.p); return node; });
-    s.insSig = (tr?.inserts ?? []).map(f => f.type).join();
+    s.inserts = (owner?.inserts ?? []).map(fx => { const node = buildInsert(this.ctx, fx); node.update(fx.p); return node; });
+    s.insSig = (owner?.inserts ?? []).map(f => f.type).join();
     let prev = s.input;
     for (const f of s.inserts) { prev.connect(f.input); prev = f.output; }
-    prev.connect(s.hp);
+    prev.connect(s.after ?? s.hp);
+  }
+
+  // Sortie d'une piste vers `dest` : directement, ou par son bus.
+  trackOut(ti, dest) {
+    const b = this.st.tracks[ti]?.bus;
+    return b !== null && b !== undefined && this.buses[b] ? this.busIn(b, dest) : dest;
+  }
+  // Piste changée de bus : ses tranches sont rebranchées.
+  routeTrack(ti) {
+    for (const s of this.strips.get(ti)?.values() ?? []) { s.pan.disconnect(); s.pan.connect(this.trackOut(ti, s.dest)); }
+  }
+  // Chaîne du bus `b` vers `dest` : inserts -> volume -> pano -> dest (un vumètre écoute la sortie).
+  busIn(b, dest) {
+    if (!this.busChains.has(b)) this.busChains.set(b, new Map());
+    const m = this.busChains.get(b);
+    let c = m.get(dest);
+    if (!c) {
+      const x = this.ctx;
+      c = { input: x.createGain(), gain: x.createGain(), pan: x.createStereoPanner(), meter: x.createAnalyser(), inserts: [] };
+      c.after = c.gain;
+      c.meter.fftSize = 256;
+      c.gain.connect(c.pan).connect(dest);
+      c.pan.connect(c.meter);
+      m.set(dest, c);
+      this.wireInserts(c, this.buses[b]);
+      this.applyBus(c, this.buses[b], true);
+    }
+    return c.input;
+  }
+  applyBus(c, bus, now = false) {
+    if (!bus) return;
+    const t = this.ctx.currentTime;
+    const set = (p, v) => (now ? p.setValueAtTime(v, t) : p.setTargetAtTime(v, t, 0.02));
+    set(c.gain.gain, bus.vol);
+    set(c.pan.pan, bus.pan);
+  }
+  // Réglages d'un bus (volume, pano), inserts ajoutés / retirés / réglés.
+  updateBus(b) { for (const c of this.busChains.get(b)?.values() ?? []) this.applyBus(c, this.buses[b]); }
+  rebuildBusInserts(b) {
+    const list = this.buses[b]?.inserts ?? [];
+    const sig = list.map(f => f.type).join();
+    for (const c of this.busChains.get(b)?.values() ?? []) {
+      if (c.insSig === sig) c.inserts.forEach((n, k) => n.update(list[k].p));
+      else this.wireInserts(c, this.buses[b]);
+    }
+  }
+  updateBusInsert(b, k) {
+    const fx = this.buses[b]?.inserts[k];
+    if (fx) for (const c of this.busChains.get(b)?.values() ?? []) c.inserts[k]?.update(fx.p);
+  }
+  // Niveau crête d'un bus (toutes ses destinations).
+  busLevel(b) {
+    let peak = 0;
+    for (const c of this.busChains.get(b)?.values() ?? []) {
+      const d = c.data ??= new Float32Array(c.meter.fftSize);
+      c.meter.getFloatTimeDomainData(d);
+      for (const v of d) peak = Math.max(peak, Math.abs(v));
+    }
+    return peak;
   }
   // Insert ajouté ou retiré : la chaîne de la piste est refaite ; réglage d'un insert : il suit tout de suite.
   // (mêmes types d'effets qu'avant : seuls les réglages sont repris, sans reconstruire la chaîne).
@@ -363,7 +450,8 @@ export class Timeline {
   }
   // Tout l'état des pistes réappliqué (« Annuler », morceau chargé, début de lecture) : réglages, inserts, muet / solo.
   updateAllTracks() {
-    for (const ti of this.strips.keys()) { this.updateTrack(ti); this.rebuildInserts(ti); }
+    for (const ti of this.strips.keys()) { this.updateTrack(ti); this.rebuildInserts(ti); this.routeTrack(ti); }
+    for (let b = 0; b < BUS_COUNT; b++) { this.updateBus(b); this.rebuildBusInserts(b); }
     this.updateMutes();
   }
 
