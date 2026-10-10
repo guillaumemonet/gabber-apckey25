@@ -1,5 +1,6 @@
 // Socle partagé : état de l'application (state), moteurs créés au démarrage, constantes et petits utilitaires.
 import { defaultAcidState } from '../acid.js';
+import { defaultMasterState } from '../audio.js';
 import { MK1_PICKER_COLORS, PICKER_COLORS, mk1Equivalent } from '../apc.js';
 import { defaultDecksState } from '../decks.js';
 import { translatePage } from '../i18n.js';
@@ -88,6 +89,7 @@ export const state = {
   keys: 'synth',                      // synthé joué au clavier : 'synth' ou 'osc' (celui de la fenêtre active)
   viz: null,                          // visualiseur : mode, réglages, mots (préparé au démarrage)
   metro: defaultMetroState(),         // métronome : allumé, quand, décompte, volume
+  master: defaultMasterState(),       // chaîne master : compresseur, limiteur (js/audio.js)
 };
 export const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 export let shiftHeld = false;

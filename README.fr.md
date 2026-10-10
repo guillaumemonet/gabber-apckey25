@@ -63,7 +63,7 @@ Le mode d'emploi complet est dans [docs/manuel](docs/manuel/README.md) ; chaque 
 4. **[Timeline, bibliothèque et piano roll](docs/manuel/timeline.md)** : Timeline et bibliothèque de sons, Piano roll, Démo
 5. **[Instruments](docs/manuel/instruments.md)** : TR-909, TB-303, Synthé, Synthé à oscillateurs, Designer de kick
 6. **[Générateur : accords et mélodie](docs/manuel/generateur.md)**
-7. **[Mixage et effets](docs/manuel/mixage.md)** : Designer d'effet, Table de mixage, Câblage
+7. **[Mixage et effets](docs/manuel/mixage.md)** : Designer d'effet, Table de mixage, Chaîne master et sonie, Câblage
 8. **[Live : platines, scènes, visualiseur](docs/manuel/live.md)** : Platines, Scènes, Visualiseur, Fenêtres des plugins
 9. **[Fichiers et enregistrement](docs/manuel/fichiers.md)** : Enregistrer et ouvrir, Enregistrement et kits
 10. **[Dépannage](docs/manuel/depannage.md)** : Dépannage, Régénérer les banques de sons (facultatif)

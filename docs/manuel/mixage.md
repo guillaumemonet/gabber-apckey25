@@ -43,6 +43,16 @@ En haut de la fenêtre de la table de mixage. Quand il est **Activé**, chaque k
 - **Baisse** : choisissez le synthé, les sons mélodiques, ou les deux. Le témoin montre la baisse en temps réel.
 - La baisse est programmée à l'instant exact de chaque kick (sur l'horloge audio), et non détectée après coup : aucun retard, et elle reste calée à n'importe quel tempo.
 
+### Chaîne master et sonie
+
+Sous les voies du mixeur, la **chaîne master** traite tout ce qui sort, dans cet ordre :
+
+- **Compresseur master** : seuil, taux, coude, attaque, relâche, gain de sortie. Ses réglages de départ sont ceux de l'ancien limiteur de GabberKey : un morceau existant sonne exactement pareil. Baissez le taux (2 à 4) et montez le seuil pour un compresseur de « colle » plus doux.
+- **Limiteur** : il anticipe de 5 ms pour qu'**aucun échantillon ne dépasse le plafond** (−0,3 dB par défaut), sans écrêtage. Le **gain d'entrée** pousse le son contre le plafond : c'est le réglage qui rend le morceau plus fort. **Relâche** : la vitesse à laquelle le gain remonte après un pic (plus long = plus doux, plus court = plus fort mais plus « pompé »).
+- **Sonie** : la mesure en **LUFS** (norme EBU R128), celle qu'utilisent les plateformes d'écoute. **Momentanée** (400 ms), **court terme** (3 s), **intégrée** (depuis la dernière **remise à zéro**), **crête** et **réduction de gain** du limiteur. La barre montre la sonie court terme ; la zone verte est la cible.
+- **Cible pour du hardcore** : environ **−8 à −6 LUFS intégrés**, crête au plafond. Montez le gain d'entrée du limiteur jusqu'à la zone, en surveillant la réduction de gain : au-delà de 6 à 8 dB de réduction permanente, le son s'écrase.
+- Chaque bouton **Actif / Coupé** contourne son étage ; double-clic sur un réglage = valeur par défaut. La chaîne est enregistrée avec le projet et dans le fichier de réglages du mixeur, et l'**export WAV** passe par elle.
+
 ## Câblage
 
 La fenêtre **Câblage** relie librement les outils et des **boîtes à effets**, comme un rack de matériel. Par défaut, chaque outil va directement au master : rien ne change tant que vous n'y touchez pas.

@@ -15,7 +15,8 @@ GabberKey saves everything automatically in the browser, and you can also keep y
 ## Recording and kits
 
 - **⤓ WAV** (timeline toolbar) exports the song as a WAV file, **rendered in a few seconds** instead of playing it in real time: from bar 1 to the end of the last block, with the synth, pads, mixer, insert effects and sidechain exactly as you hear them (about 3 s for the one-minute demo).
-- **⤓ Stems** exports each non-empty track as its own full-length WAV file, all in one ZIP archive, ready to be mixed in another program.
+- **⤓ Stems** exports each non-empty track as its own full-length WAV file, all in one ZIP archive, ready to be mixed in another program. Stems come out **without the master chain** (no compressor, no limiter): that is up to the final mix.
+- When a WAV export ends, the message gives the file's **integrated loudness** (in LUFS) and its **peak**; they stay on display in the mixer's master chain.
 - **● REC** in the header records the master output live, including what you play and the performance effects. Press it again to download a WAV file.
 - **Export bank** / **Export all** creates a self-contained `.apckit` file with the sounds and settings. **Import…** loads it back: a bank goes into the displayed bank, and a session replaces everything.
 

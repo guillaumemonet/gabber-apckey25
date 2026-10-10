@@ -1,5 +1,6 @@
 // Sauvegarde dans le navigateur, restauration au démarrage, import des banques de la bibliothèque.
 import { mergeAcidState } from '../acid.js';
+import { mergeMasterState } from '../audio.js';
 import { cleanCurve } from '../curves.js';
 import { mergeDecksState } from '../decks.js';
 import { soundName, t } from '../i18n.js';
@@ -65,6 +66,7 @@ export async function restore() {
     state.synthDirty = !!saved.synthDirty;
     state.keys = saved.keys === 'osc' ? 'osc' : 'synth';
     state.metro = mergeMetroState(saved.metro);
+    state.master = mergeMasterState(saved.master);
     state.padQuant = PAD_QUANTS.includes(saved.padQuant) ? saved.padQuant : 0;
     state.libArchives = !!saved.libArchives;
     state.curves = (Array.isArray(saved.curves) ? saved.curves : []).map(cleanCurve).filter(c => c?.id?.startsWith('u:'));
@@ -173,6 +175,7 @@ export function stateSnapshot() {
     keys: state.keys,
     viz: state.viz,
     metro: state.metro,
+    master: state.master,
     banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
   };
 }

@@ -1,6 +1,9 @@
 // Moteur audio : synthé polyphonique (clavier), sampler (pads), delay et reverb en départs,
 // effets de performance (roll, filtres, tape-stop, pump) et égaliseur général.
 import { PAGES, WAVES, MODES, toValue } from './params.js';
+import { kWeighting } from './lufs.js';
+
+const MASTER_WORKLET = 'js/master-worklet.js?v=2';
 
 const PAD_DEFS = Object.fromEntries(PAGES.pad.params.map(d => [d.id, d]));
 const midiToFreq = n => 440 * Math.pow(2, (n - 69) / 12);
@@ -45,6 +48,27 @@ function driveCurve(amount) {
     curve[i] = k ? ((1 + k) * x) / (1 + k * Math.abs(x)) : x;
   }
   return curve;
+}
+
+// Chaîne master : compresseur puis limiteur. Valeurs par défaut du compresseur = l'ancien limiteur du moteur.
+export const MASTER_PARAMS = {
+  comp: { threshold: [-40, 0, 0.5, -3], ratio: [1, 20, 0.5, 20], knee: [0, 40, 1, 30], attack: [0.5, 100, 0.5, 2], release: [20, 1000, 5, 100], makeup: [0, 12, 0.5, 0] },
+  limit: { gain: [0, 18, 0.5, 0], ceiling: [-6, 0, 0.1, -0.3], release: [10, 500, 5, 80] },
+};
+export function defaultMasterState() {
+  const pick = g => Object.fromEntries(Object.entries(MASTER_PARAMS[g]).map(([k, v]) => [k, v[3]]));
+  return { comp: { on: true, ...pick('comp') }, limit: { on: true, ...pick('limit') } };
+}
+export function mergeMasterState(saved) {
+  const m = defaultMasterState();
+  for (const g of ['comp', 'limit']) {
+    if (typeof saved?.[g]?.on === 'boolean') m[g].on = saved[g].on;
+    for (const [k, [min, max]] of Object.entries(MASTER_PARAMS[g])) {
+      const v = saved?.[g]?.[k];
+      if (Number.isFinite(v)) m[g][k] = Math.min(max, Math.max(min, v));
+    }
+  }
+  return m;
 }
 
 export class Engine {
@@ -101,18 +125,28 @@ export class Engine {
       eqHP: band('highpass', 20, 0.9),
     };
     this.eqGain = gain();
-    this.limiter = ctx.createDynamicsCompressor();
-    this.limiter.threshold.value = -3;
-    this.limiter.ratio.value = 20;
-    this.limiter.attack.value = 0.002;
-    this.limiter.release.value = 0.1;
+    // Chaîne master : compresseur (réglé par défaut comme l'ancien limiteur : le son ne change pas), puis limiteur
+    // à anticipation et compteur de sonie (js/master-worklet.js, branché par initMaster ; en attendant : passage direct).
+    this.comp = ctx.createDynamicsCompressor();
+    this.compMakeup = gain();
+    this.compWet = gain(1);
+    this.compDry = gain(0);
+    this.limitIn = gain();
+    this.limitOut = gain();
+    this.eqGain.connect(this.comp).connect(this.compMakeup).connect(this.compWet).connect(this.limitIn);
+    this.eqGain.connect(this.compDry).connect(this.limitIn);
+    this.limitIn.connect(this.limitOut);
+    this.limiterNode = null;
+    this.onMeter = () => {};   // { e (énergie pondérée K de 100 ms), peak, gr } : voir js/lufs.js
     this.analyser = ctx.createAnalyser();
     this.analyser.fftSize = 1024;
     let node = this.perfIn.connect(this.perfLP).connect(this.perfHP);
     for (const f of Object.values(this.eq)) node = node.connect(f);
-    node.connect(this.eqGain).connect(this.limiter);
-    this.output = this.limiter;   // point d'écoute de l'enregistreur
-    this.limiter.connect(this.analyser).connect(ctx.destination);
+    node.connect(this.eqGain);
+    this.output = this.limitOut;   // point d'écoute de l'enregistreur
+    this.limitOut.connect(this.analyser).connect(ctx.destination);
+    this.masterSettings = defaultMasterState();
+    this.setMaster(this.masterSettings);
 
     // Delay avec filtre dans la boucle de réinjection.
     this.delayIn = gain();
@@ -170,6 +204,37 @@ export class Engine {
   get seqRunning() { return this.seqs.size > 0; }
 
   resume() { return this.ctx.resume(); }
+
+  // Branche le limiteur et le compteur de sonie (module du fil audio, chargé une fois par contexte).
+  async initMaster() {
+    try {
+      await this.ctx.audioWorklet.addModule(MASTER_WORKLET);
+      const node = new AudioWorkletNode(this.ctx, 'gk-master', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [2],
+        processorOptions: { k: kWeighting(this.ctx.sampleRate) } });
+      node.port.onmessage = e => this.onMeter(e.data);
+      this.limitIn.disconnect();
+      this.limitIn.connect(node).connect(this.limitOut);
+      this.limiterNode = node;
+      this.setMaster(this.masterSettings);
+    } catch (err) {
+      console.warn('Limiteur master indisponible', err);   // le son passe sans limiteur
+    }
+  }
+
+  // Réglages de la chaîne master (voir defaultMasterState).
+  setMaster(m) {
+    this.masterSettings = m;
+    const c = m.comp, t = this.ctx.currentTime;
+    this.compWet.gain.setTargetAtTime(c.on ? 1 : 0, t, 0.01);
+    this.compDry.gain.setTargetAtTime(c.on ? 0 : 1, t, 0.01);
+    this.comp.threshold.setTargetAtTime(c.threshold, t, 0.02);
+    this.comp.ratio.setTargetAtTime(c.ratio, t, 0.02);
+    this.comp.knee.setTargetAtTime(c.knee, t, 0.02);
+    this.comp.attack.setTargetAtTime(c.attack / 1000, t, 0.02);
+    this.comp.release.setTargetAtTime(c.release / 1000, t, 0.02);
+    this.compMakeup.gain.setTargetAtTime(Math.pow(10, c.makeup / 20), t, 0.02);
+    this.limiterNode?.port.postMessage({ on: m.limit.on, gain: m.limit.gain, ceiling: m.limit.ceiling, release: m.limit.release });
+  }
 
   // --- Paramètres globaux (pages Synthé, Effets, EQ) ---
   set(id, v) {

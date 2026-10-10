@@ -15,7 +15,8 @@ GabberKey enregistre tout automatiquement dans le navigateur, et vous pouvez aus
 ## Enregistrement et kits
 
 - **⤓ WAV** (barre de la timeline) exporte le morceau en WAV, **calculé en quelques secondes** au lieu d'être rejoué en temps réel : de la mesure 1 à la fin du dernier bloc, avec le synthé, les pads, la table de mixage, les effets d'insert et le sidechain tels que vous les entendez (environ 3 s pour la démo d'une minute).
-- **⤓ Stems** exporte chaque piste non vide dans son propre fichier WAV, sur toute la durée du morceau, le tout dans une archive ZIP, prête à être mixée dans un autre logiciel.
+- **⤓ Stems** exporte chaque piste non vide dans son propre fichier WAV, sur toute la durée du morceau, le tout dans une archive ZIP, prête à être mixée dans un autre logiciel. Les stems sortent **sans la chaîne master** (ni compresseur ni limiteur) : c'est au mixage final d'en décider.
+- À la fin d'un export WAV, le message donne la **sonie intégrée** du fichier (en LUFS) et sa **crête** ; elles restent affichées dans la chaîne master du mixeur.
 - **● REC** dans l'en-tête enregistre la sortie générale en direct, y compris ce que vous jouez et les effets de performance. Un second appui télécharge un fichier WAV.
 - **Exporter la banque** / **Exporter tout** crée un fichier `.apckit` autonome, avec les sons et les réglages. **Importer…** le recharge : une banque va dans la banque affichée, une session remplace tout.
 

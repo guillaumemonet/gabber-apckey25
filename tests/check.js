@@ -4,6 +4,7 @@
 // - aide : une page par fenêtre dans les deux langues ;
 // - bibliothèque : chaque son de sounds/banks.json existe sur le disque ; démos présentes.
 // - documentation : chaque lien relatif des README et de docs/ mène à un fichier qui existe.
+// - sonie : la mesure en LUFS donne la valeur de la norme sur un son de référence.
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -71,6 +72,15 @@ for (const f of mdFiles) {
     const file = decodeURI(target.split('#')[0]);
     if (!fs.existsSync(path.join(ROOT, path.dirname(f), file))) fail(`${f} : lien cassé vers ${target}`);
   }
+}
+
+// 6. Mesure de la sonie (js/lufs.js) : sinus de 1 kHz à -20 dBFS sur deux canaux = -20 LUFS (norme EBU R128).
+const { measureLoudness } = await import(pathToFileURL(path.join(ROOT, 'js', 'lufs.js')));
+{
+  const sr = 48000, n = sr * 5, sine = new Float32Array(n);
+  for (let i = 0; i < n; i++) sine[i] = 0.1 * Math.sin(2 * Math.PI * 1000 * i / sr);
+  const l = measureLoudness([sine, sine], sr);
+  if (Math.abs(l.integrated + 20) > 0.05) fail(`sonie : sinus de référence mesuré à ${l.integrated.toFixed(2)} LUFS au lieu de -20`);
 }
 
 console.log(`${mdFiles.length} pages de documentation, ${links} liens vérifiés`);

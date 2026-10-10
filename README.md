@@ -63,7 +63,7 @@ The complete guide is in [docs/manual](docs/manual/README.md); every window in t
 4. **[Timeline, library and piano roll](docs/manual/timeline.md)**: Timeline and sound library, Piano roll, Demo
 5. **[Instruments](docs/manual/instruments.md)**: TR-909, TB-303, Synth, Oscillator synth, Kick designer
 6. **[Generator: chords and melody](docs/manual/generator.md)**
-7. **[Mixing and effects](docs/manual/mixing.md)**: Effect designer, Mixer, Patch
+7. **[Mixing and effects](docs/manual/mixing.md)**: Effect designer, Mixer, Master chain and loudness, Patch
 8. **[Live: turntables, scenes, visualizer](docs/manual/live.md)**: Turntables, Scenes, Visualizer, Plugin windows
 9. **[Files and recording](docs/manual/files.md)**: Saving and opening, Recording and kits
 10. **[Troubleshooting](docs/manual/troubleshooting.md)**: Troubleshooting, Rebuilding the sound banks (optional)

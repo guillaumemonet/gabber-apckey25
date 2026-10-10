@@ -32,6 +32,7 @@ import { applyGlobals, buildApcPage, buildKnobRow, pageForWindow, renderPages } 
 import { buildLibrary } from './app/library-ui.js';
 import { buildCpu, buildMetro } from './app/metro-ui.js';
 import { drawMeter, renderAll, toast } from './app/misc.js';
+import { buildMaster } from './app/master-ui.js';
 import { buildMixer } from './app/mixer-ui.js';
 import { buildOsc, oscFor, setKeys } from './app/osc-ui.js';
 import { buildBanks, buildEditor, buildPads } from './app/pads.js';
@@ -65,10 +66,12 @@ async function start() {
   $('#start-msg').textContent = t('start.generating');
   provide({ engine: new Engine() });
   await engine.resume();
+  await engine.initMaster();   // limiteur et compteur de sonie
   provide({ kit: await renderDefaultKit() });
   await restore();
   applyGlobals();
   engine.setBpm(state.bpm);
+  engine.setMaster(state.master);
   engine.setVoice(presetById(state.preset).voice);
   engine.onPadState = onPadState;
   provide({ recorder: new Recorder(engine.ctx, engine.output) });
@@ -147,6 +150,7 @@ async function start() {
   buildCpu();
   buildPatch();
   buildMixer();
+  buildMaster();
   buildSidechain();
   buildTl();
   buildRoll();

@@ -805,3 +805,19 @@ header button, header .status { white-space: nowrap; }
 [data-icon="v-fluid"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="v-reaction"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M5 5c3 0 3 4 6 4s3-4 6-4M5 12c3 0 3 4 6 4s3-4 6-4M5 19c3 0 3-3 6-3%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="v-vu"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M3 17a9 9 0 0 1 18 0M12 17l4-7M6.5 11.5l1 1M17.5 11.5l-1 1M12 8v1.5%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
+/* Chaîne master (fenêtre Mixeur) */
+.master-chain { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 10px; }
+.mc-group { display: flex; flex-direction: column; gap: 4px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 11px; }
+.mc-group.off .fx-param { opacity: .45; }
+.mc-group .fx-param { grid-template-columns: 92px 1fr 62px; }
+.mc-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.mc-head button { padding: 2px 8px; font-size: 11px; }
+.mc-on.active { background: var(--accent-2); border-color: var(--accent-2); color: #111; }
+.mc-lufs { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; font-variant-numeric: tabular-nums; }
+.mc-lufs span { color: var(--muted); }
+.mc-lufs b { text-align: right; }
+.mc-bar { position: relative; height: 8px; margin: 6px 0 2px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.mc-bar i { position: absolute; top: 0; bottom: 0; left: 0; }
+.mc-target { background: rgba(61, 214, 140, .35); }
+.mc-level { background: var(--accent-2); opacity: .85; width: 0; transition: width .2s; }
+.mc-hint, .mc-export { font-size: 10.5px; line-height: 1.35; }

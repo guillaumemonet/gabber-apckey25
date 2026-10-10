@@ -1,5 +1,6 @@
 // Fichiers : kits, projet, morceau, réglages de chaque outil.
 import { mergeAcidState } from '../acid.js';
+import { mergeMasterState } from '../audio.js';
 import { cleanCurve } from '../curves.js';
 import { DECK_IDS } from '../decks.js';
 import { t } from '../i18n.js';
@@ -25,6 +26,7 @@ import { renderCurveEditor } from './curve-ui.js';
 import { renderKick, renderKickKnobs } from './kick-ui.js';
 import { applyGlobals, renderKnobs } from './knobs.js';
 import { renderLibrary } from './library-ui.js';
+import { applyMaster } from './master-ui.js';
 import { renderAll, toast } from './misc.js';
 import { renderFx, renderMixer } from './mixer-ui.js';
 import { oscChanged, oscPresetCache } from './osc-ui.js';
@@ -167,7 +169,7 @@ export const TOOL_IO = {
     set: d => { state.kick = mergeKickState(d.kick); renderKick(); renderKickKnobs(); kickPresets?.render(); },
   },
   mix: {
-    get: () => ({ mix: state.mix, sc: state.sc, fx: pickIds(state.globals, 'fx'), eq: pickIds(state.globals, 'eq') }),
+    get: () => ({ mix: state.mix, sc: state.sc, fx: pickIds(state.globals, 'fx'), eq: pickIds(state.globals, 'eq'), master: state.master }),
     set: d => {
       state.mix = mergeMixState(d.mix);
       mixer.reload();
@@ -177,6 +179,7 @@ export const TOOL_IO = {
       renderSidechain();
       for (const page of ['fx', 'eq']) if (d[page] && typeof d[page] === 'object') Object.assign(state.globals, pickIds(d[page], page));
       applyGlobals();
+      if (d.master) { state.master = mergeMasterState(d.master); applyMaster(); }
       renderMixer();
     },
   },

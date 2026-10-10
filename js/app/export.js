@@ -1,5 +1,6 @@
 // Enregistrement du master et export rapide (WAV, stems) hors temps réel.
 import { Engine } from '../audio.js';
+import { measureLoudness } from '../lufs.js';
 import { t } from '../i18n.js';
 import { Mixer } from '../mixer.js';
 import { OscSynth } from '../osc.js';
@@ -14,6 +15,7 @@ import { $, engine, oscSynth, padKey, recorder, state, timeline } from './core.j
 import { presetPatch } from './gen.js';
 import { globalDef, globalValue } from './knobs.js';
 import { toast } from './misc.js';
+import { fmtDb, fmtLufs, setLastExport } from './master-ui.js';
 import { oscFor } from './osc-ui.js';
 import { clipKicks, isDuckedSound, padCat } from './sidechain-ui.js';
 import { clipBuffer, tlRec, tlStopRec } from './tl.js';
@@ -40,6 +42,9 @@ export async function renderSong(onlyTrack = null) {
   const sr = engine.ctx.sampleRate;
   const octx = new OfflineAudioContext(2, Math.ceil((EXPORT_LEAD + endBeat * bd + EXPORT_TAIL) * sr), sr);
   const e = new Engine(octx);
+  await e.initMaster();
+  // Chaîne master du morceau ; un stem sort sans elle (pas de compression ni de limiteur : c'est au mixage final d'en décider).
+  e.setMaster(onlyTrack === null ? state.master : { comp: { ...state.master.comp, on: false }, limit: { ...state.master.limit, on: false } });
   for (const [id, p] of Object.entries(state.globals)) if (globalDef(id)) e.set(id, globalValue(id, p));
   e.setBpm(state.bpm);
   e.setVoice(presetById(state.preset).voice);
@@ -94,6 +99,11 @@ export async function exportSong(stems) {
       toast(t('export.rendering'), 60000);
       const chans = await renderSong();
       download(new Blob([encodeWav(chans, engine.ctx.sampleRate)], { type: 'audio/wav' }), `${name}.wav`);
+      // Sonie du fichier : celle que mesureront les plateformes et les autres logiciels.
+      const l = measureLoudness(chans, engine.ctx.sampleRate);
+      setLastExport(l);
+      toast(t('export.loudness', { s: ((performance.now() - t0) / 1000).toFixed(1), lufs: fmtLufs(l.integrated), peak: fmtDb(l.peakDb) }), 8000);
+      return;
     } else {
       const list = state.tl.tracks.map((tr, i) => i).filter(i => trackAudible(state.tl.tracks, i) && state.tl.tracks[i].clips.length);
       const files = [];

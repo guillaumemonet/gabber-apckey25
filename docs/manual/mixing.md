@@ -43,6 +43,16 @@ At the top of the mixer window. When it is **On**, every kick ducks the **synth*
 - **Ducks**: choose the synth, the melodic sounds, or both. The meter shows the ducking in real time.
 - The ducking is scheduled at the exact time of each kick (on the audio clock), not detected afterwards: no delay, and it stays in time at any tempo.
 
+### Master chain and loudness
+
+Below the mixer channels, the **master chain** processes everything that goes out, in this order:
+
+- **Master compressor**: threshold, ratio, knee, attack, release, makeup. Its starting settings are those of GabberKey's old limiter: an existing song sounds exactly the same. Lower the ratio (2 to 4) and raise the threshold for a gentler "glue" compressor.
+- **Limiter**: it looks 5 ms ahead so that **no sample goes over the ceiling** (−0.3 dB by default), without clipping. **Input gain** pushes the sound against the ceiling: it is the setting that makes the song louder. **Release**: how fast the gain comes back after a peak (longer = smoother, shorter = louder but more "pumping").
+- **Loudness**: measured in **LUFS** (EBU R128), as streaming platforms do. **Momentary** (400 ms), **short term** (3 s), **integrated** (since the last **reset**), **peak** and the limiter's **gain reduction**. The bar shows the short-term loudness; the green zone is the target.
+- **Target for hardcore**: about **−8 to −6 LUFS integrated**, peak at the ceiling. Raise the limiter input gain until you reach the zone, keeping an eye on the gain reduction: beyond 6 to 8 dB of constant reduction, the sound gets squashed.
+- Each **On / Off** button bypasses its stage; double-click a setting to reset it. The chain is saved with the project and in the mixer settings file, and the **WAV export** goes through it.
+
 ## Patch
 
 The **Patch** window wires the tools and **effect boxes** freely, like a rack of hardware. By default every tool goes straight to the master: nothing changes until you touch it.
