@@ -7,7 +7,7 @@ import { Patch } from '../patch.js';
 import { presetById } from '../presets.js';
 import { download, encodeWav, stamp } from '../recorder.js';
 import { Sidechain } from '../sidechain.js';
-import { BEATS_PER_BAR, Timeline } from '../timeline.js';
+import { BEATS_PER_BAR, Timeline, trackAudible } from '../timeline.js';
 import { makeZip } from '../zip.js';
 import { renderLeds } from './controller.js';
 import { $, engine, oscSynth, padKey, recorder, state, timeline } from './core.js';
@@ -57,7 +57,8 @@ export async function renderSong(onlyTrack = null) {
   os.setValues({ ...oscSynth.values });
   os.out.connect(sc.osc).connect(m.input('osc'));
   e.padOut = pad => (isDuckedSound(pad.sampleId, padCat(pad)) ? sc.pads : e.padBus);
-  const tracks = state.tl.tracks.map((tr, i) => ({ ...tr, mute: tr.mute || (onlyTrack !== null && i !== onlyTrack) }));
+  // Ce qu'on entend (muet / solo), ou une seule piste pour un stem.
+  const tracks = state.tl.tracks.map((tr, i) => ({ ...tr, solo: false, mute: onlyTrack !== null ? i !== onlyTrack : !trackAudible(state.tl.tracks, i) }));
   const tlState = { ...state.tl, tracks };
   const tl = new Timeline(e, () => tlState, clipBuffer, m.input('tl'));
   Object.assign(tl, {
@@ -94,7 +95,7 @@ export async function exportSong(stems) {
       const chans = await renderSong();
       download(new Blob([encodeWav(chans, engine.ctx.sampleRate)], { type: 'audio/wav' }), `${name}.wav`);
     } else {
-      const list = state.tl.tracks.map((tr, i) => i).filter(i => !state.tl.tracks[i].mute && state.tl.tracks[i].clips.length);
+      const list = state.tl.tracks.map((tr, i) => i).filter(i => trackAudible(state.tl.tracks, i) && state.tl.tracks[i].clips.length);
       const files = [];
       for (const [k, i] of list.entries()) {
         toast(t('export.stem', { n: k + 1, total: list.length }), 60000);

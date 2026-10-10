@@ -10,6 +10,7 @@
 
 import { TrackChain, cleanFx } from './trackfx.js';
 import { clipEvents, monoLine } from './notes.js';
+import { buildInsert, cleanInsert } from './mixer.js';
 
 export const TL_TRACKS = 16;        // pistes au départ
 export const MIN_TRACKS = 4;
@@ -23,10 +24,16 @@ export const TRACK_DEFAULTS = { vol: 1, pan: 0, lp: 20000, hp: 20, dly: 0, rev: 
 const num = (v, lo, hi, d) => (Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d);
 // Instruments qu'une piste peut enregistrer (null = « Auto » : le choix « Enregistrer » de la barre de la timeline).
 export const REC_SOURCES = ['pads', 'synth', 'osc', 'tr', 'acid', 'decks'];
-export const newTrack = () => ({ mute: false, clips: [], fx: [], ...TRACK_DEFAULTS, name: '', color: null, arm: false, src: null });
+export const MAX_INSERTS = 4;
+// Une piste neuve = une piste nettoyée sans réglages : mêmes champs, dans le même ordre (l'historique compare des instantanés JSON).
+export const newTrack = () => cleanTrack(null);
+// Piste qu'on entend : pas muette, et soliste s'il y a des pistes en solo.
+export const trackAudible = (tracks, i) => !!tracks[i] && !tracks[i].mute && (!tracks.some(t => t.solo) || !!tracks[i].solo);
 export function cleanTrack(tr) {
   return {
     mute: !!tr?.mute,
+    solo: !!tr?.solo,
+    inserts: Array.isArray(tr?.inserts) ? tr.inserts.map(cleanInsert).filter(Boolean).slice(0, MAX_INSERTS) : [],
     clips: Array.isArray(tr?.clips) ? tr.clips : [],
     fx: Array.isArray(tr?.fx) ? tr.fx.map(cleanFx).filter(Boolean) : [],
     vol: num(tr?.vol, 0, 1.5, 1), pan: num(tr?.pan, -1, 1, 0), lp: num(tr?.lp, 200, 20000, 20000), hp: num(tr?.hp, 20, 2000, 20),
@@ -119,6 +126,7 @@ export class Timeline {
   // Démarre la lecture au temps `beat` ; renvoie l'instant (horloge audio) où ce temps sonne.
   play(beat = this.st.playhead) {
     this.stop(true);
+    this.updateAllTracks();
     const start = this.ctx.currentTime + 0.08;
     // Boucles des pads et 909 calées sur les mesures de la timeline.
     this.engine.origin = start - beat * this.beatDur;
@@ -142,7 +150,9 @@ export class Timeline {
     for (const h of this.padHits) if (h.v.startAt < this.ctx.currentTime - 10) this.padHits.delete(h);
     const jobs = [];
     st.tracks.forEach((track, ti) => {
-      if (track.mute) return;
+      // Une piste muette est programmée quand même (son volume est à zéro) : on peut la rallumer en pleine lecture.
+      // Ses kicks ne déclenchent pas le sidechain.
+      const live = this.audible(ti);
       for (const clip of track.clips) {
         if (clip.type === 'note') {
           // Chaque note du bloc (motif répété) ; une note à moitié passée n'est pas rejouée.
@@ -179,7 +189,7 @@ export class Timeline {
               const v = this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1, out });
               if (v) this.padHits.add({ key, v });
             } });
-            if (this.isKickPad(pad)) this.onKick(when);
+            if (live && this.isKickPad(pad)) this.onKick(when);
           } else if (pad) this.loadPad(pad);   // pas encore décodé : prêt pour le prochain passage
           continue;
         }
@@ -194,7 +204,7 @@ export class Timeline {
         let stopAt = time + (end - beat) * bd;
         if (st.loop && !this.recording) stopAt = Math.min(stopAt, endTime);
         const out = this.trackIn(ti, this.duckOutput && this.isDucked(clip) ? this.duckOutput : this.output);
-        this.scheduleKicks(clip, time, beat, Math.min(end, st.loop && !this.recording ? len : Infinity));
+        if (live) this.scheduleKicks(clip, time, beat, Math.min(end, st.loop && !this.recording ? len : Infinity));
         jobs.push({ time: when, run: () => this.startClip(clip, buf, rate, into, when, stopAt, out) });
       }
     });
@@ -278,26 +288,61 @@ export class Timeline {
     }
   }
 
-  // Tranche de la piste `ti` vers `dest` : passe-haut -> passe-bas -> volume -> pano -> dest, avec envois delay / reverb (avant le pano).
+  audible(ti) { return trackAudible(this.st.tracks, ti); }
+
+  // Tranche de la piste `ti` vers `dest` : effets d'insert -> passe-haut -> passe-bas -> volume -> muet -> pano -> dest,
+  // avec envois delay / reverb (après le muet, avant le pano).
   strip(ti, dest) {
     if (!this.strips.has(ti)) this.strips.set(ti, new Map());
     const m = this.strips.get(ti);
     let s = m.get(dest);
     if (!s) {
       const c = this.ctx;
-      s = { hp: c.createBiquadFilter(), lp: c.createBiquadFilter(), gain: c.createGain(), pan: c.createStereoPanner(), dly: c.createGain(), rev: c.createGain() };
+      s = { input: c.createGain(), hp: c.createBiquadFilter(), lp: c.createBiquadFilter(), gain: c.createGain(), mute: c.createGain(),
+        pan: c.createStereoPanner(), dly: c.createGain(), rev: c.createGain(), inserts: [] };
       s.hp.type = 'highpass';
       s.lp.type = 'lowpass';
       s.hp.Q.value = s.lp.Q.value = 0.707;
-      s.hp.connect(s.lp).connect(s.gain).connect(s.pan).connect(dest);
+      s.hp.connect(s.lp).connect(s.gain).connect(s.mute).connect(s.pan).connect(dest);
       // Envois pris avant le panoramique : la reverb et le delay restent larges même pour une piste calée d'un côté.
-      s.gain.connect(s.dly).connect(this.engine.delayIn);
-      s.gain.connect(s.rev).connect(this.engine.reverbIn);
-      s.input = s.hp;
+      s.mute.connect(s.dly).connect(this.engine.delayIn);
+      s.mute.connect(s.rev).connect(this.engine.reverbIn);
       m.set(dest, s);
+      this.wireInserts(s, this.st.tracks[ti]);
       this.applyStrip(s, this.st.tracks[ti], true);
+      s.mute.gain.value = this.audible(ti) ? 1 : 0;
     }
     return s.input;
+  }
+
+  // Effets d'insert de la piste, en série entre l'entrée de la tranche et ses filtres.
+  wireInserts(s, tr) {
+    s.input.disconnect();
+    for (const f of s.inserts) f.output.disconnect();
+    s.inserts = (tr?.inserts ?? []).map(fx => { const node = buildInsert(this.ctx, fx); node.update(fx.p); return node; });
+    s.insSig = (tr?.inserts ?? []).map(f => f.type).join();
+    let prev = s.input;
+    for (const f of s.inserts) { prev.connect(f.input); prev = f.output; }
+    prev.connect(s.hp);
+  }
+  // Insert ajouté ou retiré : la chaîne de la piste est refaite ; réglage d'un insert : il suit tout de suite.
+  // (mêmes types d'effets qu'avant : seuls les réglages sont repris, sans reconstruire la chaîne).
+  rebuildInserts(ti) {
+    const list = this.st.tracks[ti]?.inserts ?? [];
+    const sig = list.map(f => f.type).join();
+    for (const s of this.strips.get(ti)?.values() ?? []) {
+      if (s.insSig === sig) s.inserts.forEach((n, k) => n.update(list[k].p));
+      else this.wireInserts(s, this.st.tracks[ti]);
+    }
+  }
+  updateInsert(ti, k) {
+    const fx = this.st.tracks[ti]?.inserts[k];
+    if (fx) for (const s of this.strips.get(ti)?.values() ?? []) s.inserts[k]?.update(fx.p);
+  }
+  // Muet / solo : toutes les pistes suivent tout de suite (le solo d'une piste coupe les autres).
+  updateMutes() {
+    const t = this.ctx.currentTime;
+    for (const [ti, m] of this.strips) for (const s of m.values()) s.mute.gain.setTargetAtTime(this.audible(ti) ? 1 : 0, t, 0.008);
   }
 
   applyStrip(s, tr, now = false) {
@@ -316,7 +361,11 @@ export class Timeline {
   updateTrack(ti) {
     for (const s of this.strips.get(ti)?.values() ?? []) this.applyStrip(s, this.st.tracks[ti]);
   }
-  updateAllTracks() { for (const ti of this.strips.keys()) this.updateTrack(ti); }
+  // Tout l'état des pistes réappliqué (« Annuler », morceau chargé, début de lecture) : réglages, inserts, muet / solo.
+  updateAllTracks() {
+    for (const ti of this.strips.keys()) { this.updateTrack(ti); this.rebuildInserts(ti); }
+    this.updateMutes();
+  }
 
   // Kicks d'un bloc audio entre le temps `beat` (joué à l'instant `time`) et `until` (en temps de la timeline).
   scheduleKicks(clip, time, beat, until) {

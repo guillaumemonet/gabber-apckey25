@@ -14,7 +14,16 @@ export const FX_TYPES = {
   filter: { mode: [0, 1, 1, 0], cutoff: [0, 1, 0.005, 1], reso: [0, 1, 0.01, 0.2] },
   comp: { threshold: [-60, 0, 1, -24], ratio: [1, 20, 0.5, 4], makeup: [0, 24, 0.5, 6] },
   reverb: { size: [0.3, 6, 0.1, 2], mix: [0, 1, 0.01, 0.3] },
+  eq: { low: [-12, 12, 0.5, 0], mid: [-12, 12, 0.5, 0], high: [-12, 12, 0.5, 0] },
 };
+// Effets d'insert valides (anciennes sauvegardes, fichiers) : type connu, réglages dans leurs bornes.
+export function cleanInsert(fx) {
+  const def = FX_TYPES[fx?.type];
+  if (!def) return null;
+  const p = {};
+  for (const [k, [min, max, , d]] of Object.entries(def)) p[k] = Number.isFinite(fx.p?.[k]) ? Math.min(max, Math.max(min, fx.p[k])) : d;
+  return { type: fx.type, p };
+}
 
 const UNITY = 0.75;   // position du fader à 0 dB
 export const faderGain = pos => (pos / UNITY) ** 2;
@@ -46,6 +55,7 @@ export function fxParamLabel(type, key, v, p = {}) {
   if (type === 'comp' && key !== 'ratio') return `${v} dB`;
   if (type === 'comp') return `${v}:1`;
   if (type === 'reverb' && key === 'size') return `${v.toFixed(1)}s`;
+  if (type === 'eq') return `${v > 0 ? '+' : ''}${v} dB`;
   return pct(v);
 }
 
@@ -68,8 +78,8 @@ export function impulse(ctx, seconds) {
   return buf;
 }
 
-// Un effet d'insert : { input, output, update(p) }.
-function buildFx(ctx, fx) {
+// Un effet d'insert : { input, output, update(p) } (voies du mixeur et pistes de la timeline).
+export function buildInsert(ctx, fx) {
   const input = ctx.createGain();
   const output = ctx.createGain();
   const now = () => ctx.currentTime;
@@ -106,6 +116,18 @@ function buildFx(ctx, fx) {
         c.threshold.setTargetAtTime(p.threshold, now(), 0.02);
         c.ratio.setTargetAtTime(p.ratio, now(), 0.02);
         makeup.gain.setTargetAtTime(Math.pow(10, p.makeup / 20), now(), 0.02);
+      } };
+    }
+    case 'eq': {
+      const lo = ctx.createBiquadFilter(), mid = ctx.createBiquadFilter(), hi = ctx.createBiquadFilter();
+      lo.type = 'lowshelf'; lo.frequency.value = 120;
+      mid.type = 'peaking'; mid.frequency.value = 1000; mid.Q.value = 0.8;
+      hi.type = 'highshelf'; hi.frequency.value = 8000;
+      input.connect(lo).connect(mid).connect(hi).connect(output);
+      return { input, output, update(p) {
+        lo.gain.setTargetAtTime(p.low, now(), 0.02);
+        mid.gain.setTargetAtTime(p.mid, now(), 0.02);
+        hi.gain.setTargetAtTime(p.high, now(), 0.02);
       } };
     }
     case 'reverb': {
@@ -156,7 +178,7 @@ class Strip {
   rebuild(list) {
     this.input.disconnect();
     for (const f of this.fx) f.output.disconnect();
-    this.fx = list.map(fx => { const node = buildFx(this.ctx, fx); node.update(fx.p); return node; });
+    this.fx = list.map(fx => { const node = buildInsert(this.ctx, fx); node.update(fx.p); return node; });
     let prev = this.input;
     for (const f of this.fx) { prev.connect(f.input); prev = f.output; }
     prev.connect(this.pan);

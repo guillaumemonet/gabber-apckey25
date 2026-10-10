@@ -1,8 +1,9 @@
 // Fenêtre de la table de mixage.
 import { t } from '../i18n.js';
-import { CHANNELS, FX_TYPES, MAX_FX, MIX_FIELDS, fxParamLabel, mixKnobDefs, newFx } from '../mixer.js';
+import { CHANNELS, MAX_FX, MIX_FIELDS, mixKnobDefs } from '../mixer.js';
 import { PAGES, toValue } from '../params.js';
 import { $, engine, mixer, patch, state } from './core.js';
+import { fxOptions, renderInsertRack } from './inserts-ui.js';
 import { renderKnobs } from './knobs.js';
 import { renderMixerDest } from './patch-ui.js';
 import { save } from './save.js';
@@ -19,7 +20,6 @@ export function fieldFmt(field, id, v) { return mixKnobDefs(field).find(d => d.c
 
 export function buildMixer() {
   const wrap = $('#mixer');
-  const fxOptions = Object.keys(FX_TYPES).map(k => `<option value="${k}">${t(`fx.${k}`)}</option>`).join('');
   for (const id of CHANNELS) {
     const el = document.createElement('div');
     el.className = 'strip';
@@ -27,7 +27,7 @@ export function buildMixer() {
       <div class="strip-name">${t(`mix.ch.${id}`)}</div>
       <div class="strip-dest" title="${t('patch.destTitle')}"></div>
       <div class="fx-list"></div>
-      <select class="fx-add"><option value="">${t('mix.addFx')}</option>${fxOptions}</select>
+      <select class="fx-add"><option value="">${t('mix.addFx')}</option>${fxOptions()}</select>
       ${['reverb', 'delay', 'pan'].map(f => `<label class="send"><span>${t(`mix.${f}`)}</span><input type="range" min="0" max="1" step="0.01" data-field="${f}"><em></em></label>`).join('')}
       <div class="fader"><canvas class="vu" width="6" height="150"></canvas><input type="range" min="0" max="1" step="0.005" data-field="vol" orient="vertical"></div>
       <div class="db"></div>
@@ -40,15 +40,6 @@ export function buildMixer() {
     }
     el.querySelector('.mute').addEventListener('click', () => { ch().mute = !ch().mute; onMixChange(id); });
     el.querySelector('.solo').addEventListener('click', () => { ch().solo = !ch().solo; onMixChange(id); });
-    el.querySelector('.fx-add').addEventListener('change', e => {
-      const type = e.target.value;
-      e.target.value = '';
-      if (!type || ch().fx.length >= MAX_FX) return;
-      ch().fx.push(newFx(type));
-      mixer.rebuild(id);
-      renderFx(id);
-      save();
-    });
     stripEls[id] = el;
     wrap.appendChild(el);
     renderFx(id);
@@ -103,37 +94,9 @@ export function renderMixer() {
 }
 
 export function renderFx(id) {
-  const list = state.mix.channels[id].fx;
-  const box = stripEls[id].querySelector('.fx-list');
-  box.innerHTML = '';
-  list.forEach((fx, k) => {
-    const item = document.createElement('div');
-    item.className = 'fx';
-    item.innerHTML = `<div class="fx-head"><b>${t(`fx.${fx.type}`)}</b><button class="fx-del" title="${t('mix.removeFx')}">✕</button></div>`;
-    for (const [key, [min, max, step]] of Object.entries(FX_TYPES[fx.type])) {
-      const row = document.createElement('label');
-      row.className = 'fx-param';
-      row.innerHTML = `<span>${t(`fx.p.${key}`)}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${fx.p[key]}"><em></em>`;
-      const inp = row.querySelector('input');
-      const em = row.querySelector('em');
-      em.textContent = fxParamLabel(fx.type, key, fx.p[key], fx.p);
-      inp.addEventListener('input', () => {
-        fx.p[key] = +inp.value;
-        mixer.updateFx(id, k);
-        if (key === 'mode') renderFx(id); else em.textContent = fxParamLabel(fx.type, key, fx.p[key], fx.p);
-        save();
-      });
-      item.appendChild(row);
-    }
-    item.querySelector('.fx-del').addEventListener('click', () => {
-      list.splice(k, 1);
-      mixer.rebuild(id);
-      renderFx(id);
-      save();
-    });
-    box.appendChild(item);
-  });
-  stripEls[id].querySelector('.fx-add').disabled = list.length >= MAX_FX;
+  const el = stripEls[id];
+  renderInsertRack(el.querySelector('.fx-list'), el.querySelector('.fx-add'), () => state.mix.channels[id].fx,
+    { max: MAX_FX, rebuild: () => mixer.rebuild(id), update: k => mixer.updateFx(id, k) });
 }
 
 export function drawMixerMeters() {

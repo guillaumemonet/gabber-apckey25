@@ -444,6 +444,7 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .tl-head span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tl-head button { padding: 2px 7px; font-size: 11px; }
 .tl-arm.active, .tl-mute.active { background: #d1242f; border-color: #d1242f; color: #fff; }
+.tl-solo.active { background: #ffd23f; border-color: #ffd23f; color: #111; }
 .tl-lane { position: relative; cursor: copy;
   background-image: repeating-linear-gradient(to right, #3c3e46 0 1px, transparent 1px var(--bar)),
                     repeating-linear-gradient(to right, #1f2126 0 1px, transparent 1px var(--beat)); }
@@ -640,6 +641,10 @@ header button, header .status { white-space: nowrap; }
 .track-knob-row { grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 8px 10px 4px; }
 .track-knob-row .knob .label, .track-knob-row .knob .value { font-size: 10px; }
 .track-knob-foot { justify-content: flex-end; padding: 0 10px 10px; }
+.track-inserts { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px 10px; border-top: 1px solid var(--line); }
+.tk-ins-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.track-inserts .fx-list { max-height: 260px; overflow-y: auto; }
+.track-inserts .fx-param { grid-template-columns: 70px 1fr 56px; }
 
 .tl-head .tl-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: text; }
 .tl-head .tl-src { flex: none; width: 14px; height: 14px; font-style: normal; color: var(--muted); }

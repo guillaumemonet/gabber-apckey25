@@ -6,12 +6,13 @@ import { toPos, toValue } from '../params.js';
 import { presetById } from '../presets.js';
 import { Recorder, encodeWav } from '../recorder.js';
 import * as store from '../storage.js';
-import { BEATS_PER_BAR, MAX_TRACKS, MIN_TRACKS, REC_SOURCES, TRACK_DEFAULTS, newTrack } from '../timeline.js';
+import { BEATS_PER_BAR, MAX_INSERTS, MAX_TRACKS, MIN_TRACKS, REC_SOURCES, TRACK_DEFAULTS, newTrack, trackAudible } from '../timeline.js';
 import { renderAcid } from './acid-ui.js';
 import { renderLeds } from './controller.js';
 import { $, acid, drum, engine, metro, mixer, state, timeline, uiColor, wm } from './core.js';
 import { openDemoMenu } from './demo.js';
 import { exportSong, songEndBeats } from './export.js';
+import { fxOptions, renderInsertRack } from './inserts-ui.js';
 import { arcPath } from './knobs.js';
 import { renderLibrary } from './library-ui.js';
 import { toast } from './misc.js';
@@ -261,10 +262,11 @@ export function buildTrackRows() {
   state.tl.tracks.forEach((_, i) => {
     const head = document.createElement('div');
     head.className = 'tl-head';
-    head.innerHTML = `<i class="tl-src" hidden></i><span class="tl-name" title="${t('tl.renameTitle')}"></span><button class="tl-knobs icon-only" data-icon="dial" title="${t('tl.knobs')}" aria-label="${t('tl.knobs')}"></button><button class="tl-arm" title="${t('tl.arm')}">●</button><button class="tl-mute" title="${t('mix.mute')}">M</button>`;
+    head.innerHTML = `<i class="tl-src" hidden></i><span class="tl-name" title="${t('tl.renameTitle')}"></span><button class="tl-knobs icon-only" data-icon="dial" title="${t('tl.knobs')}" aria-label="${t('tl.knobs')}"></button><button class="tl-arm" title="${t('tl.arm')}">●</button><button class="tl-mute" title="${t('mix.mute')}">M</button><button class="tl-solo" title="${t('tl.soloTitle')}">S</button>`;
     head.querySelector('.tl-name').addEventListener('dblclick', e => renameTrack(i, e.currentTarget));
     head.querySelector('.tl-arm').addEventListener('click', () => { const tr = state.tl.tracks[i]; tr.arm = !tr.arm; renderTl(); save(); });
-    head.querySelector('.tl-mute').addEventListener('click', () => { state.tl.tracks[i].mute = !state.tl.tracks[i].mute; renderTl(); save(); });
+    head.querySelector('.tl-mute').addEventListener('click', () => { state.tl.tracks[i].mute = !state.tl.tracks[i].mute; timeline.updateMutes(); renderTl(); save(); });
+    head.querySelector('.tl-solo').addEventListener('click', () => { state.tl.tracks[i].solo = !state.tl.tracks[i].solo; timeline.updateMutes(); renderTl(); save(); });
     head.querySelector('.tl-knobs').addEventListener('click', e => openTrackKnobs(i, e.currentTarget));
     const lane = document.createElement('div');
     lane.className = 'tl-lane';
@@ -316,7 +318,7 @@ export const TRACK_KNOBS = [
   { id: 'dly', min: 0, max: 1, def: 0, fmt: v => `${Math.round(v * 100)}%` },
   { id: 'rev', min: 0, max: 1, def: 0, fmt: v => `${Math.round(v * 100)}%` },
 ];
-export const trackTouched = tr => TRACK_KNOBS.some(d => Math.abs((tr[d.id] ?? d.def) - d.def) > 1e-6);
+export const trackTouched = tr => tr.inserts?.length > 0 || TRACK_KNOBS.some(d => Math.abs((tr[d.id] ?? d.def) - d.def) > 1e-6);
 
 export function openTrackKnobs(i, anchor) {
   const was = fxEditing?.track === i;
@@ -332,7 +334,8 @@ export function openTrackKnobs(i, anchor) {
       <label>${t('tl.trackSrc')}<select class="tk-src"></select></label>
       <div class="tk-colors"><span>${t('tl.trackColor')}</span></div>
     </div>
-    <div class="mini-knobs track-knob-row"></div><div class="row track-knob-foot"><button class="tk-reset" data-icon="reset">${t('tl.knobsReset')}</button></div>`;
+    <div class="mini-knobs track-knob-row"></div><div class="row track-knob-foot"><button class="tk-reset" data-icon="reset">${t('tl.knobsReset')}</button></div>
+    <div class="track-inserts"><div class="tk-ins-head"><span>${t('tl.inserts')}</span><select class="fx-add"><option value="">${t('mix.addFx')}</option>${fxOptions()}</select></div><div class="fx-list"></div></div>`;
   box.querySelector('.win-close').addEventListener('click', closeFxEditor);
   const title = () => { box.querySelector('b').textContent = `${trackName(i)} · ${t('tl.knobs')}`; };
   title();
@@ -395,6 +398,9 @@ export function openTrackKnobs(i, anchor) {
     row.appendChild(el);
   }
   box.querySelector('.tk-reset').addEventListener('click', () => { Object.assign(tr, TRACK_DEFAULTS); changed(); save(); });
+  // Effets d'insert de la piste : toujours actifs (les blocs d'effet, eux, n'agissent que pendant leur durée).
+  renderInsertRack(box.querySelector('.track-inserts .fx-list'), box.querySelector('.track-inserts .fx-add'), () => tr.inserts,
+    { max: MAX_INSERTS, rebuild: () => { timeline.rebuildInserts(i); renderTrackHeads(); }, update: k => timeline.updateInsert(i, k) });
   render.forEach(f => f());
   document.body.appendChild(box);
   const r = anchor.getBoundingClientRect();
@@ -447,6 +453,7 @@ export function renderTrackHeads() {
     h.classList.toggle('colored', !!tr.color);
     h.querySelector('.tl-arm').classList.toggle('active', tr.arm);
     h.querySelector('.tl-mute').classList.toggle('active', tr.mute);
+    h.querySelector('.tl-solo').classList.toggle('active', !!tr.solo);
     const k = h.querySelector('.tl-knobs');
     k.classList.toggle('active', trackTouched(tr));
     k.classList.toggle('open', fxEditing?.track === i);
@@ -497,7 +504,7 @@ export function renderTl() {
   $('#tl-tracks-less').disabled = st.tracks.length <= MIN_TRACKS;
   $('#tl-tracks-more').disabled = st.tracks.length >= MAX_TRACKS;
   lanes.forEach((lane, i) => {
-    lane.classList.toggle('muted', st.tracks[i].mute);
+    lane.classList.toggle('muted', !trackAudible(st.tracks, i));
     lane.style.setProperty('--tc', st.tracks[i].color || 'transparent');
     lane.classList.toggle('colored', !!st.tracks[i].color);
     lane.querySelectorAll('.tl-clip').forEach(c => c.remove());
