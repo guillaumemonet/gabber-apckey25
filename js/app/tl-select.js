@@ -1,6 +1,7 @@
 // Timeline : sélection multiple, glisser, lasso, copier / coller, raccourcis.
 import { t } from '../i18n.js';
 import { BEATS_PER_BAR } from '../timeline.js';
+import { splitAtPlayhead } from './clip-menu.js';
 import { $, state, timeline, wm } from './core.js';
 import { libSelected, renderLibrary } from './library-ui.js';
 import { toast } from './misc.js';
@@ -209,6 +210,7 @@ export function tlKey(e) {
   else if (k === 'x') { e.preventDefault(); if (tlCopy()) tlDeletePicked(); }
   else if (k === 'v') { e.preventDefault(); tlPaste(); }
   else if (k === 'd') { e.preventDefault(); tlDuplicate(); }
+  else if (k === 'e') { e.preventDefault(); splitAtPlayhead(); }   // couper à la tête de lecture
 }
 
 // Variables modifiées depuis d'autres modules.

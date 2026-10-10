@@ -567,8 +567,10 @@ export function drawClip(cv, clip) {
   const fi = (clip.fadeIn ?? 0) * bp, fo = (clip.fadeOut ?? 0) * bp;
   const level = Math.min(2, clip.gain ?? 1);
   g.fillStyle = 'rgba(0,0,0,.4)';
+  const offPx = (clip.offset ?? 0) * bp;   // bloc coupé : la forme d'onde commence plus loin dans le son
   for (let x = 0; x < w; x++) {
-    let pos = clip.loop ? (x % natural) / natural : x / natural;
+    const xs = x + offPx;
+    let pos = clip.loop ? (xs % natural) / natural : xs / natural;
     if (pos >= 1) break;
     if (clip.reverse) pos = 1 - pos - 1e-9;
     const fade = (fi ? Math.min(1, x / fi) : 1) * (fo ? Math.min(1, (w - x) / fo) : 1);
@@ -586,7 +588,7 @@ export function drawClip(cv, clip) {
   }
   if (clip.loop) {   // repère de chaque répétition
     g.fillStyle = 'rgba(255,255,255,.35)';
-    for (let x = natural; x < w; x += natural) g.fillRect(Math.round(x), 0, 1, h);
+    for (let x = natural - (offPx % natural); x < w; x += natural) if (x > 0) g.fillRect(Math.round(x), 0, 1, h);
   }
 }
 
@@ -621,7 +623,14 @@ export function clipEl(track, clip) {
   }
   el._obj = clip;
   requestAnimationFrame(() => drawClip(cv, clip));
-  el.addEventListener('contextmenu', e => { e.preventDefault(); openClipMenu(track, clip, e.clientX, e.clientY); });
+  el.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    // Endroit du clic dans la timeline (calé au temps, Maj = au 1/16) : « Couper ici ».
+    const lane = el.closest('.tl-lane').getBoundingClientRect();
+    const raw = (e.clientX - lane.left) / beatPx();
+    const at = e.shiftKey ? Math.round(raw * 4) / 4 : Math.round(raw);
+    openClipMenu(track, clip, e.clientX, e.clientY, at);
+  });
 
   // Glisser le bloc (Alt = copie) ; glisser son bord droit = longueur (une boucle se répète).
   el.addEventListener('pointerdown', e => {

@@ -1,6 +1,7 @@
 // Menu contextuel d'un bloc de la timeline (clic droit) : écouter, gain, fondus, inverser, transposer (notes),
 // dupliquer, ouvrir dans le piano roll, supprimer. Sur un bloc sélectionné, les réglages s'appliquent à toute la sélection.
 import { t } from '../i18n.js';
+import { clipEvents } from '../notes.js';
 import { BEATS_PER_BAR } from '../timeline.js';
 import { state, timeline } from './core.js';
 import { openRoll } from './roll-ui.js';
@@ -31,7 +32,50 @@ function targets(track, clip) {
   return out;
 }
 
-export function openClipMenu(track, clip, x, y) {
+// Bloc qu'on peut couper à `at` (temps de la timeline) : un son ou un bloc de notes, et `at` strictement à l'intérieur.
+export const canSplit = (clip, at) => clip.type !== 'pad' && at > clip.start + 1e-6 && at < clip.start + timeline.clipBeats(clip) - 1e-6;
+
+/**
+ * Coupe un bloc en deux à `at` : le premier garde le début (et son fondu d'entrée), le second la suite (et le fondu de sortie).
+ * Un son continue au bon endroit (décalage `offset`) ; un bloc de notes garde ses notes de chaque côté.
+ * @returns {object|null} le nouveau bloc (la seconde moitié)
+ */
+export function splitClip(track, clip, at) {
+  if (!canSplit(clip, at)) return null;
+  const cut = +(at - clip.start).toFixed(4);
+  const total = timeline.clipBeats(clip);
+  const second = JSON.parse(JSON.stringify(clip));
+  second.id = crypto.randomUUID();
+  second.start = +(clip.start + cut).toFixed(4);
+  second.len = +(total - cut).toFixed(4);
+  if (clip.type === 'note') {
+    // Seconde moitié : les notes qui commencent après la coupe (motif déplié), à partir de 0.
+    second.seq = clipEvents(clip).filter(e => e.t >= cut - 1e-6).map(e => ({ t: +(e.t - cut).toFixed(4), len: e.len, note: e.note, vel: e.vel }));
+    second.pat = second.len;
+    delete second.notes; delete second.note; delete second.vel;
+  } else {
+    second.offset = +((clip.offset ?? 0) + cut).toFixed(4);
+  }
+  clip.len = cut;
+  delete clip.fadeOut;
+  delete second.fadeIn;
+  state.tl.tracks[track].clips.push(second);
+  return second;
+}
+
+// Coupe à la tête de lecture les blocs sélectionnés (sinon tous ceux qu'elle traverse sur les pistes armées).
+export function splitAtPlayhead() {
+  const at = timeline.playing ? timeline.position() : state.tl.playhead;
+  let list = [];
+  state.tl.tracks.forEach((tr, i) => { for (const c of tr.clips) if (tlPicked.has(c)) list.push({ track: i, clip: c }); });
+  if (!list.length) state.tl.tracks.forEach((tr, i) => { if (tr.arm) for (const c of tr.clips) list.push({ track: i, clip: c }); });
+  list = list.filter(l => canSplit(l.clip, at));
+  for (const l of list) splitClip(l.track, l.clip, at);
+  if (list.length) { renderTl(); save(); }
+  return list.length;
+}
+
+export function openClipMenu(track, clip, x, y, at = null) {
   closeClipMenu();
   if (!tlPicked.has(clip)) tlSelect(track, clip);
   const list = targets(track, clip);
@@ -115,6 +159,14 @@ export function openClipMenu(track, clip, x, y) {
 
   const sep = () => { const h = document.createElement('hr'); menu.appendChild(h); };
   sep();
+  // Couper : à l'endroit du clic, ou à la tête de lecture.
+  const playAt = timeline.playing ? timeline.position() : state.tl.playhead;
+  if (at !== null && list.some(l => canSplit(l.clip, at))) {
+    item(t('cm.splitHere'), () => { closeClipMenu(); for (const l of list) splitClip(l.track, l.clip, at); renderTl(); save(); });
+  }
+  if (list.some(l => canSplit(l.clip, playAt))) {
+    item(t('cm.splitHead'), () => { closeClipMenu(); for (const l of list) splitClip(l.track, l.clip, playAt); renderTl(); save(); });
+  }
   item(t('cm.duplicate'), () => { closeClipMenu(); duplicateClips(list); }, '', 'plus');
   if (notes && clips.length === 1) item(t('cm.roll'), () => { closeClipMenu(); openRoll(clip, true); }, '', 'roll');
   item(t('cm.delete'), () => { closeClipMenu(); for (const l of list) tlDelete(l.track, l.clip); }, 'cm-danger', 'trash');

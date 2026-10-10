@@ -223,7 +223,8 @@ export class Timeline {
         const end = clip.start + this.clipBeats(clip);
         if (end <= beat || clip.start >= len) continue;
         const rate = clip.bpm ? this.engine.bpm / clip.bpm : 1;
-        const into = Math.max(0, beat - clip.start) * bd * rate;   // secondes déjà écoulées dans le son
+        // Secondes déjà écoulées dans le son (un bloc coupé commence `offset` temps plus loin dans son son).
+        const into = (Math.max(0, beat - clip.start) + (clip.offset ?? 0)) * bd * rate;
         if (!clip.loop && into >= buf.duration) continue;
         const when = time + Math.max(0, clip.start - beat) * bd;
         let stopAt = time + (end - beat) * bd;
@@ -487,10 +488,13 @@ export class Timeline {
     const period = clip.loop ? this.naturalBeats(clip) : Infinity;   // une boucle recommence après sa durée naturelle
     if (!(period > 0.25)) return;
     const last = clip.start + this.clipBeats(clip);
-    for (let rep = clip.start; rep < Math.min(until, last); rep += period) {
+    // Bloc coupé : le son commence `offset` temps plus loin (ses kicks arrivent d'autant plus tôt).
+    const off = clip.offset ?? 0;
+    const first = clip.start - (period === Infinity ? off : off % period);
+    for (let rep = first; rep < Math.min(until, last); rep += period) {
       for (const k of kicks) {
         const b = rep + k;
-        if (b >= beat - 1e-6 && b < until && b < last) this.onKick(time + (b - beat) * bd);
+        if (b >= clip.start - 1e-6 && b >= beat - 1e-6 && b < until && b < last) this.onKick(time + (b - beat) * bd);
       }
       if (period === Infinity) break;
     }
