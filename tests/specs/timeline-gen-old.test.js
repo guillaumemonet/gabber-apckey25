@@ -21,8 +21,9 @@ export default async function (t, A) {
   t.eq(S.preset, 'acid', 'preset de la sauvegarde gardé');
   t.eq(S.tl.tracks[0].clips.map(c => c.id), ['old1'], 'vieux bloc gardé');
   S.tl.playhead = 0;
-  t.$('#gen-btn').click();
-  t.$('#gen button.primary').click();
+  t.eq(S.gen.lead.style, 'anthem', 'réglages de la mélodie ajoutés à une ancienne sauvegarde');
+  A.wm.toggle('gen', true);
+  t.$('#gen-go').click();
   await t.wait(100);
   const made = S.tl.tracks.map((tr, i) => [i, tr.clips.filter(c => c.id !== 'old1').length]).filter(x => x[1]);
   t.ok(made.length === 1 && made[0][0] !== 0, 'les accords vont sur une piste libre (pas sur le vieux bloc)', made);

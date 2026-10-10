@@ -503,8 +503,15 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .sidechain button.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; font-weight: 600; }
 .sc-meter { width: 60px; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
 .sc-meter i { display: block; height: 100%; width: 0; background: var(--accent-2); }
-.tl-gen { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 12px; }
-.tl-gen[hidden] { display: none; }
+.gen { display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
+.gen-tabs { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.gen-tabs button { border: none; border-radius: 0; padding: 6px; font-weight: 600; background: transparent; }
+.gen-tabs button + button { border-left: 1px solid var(--line); }
+.gen-tabs button.active { background: var(--accent-2); color: #000; }
+.gen-panel[hidden] { display: none; }
+.gen-row input[type=checkbox] { width: 18px; height: 18px; margin: 4px 0; accent-color: var(--accent-2); }
+.gen-actions { justify-content: flex-end; }
+.gen-actions .primary { min-width: 110px; }
 .gen-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; }
 .gen-row label { display: flex; flex-direction: column; gap: 3px; }
 .gen-row label > span { color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
@@ -512,8 +519,6 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .gen-row input[type=text] { width: 220px; font-family: ui-monospace, monospace; }
 .gen-chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .gen-chips button { padding: 3px 8px; font-size: 11px; }
-#gen-btn { margin-bottom: 8px; }
-#gen-btn.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
 #tl-undo, #tl-redo { font-size: 15px; padding: 2px 9px; }
 #tl-undo:disabled, #tl-redo:disabled { opacity: .35; cursor: default; }
 #tl-loop.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }

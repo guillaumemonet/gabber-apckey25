@@ -1,4 +1,4 @@
-// Suites d'accords pour le générateur de nappes : lecture des symboles (« Fm Db Eb Cm ») et
+// Suites d'accords pour le générateur (accords et mélodie) : lecture des symboles (« Fm Db Eb Cm ») et
 // enchaînement des voix (chaque accord garde les notes communes et bouge le moins possible).
 
 export const PROGRESSIONS = ['Fm Db Eb Cm', 'Fm Db Ab Eb', 'Fm Bbm Db C', 'Fm Eb Db C', 'Fm Ab Eb Db', 'Bbm Fm Db C'];

@@ -4,16 +4,17 @@ export default async function (t, A) {
   const S = A.state, E = A.engine;
   for (const tr of S.tl.tracks) tr.clips = [];
   S.tl.playhead = 0;
-  t.$('#gen-btn').click();
+  t.$('#plugins button[data-plugin="gen"]').click();
   const box = t.$('#gen');
-  t.ok(!box.hidden && t.$('#gen-btn').classList.contains('active'), 'le bouton ouvre le panneau');
-  t.eq(box.querySelectorAll('select').length, 6, 'six réglages');
+  t.ok(A.wm.isOpen('gen'), 'la barre des plugins ouvre la fenêtre Générateur');
+  t.$$('.gen-tabs button')[0].click();
+  t.eq(S.gen.tab, 'chords', 'onglet Accords');
+  t.eq(box.querySelectorAll('.gen-panel:not([hidden]) select').length, 4, 'quatre réglages propres aux accords');
   t.ok(box.querySelectorAll('.gen-chips button').length >= 3, 'progressions toutes prêtes');
   const input = box.querySelector('input[type=text]');
   input.value = 'Fm - Db - Eb - Cm7 xx'; input.dispatchEvent(new Event('input'));
-  const sels = box.querySelectorAll('select');
-  const set = (i, v) => { sels[i].value = v; sels[i].dispatchEvent(new Event('change')); };
-  set(0, 'thunder_pad'); set(3, '1'); set(5, 'offbeat');   // son, répétitions, basse
+  const set = (key, v) => { const el = box.querySelector(`[data-panel="chords"] select[data-key="${key}"], .gen-row:not(.gen-panel) select[data-key="${key}"]`); el.value = v; el.dispatchEvent(new Event('change')); };
+  set('preset', 'thunder_pad'); set('repeat', '1'); set('bass', 'offbeat');
   const info = box.querySelector('.gen-info').textContent;
   t.ok(/Fm/.test(info) && /Cm7/.test(info) && /xx/.test(info), 'accords reconnus et accord inconnu affichés', info);
   box.querySelector('button.primary').click();

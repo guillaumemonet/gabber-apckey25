@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=73">
+  <link rel="stylesheet" href="css/style.css?v=74">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -221,6 +221,13 @@
       <p class="hint" data-i18n="curve.help"></p>
     </section>
 
+    <section class="window gen-area" data-win="gen">
+      <div class="section-title">
+        <h2 data-i18n="gen.winTitle"></h2>
+      </div>
+      <div id="gen" class="gen"></div>
+    </section>
+
     <section class="window decks-area" data-win="decks">
       <div class="section-title">
         <h2 data-i18n="deck.title"></h2>
@@ -280,8 +287,6 @@
       <div id="synth-pbar"></div>
       <div id="synth-knobs" class="mini-knobs synth-knobs"></div>
       <div id="synth-play" class="synth-play"></div>
-      <button id="gen-btn" class="gen-btn" data-icon="wand" data-i18n="gen.button" data-i18n-title="gen.title"></button>
-      <div id="gen" class="tl-gen" hidden></div>
       <div id="piano" class="piano"></div>
     </section>
 
@@ -350,83 +355,84 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/app/acid-ui.js": "./js/app/acid-ui.js?v=73",
-      "./js/app/actions.js": "./js/app/actions.js?v=73",
-      "./js/app/controller.js": "./js/app/controller.js?v=73",
-      "./js/app/core.js": "./js/app/core.js?v=73",
-      "./js/app/curve-ui.js": "./js/app/curve-ui.js?v=73",
-      "./js/app/decks-ui.js": "./js/app/decks-ui.js?v=73",
-      "./js/app/demo.js": "./js/app/demo.js?v=73",
-      "./js/app/export.js": "./js/app/export.js?v=73",
-      "./js/app/files.js": "./js/app/files.js?v=73",
-      "./js/app/gen.js": "./js/app/gen.js?v=73",
-      "./js/app/kick-ui.js": "./js/app/kick-ui.js?v=73",
-      "./js/app/knobs.js": "./js/app/knobs.js?v=73",
-      "./js/app/library-ui.js": "./js/app/library-ui.js?v=73",
-      "./js/app/metro-ui.js": "./js/app/metro-ui.js?v=73",
-      "./js/app/misc.js": "./js/app/misc.js?v=73",
-      "./js/app/mixer-ui.js": "./js/app/mixer-ui.js?v=73",
-      "./js/app/osc-ui.js": "./js/app/osc-ui.js?v=73",
-      "./js/app/pads.js": "./js/app/pads.js?v=73",
-      "./js/app/patch-ui.js": "./js/app/patch-ui.js?v=73",
-      "./js/app/perf-fx.js": "./js/app/perf-fx.js?v=73",
-      "./js/app/play.js": "./js/app/play.js?v=73",
-      "./js/app/piano.js": "./js/app/piano.js?v=73",
-      "./js/app/plugins.js": "./js/app/plugins.js?v=73",
-      "./js/app/presets-bar.js": "./js/app/presets-bar.js?v=73",
-      "./js/app/roll-ui.js": "./js/app/roll-ui.js?v=73",
-      "./js/app/save.js": "./js/app/save.js?v=73",
-      "./js/app/scenes.js": "./js/app/scenes.js?v=73",
-      "./js/app/sounds.js": "./js/app/sounds.js?v=73",
-      "./js/app/sidechain-ui.js": "./js/app/sidechain-ui.js?v=73",
-      "./js/app/synth-ui.js": "./js/app/synth-ui.js?v=73",
-      "./js/app/tempo.js": "./js/app/tempo.js?v=73",
-      "./js/app/tl-listen.js": "./js/app/tl-listen.js?v=73",
-      "./js/app/tl-record.js": "./js/app/tl-record.js?v=73",
-      "./js/app/tl-select.js": "./js/app/tl-select.js?v=73",
-      "./js/app/tl.js": "./js/app/tl.js?v=73",
-      "./js/app/tr909-ui.js": "./js/app/tr909-ui.js?v=73",
-      "./js/app/trackfx-ui.js": "./js/app/trackfx-ui.js?v=73",
-      "./js/app/undo.js": "./js/app/undo.js?v=73",
-      "./js/app/viz-ui.js": "./js/app/viz-ui.js?v=73",
-      "./js/acid.js": "./js/acid.js?v=73",
-      "./js/apc.js": "./js/apc.js?v=73",
-      "./js/audio.js": "./js/audio.js?v=73",
-      "./js/decks.js": "./js/decks.js?v=73",
-      "./js/chords.js": "./js/chords.js?v=73",
-      "./js/help.js": "./js/help.js?v=73",
-      "./js/history.js": "./js/history.js?v=73",
-      "./js/i18n.js": "./js/i18n.js?v=73",
-      "./js/kickdesign.js": "./js/kickdesign.js?v=73",
-      "./js/kit.js": "./js/kit.js?v=73",
-      "./js/kits.js": "./js/kits.js?v=73",
-      "./js/metronome.js": "./js/metronome.js?v=73",
-      "./js/cpumeter.js": "./js/cpumeter.js?v=73",
-      "./js/curves.js": "./js/curves.js?v=73",
-      "./js/library.js": "./js/library.js?v=73",
-      "./js/main.js": "./js/main.js?v=73",
-      "./js/mixer.js": "./js/mixer.js?v=73",
-      "./js/notes.js": "./js/notes.js?v=73",
-      "./js/osc.js": "./js/osc.js?v=73",
-      "./js/params.js": "./js/params.js?v=73",
-      "./js/patch.js": "./js/patch.js?v=73",
-      "./js/performer.js": "./js/performer.js?v=73",
-      "./js/pianoroll.js": "./js/pianoroll.js?v=73",
-      "./js/presets.js": "./js/presets.js?v=73",
-      "./js/project.js": "./js/project.js?v=73",
-      "./js/sidechain.js": "./js/sidechain.js?v=73",
-      "./js/recorder.js": "./js/recorder.js?v=73",
-      "./js/timeline.js": "./js/timeline.js?v=73",
-      "./js/storage.js": "./js/storage.js?v=73",
-      "./js/tr909.js": "./js/tr909.js?v=73",
-      "./js/trackfx.js": "./js/trackfx.js?v=73",
-      "./js/visualizer.js": "./js/visualizer.js?v=73",
-      "./js/viz3d.js": "./js/viz3d.js?v=73",
-      "./js/windows.js": "./js/windows.js?v=73",
-      "./js/zip.js": "./js/zip.js?v=73"
+      "./js/app/acid-ui.js": "./js/app/acid-ui.js?v=74",
+      "./js/app/actions.js": "./js/app/actions.js?v=74",
+      "./js/app/controller.js": "./js/app/controller.js?v=74",
+      "./js/app/core.js": "./js/app/core.js?v=74",
+      "./js/app/curve-ui.js": "./js/app/curve-ui.js?v=74",
+      "./js/app/decks-ui.js": "./js/app/decks-ui.js?v=74",
+      "./js/app/demo.js": "./js/app/demo.js?v=74",
+      "./js/app/export.js": "./js/app/export.js?v=74",
+      "./js/app/files.js": "./js/app/files.js?v=74",
+      "./js/app/gen.js": "./js/app/gen.js?v=74",
+      "./js/app/kick-ui.js": "./js/app/kick-ui.js?v=74",
+      "./js/app/knobs.js": "./js/app/knobs.js?v=74",
+      "./js/app/library-ui.js": "./js/app/library-ui.js?v=74",
+      "./js/app/metro-ui.js": "./js/app/metro-ui.js?v=74",
+      "./js/app/misc.js": "./js/app/misc.js?v=74",
+      "./js/app/mixer-ui.js": "./js/app/mixer-ui.js?v=74",
+      "./js/app/osc-ui.js": "./js/app/osc-ui.js?v=74",
+      "./js/app/pads.js": "./js/app/pads.js?v=74",
+      "./js/app/patch-ui.js": "./js/app/patch-ui.js?v=74",
+      "./js/app/perf-fx.js": "./js/app/perf-fx.js?v=74",
+      "./js/app/play.js": "./js/app/play.js?v=74",
+      "./js/app/piano.js": "./js/app/piano.js?v=74",
+      "./js/app/plugins.js": "./js/app/plugins.js?v=74",
+      "./js/app/presets-bar.js": "./js/app/presets-bar.js?v=74",
+      "./js/app/roll-ui.js": "./js/app/roll-ui.js?v=74",
+      "./js/app/save.js": "./js/app/save.js?v=74",
+      "./js/app/scenes.js": "./js/app/scenes.js?v=74",
+      "./js/app/sounds.js": "./js/app/sounds.js?v=74",
+      "./js/app/sidechain-ui.js": "./js/app/sidechain-ui.js?v=74",
+      "./js/app/synth-ui.js": "./js/app/synth-ui.js?v=74",
+      "./js/app/tempo.js": "./js/app/tempo.js?v=74",
+      "./js/app/tl-listen.js": "./js/app/tl-listen.js?v=74",
+      "./js/app/tl-record.js": "./js/app/tl-record.js?v=74",
+      "./js/app/tl-select.js": "./js/app/tl-select.js?v=74",
+      "./js/app/tl.js": "./js/app/tl.js?v=74",
+      "./js/app/tr909-ui.js": "./js/app/tr909-ui.js?v=74",
+      "./js/app/trackfx-ui.js": "./js/app/trackfx-ui.js?v=74",
+      "./js/app/undo.js": "./js/app/undo.js?v=74",
+      "./js/app/viz-ui.js": "./js/app/viz-ui.js?v=74",
+      "./js/acid.js": "./js/acid.js?v=74",
+      "./js/apc.js": "./js/apc.js?v=74",
+      "./js/audio.js": "./js/audio.js?v=74",
+      "./js/decks.js": "./js/decks.js?v=74",
+      "./js/chords.js": "./js/chords.js?v=74",
+      "./js/help.js": "./js/help.js?v=74",
+      "./js/history.js": "./js/history.js?v=74",
+      "./js/i18n.js": "./js/i18n.js?v=74",
+      "./js/kickdesign.js": "./js/kickdesign.js?v=74",
+      "./js/kit.js": "./js/kit.js?v=74",
+      "./js/kits.js": "./js/kits.js?v=74",
+      "./js/metronome.js": "./js/metronome.js?v=74",
+      "./js/cpumeter.js": "./js/cpumeter.js?v=74",
+      "./js/curves.js": "./js/curves.js?v=74",
+      "./js/library.js": "./js/library.js?v=74",
+      "./js/melody.js": "./js/melody.js?v=74",
+      "./js/main.js": "./js/main.js?v=74",
+      "./js/mixer.js": "./js/mixer.js?v=74",
+      "./js/notes.js": "./js/notes.js?v=74",
+      "./js/osc.js": "./js/osc.js?v=74",
+      "./js/params.js": "./js/params.js?v=74",
+      "./js/patch.js": "./js/patch.js?v=74",
+      "./js/performer.js": "./js/performer.js?v=74",
+      "./js/pianoroll.js": "./js/pianoroll.js?v=74",
+      "./js/presets.js": "./js/presets.js?v=74",
+      "./js/project.js": "./js/project.js?v=74",
+      "./js/sidechain.js": "./js/sidechain.js?v=74",
+      "./js/recorder.js": "./js/recorder.js?v=74",
+      "./js/timeline.js": "./js/timeline.js?v=74",
+      "./js/storage.js": "./js/storage.js?v=74",
+      "./js/tr909.js": "./js/tr909.js?v=74",
+      "./js/trackfx.js": "./js/trackfx.js?v=74",
+      "./js/visualizer.js": "./js/visualizer.js?v=74",
+      "./js/viz3d.js": "./js/viz3d.js?v=74",
+      "./js/windows.js": "./js/windows.js?v=74",
+      "./js/zip.js": "./js/zip.js?v=74"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=73"></script>
+  <script type="module" src="js/main.js?v=74"></script>
 </body>
 </html>

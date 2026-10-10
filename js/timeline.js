@@ -5,7 +5,7 @@
 // - loop : le son se répète pour remplir toute la longueur du bloc.
 // Blocs enregistrés en jouant : { type: 'pad', bank, pad } rejoue le pad avec ses réglages,
 // { type: 'note', note, vel } rejoue une note du synthé (preset en cours) pendant `len` temps ;
-// avec `notes` (accord) et `preset`, le bloc joue plusieurs notes avec son propre preset (générateur de nappes) ;
+// avec `notes` (accord) et `preset`, le bloc joue plusieurs notes avec son propre preset (générateur d'accords) ;
 // avec `seq` et `pat`, c'est un motif du piano roll (voir js/notes.js).
 
 import { TrackChain, cleanFx } from './trackfx.js';

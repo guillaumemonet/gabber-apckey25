@@ -37,7 +37,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 
 | | |
 |---|---|
-| **Sampler pads and pad editor**<br>[![The 40 pads of the Hardstyle bank and the pad editor](docs/screenshots/pads-en.png)](docs/screenshots/pads-en.png) | **Synth and pad generator**<br>[![Synth window: families, presets, expression knobs, chords, arpeggiator and pad generator](docs/screenshots/synth-en.png)](docs/screenshots/synth-en.png) |
+| **Sampler pads and pad editor**<br>[![The 40 pads of the Hardstyle bank and the pad editor](docs/screenshots/pads-en.png)](docs/screenshots/pads-en.png) | **Synth**<br>[![Synth window: families, presets, expression knobs, chords and arpeggiator](docs/screenshots/synth-en.png)](docs/screenshots/synth-en.png) |
 | **TR-909**<br>[![TR-909 window: 16-step sequencer, and the knobs with per-instrument distortion](docs/screenshots/tr-en.png)](docs/screenshots/tr-en.png) | **TB-303**<br>[![TB-303 window: grid with octaves, accents and slides, and its knobs](docs/screenshots/acid-en.png)](docs/screenshots/acid-en.png) |
 | **Kick designer**<br>[![Kick designer: presets, 12 knobs and the waveform](docs/screenshots/kick-en.png)](docs/screenshots/kick-en.png) | **Turntables**<br>[![Turntables: two decks with scratchable records, EQ, filter and crossfader](docs/screenshots/decks-en.png)](docs/screenshots/decks-en.png) |
 | **Mixer and sidechain**<br>[![Mixer: channels, insert effects and sidechain, with the performance effects](docs/screenshots/mixer-en.png)](docs/screenshots/mixer-en.png) | **Patch**<br>[![Patch window: tools on the left, effect boxes in the middle, the master on the right](docs/screenshots/patch-en.png)](docs/screenshots/patch-en.png) |
@@ -358,7 +358,7 @@ The bar under the header opens and closes the plugins, in four groups: **Instrum
 
 ## Synth
 
-[![Synth window: families, presets, expression knobs, chords, arpeggiator and pad generator](docs/screenshots/synth-en.png)](docs/screenshots/synth-en.png)
+[![Synth window: families, presets, expression knobs, chords and arpeggiator](docs/screenshots/synth-en.png)](docs/screenshots/synth-en.png)
 
 The keyboard plays a layered synth built for hardcore: every preset stacks up to 3 **layers** of oscillators (saw, square, triangle, sine or pulse, each with its own unison, octave and level), with **formants** (string body resonance, "a" / "o" choir vowels), a stereo **ensemble**, unison spread across the stereo field, and a vibrato that comes in after a moment.
 
@@ -394,9 +394,11 @@ Below the knobs of the Synth window:
 
 When the timeline records the synth, the chords and the arpeggio notes are recorded too, in the note block of the take.
 
-### Pad generator
+### Generator: chords and melody
 
-**Pad generator → timeline**, in the Synth window, opens the generator: it lays string or pad blocks on the timeline from a chord progression.
+The **Generator** window (plugin bar, Tools group) starts from a chord progression and lays on the timeline, in two tabs, either **chord blocks** (strings, pads, choirs…) or a **melody (lead)** that follows those chords.
+
+**Chords**
 
 - **Progression**: type the chords separated by spaces or dashes (`Fm Db Eb Cm`, `Fm-Bbm-Db-C`…), or click a ready-made one. Recognised: major (`Db`), minor (`Fm`), `7`, `m7`, `maj7`, `sus2`, `sus4`, `dim`, `aug`, `5`, `add9`, with `#` / `b`.
 - **Sound**: the current synth preset, or a preset from the strings, pads, choirs, supersaw, stabs or keys families. Each block keeps **its own preset**: you can play something else on the keyboard, or change preset, without changing the pads.
@@ -406,6 +408,14 @@ When the timeline records the synth, the chords and the arpeggio notes are recor
 - **▶ Listen** plays the first chord; **Generate** places the blocks from the playhead's bar, on the first track that is free for the whole length, starting from the armed track. The timeline grows if needed.
 
 A chord block works like any other block: move it, lengthen it, copy it (Alt), open it in the piano roll (double-click) or delete it.
+
+**Melody (lead)**
+
+- Same **progression**, **bars per chord** and **repeat** as the Chords tab: the melody follows the harmony.
+- **Style**: **Anthem** (a motif replayed on each chord, like a hardcore anthem hook), **Arpeggio**, **Hardcore riff** (short notes, octaves and fifths), **Call and response** (a phrase that rises, an answer that falls). Strong beats land on the chord notes; in between, the melody walks the scale (on a major chord in F minor, such as C, it takes E natural).
+- **Sound** (supersaw, leads, hoovers, stabs or the current synth preset), **density** (sparse, medium, dense), **register** (middle, high), **octave doubling**.
+- **New idea** draws another melody and plays it; **Listen** plays exactly what **Generate** will lay down (click again to stop).
+- The melody is laid as **a single note block**, repeated over the whole length: double-click it to edit it note by note in the piano roll.
 
 ## Oscillator synth
 
@@ -584,7 +594,8 @@ js/visualizer.js      visualizer (2D modes)
 js/viz3d.js           visualizer 3D modes (WebGL shaders)
 js/project.js         .gabber files (project, song, tool settings)
 js/notes.js           note blocks (patterns, merge, quantize)
-js/chords.js          chord progressions (pad generator)
+js/chords.js          chord progressions (generator)
+js/melody.js          melody (lead) generator
 js/params.js          knob parameters
 js/i18n.js            English / French translations
 js/kit.js             starter kit (synthesised)

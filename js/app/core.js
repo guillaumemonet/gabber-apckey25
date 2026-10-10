@@ -70,7 +70,7 @@ export const state = {
   tl: defaultTlState(),        // timeline : pistes de clips (sons posés ou enregistrements d'outils)
   scenes: new Array(40).fill(null),   // 40 scènes (instantanés rappelés à la mesure suivante)
   play: defaultPlayState(),           // jeu du clavier : mode accords, arpégiateur
-  gen: null,                          // générateur de nappes (voir defaultGen)
+  gen: null,                          // générateur d'accords et de mélodie (voir js/app/gen.js)
   sc: defaultScState(),               // sidechain : les kicks font respirer synthé, nappes et basses
   acid: defaultAcidState(),           // TB-303 : réglages et patterns
   kick: defaultKickState(),           // designer de kick

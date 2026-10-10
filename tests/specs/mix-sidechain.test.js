@@ -4,7 +4,7 @@ export default async function (t, A) {
   const S = A.state, E = A.engine, SC = A.sidechain;
   const box = t.$('#sidechain');
   t.ok(box.querySelectorAll('button').length >= 2, 'interface du sidechain');
-  t.ok(t.$('.piano-area #gen-btn') && !t.$('#timeline #gen-btn'), 'le générateur est dans la fenêtre Synthé');
+  t.ok(t.$('[data-win="gen"] #gen') && !t.$('.piano-area #gen'), 'le générateur a sa propre fenêtre (plus dans la fenêtre Synthé)');
   box.querySelector('button[data-sc=on]').click();
   t.ok(S.sc.on, 'sidechain activé');
   const ducks = [];
@@ -76,10 +76,11 @@ export default async function (t, A) {
   const g2 = ducks.slice(1).map((x, i) => x - ducks[i]);
   t.ok(ducks.length >= 2 && g2.every(g => Math.abs(g - bd) < 0.01), 'mode chaque temps : un déclenchement par temps', g2);
 
-  // Générateur de la fenêtre Synthé.
-  t.$('#gen-btn').click();
-  const gsel = t.$('#gen select');
-  t.ok(!t.$('#gen').hidden, 'le générateur s\'ouvre');
+  // Fenêtre Générateur, onglet Accords.
+  A.wm.toggle('gen', true);
+  t.$$('.gen-tabs button')[0].click();
+  const gsel = t.$('#gen [data-panel="chords"] select[data-key="preset"]');
+  t.ok(A.wm.isOpen('gen'), 'le générateur s\'ouvre');
   t.eq(gsel.value, 'epic_strings', 'preset de départ du générateur');
   await t.wait(600);
   t.eq(S.sc.source, 'beat', 'la source du sidechain est gardée');

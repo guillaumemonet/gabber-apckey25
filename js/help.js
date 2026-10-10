@@ -135,15 +135,24 @@ export const HELP = {
         <li><b>All to master</b> wires every tool straight to the master again.</li>
       </ul>`,
     piano: `
-      <p>The keyboard synth: 35 presets in 10 families, 8 expression knobs, chord mode, arpeggiator and pad generator.</p>
+      <p>The keyboard synth: 35 presets in 10 families, 8 expression knobs, chord mode and arpeggiator.</p>
       <ul>
         <li><b>Families and presets</b>: click, or on the APC <b>Shift + white key</b> = preset of the family, <b>Shift + C# / D#</b> = previous / next family.</li>
         <li><b>8 knobs</b> adapted to the family (brightness, resonance, attack, release, width, vibrato, ensemble or drive, glide, detune, reverb). Double-click = back to the preset's value.</li>
         <li><b>Your presets</b> (menu under the presets, by family): a preset of yours keeps its starting sound and your 8 knobs. Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
         <li><b>Chords</b>: one key plays a whole chord; <b>In key (F minor)</b> builds the right chord of the scale on each key. APC: Shift + F#.</li>
         <li><b>Arpeggio</b>: the held notes are played one after another in time with the tempo (1/8, 1/16, 1/32; order; 1-3 octaves; note length; <b>Hold</b>). APC: Shift + G# = on / off, Shift + A# = speed.</li>
-        <li><b>Pad generator → timeline</b>: type a progression (<code>Fm Db Eb Cm</code>), choose a sound, register, bars per chord, repeats, rhythm and bass, then <b>Generate</b>: the chord blocks are placed from the playhead, each with its own preset.</li>
         <li>Computer keyboard: middle row (A S D F… on QWERTY), Z / X = octave.</li>
+      </ul>`,
+    gen: `
+      <p>From a chord progression, lays on the timeline chord blocks (strings, pads, choirs…) or a melody that follows the chords.</p>
+      <ul>
+        <li><b>Progression</b>: type the chords separated by spaces or dashes (<code>Fm Db Eb Cm</code>), or click a ready-made one. Recognised: major, minor (<code>m</code>), <code>7</code>, <code>m7</code>, <code>maj7</code>, <code>sus2</code>, <code>sus4</code>, <code>dim</code>, <code>aug</code>, <code>5</code>, <code>add9</code>. <b>Bars per chord</b> and <b>Repeat</b> apply to both tabs.</li>
+        <li><b>Chords</b>: sound (strings, pads, choirs, supersaw, stabs, keys or the current synth preset), register, rhythm (held, every beat, offbeat, 8th notes) and bass (sub, hardcore offbeat, reese) on a second track. One block per chord, each with its own preset.</li>
+        <li><b>Melody (lead)</b>: a lead that follows the chords. <b>Style</b>: Anthem (a hook replayed on each chord, strong beats on the chord notes), Arpeggio, Hardcore riff (short notes, octaves and fifths), Call and response (a phrase that rises, an answer that falls). <b>Density</b>, <b>register</b> and <b>octave doubling</b>.</li>
+        <li><b>New idea</b> draws another melody and plays it; <b>Listen</b> plays exactly what <b>Generate</b> will lay down (click again to stop).</li>
+        <li>The melody is a single note block, repeated over the whole length: double-click it to edit it in the piano roll.</li>
+        <li>Blocks are laid from the playhead bar, on the first track that is free for the whole length, starting from the armed track; the song gets longer if needed.</li>
       </ul>`,
     knobs: `
       <p>The 8 on-screen knobs follow the APC knobs K1-K8, page by page.</p>
@@ -319,15 +328,24 @@ export const HELP = {
         <li><b>Tout sur le master</b> recâble chaque outil directement sur le master.</li>
       </ul>`,
     piano: `
-      <p>Le synthé du clavier : 35 presets en 10 familles, 8 potentiomètres d'expression, mode accords, arpégiateur et générateur de nappes.</p>
+      <p>Le synthé du clavier : 35 presets en 10 familles, 8 potentiomètres d'expression, mode accords et arpégiateur.</p>
       <ul>
         <li><b>Familles et presets</b> : clic, ou sur l'APC <b>Maj + touche blanche</b> = preset de la famille, <b>Maj + do# / ré#</b> = famille précédente / suivante.</li>
         <li><b>8 potentiomètres</b> adaptés à la famille (brillance, résonance, attaque, relâche, largeur, vibrato, ensemble ou saturation, glissé, désaccord, réverb). Double-clic = retour à la valeur du preset.</li>
         <li><b>Vos presets</b> (menu sous les presets, par famille) : un preset personnel garde son son de départ et vos 8 potentiomètres. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
         <li><b>Accords</b> : une touche joue un accord complet ; <b>Dans la tonalité (fa mineur)</b> construit sur chaque touche l'accord juste de la gamme. APC : Maj + fa#.</li>
         <li><b>Arpège</b> : les notes tenues sont jouées l'une après l'autre, calées sur le tempo (1/8, 1/16, 1/32 ; ordre ; 1 à 3 octaves ; durée des notes ; <b>Tenue</b>). APC : Maj + sol# = oui / non, Maj + la# = vitesse.</li>
-        <li><b>Générateur de nappes → timeline</b> : tapez une suite d'accords (<code>Fm Db Eb Cm</code>), choisissez le son, le registre, les mesures par accord, les répétitions, le rythme et la basse, puis <b>Générer</b> : les blocs d'accords sont posés à partir de la tête de lecture, chacun avec son propre preset.</li>
         <li>Clavier de l'ordinateur : rangée du milieu (Q S D F… en AZERTY), W / X = octave.</li>
+      </ul>`,
+    gen: `
+      <p>À partir d'une suite d'accords, pose sur la timeline des blocs d'accords (cordes, nappes, chœurs…) ou une mélodie qui suit les accords.</p>
+      <ul>
+        <li><b>Suite d'accords</b> : tapez les accords séparés par des espaces ou des tirets (<code>Fm Db Eb Cm</code>), ou cliquez sur une suite toute prête. Reconnus : majeur, mineur (<code>m</code>), <code>7</code>, <code>m7</code>, <code>maj7</code>, <code>sus2</code>, <code>sus4</code>, <code>dim</code>, <code>aug</code>, <code>5</code>, <code>add9</code>. <b>Mesures par accord</b> et <b>Répétitions</b> valent pour les deux onglets.</li>
+        <li><b>Accords</b> : son (cordes, nappes, chœurs, supersaw, stabs, claviers ou le preset du synthé en cours), registre, rythme (tenu, chaque temps, contretemps, croches) et basse (sub, hardcore en contretemps, reese) sur une deuxième piste. Un bloc par accord, chacun avec son propre preset.</li>
+        <li><b>Mélodie (lead)</b> : une mélodie qui suit les accords. <b>Style</b> : Hymne (un motif repris sur chaque accord, temps forts sur les notes de l'accord), Arpège, Riff hardcore (notes courtes, octaves et quintes), Question / réponse (une phrase qui monte, une réponse qui descend). <b>Densité</b>, <b>registre</b> et <b>doublage à l'octave</b>.</li>
+        <li><b>Nouvelle idée</b> tire une autre mélodie et la fait écouter ; <b>Écouter</b> joue exactement ce que <b>Générer</b> posera (un deuxième clic arrête).</li>
+        <li>La mélodie est un seul bloc de notes, répété sur toute la durée : double-cliquez dessus pour la retoucher dans le piano roll.</li>
+        <li>Les blocs sont posés à partir de la mesure de la tête de lecture, sur la première piste libre sur toute la durée, en partant de la piste armée ; le morceau s'allonge si besoin.</li>
       </ul>`,
     knobs: `
       <p>Les 8 potentiomètres à l'écran suivent les potentiomètres K1-K8 de l'APC, page par page.</p>

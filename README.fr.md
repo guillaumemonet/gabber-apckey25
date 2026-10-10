@@ -37,7 +37,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 
 | | |
 |---|---|
-| **Pads du sampler et éditeur de pad**<br>[![Les 40 pads de la banque Hardstyle et l'éditeur de pad](docs/screenshots/pads-fr.png)](docs/screenshots/pads-fr.png) | **Synthé et générateur de nappes**<br>[![Fenêtre Synthé : familles, presets, potentiomètres d'expression, accords, arpégiateur et générateur de nappes](docs/screenshots/synth-fr.png)](docs/screenshots/synth-fr.png) |
+| **Pads du sampler et éditeur de pad**<br>[![Les 40 pads de la banque Hardstyle et l'éditeur de pad](docs/screenshots/pads-fr.png)](docs/screenshots/pads-fr.png) | **Synthé**<br>[![Fenêtre Synthé : familles, presets, potentiomètres d'expression, accords et arpégiateur](docs/screenshots/synth-fr.png)](docs/screenshots/synth-fr.png) |
 | **TR-909**<br>[![Fenêtre TR-909 : séquenceur 16 pas, et les potentiomètres avec la distorsion par instrument](docs/screenshots/tr-fr.png)](docs/screenshots/tr-fr.png) | **TB-303**<br>[![Fenêtre TB-303 : grille avec octaves, accents et slides, et ses potentiomètres](docs/screenshots/acid-fr.png)](docs/screenshots/acid-fr.png) |
 | **Designer de kick**<br>[![Designer de kick : presets, 12 potentiomètres et la forme d'onde](docs/screenshots/kick-fr.png)](docs/screenshots/kick-fr.png) | **Platines**<br>[![Platines : deux decks avec disques à scratcher, égaliseur, filtre et crossfader](docs/screenshots/decks-fr.png)](docs/screenshots/decks-fr.png) |
 | **Table de mixage et sidechain**<br>[![Table de mixage : voies, effets d'insert et sidechain, avec les effets de performance](docs/screenshots/mixer-fr.png)](docs/screenshots/mixer-fr.png) | **Câblage**<br>[![Fenêtre Câblage : les outils à gauche, les boîtes à effets au milieu, le master à droite](docs/screenshots/patch-fr.png)](docs/screenshots/patch-fr.png) |
@@ -358,7 +358,7 @@ La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instr
 
 ## Synthé
 
-[![Fenêtre Synthé : familles, presets, potentiomètres d'expression, accords, arpégiateur et générateur de nappes](docs/screenshots/synth-fr.png)](docs/screenshots/synth-fr.png)
+[![Fenêtre Synthé : familles, presets, potentiomètres d'expression, accords et arpégiateur](docs/screenshots/synth-fr.png)](docs/screenshots/synth-fr.png)
 
 Le clavier joue un synthé en couches pensé pour le hardcore : chaque preset empile jusqu'à 3 **couches** d'oscillateurs (scie, carré, triangle, sinus ou impulsion, chacune avec son unisson, son octave et son niveau), avec des **formants** (résonance de caisse des cordes, voyelles « a » / « o » des chœurs), un **ensemble** stéréo, l'unisson étalé dans la stéréo, et un vibrato qui arrive après un instant.
 
@@ -394,9 +394,11 @@ Sous les potentiomètres de la fenêtre Synthé :
 
 Quand la timeline enregistre le synthé, les accords et les notes de l'arpège sont enregistrés aussi, dans le bloc de notes de la prise.
 
-### Générateur de nappes
+### Générateur : accords et mélodie
 
-**Générateur de nappes → timeline**, dans la fenêtre Synthé, ouvre le générateur : il pose des blocs de cordes ou de nappes sur la timeline à partir d'une suite d'accords.
+La fenêtre **Générateur** (barre des plugins, groupe Outils) part d'une suite d'accords et pose sur la timeline, au choix (deux onglets), des **blocs d'accords** (cordes, nappes, chœurs…) ou une **mélodie (lead)** qui suit ces accords.
+
+**Accords**
 
 - **Suite d'accords** : tapez les accords séparés par des espaces ou des tirets (`Fm Db Eb Cm`, `Fm-Bbm-Db-C`…), ou cliquez sur une suite toute prête. Reconnus : majeur (`Db`), mineur (`Fm`), `7`, `m7`, `maj7`, `sus2`, `sus4`, `dim`, `aug`, `5`, `add9`, avec `#` / `b`.
 - **Son** : le preset du synthé en cours, ou un preset parmi les familles cordes, nappes, chœurs, supersaw, stabs ou claviers. Chaque bloc garde **son propre preset** : vous pouvez jouer autre chose au clavier, ou changer de preset, sans changer les nappes.
@@ -406,6 +408,14 @@ Quand la timeline enregistre le synthé, les accords et les notes de l'arpège s
 - **▶ Écouter** joue le premier accord ; **Générer** pose les blocs à partir de la mesure de la tête de lecture, sur la première piste libre sur toute la durée, en partant de la piste armée. La timeline s'allonge si besoin.
 
 Un bloc d'accord se manipule comme les autres : le déplacer, l'allonger, le copier (Alt), l'ouvrir dans le piano roll (double-clic) ou le supprimer.
+
+**Mélodie (lead)**
+
+- Même **suite d'accords**, mêmes **mesures par accord** et **répétitions** que l'onglet Accords : la mélodie suit l'harmonie.
+- **Style** : **Hymne** (un motif repris sur chaque accord, comme un hook d'hymne hardcore), **Arpège**, **Riff hardcore** (notes courtes, octaves et quintes), **Question / réponse** (une phrase qui monte, une réponse qui descend). Les temps forts tombent sur les notes de l'accord ; entre eux, la mélodie passe par la gamme (sur un accord majeur en fa mineur, comme do, elle prend le mi bécarre).
+- **Son** (supersaw, leads, hoovers, stabs ou le preset du synthé en cours), **densité** (aérée, moyenne, dense), **registre** (médium, aigu), **doublée à l'octave**.
+- **Nouvelle idée** tire une autre mélodie et la fait écouter ; **Écouter** joue exactement ce que **Générer** posera (un deuxième clic arrête).
+- La mélodie est posée en **un seul bloc de notes**, répété sur toute la durée : double-cliquez dessus pour la retoucher note par note dans le piano roll.
 
 ## Synthé à oscillateurs
 
@@ -584,7 +594,8 @@ js/visualizer.js      visualiseur (modes 2D)
 js/viz3d.js           modes 3D du visualiseur (shaders WebGL)
 js/project.js         fichiers .gabber (projet, morceau, réglages des outils)
 js/notes.js           blocs de notes (motifs, regroupement, quantification)
-js/chords.js          suites d'accords (générateur de nappes)
+js/chords.js          suites d'accords (générateur)
+js/melody.js          générateur de mélodie (lead)
 js/params.js          paramètres des potentiomètres
 js/i18n.js            traductions anglais / français
 js/kit.js             kit de départ (synthétisé)
