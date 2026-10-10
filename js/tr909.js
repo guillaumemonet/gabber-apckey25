@@ -53,7 +53,7 @@ export function distCurve(amount, shape) {
 // Voie de la table de mixage qui reçoit chaque instrument.
 export const TR_GROUPS = { bd: 'bd', sd: 'snare', rs: 'snare', hc: 'snare', lt: 'toms', mt: 'toms', ht: 'toms', ch: 'hats', oh: 'hats', cr: 'cym', rd: 'cym' };
 
-// Définitions des 8 potards de la page TR-909 : paramètres de l'instrument choisi (K1-K4),
+// Définitions des 8 potentiomètres de la page TR-909 : paramètres de l'instrument choisi (K1-K4),
 // sa distorsion Drive / Shape (K5-K6), puis Shuffle et Volume (K7-K8). Valeurs = positions 0..1.
 export function trKnobDefs(sel) {
   const inst = TR_INSTR.find(i => i.id === sel) ?? TR_INSTR[0];

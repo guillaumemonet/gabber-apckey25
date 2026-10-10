@@ -123,7 +123,7 @@ export class APC extends EventTarget {
     });
   }
 
-  // mk2 : port 0 = clavier, port 1 = pads/potards/boutons (noms variables selon l'OS).
+  // mk2 : port 0 = clavier, port 1 = pads/potentiomètres/boutons (noms variables selon l'OS).
   guessRoles() {
     this.roles.clear();
     if (this.model !== 'mk2' || this.inputs.length < 2) return;

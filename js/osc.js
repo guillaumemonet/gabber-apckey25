@@ -3,7 +3,7 @@
 // enveloppe de hauteur, saturation puis filtre passe-bas / passe-haut / passe-bande 12 ou 24 dB (coupure, résonance,
 // enveloppe, suivi du clavier), 2 enveloppes ADSR, un LFO calé sur le tempo (hauteur, filtre, largeur d'impulsion, volume),
 // jeu polyphonique (8 voix), mono ou legato avec glissé.
-// Les réglages sont des positions 0..1 (comme les potards) ; `oscValues` donne les valeurs réelles.
+// Les réglages sont des positions 0..1 (comme les potentiomètres) ; `oscValues` donne les valeurs réelles.
 // L'impulsion = scie − la même scie retardée (le retard fixe la largeur, modulable par le LFO).
 import { t } from './i18n.js';
 
@@ -59,7 +59,7 @@ export const OSC_PARAMS = {
 };
 export const OSC_IDS = Object.keys(OSC_PARAMS);
 for (const [id, d] of Object.entries(OSC_PARAMS)) d.id = id;
-// Page de potards de l'APC (K1-K8).
+// Page de potentiomètres de l'APC (K1-K8).
 export const OSC_KNOBS = ['cutoff', 'reso', 'fenv', 'fd', 'drive', 'ldepth', 'ar', 'vol'];
 
 export function oscToValue(d, p) {
@@ -423,7 +423,7 @@ export class OscSynth {
         g.setTargetAtTime(0, t, 0.005);
         for (const n of sources) { try { n.stop(t + 0.05); } catch { /* déjà arrêtée */ } }
       },
-      // Potards tournés pendant qu'une note joue.
+      // Potentiomètres tournés pendant qu'une note joue.
       update: (N, t) => {
         const b = Math.min(20000, Math.max(20, N.cutoff * Math.pow(midiToFreq(voice.note) / 261.63, N.ktrack)));
         filters.forEach((fl, i) => { fl.frequency.setTargetAtTime(b, t, 0.02); if (!i) fl.Q.setTargetAtTime(N.reso, t, 0.02); });

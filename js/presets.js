@@ -1,5 +1,5 @@
 // Presets du synthé joué au clavier, rangés par famille (nom affiché : t(`preset.${id}`)).
-// `values` = potards d'expression (voir PAGES.synth), `voice` = caractère du son :
+// `values` = potentiomètres d'expression (voir PAGES.synth), `voice` = caractère du son :
 //   layers : couches d'oscillateurs { osc, voices (unisson), spread (centièmes à « Désaccord » = 12),
 //            octave (demi-tons), level, formant ('strings' | 'a' | 'o') }
 //   fenv (enveloppe du filtre), decay, sustain, sub, bend, bendTime, vibRate, vibDelay, vibRange (demi-tons au max),

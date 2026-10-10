@@ -13,7 +13,7 @@ const db = v => (Math.abs(v) < 0.25 ? '0 dB' : `${v > 0 ? '+' : ''}${v.toFixed(1
 const sec = v => (v < 1 ? `${Math.round(v * 1000)}ms` : `${v.toFixed(2)}s`);
 
 export const PAGES = {
-  // Potards d'expression du synthé ; chaque famille de sons en montre 8 (voir SYNTH_KNOBS).
+  // Potentiomètres d'expression du synthé ; chaque famille de sons en montre 8 (voir SYNTH_KNOBS).
   synth: {
     label: t('page.synth'),
     params: [
@@ -71,10 +71,10 @@ export const PAGES = {
   },
 };
 
-// Libellés des potards dans la langue du navigateur.
+// Libellés des potentiomètres dans la langue du navigateur.
 for (const [page, { params }] of Object.entries(PAGES)) for (const d of params) d.label = t(`${page}.${d.id}`);
 
-// Potards du synthé selon la famille : nappes / cordes / chœurs, ou sons monophoniques (basses, leads).
+// Potentiomètres du synthé selon la famille : nappes / cordes / chœurs, ou sons monophoniques (basses, leads).
 export const SYNTH_KNOBS = {
   wide: ['cutoff', 'reso', 'attack', 'release', 'width', 'vibrato', 'chorus', 'rSend'],
   mono: ['cutoff', 'reso', 'attack', 'release', 'drive', 'glide', 'detune', 'rSend'],

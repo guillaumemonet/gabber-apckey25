@@ -1,5 +1,5 @@
 // Designer de kick : réglages invalides d'une ancienne sauvegarde nettoyés, hauteur de la queue accordée,
-// presets, potard qui rend le son « perso », envoi vers un pad et vers la bibliothèque, retrait, aide.
+// presets, potentiomètre qui rend le son « perso », envoi vers un pad et vers la bibliothèque, retrait, aide.
 export async function seed() {
   await new Promise((res, rej) => {
     const req = indexedDB.open('apc-studio', 1);
@@ -30,7 +30,7 @@ export default async function (t, A) {
   t.eq(S.userSounds.length, 0, 'sons perso invalides écartés');
   A.wm.toggle('kick', true);
   await t.wait(50);
-  t.eq(t.$$('#kick-knobs .knob').length, 12, '12 potards');
+  t.eq(t.$$('#kick-knobs .knob').length, 12, '12 potentiomètres');
   const presets = t.$$('#kick-presets button');
   t.eq(presets.length, 8, '8 presets');
   // Hauteur de la queue : fa (87 Hz), puis une octave au-dessus.
@@ -52,12 +52,12 @@ export default async function (t, A) {
   }
   t.ok(lens.size >= 4, 'les presets donnent des kicks différents', [...lens]);
   t.eq(t.$('#kick-presets button.active')?.dataset.preset, presets.at(-1).dataset.preset, 'le dernier preset choisi est actif');
-  // Molette sur un potard : le son devient « perso ».
+  // Molette sur un potentiomètre : le son devient « perso ».
   const knob = t.$$('#kick-knobs .knob')[5];
   const z0 = S.kick.params.zaag;
   knob.dispatchEvent(new WheelEvent('wheel', { deltaY: -100, bubbles: true, cancelable: true }));
   await t.wait(150);
-  t.ok(S.kick.params.zaag !== z0, 'le potard change le réglage');
+  t.ok(S.kick.params.zaag !== z0, 'le potentiomètre change le réglage');
   t.eq(S.kick.preset, null, 'le son devient perso');
   // → Pad.
   t.$('#kick-to-pad').click();

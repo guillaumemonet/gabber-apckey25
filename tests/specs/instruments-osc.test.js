@@ -1,4 +1,4 @@
-// Synthé à oscillateurs : fenêtre et modules, chaque preset sonne sans NaN, silence après relâchement, potard de l'APC,
+// Synthé à oscillateurs : fenêtre et modules, chaque preset sonne sans NaN, silence après relâchement, potentiomètre de l'APC,
 // clavier qui suit la fenêtre active, bloc de notes joué par la timeline puis exporté, prise au clavier.
 export default async function (t, A) {
   const S = A.state;
@@ -6,9 +6,9 @@ export default async function (t, A) {
   A.wm.toggle('osc', true);
   await t.wait(100);
   t.eq(S.keys, 'osc', 'le clavier joue le synthé de la fenêtre active');
-  t.eq(S.page, 'osc', 'page de potards du synthé');
+  t.eq(S.page, 'osc', 'page de potentiomètres du synthé');
   t.ok(t.$$('.osc-mod').length >= 7, 'modules (3 oscillateurs, mod, filtre, enveloppes, LFO…)', t.$$('.osc-mod').length);
-  t.ok(t.$$('#osc-modules .knob').length >= 30, 'potards', t.$$('#osc-modules .knob').length);
+  t.ok(t.$$('#osc-modules .knob').length >= 30, 'potentiomètres', t.$$('#osc-modules .knob').length);
   t.eq(t.$$('#osc-presets button').length >= 12, true, '12 presets ou plus');
   const meter = t.meter(A.oscSynth.out);
   const buf = new Float32Array(2048);
@@ -28,7 +28,7 @@ export default async function (t, A) {
   await t.wait(900);
   t.ok(meter() < 0.01, 'silence après relâchement des notes', meter());
   t.eq([...A.oscSynth.voices.values()].filter(v => !v.released).length, 0, 'aucune voix tenue');
-  // Potard K1 de l'APC = coupure (le preset devient perso).
+  // Potentiomètre K1 de l'APC = coupure (le preset devient perso).
   A.loadOscPreset('supersaw');
   const c0 = S.osc.params.cutoff;
   A.apc.dispatchEvent(new CustomEvent('knob', { detail: { index: 0, value: 0.2 } }));

@@ -1,11 +1,11 @@
-// TB-303 : horloge propre puis calée sur la 909, grille, saisie au clavier, page de potards (Maj + REC),
+// TB-303 : horloge propre puis calée sur la 909, grille, saisie au clavier, page de potentiomètres (Maj + REC),
 // enregistrement audio dans la timeline, aide.
 export default async function (t, A) {
   const S = A.state, AC = A.acid, E = A.engine;
   A.wm.toggle('acid', true);
   const grid = t.$('#acid-grid');
   t.eq(grid.querySelectorAll('.acid-cell').length, 17 * 16, 'grille de 16 pas × 17 rangées (13 notes, accent, slide, octave + et −)');
-  t.ok(t.$$('#acid-knobs .knob').length >= 9, 'potards de la 303');
+  t.ok(t.$$('#acid-knobs .knob').length >= 9, 'potentiomètres de la 303');
   t.ok(t.$$('.strip-name').some(e => /303/.test(e.textContent)), 'voie TB-303 dans le mixeur');
   const level = t.meter(AC.out);
   const peakOver = async ms => { let p = 0; const t0 = performance.now(); while (performance.now() - t0 < ms) { p = Math.max(p, level()); await t.wait(20); } return p; };
@@ -70,7 +70,7 @@ export default async function (t, A) {
   const btn = (name, pressed) => A.apc.dispatchEvent(new CustomEvent('button', { detail: { name, pressed } }));
   A.setPage('synth');
   btn('shift', true); btn('record', true); btn('record', false); btn('shift', false);
-  t.eq(S.page, 'acid', 'Maj + REC : page de potards TB-303');
+  t.eq(S.page, 'acid', 'Maj + REC : page de potentiomètres TB-303');
   const c0 = S.acid.params.cutoff;
   A.turnKnob(0, { value: 0.8 });
   t.ok(Math.abs(S.acid.params.cutoff - 0.8) < 0.01 && c0 !== 0.8, 'K1 règle la coupure', [c0, S.acid.params.cutoff]);

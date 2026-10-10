@@ -1,4 +1,4 @@
-// Timeline : une ancienne sauvegarde (pistes sans potards, source d'enregistrement TB-303) se recharge correctement.
+// Timeline : une ancienne sauvegarde (pistes sans potentiomètres, source d'enregistrement TB-303) se recharge correctement.
 export async function seed() {
   await new Promise((res, rej) => {
     const req = indexedDB.open('apc-studio', 1);
@@ -19,6 +19,6 @@ export default async function (t, A) {
   t.eq(S.tl.tracks.length, 16, 'les 16 pistes reviennent');
   t.eq(t.$$('#tl-grid .tl-lane').length, 16, 'une ligne par piste');
   t.eq(S.tl.source, 'acid', 'la source d\'enregistrement TB-303 est gardée');
-  t.ok(S.tl.tracks.every(tr => tr.vol === 1 && tr.pan === 0 && tr.lp === 20000 && tr.hp === 20 && Array.isArray(tr.fx)), 'potards et effets par défaut ajoutés');
-  t.eq(t.$$('.tl-knobs').length, 16, 'un bouton de potards par piste');
+  t.ok(S.tl.tracks.every(tr => tr.vol === 1 && tr.pan === 0 && tr.lp === 20000 && tr.hp === 20 && Array.isArray(tr.fx)), 'potentiomètres et effets par défaut ajoutés');
+  t.eq(t.$$('.tl-knobs').length, 16, 'un bouton de potentiomètres par piste');
 }

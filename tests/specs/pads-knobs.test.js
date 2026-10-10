@@ -1,4 +1,4 @@
-// Potards : rangée sous les pads (molette, potards physiques de l'APC), potards de la TR-909, page de l'APC
+// Potentiomètres : rangée sous les pads (molette, potentiomètres physiques de l'APC), potentiomètres de la TR-909, page de l'APC
 // qui suit la fenêtre active, page EQ choisie dans l'en-tête.
 const wheel = (el, up = true) => el.dispatchEvent(new WheelEvent('wheel', { deltaY: up ? -100 : 100, bubbles: true, cancelable: true }));
 const knob = (A, index, value) => A.apc.dispatchEvent(new CustomEvent('knob', { detail: { index, value } }));
@@ -11,7 +11,7 @@ export default async function (t, A) {
   A.wm.toggle('pads', true);
   await t.wait(100);
   const row = t.$$('#pad-knobs .knob');
-  t.eq(row.length, 8, 'rangée de 8 potards sous les pads');
+  t.eq(row.length, 8, 'rangée de 8 potentiomètres sous les pads');
   t.ok(t.$('#pad-knobs-name').textContent.startsWith('Pad 1'), 'la rangée montre le pad sélectionné', t.$('#pad-knobs-name').textContent);
   t.eq(S.page, 'pad', 'la fenêtre des pads active la page Pad');
   const pad = S.banks[6][0];
@@ -22,7 +22,7 @@ export default async function (t, A) {
   t.ok(row[1].querySelector('.value').textContent !== '', 'la valeur affichée suit');
   knob(A, 0, 0.3);
   await t.wait(30);
-  t.near(pad.p.volume, 0.3, 0.01, 'potard K1 de l’APC = volume du pad');
+  t.near(pad.p.volume, 0.3, 0.01, 'potentiomètre K1 de l’APC = volume du pad');
   A.selectPad(5);
   await t.wait(30);
   t.ok(t.$('#pad-knobs-name').textContent.startsWith('Pad 6'), 'changer de pad change la rangée', t.$('#pad-knobs-name').textContent);
@@ -31,7 +31,7 @@ export default async function (t, A) {
   A.wm.toggle('tr', true);
   await t.wait(30);
   const tr = t.$$('#tr-knobs .knob');
-  t.ok(tr.length >= 6, 'potards de la 909', tr.length);
+  t.ok(tr.length >= 6, 'potentiomètres de la 909', tr.length);
   const d0 = S.tr.params.bd.decay;
   wheel(tr[2]);
   t.ok(S.tr.params.bd.decay !== d0, 'la molette change la décroissance de la grosse caisse', [d0, S.tr.params.bd.decay]);
@@ -52,7 +52,7 @@ export default async function (t, A) {
 
   // --- Page choisie dans l'en-tête : EQ, K8 = gain ---
   const sel = t.$('#apc-page');
-  t.ok(sel.options.length > 5, 'menu des pages de potards', sel.options.length);
+  t.ok(sel.options.length > 5, 'menu des pages de potentiomètres', sel.options.length);
   sel.value = 'eq';
   sel.dispatchEvent(new Event('change'));
   knob(A, 7, 0.8);

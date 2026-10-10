@@ -557,7 +557,8 @@ Cliquez ensuite sur **Réinitialiser** dans l'appli (la flèche circulaire à dr
 ```
 index.html            page
 css/style.css         styles
-js/main.js            interface et liaisons
+js/main.js            point d'entrée : crée les moteurs et construit l'interface
+js/app/               interface et liaisons, un module par domaine (voir docs/dev/architecture.md)
 js/apc.js             détection de l'APC Key 25, lecture MIDI, LEDs (mk1 + mk2)
 js/audio.js           moteur audio : synthé, sampler, effets, EQ, tempo
 js/tr909.js           émulation TR-909 et séquenceur

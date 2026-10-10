@@ -24,9 +24,20 @@ function firefoxPath() {
   return candidates.find(p => fs.existsSync(p)) ?? 'firefox';
 }
 
-// Application de test : main.js + window.__app, qui lit n'importe quelle variable du module (eval direct, à la demande).
-const mainSource = () => fs.readFileSync(path.join(ROOT, 'js', 'main.js'), 'utf8')
-  + "\n// --- tests ---\nwindow.__app = new Proxy({}, { get: (_, k) => { if (typeof k !== 'string' || !/^[A-Za-z_$][\\w$]*$/.test(k)) return undefined; try { return eval(k); } catch { return undefined; } } });\n";
+// Application de test : main.js + window.__app, qui lit n'importe quelle variable de main.js (eval direct, à la demande),
+// de l'un des modules de js/app/ (leurs déclarations sont toutes exportées), ou un export des moteurs (js/*.js).
+// `A.store` = js/storage.js ; `A.synthKick` = renderKick de js/kickdesign.js (A.renderKick = celui de la fenêtre).
+const mainSource = () => {
+  const list = dir => fs.readdirSync(path.join(ROOT, 'js', dir)).filter(f => f.endsWith('.js') && !f.startsWith('__') && !f.endsWith('-worklet.js')).sort();
+  const mods = [...list('app').map(f => `./app/${f}`), ...list('').filter(f => f !== 'main.js').map(f => `./${f}`)];
+  return fs.readFileSync(path.join(ROOT, 'js', 'main.js'), 'utf8')
+    + '\n// --- tests ---\n'
+    + mods.map((f, i) => `import * as __m${i} from '${f}';\n`).join('')
+    + `const __mods = [${mods.map((_, i) => `__m${i}`).join(', ')}];\n`
+    + `const __alias = { store: __m${mods.indexOf('./storage.js')}, synthKick: __m${mods.indexOf('./kickdesign.js')}.renderKick };\n`
+    + "window.__app = new Proxy({}, { get: (_, k) => { if (typeof k !== 'string' || !/^[A-Za-z_$][\\w$]*$/.test(k)) return undefined;"
+    + ' if (k in __alias) return __alias[k]; for (const m of __mods) if (k in m) return m[k]; try { return eval(k); } catch { return undefined; } } });\n';
+};
 const testPage = spec => {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const out = html.replace(/<script type="module" src="js\/main\.js\?v=\d+"><\/script>/,

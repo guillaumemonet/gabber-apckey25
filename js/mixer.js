@@ -5,7 +5,7 @@ import { distCurve, SHAPES } from './tr909.js';
 
 // Les niveaux de chaque son restent dans leur outil (volume des pads, niveaux de la 909).
 export const CHANNELS = ['pads', 'synth', 'tr', 'tl', 'acid', 'decks', 'osc'];   // TB-303, platines, synthé à oscillateurs : K5, K6, K7 sur les pages mixeur
-export const MIX_FIELDS = ['vol', 'pan', 'delay', 'reverb'];   // pages de potards Maj + piste 1 à 4
+export const MIX_FIELDS = ['vol', 'pan', 'delay', 'reverb'];   // pages de potentiomètres Maj + piste 1 à 4
 export const MAX_FX = 4;
 
 // Effets d'insert : paramètres en valeurs réelles (min, max, pas, défaut).
@@ -49,7 +49,7 @@ export function fxParamLabel(type, key, v, p = {}) {
   return pct(v);
 }
 
-// Potards d'une page mixeur : une voie par outil pour le réglage `field` (K1, K2, K3…).
+// Potentiomètres d'une page mixeur : une voie par outil pour le réglage `field` (K1, K2, K3…).
 export function mixKnobDefs(field) {
   return CHANNELS.map(ch => ({
     id: field, ch, label: t(`mix.short.${ch}`), min: 0, max: 1,

@@ -8,7 +8,7 @@ export const ACID_PATTERNS = 8;
 export const ACID_BASE = 41;   // fa2 : première ligne de la grille (tonalité des banques)
 export const ACID_ROWS = 13;   // de fa à fa (une octave)
 
-// Potards : positions 0..1 ; valeur réelle calculée par `acidValue`.
+// Potentiomètres : positions 0..1 ; valeur réelle calculée par `acidValue`.
 const PARAMS = {
   tune: { def: 0.5, val: p => Math.round((p - 0.5) * 24), fmt: v => (v > 0 ? `+${v}` : `${v}`) },
   cutoff: { def: 0.35, val: p => 60 * Math.pow(7000 / 60, p), fmt: v => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : Math.round(v)) + 'Hz' },
@@ -22,12 +22,12 @@ const PARAMS = {
   volume: { def: 0.75, val: p => p, fmt: v => `${Math.round(v * 100)}%` },
 };
 export const ACID_PARAMS = Object.keys(PARAMS);
-export const ACID_KNOBS = ['cutoff', 'reso', 'env', 'decay', 'accent', 'drive', 'shape', 'volume'];   // page de potards (APC)
+export const ACID_KNOBS = ['cutoff', 'reso', 'env', 'decay', 'accent', 'drive', 'shape', 'volume'];   // page de potentiomètres (APC)
 export const acidValue = (id, p) => PARAMS[id].val(p);
 export const acidFmt = (id, p) => PARAMS[id].fmt(PARAMS[id].val(p));
 export const acidSteps = id => PARAMS[id].steps;
 
-// Presets de son (réglages des potards + onde), rangés par catégorie. Positions 0..1 des potards ;
+// Presets de son (réglages des potentiomètres + onde), rangés par catégorie. Positions 0..1 des potentiomètres ;
 // ce qui n'est pas donné garde la valeur par défaut. Les tiens s'y ajoutent (state.acid.user).
 export const ACID_CATS = ['acid', 'bass', 'lead', 'fx'];
 const S = (id, cat, wave, v) => ({ id, cat, wave, v });
@@ -264,7 +264,7 @@ export class Acid303 {
     const f = this.osc.frequency;
     const acc = s.acc ? this.p('accent') : 0;
     if (tied) {
-      f.setTargetAtTime(freq, time, this.p('slide') / 3);   // glissé (potard Slide)
+      f.setTargetAtTime(freq, time, this.p('slide') / 3);   // glissé (potentiomètre Slide)
     } else {
       f.setValueAtTime(freq, time);
       // Enveloppe du filtre : pic au-dessus de la coupure, puis retour (plus court et plus haut avec l'accent).

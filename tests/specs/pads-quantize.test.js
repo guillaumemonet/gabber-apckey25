@@ -42,7 +42,8 @@ export default async function (t, A) {
   press(25);
   const st = v(25)?.stopAt;
   t.ok(st > ctx.currentTime, 'arrêt programmé', st);
-  t.near(((st - E.origin) / bar) % 1, 0, 0.002, 'arrêt pile en fin de mesure');
+  const sb = (st - E.origin) / bar;
+  t.near(sb - Math.round(sb), 0, 0.002, 'arrêt pile en fin de mesure');   // distance à la mesure la plus proche (0.9999… = pile)
   t.ok(v(25), 'la voix reste là jusqu’à l’arrêt');
   await t.wait((st - ctx.currentTime) * 1000 + 250);
   t.ok(!v(25), 'puis elle s’arrête');

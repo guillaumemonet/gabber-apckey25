@@ -5,9 +5,9 @@ import { PAGES, WAVES, MODES, toValue } from './params.js';
 const PAD_DEFS = Object.fromEntries(PAGES.pad.params.map(d => [d.id, d]));
 const midiToFreq = n => 440 * Math.pow(2, (n - 69) / 12);
 
-// Caractère d'une voix de synthé (réglé par les presets, non exposé aux potards).
+// Caractère d'une voix de synthé (réglé par les presets, non exposé aux potentiomètres).
 export const DEFAULT_VOICE = {
-  unison: 2,          // oscillateurs empilés, écartés par le potard « Désaccord »
+  unison: 2,          // oscillateurs empilés, écartés par le potentiomètre « Désaccord »
   sub: 0,             // niveau du sous-oscillateur (octave en dessous)
   bend: 0,            // demi-tons de départ, qui glissent vers la note (hoover, kick)
   bendTime: 0.06,
@@ -24,7 +24,7 @@ export const DEFAULT_VOICE = {
   octave: 0,          // transposition en demi-tons
   layers: null,       // couches d'oscillateurs (voir js/presets.js) ; null = scies en unisson
   fenv: 0.4,          // enveloppe du filtre
-  vibRange: 0.5,      // vibrato maximal (demi-tons) quand le potard est au bout
+  vibRange: 0.5,      // vibrato maximal (demi-tons) quand le potentiomètre est au bout
 };
 
 function makeImpulse(ctx, seconds) {
@@ -330,8 +330,8 @@ export class Engine {
       if (start !== f) o.osc.frequency.exponentialRampToValueAtTime(f * o.ratio, t + time);
     }
 
-    // Vibrato (potard « Vibrato »), qui arrive après un instant comme sur un instrument joué.
-    // Une note de la timeline sans vibrato n'en a pas besoin (au clavier, le potard peut le monter pendant la note).
+    // Vibrato (potentiomètre « Vibrato »), qui arrive après un instant comme sur un instrument joué.
+    // Une note de la timeline sans vibrato n'en a pas besoin (au clavier, le potentiomètre peut le monter pendant la note).
     const lfos = [];
     let vibGain = null;
     if (!patch || (p.vibrato ?? 0) > 0) {
@@ -714,7 +714,7 @@ export class Engine {
     for (const i of [...this.padVoices.keys()]) this.stopPad(i);
   }
 
-  // Met à jour en direct la voix d'un pad pendant qu'on tourne un potard.
+  // Met à jour en direct la voix d'un pad pendant qu'on tourne un potentiomètre.
   updatePadVoice(index, pad) {
     const v = this.padVoices.get(index);
     if (!v) return;

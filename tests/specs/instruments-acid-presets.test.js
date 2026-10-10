@@ -1,5 +1,5 @@
-// Presets de la TB-303 : catégories, preset fourni, potard qui rend le son perso, preset perso enregistré dans une
-// catégorie, rechargé puis supprimé ; potard Slide ; fichiers de réglages avec les presets perso.
+// Presets de la TB-303 : catégories, preset fourni, potentiomètre qui rend le son perso, preset perso enregistré dans une
+// catégorie, rechargé puis supprimé ; potentiomètre Slide ; fichiers de réglages avec les presets perso.
 export default async function (t, A) {
   const S = A.state;
   t.near(S.acid.params.slide, 0.46, 0.01, 'Slide : valeur par défaut');
@@ -12,7 +12,7 @@ export default async function (t, A) {
   t.eq(S.acid.sound, 'screamer', 'preset Screamer chargé');
   t.ok(A.acid.f1.Q.value > 5, 'le filtre de la 303 suit (résonance forte)', A.acid.f1.Q.value);
   t.$$('#acid-knobs .knob')[1].dispatchEvent(new WheelEvent('wheel', { deltaY: -100, bubbles: true, cancelable: true }));
-  t.eq(S.acid.sound, null, 'tourner un potard rend le son perso');
+  t.eq(S.acid.sound, null, 'tourner un potentiomètre rend le son perso');
   t.eq(sel.value, '', 'le menu n’affiche plus de preset');
   t.$('#acid-presets .pb-name').value = 'Mon screamer';
   t.$('#acid-presets .pb-cat').value = 'lead';

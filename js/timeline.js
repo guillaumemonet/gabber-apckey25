@@ -18,7 +18,7 @@ export const BEATS_PER_BAR = 4;
 // Les notes et les sons ne sont créés qu'un peu avant de jouer (secondes) : tout créer d'avance
 // (des milliers de nœuds audio pour un morceau entier) écroulerait le moteur audio.
 const LOOKAHEAD = 1.5;
-// Réglages d'une piste (ses potards) : volume, panoramique, filtres passe-bas / passe-haut, envois delay et reverb.
+// Réglages d'une piste (ses potentiomètres) : volume, panoramique, filtres passe-bas / passe-haut, envois delay et reverb.
 export const TRACK_DEFAULTS = { vol: 1, pan: 0, lp: 20000, hp: 20, dly: 0, rev: 0 };
 const num = (v, lo, hi, d) => (Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d);
 // Instruments qu'une piste peut enregistrer (null = « Auto » : le choix « Enregistrer » de la barre de la timeline).
@@ -46,7 +46,7 @@ export function defaultTlState() {
     playhead: 0,        // en temps (noires)
     source: 'pads',     // outil enregistré : pads, synth (blocs posés en jouant), tr (audio)
     armed: 0,           // piste qui reçoit l'enregistrement
-    tracks: Array.from({ length: TL_TRACKS }, (_, i) => ({ ...newTrack(), arm: i === 0 })),   // fx : blocs d'effet (js/trackfx.js), potards, nom, couleur, armement, instrument
+    tracks: Array.from({ length: TL_TRACKS }, (_, i) => ({ ...newTrack(), arm: i === 0 })),   // fx : blocs d'effet (js/trackfx.js), potentiomètres, nom, couleur, armement, instrument
   };
 }
 
@@ -311,7 +311,7 @@ export class Timeline {
     set(s.rev.gain, tr.rev ?? 0);
   }
 
-  // Potards d'une piste tournés (ou « Annuler ») : le son suit tout de suite.
+  // Potentiomètres d'une piste tournés (ou « Annuler ») : le son suit tout de suite.
   updateTrack(ti) {
     for (const s of this.strips.get(ti)?.values() ?? []) this.applyStrip(s, this.st.tracks[ti]);
   }

@@ -1,5 +1,5 @@
 // Platines : chargement, lecture synchro au tempo, scratch en arrière, pause, cue, crossfader,
-// glisser un son de la bibliothèque sur un deck, page de potards de l'APC, aide.
+// glisser un son de la bibliothèque sur un deck, page de potentiomètres de l'APC, aide.
 const find = (A, name) => { for (const b of A.libManifest.banks) for (const p of b.pads) if (p && p.name === name && p.bpm) return p; };
 const item = p => ({ sampleId: `lib:${p.file}`, name: p.name, loop: true, bpm: p.bpm, cat: p.cat });
 
@@ -8,7 +8,7 @@ export default async function (t, A) {
   A.wm.toggle('decks', true);
   await t.wait(200);
   t.eq(t.$$('.deck').length, 2, 'deux decks');
-  t.eq(t.$$('.deck-knobs .knob').length, 10, '5 potards par deck');
+  t.eq(t.$$('.deck-knobs .knob').length, 10, '5 potentiomètres par deck');
   t.ok(t.$('.deck-vinyl') && t.$('.deck-zoom') && t.$('.deck-wave'), 'platine, forme d\'onde zoomée et vue d\'ensemble');
 
   const beat = find(A, 'Mainstream beat');
@@ -96,15 +96,15 @@ export default async function (t, A) {
   const loadedB = await t.until(() => D.decks.B.buffer, 5000);
   t.ok(loadedB && S.decks.B.name, 'son glissé sur le deck B', S.decks.B.name);
 
-  // Page de potards des platines (Maj + REC deux fois) : K7 = crossfader.
+  // Page de potentiomètres des platines (Maj + REC deux fois) : K7 = crossfader.
   const btn = (name, pressed = true) => A.apc.dispatchEvent(new CustomEvent('button', { detail: { name, pressed } }));
   btn('shift');
   for (let i = 0; i < 3 && S.page !== 'decks'; i++) btn('record');   // Maj + REC fait tourner les pages TB-303 / platines / synthé
   btn('shift', false);
-  t.eq(S.page, 'decks', 'page de potards des platines');
+  t.eq(S.page, 'decks', 'page de potentiomètres des platines');
   A.turnKnob(6, { value: 0.9 });
   t.near(S.decks.xfade, 0.9, 0.001, 'K7 règle le crossfader');
-  t.ok(A.knobDefs().some(d => d?.deck === 'A'), 'potards du deck A sur la page');
+  t.ok(A.knobDefs().some(d => d?.deck === 'A'), 'potentiomètres du deck A sur la page');
 
   // Aide de la fenêtre.
   t.$('[data-win="decks"] .win-help').click();

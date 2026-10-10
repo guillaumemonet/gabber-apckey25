@@ -557,7 +557,8 @@ After regenerating, click **Reset** in the app (the circular arrow at the right 
 ```
 index.html            page
 css/style.css         styles
-js/main.js            UI and wiring
+js/main.js            entry point: creates the engines and builds the UI
+js/app/               UI and wiring, one module per area (see docs/dev/architecture.md)
 js/apc.js             APC Key 25 detection, MIDI input, LEDs (mk1 + mk2)
 js/audio.js           audio engine: synth, sampler, effects, EQ, tempo
 js/tr909.js           TR-909 emulation and sequencer

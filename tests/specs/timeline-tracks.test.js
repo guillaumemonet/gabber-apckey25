@@ -1,11 +1,11 @@
-// Timeline : ajouter / retirer des pistes (annulable), potards d'une piste (volume, pano…) en direct et à l'export.
+// Timeline : ajouter / retirer des pistes (annulable), potentiomètres d'une piste (volume, pano…) en direct et à l'export.
 export default async function (t, A) {
   const S = A.state;
   const lanes = () => t.$$('#tl-grid .tl-lane').length;
   t.eq(S.tl.tracks.length, 16, '16 pistes au départ');
   t.eq(lanes(), 16, 'une ligne par piste');
   t.ok(/16/.test(t.$('#tl-tracks').textContent), 'le compteur affiche 16 pistes', t.$('#tl-tracks').textContent);
-  t.eq(t.$$('.tl-knobs').length, 16, 'un bouton de potards par piste');
+  t.eq(t.$$('.tl-knobs').length, 16, 'un bouton de potentiomètres par piste');
   // Ajouter deux pistes, retirer la dernière, annuler.
   t.$('#tl-tracks-more').click();
   t.$('#tl-tracks-more').click();
@@ -17,14 +17,14 @@ export default async function (t, A) {
   await t.wait(100);
   t.eq(S.tl.tracks.length, 18, 'Annuler la remet');
   t.eq(lanes(), 18, 'et sa ligne aussi');
-  // Potards de la piste 1 sur la démo, les autres pistes coupées.
+  // Potentiomètres de la piste 1 sur la démo, les autres pistes coupées.
   await A.loadDemo();
   for (const [i, tr] of S.tl.tracks.entries()) tr.mute = i !== 0;
   t.$$('.tl-knobs')[0].click();
   await t.wait(50);
   const box = t.$('.track-knobs');
-  t.ok(box, 'le panneau de potards s\'ouvre');
-  t.eq(box.querySelectorAll('.knob').length, 6, '6 potards : volume, pano, filtres, delay, réverbe');
+  t.ok(box, 'le panneau de potentiomètres s\'ouvre');
+  t.eq(box.querySelectorAll('.knob').length, 6, '6 potentiomètres : volume, pano, filtres, delay, réverbe');
   S.tl.playhead = 16;
   A.tlToggle();
   await t.wait(900);

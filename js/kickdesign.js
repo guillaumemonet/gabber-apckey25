@@ -1,5 +1,5 @@
 // Designer de kick : un kick gabber / hardcore calculé dans un contexte audio hors temps réel, à partir de
-// 12 potards. Deux couches, comme dans tools/gabber.py : une queue tonale saturée (sinus + scie « zaag »,
+// 12 potentiomètres. Deux couches, comme dans tools/gabber.py : une queue tonale saturée (sinus + scie « zaag »,
 // hauteur qui tombe puis qui plonge) et une attaque courte (blip aigu + clic de bruit).
 import { t } from './i18n.js';
 import { distCurve, SHAPES, shapeIndex } from './tr909.js';
@@ -9,7 +9,7 @@ const ms = v => (v < 1 ? `${Math.round(v * 1000)} ms` : `${v.toFixed(2)} s`);
 const pct = v => `${Math.round(v * 100)}%`;
 const NOTE_NAMES = () => t('notes');
 
-// Potards : position 0..1 -> valeur réelle ; affichage.
+// Potentiomètres : position 0..1 -> valeur réelle ; affichage.
 const PARAMS = {
   tune: { def: 0.5, steps: 25, val: p => Math.round(p * 24) - 12, fmt: v => `${NOTE_NAMES()[((5 + v) % 12 + 12) % 12]} (${v > 0 ? '+' : ''}${v})` },
   pitch: { def: 0.45, val: expMap(1.5, 16), fmt: v => `×${v.toFixed(1)}` },
@@ -30,7 +30,7 @@ export const kickFmt = (id, p) => PARAMS[id].fmt(PARAMS[id].val(p));
 export const kickSteps = id => PARAMS[id].steps;
 export const kickDefaults = () => Object.fromEntries(KICK_PARAMS.map(id => [id, PARAMS[id].def]));
 
-// Presets (positions des potards) ; les autres potards gardent leur valeur par défaut.
+// Presets (positions des potentiomètres) ; les autres potentiomètres gardent leur valeur par défaut.
 export const KICK_PRESETS = {
   rotterdam: { pitch: 0.35, sweep: 0.3, bend: 0.15, length: 0.38, zaag: 0, drive: 0.78, shape: 0.5, tone: 0.42, bite: 0.5, click: 0.35, top: 0.45 },
   mainstream: { pitch: 0.5, sweep: 0.22, bend: 0.3, length: 0.45, zaag: 0.12, drive: 0.62, shape: 0.25, tone: 0.5, bite: 0.55, click: 0.6, top: 0.8 },

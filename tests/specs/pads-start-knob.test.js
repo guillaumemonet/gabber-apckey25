@@ -1,4 +1,4 @@
-// Potard « Début » en direct sur une boucle calée au tempo : la boucle repart à la nouvelle position (fondu court,
+// Potentiomètre « Début » en direct sur une boucle calée au tempo : la boucle repart à la nouvelle position (fondu court,
 // pas de trou), garde sa longueur et reste calée sur la grille ; l'arrêt reste propre.
 export default async function (t, A) {
   const S = A.state, E = A.engine, ctx = E.ctx;

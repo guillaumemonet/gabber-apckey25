@@ -54,7 +54,7 @@ export class Visualizer {
     this.mode = 'spectrum';
     this.fx = {};                 // filtres actifs : { crt: 0..1, kaleido: branches, glitch: 0..1, strobe: bool }
     this.words = ['HARDCORE'];    // textes du mode « texte qui cogne »
-    this.speed = 1;       // réglages (potards) : vitesse, décalage de teinte, force des flashs, sensibilité
+    this.speed = 1;       // réglages (potentiomètres) : vitesse, décalage de teinte, force des flashs, sensibilité
     this.hueShift = 0;
     this.flashGain = 1;
     this.sens = 1;

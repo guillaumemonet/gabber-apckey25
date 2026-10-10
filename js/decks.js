@@ -32,7 +32,7 @@ export function mergeDecksState(saved) {
   return base;
 }
 
-// Page de potards (APC : Maj + REC, 2e appui) : volume, basses, filtre de chaque deck, crossfader.
+// Page de potentiomètres (APC : Maj + REC, 2e appui) : volume, basses, filtre de chaque deck, crossfader.
 export function deckKnobDefs() {
   const pct = v => `${Math.round(v * 100)}%`;
   const eq = v => (v < 0.02 ? 'kill' : `${v > 0.5 ? '+' : ''}${Math.round((v - 0.5) * 24)} dB`);

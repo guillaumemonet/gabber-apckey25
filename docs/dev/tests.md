@@ -32,7 +32,7 @@ Un fichier `tests/specs/domaine-sujet.test.js` :
 ```js
 // Ce que le test vérifie, en une phrase.
 export default async function (t, A) {
-  A.setBank(16);                                  // A : toutes les variables internes de js/main.js
+  A.setBank(16);                                  // A : toutes les variables internes (js/main.js, js/app/, moteurs)
   t.eq(A.state.bank, 16, 'la banque 17 est affichée');
   await t.until(() => A.timeline.playing, 2000);  // attendre une condition
   t.near(A.timeline.position(), 4, 0.5, 'la tête de lecture avance');

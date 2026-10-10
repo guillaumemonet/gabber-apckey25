@@ -11,7 +11,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const problems = [];
 const fail = msg => problems.push(msg);
-const js = fs.readdirSync(path.join(ROOT, 'js')).filter(f => f.endsWith('.js') && !f.startsWith('__'));
+const jsIn = dir => fs.readdirSync(path.join(ROOT, 'js', dir)).filter(f => f.endsWith('.js') && !f.startsWith('__')).map(f => (dir ? `${dir}/${f}` : f));
+const js = [...jsIn(''), ...jsIn('app')];
 
 // 1. Syntaxe.
 for (const f of [...js.map(f => path.join('js', f)), 'tests/run.js', 'tests/harness.js', 'tests/check.js']) {
@@ -33,6 +34,9 @@ for (const f of js) {
   const src = fs.readFileSync(path.join(ROOT, 'js', f), 'utf8');
   for (const [, k] of src.matchAll(/\bt\('([a-zA-Z0-9_.-]+)'/g)) if (!en.has(k)) fail(`${f} utilise une clé inconnue : ${k}`);
 }
+
+// Chaque module est dans l'import map d'index.html (version des scripts, contre les anciens caches).
+for (const f of js) if (!f.endsWith('-worklet.js') && !html.includes(`"./js/${f}": "./js/${f}?v=`)) fail(`index.html : module absent de l'import map : js/${f}`);
 
 // 3. Aide.
 const { HELP } = await import(pathToFileURL(path.join(ROOT, 'js', 'help.js')));
