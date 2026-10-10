@@ -13,6 +13,7 @@ import { $, acid, drum, engine, metro, mixer, state, timeline, uiColor, wm } fro
 import { openDemoMenu } from './demo.js';
 import { exportSong, songEndBeats } from './export.js';
 import { BUS_COLORS, BUS_LETTERS, busName, renderBuses } from './buses-ui.js';
+import { openClipMenu } from './clip-menu.js';
 import { fxOptions, renderInsertRack } from './inserts-ui.js';
 import { arcPath } from './knobs.js';
 import { renderLibrary } from './library-ui.js';
@@ -562,12 +563,26 @@ export function drawClip(cv, clip) {
   const p = peaks(clip.sampleId);
   if (!p) return;
   const natural = timeline.naturalBeats(clip) * beatPx();
+  const bp = beatPx();
+  const fi = (clip.fadeIn ?? 0) * bp, fo = (clip.fadeOut ?? 0) * bp;
+  const level = Math.min(2, clip.gain ?? 1);
   g.fillStyle = 'rgba(0,0,0,.4)';
   for (let x = 0; x < w; x++) {
-    const pos = clip.loop ? (x % natural) / natural : x / natural;
+    let pos = clip.loop ? (x % natural) / natural : x / natural;
     if (pos >= 1) break;
-    const bar = Math.max(1, p[Math.floor(pos * p.length)] * h * 0.9);
+    if (clip.reverse) pos = 1 - pos - 1e-9;
+    const fade = (fi ? Math.min(1, x / fi) : 1) * (fo ? Math.min(1, (w - x) / fo) : 1);
+    const bar = Math.max(1, Math.min(1, p[Math.floor(pos * p.length)] * level * fade) * h * 0.9);
     g.fillRect(x, (h - bar) / 2, 1, bar);
+  }
+  // Fondus : lignes qui montent du coin bas gauche, descendent vers le coin bas droit.
+  if (fi || fo) {
+    g.strokeStyle = 'rgba(255,255,255,.75)';
+    g.lineWidth = 1.5;
+    g.beginPath();
+    if (fi) { g.moveTo(0, h); g.lineTo(Math.min(w, fi), 1); }
+    if (fo) { g.moveTo(Math.max(0, w - fo), 1); g.lineTo(w, h); }
+    g.stroke();
   }
   if (clip.loop) {   // repère de chaque répétition
     g.fillStyle = 'rgba(255,255,255,.35)';
@@ -606,7 +621,7 @@ export function clipEl(track, clip) {
   }
   el._obj = clip;
   requestAnimationFrame(() => drawClip(cv, clip));
-  el.addEventListener('contextmenu', e => { e.preventDefault(); tlDelete(track, clip); });
+  el.addEventListener('contextmenu', e => { e.preventDefault(); openClipMenu(track, clip, e.clientX, e.clientY); });
 
   // Glisser le bloc (Alt = copie) ; glisser son bord droit = longueur (une boucle se répète).
   el.addEventListener('pointerdown', e => {

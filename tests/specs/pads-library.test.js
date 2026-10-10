@@ -4,6 +4,7 @@ export default async function (t, A) {
   const S = A.state;
   A.wm.toggle('pads', true);
   A.setBank(15);   // banque 16 (Anthems)
+  await t.until(() => A.bankLoaded(15), 15000);
   await t.wait(200);
   const search = t.$('#lib-search');
   search.value = 'riff de guitare';

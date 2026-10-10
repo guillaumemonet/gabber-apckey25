@@ -845,3 +845,17 @@ header button, header .status { white-space: nowrap; }
 .bus-tracks { font-size: 10.5px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 14px; }
 .tl-head .tl-bus { flex: none; font-size: 10px; line-height: 14px; min-width: 14px; text-align: center; border-radius: 3px; background: var(--bc); color: #111; }
 .tl-head .tl-bus[hidden] { display: none; }
+/* Menu contextuel d'un bloc de la timeline */
+.clip-menu { position: fixed; z-index: 1000; width: 270px; display: flex; flex-direction: column; gap: 2px; padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.5); font-size: 12px; }
+.cm-head { padding: 4px 8px 6px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+.cm-item { display: flex; align-items: center; text-align: left; border: none; background: transparent; padding: 6px 8px; border-radius: 6px; font-size: 12px; }
+.cm-item:hover, .cm-item:focus-visible { background: var(--bg); }
+.cm-danger { color: #ff6b5a; }
+.cm-row { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 8px; padding: 4px 8px; color: var(--muted); }
+.cm-row select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 2px 4px; }
+.cm-gain { grid-template-columns: 96px 1fr 58px; }
+.cm-gain em { font-style: normal; text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
+.cm-check input { justify-self: start; width: 16px; height: 16px; accent-color: var(--accent-2); }
+.cm-transpose { display: flex; gap: 4px; }
+.cm-transpose button { flex: 1; padding: 3px 0; font-size: 11px; }
+.clip-menu hr { border: none; border-top: 1px solid var(--line); margin: 4px 0; }

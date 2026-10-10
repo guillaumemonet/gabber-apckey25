@@ -41,8 +41,9 @@ export default async function (t, A) {
   t.ok(await t.until(() => E.voices.size === 0, 4000), 'à l\'arrêt, plus aucune voix', E.voices.size);
   // Clic droit sur un bloc : supprimé.
   const n0 = all().length;
-  t.$('.tl-clip.note').dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
-  t.eq(n0 - all().length, 1, 'clic droit : le bloc est supprimé');
+  t.$('.tl-clip.note').dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 600, clientY: 400 }));
+  t.$('.clip-menu .cm-danger').click();
+  t.eq(n0 - all().length, 1, 'clic droit › Supprimer : le bloc est supprimé');
   // Plus aucune piste libre : message, rien n'est ajouté.
   S.tl.tracks.forEach(tr => tr.clips.push({ id: crypto.randomUUID(), type: 'note', note: 60, name: 'x', cat: 'lead', start: 0, len: 4 }));
   const n1 = all().length;

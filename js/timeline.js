@@ -195,7 +195,7 @@ export class Timeline {
             const out = this.trackIn(ti, dest);
             jobs.push({ time: when, run: () => {
               this.synths.add(syn);
-              syn.noteOn(n.note, n.vel, when, key, patch, out, n.from);
+              syn.noteOn(n.note, Math.min(1, n.vel * (clip.gain ?? 1)), when, key, patch, out, n.from);
               this.offs.push({ note: n.note, key, time: when + n.len * bd - 0.005, syn });
               this.offsDirty = true;
             } });
@@ -211,7 +211,7 @@ export class Timeline {
           if (pad?.buffer) {
             const out = this.trackIn(ti, this.engine.padOut(pad) ?? this.engine.padBus);
             jobs.push({ time: when, run: () => {
-              const v = this.engine.playPad(key, pad, { when, oneShot: true, vel: clip.vel ?? 1, out });
+              const v = this.engine.playPad(key, pad, { when, oneShot: true, vel: (clip.vel ?? 1) * (clip.gain ?? 1), out });
               if (v) this.padHits.add({ key, v });
             } });
             if (live && this.isKickPad(pad)) this.onKick(when);
@@ -230,7 +230,9 @@ export class Timeline {
         if (st.loop && !this.recording) stopAt = Math.min(stopAt, endTime);
         const out = this.trackIn(ti, this.duckOutput && this.isDucked(clip) ? this.duckOutput : this.output);
         if (live) this.scheduleKicks(clip, time, beat, Math.min(end, st.loop && !this.recording ? len : Infinity));
-        jobs.push({ time: when, run: () => this.startClip(clip, buf, rate, into, when, stopAt, out) });
+        // Début et fin du bloc sur l'horloge audio (fondus d'entrée et de sortie).
+        const span = { t0: time + (clip.start - beat) * bd, t1: time + (end - beat) * bd, bd };
+        jobs.push({ time: when, run: () => this.startClip(clip, buf, rate, into, when, stopAt, out, span) });
       }
     });
     this.ons = this.ons.concat(jobs).sort((a, b) => a.time - b.time);
@@ -243,9 +245,9 @@ export class Timeline {
   }
 
   // Crée la source d'un bloc audio (juste avant qu'il joue).
-  startClip(clip, buf, rate, into, when, stopAt, out) {
+  startClip(clip, buf, rate, into, when, stopAt, out, span = null) {
     const src = this.ctx.createBufferSource();
-    src.buffer = buf;
+    src.buffer = clip.reverse ? this.reversed(buf) : buf;
     src.playbackRate.value = rate;
     if (clip.loop) { src.loop = true; src.loopStart = 0; src.loopEnd = buf.duration; }
     const gain = this.ctx.createGain();
@@ -256,13 +258,35 @@ export class Timeline {
     let node = gain;
     if (buf.numberOfChannels === 1) { node = this.ctx.createStereoPanner(); gain.connect(node); }
     node.connect(out);
-    gain.gain.setValueAtTime(level, when);
-    gain.gain.setValueAtTime(level, Math.max(when, stopAt - 0.006));
+    // Fondus du bloc (en temps) : g(t) = niveau × montée depuis le début du bloc × descente vers sa fin.
+    const fi = span && clip.fadeIn > 0 ? clip.fadeIn * span.bd : 0;
+    const fo = span && clip.fadeOut > 0 ? clip.fadeOut * span.bd : 0;
+    const g = t => level * (fi ? Math.min(1, Math.max(0, (t - span.t0) / fi)) : 1) * (fo ? Math.min(1, Math.max(0, (span.t1 - t) / fo)) : 1);
+    gain.gain.setValueAtTime(g(when), when);
+    if (fi && span.t0 + fi > when) gain.gain.linearRampToValueAtTime(g(span.t0 + fi), span.t0 + fi);
+    if (fo) {
+      const from = Math.max(when, span.t1 - fo);
+      if (from < stopAt) { gain.gain.setValueAtTime(g(from), from); gain.gain.linearRampToValueAtTime(g(Math.min(stopAt, span.t1)), Math.min(stopAt, span.t1)); }
+    }
+    const end = Math.max(when, stopAt - 0.006);
+    gain.gain.setValueAtTime(g(end), end);
     gain.gain.linearRampToValueAtTime(0, stopAt);   // fin du bloc sans clic
     src.start(when, clip.loop ? into % buf.duration : into);
     src.stop(stopAt + 0.01);
     src.onended = () => { this.sources = this.sources.filter(s => s.src !== src); };
     this.sources.push({ src, gain });
+  }
+
+  // Son à l'envers (bloc inversé), calculé une fois par son.
+  reversed(buf) {
+    this.revCache ??= new WeakMap();
+    let r = this.revCache.get(buf);
+    if (!r) {
+      r = this.ctx.createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
+      for (let c = 0; c < buf.numberOfChannels; c++) r.getChannelData(c).set(buf.getChannelData(c).slice().reverse());
+      this.revCache.set(buf, r);
+    }
+    return r;
   }
 
   // Entrée de la piste `ti` vers la destination `dest` : sa chaîne d'effets si elle en a, sinon la destination.

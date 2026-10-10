@@ -5,6 +5,7 @@ export default async function (t, A) {
   A.wm.toggle('pads', true);
   A.setBpm(190);
   A.setBank(18);   // Anthem chords : pad 1 = cordes épiques (boucle de 4 mesures, son tenu)
+  await t.until(() => A.bankLoaded(18), 15000);   // sons chargés à l'affichage de la banque
   A.setPage('pad');
   const meter = t.meter(E.padBus);
   const press = i => {

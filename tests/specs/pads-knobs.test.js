@@ -7,6 +7,7 @@ export default async function (t, A) {
   const S = A.state;
   // --- Pads ---
   A.setBank(6);
+  await t.until(() => A.bankLoaded(6), 15000);
   A.selectPad(0);
   A.wm.toggle('pads', true);
   await t.wait(100);
