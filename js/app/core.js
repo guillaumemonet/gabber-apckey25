@@ -90,6 +90,7 @@ export const state = {
   viz: null,                          // visualiseur : mode, réglages, mots (préparé au démarrage)
   metro: defaultMetroState(),         // métronome : allumé, quand, décompte, volume
   master: defaultMasterState(),       // chaîne master : compresseur, limiteur (js/audio.js)
+  midiMap: [],                        // MIDI learn : [{ port, ch, kind, n, target }] (js/app/midi-ui.js)
 };
 export const playing = new Map();   // clé voix (banque*40 + pad) -> mode
 export let shiftHeld = false;

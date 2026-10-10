@@ -25,7 +25,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Table de mixage** : une voie par outil avec panoramique, envois delay et reverb, muet / solo, vumètres, jusqu'à 4 effets d'insert, un **sidechain** déclenché par les kicks, **4 bus** pour traiter des pistes ensemble, et une **chaîne master** (compresseur, limiteur, sonie en LUFS) ; chaque piste de la timeline a aussi son solo et ses effets d'insert ;
   - **Câblage** : reliez librement les outils et des **boîtes à effets** (distorsion, PCF, filtre, delay, reverb, compresseur, bitcrusher), tout calé sur le tempo ;
   - **Visualiseur** dans l'esprit Winamp : 21 modes (spectre à LED, oscilloscope, tourbillons Milk, vumètres hi-fi, texte qui cogne, particules, barres Amiga, spectrogramme, et modes 3D / GPU : tunnel, paysage synthwave, blob, hyperespace, fractale, lasers, ville de spectre, mur de LED, metaballs, plasma, rotozoomer, fluide, réaction-diffusion), filtres empilables (CRT, kaléidoscope, glitch, stroboscope), et une fenêtre projecteur pour un deuxième écran ;
-  - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **moniteur MIDI**.
+  - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **MIDI learn** pour tout autre clavier ou contrôleur MIDI, avec un moniteur MIDI.
 - **Enregistrer et ouvrir** tout le projet, le morceau ou les réglages de chaque outil (fichiers `.gabber`), **export WAV rapide et stems**, **enregistrement WAV** de votre session et **export / import de kits**.
 - Interface en **français ou en anglais**, selon la langue du navigateur.
 
@@ -59,7 +59,7 @@ Il faut seulement Python 3, pour le petit serveur local. Détails : [Premiers pa
 Le mode d'emploi complet est dans [docs/manuel](docs/manuel/README.md) ; chaque fenêtre de l'application a aussi son aide (bouton **?**).
 
 1. **[Premiers pas](docs/manuel/demarrage.md)** : Prérequis, Installation, Lancement, Langue, Compatibilité matérielle
-2. **[Le contrôleur APC Key 25](docs/manuel/apc.md)** : Commandes sur l'APC, Potentiomètres, Effets de performance
+2. **[Le contrôleur APC Key 25](docs/manuel/apc.md)** : Commandes sur l'APC, Potentiomètres, Effets de performance, Autres claviers MIDI et MIDI learn
 3. **[Pads et banques](docs/manuel/pads.md)** : Banques, Tempo et boucles
 4. **[Timeline, bibliothèque et piano roll](docs/manuel/timeline.md)** : Timeline et bibliothèque de sons, Automation, Marqueurs, Piano roll, Démo
 5. **[Instruments](docs/manuel/instruments.md)** : TR-909, TB-303, Synthé, Synthé à oscillateurs, Designer de kick
@@ -87,7 +87,7 @@ Les idées et suggestions sont les bienvenues dans les [issues](https://github.c
 
 ## Compatibilité matérielle
 
-GabberKey est développé et testé avec un **Akai APC Key 25 mk1**. Le **mk2** est pris en charge d'après la documentation MIDI d'Akai Professional, mais n'a pas encore été essayé sur un vrai appareil. Tout fonctionne aussi à la souris et au clavier de l'ordinateur.
+GabberKey est développé et testé avec un **Akai APC Key 25 mk1**. Le **mk2** est pris en charge d'après la documentation MIDI d'Akai Professional, mais n'a pas encore été essayé sur un vrai appareil. Tout fonctionne aussi à la souris et au clavier de l'ordinateur, et **n'importe quel autre clavier MIDI** peut jouer le synthé et piloter les réglages par MIDI learn.
 
 > **Un mot pour les fabricants de matériel** 🙏
 >

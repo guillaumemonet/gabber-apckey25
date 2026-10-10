@@ -92,16 +92,19 @@ export function bindController() {
 
   apc.addEventListener('sustain', ({ detail }) => onSustainButton(detail.on));
 
+  apc.addEventListener('raw', ({ detail }) => monitorLog(detail));
+}
+
+// Journal du moniteur MIDI (APC et autres appareils) : les 80 derniers messages.
+const monitorLines = [];
+export function monitorLog(detail) {
+  if (!wm?.isOpen('monitor')) return;
   const log = $('#log');
-  const lines = [];
-  apc.addEventListener('raw', ({ detail }) => {
-    if (!wm?.isOpen('monitor')) return;
-    const hex = detail.data.map(b => b.toString(16).padStart(2, '0')).join(' ');
-    lines.push(`${hex.padEnd(10)}  ${describe(detail.data)}   ← ${detail.port}`);
-    if (lines.length > 80) lines.shift();
-    log.textContent = lines.join('\n');
-    log.scrollTop = log.scrollHeight;
-  });
+  const hex = detail.data.map(b => b.toString(16).padStart(2, '0')).join(' ');
+  monitorLines.push(`${hex.padEnd(10)}  ${describe(detail.data)}   ← ${detail.port}`);
+  if (monitorLines.length > 80) monitorLines.shift();
+  log.textContent = monitorLines.join('\n');
+  log.scrollTop = log.scrollHeight;
 }
 
 export function describe([st, d1, d2]) {

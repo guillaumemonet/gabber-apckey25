@@ -25,6 +25,7 @@ import { mergeRoll } from './roll-ui.js';
 import { mergeScenes } from './scenes.js';
 import { tlRec } from './tl.js';
 import { loadPad, padsInUse } from './sounds.js';
+import { cleanMidiMap } from './midi-ui.js';
 import { mergeViz } from './viz-ui.js';
 
 // ---------- Sauvegarde ----------
@@ -67,6 +68,7 @@ export async function restore() {
     state.keys = saved.keys === 'osc' ? 'osc' : 'synth';
     state.metro = mergeMetroState(saved.metro);
     state.master = mergeMasterState(saved.master);
+    state.midiMap = cleanMidiMap(saved.midiMap);
     state.padQuant = PAD_QUANTS.includes(saved.padQuant) ? saved.padQuant : 0;
     state.libArchives = !!saved.libArchives;
     state.curves = (Array.isArray(saved.curves) ? saved.curves : []).map(cleanCurve).filter(c => c?.id?.startsWith('u:'));
@@ -176,6 +178,7 @@ export function stateSnapshot() {
     viz: state.viz,
     metro: state.metro,
     master: state.master,
+    midiMap: state.midiMap,
     banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
   };
 }

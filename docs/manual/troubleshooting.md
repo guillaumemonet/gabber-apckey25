@@ -13,7 +13,7 @@ Common problems and rebuilding the sound banks.
 | Detected but pads do nothing | Unplug the APC, wait 10 seconds, plug it into another USB port, then reload. Windows' MIDI service can stop delivering input after sleep or hot-plugging. |
 | No sound | Click **Start** first: browsers block audio until a click. |
 | A new sound bank does not appear | Restart `start.bat` / `start.sh`, then reload. New library banks go to their planned bank if it is empty, otherwise to the first empty bank (a message tells you which). |
-| See what the APC sends | Open the **MIDI monitor** plugin. |
+| See what the APC sends | Open the **MIDI** window: its monitor shows the last messages received. |
 | The visualizer's projector window does not open | The browser blocked the pop-up: allow pop-ups for this page (icon in the address bar), then click **Projector** again. |
 
 ## Rebuilding the sound banks (optional)

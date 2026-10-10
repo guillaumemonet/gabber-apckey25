@@ -13,7 +13,7 @@ Problèmes courants et régénération des banques de sons.
 | Détecté mais les pads ne font rien | Débranchez l'APC, attendez 10 secondes, rebranchez-le sur un autre port USB, puis rechargez. Le service MIDI de Windows peut cesser de transmettre après une mise en veille ou un branchement à chaud. |
 | Pas de son | Cliquez d'abord sur **Démarrer** : les navigateurs bloquent le son avant un clic. |
 | Une nouvelle banque de sons n'apparaît pas | Relancez `start.bat` / `start.sh`, puis rechargez. Une nouvelle banque de la bibliothèque va dans sa banque prévue si elle est vide, sinon dans la première banque vide (un message indique laquelle). |
-| Voir ce qu'envoie l'APC | Ouvrez le plugin **Moniteur MIDI**. |
+| Voir ce qu'envoie l'APC | Ouvrez la fenêtre **MIDI** : son moniteur affiche les derniers messages reçus. |
 | La fenêtre projecteur du visualiseur ne s'ouvre pas | Le navigateur a bloqué la fenêtre pop-up : autorisez les pop-ups pour cette page (icône dans la barre d'adresse), puis recliquez sur **Projecteur**. |
 
 ## Régénérer les banques de sons (facultatif)

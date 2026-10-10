@@ -35,6 +35,7 @@ import { drawMeter, renderAll, toast } from './app/misc.js';
 import { buildBuses } from './app/buses-ui.js';
 import { buildMarkers } from './app/markers.js';
 import { buildMaster } from './app/master-ui.js';
+import { initMidi } from './app/midi-ui.js';
 import { buildMixer } from './app/mixer-ui.js';
 import { buildOsc, oscFor, setKeys } from './app/osc-ui.js';
 import { buildBanks, buildEditor, buildPads } from './app/pads.js';
@@ -183,6 +184,7 @@ async function start() {
 
   provide({ apc: new APC() });
   bindController();
+  initMidi();   // autres claviers et contrôleurs MIDI, MIDI learn (sans attendre l'APC)
   try {
     await apc.init();
   } catch (err) {

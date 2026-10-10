@@ -883,3 +883,14 @@ header button, header .status { white-space: nowrap; }
 .auto-pt { fill: #111; stroke: #3dd68c; stroke-width: 2; cursor: grab; }
 .auto-pt:hover { fill: #3dd68c; }
 .tl-auto-label { position: sticky; left: 230px; top: 2px; display: inline-block; margin: 2px 0 0 6px; font-size: 10px; color: var(--muted); pointer-events: none; }
+/* Fenêtre MIDI : appareils et MIDI learn */
+.midi-learn { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.learn-head { display: flex; flex-direction: column; gap: 2px; }
+.learn-list { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; max-height: 330px; overflow-y: auto; padding-right: 4px; }
+.learn-row { display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 6px; padding: 2px 4px; border-radius: 6px; font-size: 12px; }
+.learn-row em { font-style: normal; font-size: 11px; color: var(--muted); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.learn-row.learning { background: color-mix(in srgb, var(--accent-2) 18%, transparent); }
+.learn-row.learning em { color: var(--accent-2); }
+.learn-row button { padding: 2px 8px; font-size: 11px; }
+.learn-btn.active { background: var(--accent-2); border-color: var(--accent-2); color: #111; }
+@media (max-width: 900px) { .learn-list { grid-template-columns: 1fr; } }

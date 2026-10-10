@@ -54,6 +54,16 @@ Double-clic sur un potentiomètre à l'écran pour le remettre à zéro.
 - **Tape-stop** ralentit tout jusqu'à l'arrêt.
 - **Pump** fait s'effacer le synthé à chaque temps.
 
+## Autres claviers MIDI et MIDI learn
+
+L'APC Key 25 n'est pas le seul appareil possible : **n'importe quel clavier ou contrôleur MIDI** branché en USB (sans pilote pour la plupart) est reconnu, en même temps que l'APC. La fenêtre **MIDI** (barre des plugins, groupe Système) les liste.
+
+- **Ses touches** jouent le synthé de la fenêtre active, comme le clavier de l'APC (accords, arpégiateur, enregistrement dans la timeline compris) ; **sa pédale de sustain** tient les notes.
+- **MIDI learn** : dans la fenêtre MIDI, cliquez sur **Apprendre** à côté d'une cible, puis tournez un potentiomètre, bougez un fader ou appuyez sur un bouton de l'appareil. Échap annule ; la corbeille retire une assignation.
+- **Cibles** : les potentiomètres **K1 à K8 de la page active** (exactement comme ceux de l'APC : synthé, effets, pads, mixeur…), les **faders du mixeur**, le **volume général**, les **volumes des bus**, et le transport : **lecture / arrêt**, **arrêt**, **enregistrer**, **boucle**.
+- Une commande ne pilote qu'une cible (la réassigner la retire de l'ancienne). Une touche ou un pad assigné à un bouton ne joue plus de note.
+- Les assignations sont enregistrées avec le projet. En bas de la fenêtre, le **moniteur** affiche les derniers messages reçus de chaque appareil.
+
 ---
 
 ← [Premiers pas](demarrage.md) · [Sommaire](README.md) · [Pads et banques](pads.md) →

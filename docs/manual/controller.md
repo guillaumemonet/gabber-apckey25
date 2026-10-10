@@ -54,6 +54,16 @@ Double-click a knob on screen to reset it.
 - **Tape stop** slows everything down to a halt.
 - **Pump** ducks the synth on every beat.
 
+## Other MIDI keyboards and MIDI learn
+
+The APC Key 25 is not the only option: **any MIDI keyboard or controller** plugged in by USB (no driver needed for most of them) is recognised, alongside the APC. The **MIDI** window (plugin bar, System group) lists them.
+
+- **Its keys** play the synth of the active window, like the APC keyboard (chords, arpeggiator and timeline recording included); **its sustain pedal** holds the notes.
+- **MIDI learn**: in the MIDI window, click **Learn** next to a target, then move a knob or fader, or press a button on the device. Esc cancels; the bin removes an assignment.
+- **Targets**: knobs **K1 to K8 of the active page** (exactly like the APC knobs: synth, effects, pads, mixer…), the **mixer faders**, the **master volume**, the **bus volumes**, and the transport: **play / stop**, **stop**, **record**, **loop**.
+- A control drives only one target (assigning it again removes it from the old one). A key or pad assigned to a button no longer plays a note.
+- Assignments are saved with the project. At the bottom of the window, the **monitor** shows the last messages received from each device.
+
 ---
 
 ← [Getting started](getting-started.md) · [Contents](README.md) · [Pads and banks](pads.md) →

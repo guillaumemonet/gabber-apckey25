@@ -25,7 +25,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Mixer**: one channel per tool with pan, delay and reverb sends, mute / solo, meters, up to 4 insert effects, a **sidechain** triggered by the kicks, **4 buses** to process tracks together, and a **master chain** (compressor, limiter, LUFS loudness); every timeline track also has its own solo and insert effects;
   - **Patch**: wire the tools and **effect boxes** (distortion, PCF, filter, delay, reverb, compressor, bitcrusher) freely, everything in sync with the tempo;
   - **Visualizer** in the Winamp spirit: 21 modes (LED spectrum, oscilloscope, Milk swirls, hi-fi VU meters, text slam, particles, Amiga bars, spectrogram, and 3D / GPU modes: tunnel, synthwave landscape, blob, hyperspace, fractal, lasers, spectrum city, LED wall, metaballs, plasma, rotozoomer, fluid, reaction-diffusion), stackable filters (CRT, kaleidoscope, glitch, strobe), and a projector window for a second screen;
-  - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **MIDI monitor**.
+  - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **MIDI learn** for any other MIDI keyboard or controller, with a MIDI monitor.
 - **Save and open** the whole project, the song or the settings of each tool (`.gabber` files), **fast WAV export and stems**, **WAV recording** of your session and **kit export / import**.
 - Interface in **English or French**, following the browser language.
 
@@ -59,7 +59,7 @@ All you need is Python 3, for the small local server. Details: [Getting started]
 The complete guide is in [docs/manual](docs/manual/README.md); every window in the app also has its own help (**?** button).
 
 1. **[Getting started](docs/manual/getting-started.md)**: Requirements, Installation, Starting, Language, Hardware compatibility
-2. **[The APC Key 25 controller](docs/manual/controller.md)**: Controls on the APC, Knobs, Performance effects
+2. **[The APC Key 25 controller](docs/manual/controller.md)**: Controls on the APC, Knobs, Performance effects, Other MIDI keyboards and MIDI learn
 3. **[Pads and banks](docs/manual/pads.md)**: Banks, Tempo and loops
 4. **[Timeline, library and piano roll](docs/manual/timeline.md)**: Timeline and sound library, Automation, Markers, Piano roll, Demo
 5. **[Instruments](docs/manual/instruments.md)**: TR-909, TB-303, Synth, Oscillator synth, Kick designer
@@ -87,7 +87,7 @@ Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemo
 
 ## Hardware compatibility
 
-GabberKey is developed and tested with an **Akai APC Key 25 mk1**. The **mk2** is supported from Akai Professional's MIDI documentation, but has not been tested on a real unit yet. Everything also works with the mouse and the computer keyboard.
+GabberKey is developed and tested with an **Akai APC Key 25 mk1**. The **mk2** is supported from Akai Professional's MIDI documentation, but has not been tested on a real unit yet. Everything also works with the mouse and the computer keyboard, and **any other MIDI keyboard** can play the synth and drive the settings through MIDI learn.
 
 > **A word to hardware makers** 🙏
 >
