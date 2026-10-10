@@ -30,9 +30,9 @@ export function renderInsertRack(box, add, list, o) {
       inp.addEventListener('input', () => {
         fx.p[key] = +inp.value;
         o.update(k);
-        if (key === 'mode') renderInsertRack(box, add, list, o); else em.textContent = fxParamLabel(fx.type, key, fx.p[key], fx.p);
-        save();
+        if (key === 'mode') { renderInsertRack(box, add, list, o); save(); } else em.textContent = fxParamLabel(fx.type, key, fx.p[key], fx.p);
       });
+      inp.addEventListener('change', () => save());   // au lâcher : une seule étape d'annulation par geste
       inp.addEventListener('dblclick', () => {   // retour à la valeur par défaut
         fx.p[key] = FX_TYPES[fx.type][key][3];
         o.update(k);

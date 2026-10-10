@@ -68,12 +68,20 @@ export default async function (t, A) {
   t.ok([...TL.busChains.get(0).values()].every(c => c.inserts.length === 1), 'dans sa chaîne audio');
   t.$('#tl-play').click();
 
-  // Annuler : la piste quitte le bus.
+  // Annuler : l'insert ajouté au bus disparaît (les bus font partie de l'historique), la piste reste dans le bus.
   A.tlUndo();
   await t.wait(50);
-  t.eq(S.tl.tracks[0].bus, null, 'Ctrl+Z : la piste n’est plus dans le bus');
-  t.ok(t.$$('#tl-grid .tl-head')[0].querySelector('.tl-bus').hidden, 'la lettre disparaît');
-  S.tl.tracks[0].bus = 0;
+  t.eq(S.tl.buses[0].inserts.length, 0, 'Ctrl+Z : l’insert du bus disparaît');
+  t.eq(S.tl.tracks[0].bus, 0, 'la piste reste dans le bus');
+  // Sortir la piste du bus, puis Annuler : elle y revient.
+  t.$$('#tl-grid .tl-head')[0].querySelector('.tl-knobs').click();
+  const sel2 = t.$('.track-knobs .tk-bus');
+  sel2.value = ''; sel2.dispatchEvent(new Event('change'));
+  A.closeFxEditor();
+  t.ok(S.tl.tracks[0].bus === null && t.$$('#tl-grid .tl-head')[0].querySelector('.tl-bus').hidden, 'piste sortie du bus, lettre retirée');
+  A.tlUndo();
+  await t.wait(50);
+  t.eq(S.tl.tracks[0].bus, 0, 'Ctrl+Z : la piste revient dans le bus');
 
   // Export : seule la piste du bus, bus à zéro = silence ; bus normal = son.
   S.tl.buses[0].inserts = [];

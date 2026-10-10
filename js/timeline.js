@@ -40,7 +40,7 @@ export function cleanBus(b) {
     inserts: Array.isArray(b?.inserts) ? b.inserts.map(cleanInsert).filter(Boolean).slice(0, MAX_INSERTS) : [],
   };
 }
-const cleanBuses = list => Array.from({ length: BUS_COUNT }, (_, i) => cleanBus(Array.isArray(list) ? list[i] : null));
+export const cleanBuses = list => Array.from({ length: BUS_COUNT }, (_, i) => cleanBus(Array.isArray(list) ? list[i] : null));
 // Piste qu'on entend : ni elle ni son bus ne sont muets ; s'il y a des solos (pistes ou bus), elle ou son bus en fait partie.
 export function trackAudible(tracks, i, buses = []) {
   const tr = tracks[i];

@@ -37,7 +37,8 @@ export function buildBuses() {
     name.addEventListener('keydown', e => e.stopPropagation());
     for (const inp of el.querySelectorAll('input[data-field]')) {
       const f = inp.dataset.field;
-      inp.addEventListener('input', () => { bus()[f] = +inp.value; timeline.updateBus(b); renderBus(b); save(); });
+      inp.addEventListener('input', () => { bus()[f] = +inp.value; timeline.updateBus(b); renderBus(b); });
+      inp.addEventListener('change', () => save());   // au lâcher : une seule étape d'annulation par geste
       inp.addEventListener('dblclick', () => { bus()[f] = BUS_DEFAULTS[f]; timeline.updateBus(b); renderBus(b); save(); });
     }
     el.querySelector('.mute').addEventListener('click', () => { bus().mute = !bus().mute; timeline.updateMutes(); renderBus(b); renderTl(); save(); });

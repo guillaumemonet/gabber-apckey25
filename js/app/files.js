@@ -66,10 +66,7 @@ export async function unpackPad(s) {
 }
 
 export function replaceBank(b, pads) {
-  state.banks[b].forEach((old, i) => {
-    engine.stopPad(padKey(b, i));
-    if (old?.sampleId?.startsWith('user:')) store.deleteSample(old.sampleId).catch(() => {});
-  });
+  state.banks[b].forEach((old, i) => engine.stopPad(padKey(b, i)));
   state.banks[b] = pads;
 }
 

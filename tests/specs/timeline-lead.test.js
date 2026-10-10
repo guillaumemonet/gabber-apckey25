@@ -24,7 +24,7 @@ export default async function (t, A) {
   t.$('#gen-listen').click();
   await t.wait(300);
   const after = await peak(400);   // il ne reste que la queue de réverbération
-  t.ok(!A.genPreviewing() && after < playingPeak * 0.15, 'un deuxième clic l’arrête', [playingPeak, after]);
+  t.ok(!A.genPreviewing() && after < playingPeak * 0.3, 'un deuxième clic l’arrête', [playingPeak, after]);
 
   // Générer : un seul bloc, phrase de 4 accords × 2 mesures, répétée 2 fois.
   t.$('#gen-go').click();

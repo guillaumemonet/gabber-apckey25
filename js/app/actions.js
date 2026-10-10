@@ -212,7 +212,6 @@ export async function loadFileIntoPad(file, i) {
     return;
   }
   const old = state.banks[state.bank][i];
-  if (old?.sampleId?.startsWith('user:')) store.deleteSample(old.sampleId).catch(() => {});
 
   const id = `user:${crypto.randomUUID()}`;
   await store.saveSample(id, { name: file.name, data });
@@ -240,7 +239,6 @@ export async function loadItemIntoPad(item, i) {
   if (old) pad.p = { ...old.p };
   pad.p.mode = (item.loop ? 2 : 0) / (PAGES.pad.params[7].steps - 1);
   state.banks[b][i] = pad;
-  if (old?.sampleId?.startsWith('user:') && !sampleInUse(old.sampleId)) store.deleteSample(old.sampleId).catch(() => {});
   selectPad(i);
   renderPad(i);
   renderEditor();
@@ -262,7 +260,6 @@ export function clearBank() {
   const olds = state.banks[b];
   olds.forEach((_, i) => engine.stopPad(padKey(b, i)));
   state.banks[b] = new Array(40).fill(null);
-  for (const p of olds) if (p?.sampleId?.startsWith('user:') && !sampleInUse(p.sampleId)) store.deleteSample(p.sampleId).catch(() => {});
   renderPads();
   renderEditor();
   renderKnobs();
@@ -275,7 +272,6 @@ export function clearPad(i) {
   const old = state.banks[state.bank][i];
   if (!old) return;
   engine.stopPad(padKey(state.bank, i));
-  if (old.sampleId?.startsWith('user:')) store.deleteSample(old.sampleId).catch(() => {});
   state.banks[state.bank][i] = null;
   renderPad(i);
   renderEditor();
