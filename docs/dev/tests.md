@@ -16,6 +16,7 @@ Quelques secondes, sans navigateur (`tests/check.js`) :
 - les **traductions** : chaque clé existe en anglais et en français, et aucune clé utilisée dans `index.html` ou dans le code (`t('…')`) n'est inconnue ;
 - l'**aide** : chaque fenêtre a sa page d'aide dans les deux langues ;
 - la **bibliothèque** : chaque son déclaré dans `sounds/banks.json` existe sur le disque, et les démos sont présentes.
+- la **documentation** : chaque lien relatif des README et de `docs/` mène à un fichier qui existe.
 
 ## Tests dans le navigateur — `npm run test:browser`
 

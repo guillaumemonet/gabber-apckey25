@@ -3,6 +3,7 @@
 // - traductions : mêmes clés en anglais et en français, aucune clé utilisée (HTML ou code) qui n'existe pas ;
 // - aide : une page par fenêtre dans les deux langues ;
 // - bibliothèque : chaque son de sounds/banks.json existe sur le disque ; démos présentes.
+// - documentation : chaque lien relatif des README et de docs/ mène à un fichier qui existe.
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -53,6 +54,26 @@ for (const b of man.banks) for (const p of b.pads) {
 }
 for (const f of ['demo/demo.json', ...[2, 3, 4, 5].map(n => `demo/gabberkey-demo-${n}.gabber`)]) if (!fs.existsSync(path.join(ROOT, f))) fail(`démo manquante : ${f}`);
 
+// 5. Documentation : chaque lien relatif des README et de docs/ mène à un fichier qui existe.
+const mdFiles = ['README.md', 'README.fr.md'];
+(function walk(dir) {
+  for (const f of fs.readdirSync(path.join(ROOT, dir), { withFileTypes: true })) {
+    if (f.isDirectory()) walk(path.join(dir, f.name));
+    else if (f.name.endsWith('.md')) mdFiles.push(path.join(dir, f.name));
+  }
+})('docs');
+let links = 0;
+for (const f of mdFiles) {
+  const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
+  for (const [, target] of src.matchAll(/\]\(([^)\s]+)\)/g)) {
+    if (/^(https?:|mailto:|#)/.test(target)) continue;
+    links++;
+    const file = decodeURI(target.split('#')[0]);
+    if (!fs.existsSync(path.join(ROOT, path.dirname(f), file))) fail(`${f} : lien cassé vers ${target}`);
+  }
+}
+
+console.log(`${mdFiles.length} pages de documentation, ${links} liens vérifiés`);
 console.log(`${js.length} modules, ${en.size} traductions, ${Object.keys(HELP.en).length} pages d'aide, ${sounds} sons vérifiés`);
 if (problems.length) {
   console.log(`\n${problems.length} problème(s) :`);
