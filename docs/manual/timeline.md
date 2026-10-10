@@ -31,6 +31,18 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
   - **■ Stop rec** (or REC again) ends the recording.
 - **Play**: ▶ (or PLAY on the APC) plays from the playhead, and the same button stops; the view follows the playhead. Loops recorded at another tempo follow the global tempo. The timeline has its own channel in the mixer.
 
+### Automation
+
+[![Timeline of demo 3 with two automation lanes: the bass volume and the strings low-pass](../screenshots/automation-en.png)](../screenshots/automation-en.png)
+
+Make a track setting move along the song: a filter opening during the build-up, a bass fading in, a reverb growing over the break…
+
+- The **A** button in a track header opens its **automation lane**, under its blocks. In the header, choose the setting: **volume**, **pan**, **low-pass**, **high-pass**, **delay** and **reverb** sends (a dot • marks those with a curve).
+- **Click** in the lane: a point (snapped to the quarter beat, Shift = free). **Drag** a point: move it. **Right-click**: delete it. The bin clears the whole curve of the setting.
+- Between two points the setting follows a straight line; before the first and after the last it keeps their value. With no curve, the dotted line shows the knob value.
+- **While playing**, the curve replaces the track knob; when stopped, the knob takes over again. A curve changed while playing is heard at once.
+- The A button lights up when the track has curves. Automation can be undone with Ctrl+Z, is saved with the project and in song files, and is heard in the WAV export and the stems.
+
 ### Markers
 
 [![Timeline of demo 3 with Intro, Build-up and Drop 1 markers under the bar numbers](../screenshots/markers-en.png)](../screenshots/markers-en.png)

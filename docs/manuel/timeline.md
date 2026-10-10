@@ -31,6 +31,18 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
   - **■ Arrêter rec** (ou REC à nouveau) termine l'enregistrement.
 - **Lire** : ▶ (ou PLAY sur l'APC) joue depuis la tête de lecture, et le même bouton arrête ; la vue suit la tête de lecture. Les boucles faites à un autre tempo suivent le tempo global. La timeline a sa propre voie dans la table de mixage.
 
+### Automation
+
+[![Timeline de la démo 3 avec deux lignes d'automation : le volume de la basse et le passe-bas des cordes](../screenshots/automation-fr.png)](../screenshots/automation-fr.png)
+
+Faites évoluer un réglage d'une piste au fil du morceau : un filtre qui s'ouvre pendant la montée, une basse qui arrive en fondu, une reverb qui grandit sur le break…
+
+- Le bouton **A** de l'en-tête d'une piste ouvre sa **ligne d'automation**, sous ses blocs. Dans l'en-tête, choisissez le réglage : **volume**, **pano**, **passe-bas**, **passe-haut**, envois **delay** et **reverb** (un point • marque ceux qui ont une courbe).
+- **Clic** dans la ligne : un point (calé au quart de temps, Maj = libre). **Glisser** un point : le déplacer. **Clic droit** : le supprimer. La corbeille efface toute la courbe du réglage.
+- Entre deux points, le réglage suit une ligne droite ; avant le premier et après le dernier, il garde leur valeur. Sans courbe, la ligne pointillée montre la valeur du potentiomètre.
+- **Pendant la lecture**, la courbe remplace le potentiomètre de la piste ; à l'arrêt, le potentiomètre reprend la main. Une courbe modifiée pendant la lecture s'entend tout de suite.
+- Le bouton A s'allume quand la piste a des courbes. L'automation s'annule avec Ctrl+Z, est enregistrée avec le projet et dans les fichiers morceau, et s'entend dans l'export WAV et les stems.
+
 ### Marqueurs
 
 [![Timeline de la démo 3 avec des marqueurs Intro, Montée et Drop 1 sous les numéros de mesure](../screenshots/markers-fr.png)](../screenshots/markers-fr.png)

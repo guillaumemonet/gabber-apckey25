@@ -61,7 +61,7 @@ The complete guide is in [docs/manual](docs/manual/README.md); every window in t
 1. **[Getting started](docs/manual/getting-started.md)**: Requirements, Installation, Starting, Language, Hardware compatibility
 2. **[The APC Key 25 controller](docs/manual/controller.md)**: Controls on the APC, Knobs, Performance effects
 3. **[Pads and banks](docs/manual/pads.md)**: Banks, Tempo and loops
-4. **[Timeline, library and piano roll](docs/manual/timeline.md)**: Timeline and sound library, Markers, Piano roll, Demo
+4. **[Timeline, library and piano roll](docs/manual/timeline.md)**: Timeline and sound library, Automation, Markers, Piano roll, Demo
 5. **[Instruments](docs/manual/instruments.md)**: TR-909, TB-303, Synth, Oscillator synth, Kick designer
 6. **[Generator: chords and melody](docs/manual/generator.md)**
 7. **[Mixing and effects](docs/manual/mixing.md)**: Effect designer, Mixer, Buses, Master chain and loudness, Patch

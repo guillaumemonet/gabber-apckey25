@@ -61,7 +61,7 @@ Le mode d'emploi complet est dans [docs/manuel](docs/manuel/README.md) ; chaque 
 1. **[Premiers pas](docs/manuel/demarrage.md)** : Prérequis, Installation, Lancement, Langue, Compatibilité matérielle
 2. **[Le contrôleur APC Key 25](docs/manuel/apc.md)** : Commandes sur l'APC, Potentiomètres, Effets de performance
 3. **[Pads et banques](docs/manuel/pads.md)** : Banques, Tempo et boucles
-4. **[Timeline, bibliothèque et piano roll](docs/manuel/timeline.md)** : Timeline et bibliothèque de sons, Marqueurs, Piano roll, Démo
+4. **[Timeline, bibliothèque et piano roll](docs/manuel/timeline.md)** : Timeline et bibliothèque de sons, Automation, Marqueurs, Piano roll, Démo
 5. **[Instruments](docs/manuel/instruments.md)** : TR-909, TB-303, Synthé, Synthé à oscillateurs, Designer de kick
 6. **[Générateur : accords et mélodie](docs/manuel/generateur.md)**
 7. **[Mixage et effets](docs/manuel/mixage.md)** : Designer d'effet, Table de mixage, Bus, Chaîne master et sonie, Câblage

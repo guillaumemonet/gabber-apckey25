@@ -25,6 +25,33 @@ const num = (v, lo, hi, d) => (Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)
 // Instruments qu'une piste peut enregistrer (null = « Auto » : le choix « Enregistrer » de la barre de la timeline).
 export const REC_SOURCES = ['pads', 'synth', 'osc', 'tr', 'acid', 'decks'];
 export const MAX_INSERTS = 4;
+// Automation : réglages d'une piste qui suivent une courbe dessinée sur la durée du morceau.
+// Points { b (temps de la timeline), v (0..1) } ; entre deux points, la valeur suit une ligne droite (en position 0..1).
+export const AUTO_PARAMS = {
+  vol: { min: 0, max: 1.5, def: 1 }, pan: { min: -1, max: 1, def: 0 },
+  lp: { min: 200, max: 20000, def: 20000, exp: true }, hp: { min: 20, max: 2000, def: 20, exp: true },
+  dly: { min: 0, max: 1, def: 0 }, rev: { min: 0, max: 1, def: 0 },
+};
+export const autoValue = (id, v) => { const d = AUTO_PARAMS[id]; return d.exp ? d.min * Math.pow(d.max / d.min, v) : d.min + (d.max - d.min) * v; };
+export const autoPos = (id, x) => { const d = AUTO_PARAMS[id]; return d.exp ? Math.log(x / d.min) / Math.log(d.max / d.min) : (x - d.min) / (d.max - d.min); };
+// Position (0..1) d'une courbe au temps `b`.
+export function autoAt(points, b) {
+  if (!points?.length) return null;
+  if (b <= points[0].b) return points[0].v;
+  for (let i = 1; i < points.length; i++) {
+    const p = points[i - 1], q = points[i];
+    if (b <= q.b) return q.b - p.b < 1e-9 ? q.v : p.v + (q.v - p.v) * (b - p.b) / (q.b - p.b);
+  }
+  return points[points.length - 1].v;
+}
+function cleanAuto(auto) {
+  const out = {};
+  for (const id of Object.keys(AUTO_PARAMS)) {
+    const pts = Array.isArray(auto?.[id]) ? auto[id].filter(p => Number.isFinite(p?.b) && p.b >= 0 && Number.isFinite(p?.v)) : [];
+    if (pts.length) out[id] = pts.map(p => ({ b: +p.b, v: Math.min(1, Math.max(0, p.v)) })).sort((a, b) => a.b - b.b).slice(0, 2000);
+  }
+  return out;
+}
 // Une piste neuve = une piste nettoyée sans réglages : mêmes champs, dans le même ordre (l'historique compare des instantanés JSON).
 export const newTrack = () => cleanTrack(null);
 // Bus : des pistes regroupées pour être traitées ensemble (effets d'insert, volume, pano, muet / solo).
@@ -64,6 +91,9 @@ export function cleanTrack(tr) {
     arm: !!tr?.arm,
     src: REC_SOURCES.includes(tr?.src) ? tr.src : null,
     bus: Number.isInteger(tr?.bus) && tr.bus >= 0 && tr.bus < BUS_COUNT ? tr.bus : null,
+    auto: cleanAuto(tr?.auto),                                           // courbes d'automation : { vol: [{ b, v }], … }
+    autoParam: tr?.autoParam in AUTO_PARAMS ? tr.autoParam : 'vol',      // réglage affiché dans la ligne d'automation
+    autoOpen: !!tr?.autoOpen,                                            // ligne d'automation ouverte
   };
 }
 
@@ -173,6 +203,7 @@ export class Timeline {
     const bd = this.beatDur;
     const endTime = time + (len - beat) * bd;
     this.cycle = { time, beat, len, bd, until: st.loop && !this.recording ? len : Infinity };
+    for (const [ti, m] of this.strips) for (const s of m.values()) this.automate(s, ti, this.cycle, beat, Math.max(time, this.ctx.currentTime), this.cycle.until);
     this.cycleChains.clear();
     // Les coups de pad déjà joués (d'un cycle précédent) sont oubliés.
     for (const h of this.padHits) if (h.v.startAt < this.ctx.currentTime - 10) this.padHits.delete(h);
@@ -342,6 +373,47 @@ export class Timeline {
   }
 
   audible(ti) { return trackAudible(this.st.tracks, ti, this.st.buses ?? []); }
+
+  // Réglage audio d'une tranche piloté par l'automation `id`.
+  autoNode(s, id) { return { vol: s.gain.gain, pan: s.pan.pan, lp: s.lp.frequency, hp: s.hp.frequency, dly: s.dly.gain, rev: s.rev.gain }[id]; }
+  // Courbes de la piste `ti` programmées sur la tranche `s`, du temps `from` (joué à l'instant `at`) jusqu'à `until`
+  // (cycle `c` : { time, beat, bd }). Les réglages fins (filtres) sont échantillonnés au quart de temps.
+  automate(s, ti, c, from, at, until) {
+    const tr = this.st.tracks[ti];
+    if (!tr?.auto) return;
+    const time = b => c.time + (b - c.beat) * c.bd;
+    for (const [id, pts] of Object.entries(tr.auto)) {
+      if (!pts.length) continue;
+      const param = this.autoNode(s, id);
+      param.cancelScheduledValues(at);
+      param.setValueAtTime(autoValue(id, autoAt(pts, from)), at);
+      const marks = new Set(pts.map(p => p.b).filter(b => b > from && b < until));
+      if (AUTO_PARAMS[id].exp) for (let b = Math.ceil(from * 4) / 4; b < until; b += 0.25) if (b > from) marks.add(b);
+      for (const b of [...marks].sort((x, y) => x - y)) param.linearRampToValueAtTime(autoValue(id, autoAt(pts, b)), time(b));
+      if (Number.isFinite(until)) param.linearRampToValueAtTime(autoValue(id, autoAt(pts, until)), time(until));
+    }
+    s.automated = true;
+  }
+  // Courbes modifiées pendant la lecture : reprogrammées à partir de maintenant.
+  refreshAutomation(ti) {
+    if (!this.playing) return;
+    const now = this.ctx.currentTime + 0.03;
+    const c = [...this.cycles].reverse().find(x => x.time <= now) ?? this.cycles[0];
+    if (!c) return;
+    const bd = this.beatDur, until = this.st.loop && !this.recording ? this.length : Infinity;
+    const pos = c.beat + (now - c.time) / bd;
+    for (const s of this.strips.get(ti)?.values() ?? []) {
+      if (!Object.keys(this.st.tracks[ti]?.auto ?? {}).length && s.automated) { this.resetAutomation(s, ti); continue; }
+      this.automate(s, ti, { time: c.time, beat: c.beat, bd }, pos, now, Math.min(until, c.beat + (c.len ?? until)));
+    }
+  }
+  // Fin de lecture : les réglages reprennent la valeur des potentiomètres de la piste.
+  resetAutomation(s, ti) {
+    if (!s.automated) return;
+    for (const id of Object.keys(AUTO_PARAMS)) this.autoNode(s, id).cancelScheduledValues(0);
+    s.automated = false;
+    this.applyStrip(s, this.st.tracks[ti], true);
+  }
   get buses() { return this.st.buses ?? []; }
 
   // Tranche de la piste `ti` vers `dest` : effets d'insert -> passe-haut -> passe-bas -> volume -> muet -> pano -> dest,
@@ -367,6 +439,7 @@ export class Timeline {
       this.wireInserts(s, this.st.tracks[ti]);
       this.applyStrip(s, this.st.tracks[ti], true);
       s.mute.gain.value = this.audible(ti) ? 1 : 0;
+      if (this.playing && this.cycle) this.automate(s, ti, this.cycle, this.cycle.beat, Math.max(this.cycle.time, this.ctx.currentTime), this.cycle.until);
     }
     return s.input;
   }
@@ -463,7 +536,8 @@ export class Timeline {
   applyStrip(s, tr, now = false) {
     if (!tr) return;
     const t = this.ctx.currentTime;
-    const set = (p, v) => (now ? p.setValueAtTime(v, t) : p.setTargetAtTime(v, t, 0.02));
+    const auto = s.automated && this.playing ? tr.auto ?? {} : {};
+    const set = (p, v) => { if (Object.keys(auto).some(id => this.autoNode(s, id) === p)) return; if (now) p.setValueAtTime(v, t); else p.setTargetAtTime(v, t, 0.02); };
     set(s.hp.frequency, tr.hp ?? 20);
     set(s.lp.frequency, tr.lp ?? 20000);
     set(s.gain.gain, tr.vol ?? 1);
@@ -554,6 +628,7 @@ export class Timeline {
     for (const { src, gain } of this.sources) safe(() => { gain.gain.setTargetAtTime(0, t, 0.01); src.stop(t + 0.05); });
     this.sources = [];
     for (const m of this.chains.values()) for (const c of m.values()) safe(() => c.reset());
+    for (const [ti, m] of this.strips) for (const s of m.values()) safe(() => this.resetAutomation(s, ti));
     safe(() => this.onHalt());
     if (was && !silent) this.onStop();
   }

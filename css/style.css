@@ -435,14 +435,14 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 
 /* Timeline */
 .tl-scroll { flex: 1; min-height: 0; overflow: auto; border-radius: 6px; background: var(--bg); }
-.tl { position: relative; display: grid; grid-template-columns: 204px var(--w); grid-template-rows: 44px; grid-auto-rows: auto; row-gap: 2px; width: max-content; user-select: none; }
+.tl { position: relative; display: grid; grid-template-columns: 224px var(--w); grid-template-rows: 44px; grid-auto-rows: auto; row-gap: 2px; width: max-content; user-select: none; }
 .tl-corner { position: sticky; left: 0; top: 0; z-index: 5; background: var(--panel); }
 .tl-ruler { position: sticky; top: 0; z-index: 4; cursor: pointer; background-color: var(--panel); border-bottom: 1px solid var(--line);
   background-image: repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px var(--bar)); }
 .tl-ruler span { position: absolute; top: 4px; padding-left: 4px; font-size: 11px; color: var(--muted); border-left: 1px solid var(--muted); line-height: 15px; }
-.tl-head { position: sticky; left: 0; z-index: 3; min-height: 40px; display: flex; align-items: center; gap: 4px; padding: 0 6px 0 8px; font-size: 12px; background: var(--panel-2); border-right: 1px solid var(--line); }
+.tl-head { position: sticky; left: 0; z-index: 3; min-height: 40px; display: flex; align-items: flex-start; gap: 3px; padding: 8px 6px 0 8px; font-size: 12px; background: var(--panel-2); border-right: 1px solid var(--line); }
 .tl-head span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.tl-head button { padding: 2px 7px; font-size: 11px; }
+.tl-head button { padding: 2px 6px; font-size: 11px; }
 .tl-arm.active, .tl-mute.active { background: #d1242f; border-color: #d1242f; color: #fff; }
 .tl-solo.active { background: #ffd23f; border-color: #ffd23f; color: #111; }
 .tl-lane { position: relative; cursor: copy;
@@ -481,7 +481,7 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .tl-grip { position: absolute; top: 0; right: 0; bottom: 0; width: 7px; cursor: ew-resize; background: rgba(255, 255, 255, .18); }
 .tl-grip:hover { background: rgba(255, 255, 255, .45); }
 .tl-drop { position: absolute; top: 2px; bottom: 2px; border: 2px dashed var(--accent-2); border-radius: 4px; background: rgba(61, 214, 140, .12); pointer-events: none; }
-.tl-playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); pointer-events: none; z-index: 6; }
+.tl-playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); pointer-events: none; z-index: 2; }   /* sous les en-têtes de piste (3) et la règle (4), qui restent fixes au défilement */
 .tl-src { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
 .tl-src select { font: inherit; font-size: 12px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px; }
 .tl-bars { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
@@ -651,7 +651,8 @@ header button, header .status { white-space: nowrap; }
 .track-inserts .fx-list { max-height: 260px; overflow-y: auto; }
 .track-inserts .fx-param { grid-template-columns: 70px 1fr 56px; }
 
-.tl-head .tl-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: text; }
+.tl-head .tl-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: text; line-height: 22px; }
+.tl-head .tl-src, .tl-head .tl-bus { margin-top: 4px; }
 .tl-head .tl-src { flex: none; width: 14px; height: 14px; font-style: normal; color: var(--muted); }
 .tl-head .tl-src[data-icon]::before { margin: 0; width: 14px; height: 14px; }
 .tl-head .tl-src[hidden] { display: none; }
@@ -866,4 +867,19 @@ header button, header .status { white-space: nowrap; }
 .tl-ruler .tl-marker span { position: static; top: auto; padding: 0; border: none; color: inherit; font-size: inherit; line-height: inherit; overflow: hidden; text-overflow: ellipsis; }
 .tl-marker::before { content: ""; position: absolute; left: 0; top: -4px; bottom: 0; width: 2px; background: #ffd23f; }
 .tl-marker-edit { position: absolute; left: 4px; top: 0; width: 140px; font: inherit; font-size: 11px; padding: 0 4px; border: 1px solid var(--accent-2); border-radius: 4px; background: var(--bg); color: var(--text); }
-.tl-mline { position: absolute; top: 44px; bottom: 0; width: 0; border-left: 1px dashed rgba(255, 210, 63, .7); pointer-events: none; z-index: 5; }
+.tl-mline { position: absolute; top: 44px; bottom: 0; width: 0; border-left: 1px dashed rgba(255, 210, 63, .7); pointer-events: none; z-index: 2; }
+/* Automation (ligne sous une piste) */
+.tl-head { position: sticky; }
+.tl-head .tl-auto { padding: 2px 6px; font-weight: 700; }
+.tl-head .tl-auto.active { background: var(--accent-2); border-color: var(--accent-2); color: #111; }
+.tl-head .tl-auto.open { outline: 2px solid var(--accent-2); outline-offset: 1px; }
+.tl-auto-ctl { position: absolute; left: 8px; right: 6px; height: 26px; margin-bottom: 19px; display: flex; gap: 4px; align-items: center; }
+.tl-auto-ctl[hidden] { display: none; }
+.tl-auto-ctl select { flex: 1; min-width: 0; font: inherit; font-size: 11px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 2px 4px; }
+.tl-autolane { position: absolute; left: 0; right: 0; background: rgba(61, 214, 140, .05); border-top: 1px dashed #2c2d36; cursor: crosshair; }
+.tl-autolane svg { position: absolute; left: 0; top: 0; overflow: visible; }
+.auto-line { fill: none; stroke: #3dd68c; stroke-width: 2; }
+.auto-line.idle { stroke: #5c6a63; stroke-dasharray: 4 4; stroke-width: 1.5; }
+.auto-pt { fill: #111; stroke: #3dd68c; stroke-width: 2; cursor: grab; }
+.auto-pt:hover { fill: #3dd68c; }
+.tl-auto-label { position: sticky; left: 230px; top: 2px; display: inline-block; margin: 2px 0 0 6px; font-size: 10px; color: var(--muted); pointer-events: none; }

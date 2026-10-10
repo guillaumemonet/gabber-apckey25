@@ -13,6 +13,7 @@ import { $, acid, drum, engine, metro, mixer, state, timeline, uiColor, wm } fro
 import { openDemoMenu } from './demo.js';
 import { exportSong, songEndBeats } from './export.js';
 import { BUS_COLORS, BUS_LETTERS, busName, renderBuses } from './buses-ui.js';
+import { autoHead, renderAutoHead, renderAutoLane } from './automation-ui.js';
 import { openClipMenu } from './clip-menu.js';
 import { renderMarkers } from './markers.js';
 import { fxOptions, renderInsertRack } from './inserts-ui.js';
@@ -38,7 +39,7 @@ export let tlRecorder = null;
 export let tlRec = null;                // enregistrement en cours : { beat, time, events, audio, open, notes, startedDrum, startedAcid, bpm }
 export let tlSel = null;                // bloc sélectionné : { track, clip }
 
-export const TL_HEAD = 204;   // largeur des en-têtes de piste (px) : la 1re colonne de .tl dans css/style.css
+export const TL_HEAD = 224;   // largeur des en-têtes de piste (px) : la 1re colonne de .tl dans css/style.css
 export const beatPx = () => state.tl.zoom / BEATS_PER_BAR;
 export const snapBeat = (v, fine) => (fine ? Math.round(v) : Math.round(v / BEATS_PER_BAR) * BEATS_PER_BAR);
 
@@ -271,6 +272,7 @@ export function buildTrackRows() {
     head.querySelector('.tl-mute').addEventListener('click', () => { state.tl.tracks[i].mute = !state.tl.tracks[i].mute; timeline.updateMutes(); renderTl(); save(); });
     head.querySelector('.tl-solo').addEventListener('click', () => { state.tl.tracks[i].solo = !state.tl.tracks[i].solo; timeline.updateMutes(); renderTl(); save(); });
     head.querySelector('.tl-knobs').addEventListener('click', e => openTrackKnobs(i, e.currentTarget));
+    autoHead(head, i);
     const lane = document.createElement('div');
     lane.className = 'tl-lane';
     lane.dataset.track = i;
@@ -533,7 +535,10 @@ export function renderTl() {
     fxLane.innerHTML = '';
     const { rows, count } = fxRows(st.tracks[i].fx);
     fxLane.style.height = `${count * FX_ROW}px`;
-    lane.style.height = `${38 + count * FX_ROW}px`;
+    const autoH = renderAutoLane(lane, i, count * FX_ROW);   // ligne d'automation, au-dessus de la ligne d'effets
+    lane.style.height = `${38 + count * FX_ROW + autoH}px`;
+    const head = grid.querySelectorAll('.tl-head')[i];
+    if (head) renderAutoHead(head, st.tracks[i], count * FX_ROW);
     for (const b of st.tracks[i].fx) fxLane.appendChild(fxEl(i, b, rows.get(b)));
   });
   if (pianoRoll) renderRollBar();
