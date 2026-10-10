@@ -19,8 +19,10 @@ export default async function (t, A) {
   const osc = meter(A.oscSynth.out), master = meter(E.master);
   for (const bar of [32, 17, 44]) {
     A.timeline.play(bar * 4);
-    await t.wait(2300);
-    const before = osc();
+    await t.wait(2000);
+    // Niveau maximal sur 300 ms (une seule mesure peut tomber entre deux notes du morceau).
+    let before = 0;
+    for (let i = 0; i < 15; i++) { before = Math.max(before, osc()); await t.wait(20); }
     // Chaque voix de la timeline encore connue (y compris celles préparées d'avance ou reprises par une note suivante)
     // doit être coupée net par Stop.
     const voices = [...A.oscSynth.all].filter(v => String(v.key).startsWith('tl:'));
