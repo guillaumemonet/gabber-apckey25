@@ -72,6 +72,7 @@ export const state = {
   scenes: new Array(40).fill(null),   // 40 scènes (instantanés rappelés à la mesure suivante)
   play: defaultPlayState(),           // jeu du clavier : mode accords, arpégiateur
   gen: null,                          // générateur d'accords et de mélodie (voir js/app/gen.js)
+  breizh: null,                       // Breizh generator (voir js/app/breizh-ui.js)
   sc: defaultScState(),               // sidechain : les kicks font respirer synthé, nappes et basses
   acid: defaultAcidState(),           // TB-303 : réglages et patterns
   kick: defaultKickState(),           // designer de kick

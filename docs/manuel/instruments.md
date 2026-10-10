@@ -53,7 +53,7 @@ Une ligne de basse acid façon Roland TB-303, synthétisée en direct : oscillat
 
 Le clavier joue un synthé en couches pensé pour le hardcore : chaque preset empile jusqu'à 3 **couches** d'oscillateurs (scie, carré, triangle, sinus ou impulsion, chacune avec son unisson, son octave et son niveau), avec des **formants** (résonance de caisse des cordes, voyelles « a » / « o » des chœurs), un **ensemble** stéréo, l'unisson étalé dans la stéréo, et un vibrato qui arrive après un instant.
 
-**35 presets en 10 familles** (fenêtre Synthé, ou **Maj + touche blanche** sur l'APC = preset de la famille, **Maj + do# / ré#** = famille précédente / suivante) :
+**40 presets en 11 familles** (fenêtre Synthé, ou **Maj + touche blanche** sur l'APC = preset de la famille, **Maj + do# / ré#** = famille précédente / suivante) :
 
 | Famille | Presets |
 |---|---|
@@ -66,6 +66,7 @@ Le clavier joue un synthé en couches pensé pour le hardcore : chaque preset em
 | Basses | Distordue, Reese, Sub |
 | Stabs | Rave, Belge, Coup d'orchestre |
 | Claviers | Piano rave, Orgue |
+| Breizh | Bombarde, Biniou kozh, Cornemuse, Bagad (pupitre), Bourdon |
 | Effets | Kick accordé, Sirène, Laser |
 
 **8 potentiomètres d'expression**, adaptés à la famille (dans la fenêtre Synthé et sur la page Synthé de l'APC) :

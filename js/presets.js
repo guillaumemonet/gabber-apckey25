@@ -1,14 +1,15 @@
 // Presets du synthé joué au clavier, rangés par famille (nom affiché : t(`preset.${id}`)).
 // `values` = potentiomètres d'expression (voir PAGES.synth), `voice` = caractère du son :
-//   layers : couches d'oscillateurs { osc, voices (unisson), spread (centièmes à « Désaccord » = 12),
-//            octave (demi-tons), level, formant ('strings' | 'a' | 'o') }
+//   layers : couches d'oscillateurs { osc ('sawtooth', 'square', 'pulse', 'reed', 'chanter'…), voices (unisson),
+//            spread (centièmes à « Désaccord » = 12), octave (demi-tons), level,
+//            formant ('strings' | 'bombarde' | 'pipe' | 'drone' | 'a' | 'o') }
 //   fenv (enveloppe du filtre), decay, sustain, sub, bend, bendTime, vibRate, vibDelay, vibRange (demi-tons au max),
 //   filterType, lfoRate / lfoDepth (LFO sur la coupure), mono, glide, octave.
 // Sur l'APC : Maj + touche blanche = preset de la famille, Maj + do# / ré# = famille précédente / suivante.
 import { t } from './i18n.js';
 
-export const FAMILIES = ['strings', 'pads', 'choirs', 'supersaw', 'hoovers', 'leads', 'basses', 'stabs', 'keys', 'fx'];
-const MONO_FAMILIES = new Set(['hoovers', 'leads', 'basses', 'fx']);
+export const FAMILIES = ['strings', 'pads', 'choirs', 'supersaw', 'hoovers', 'leads', 'basses', 'stabs', 'keys', 'breizh', 'fx'];
+const MONO_FAMILIES = new Set(['hoovers', 'leads', 'basses', 'breizh', 'fx']);
 export const familyGroup = f => (MONO_FAMILIES.has(f) ? 'mono' : 'wide');
 
 const L = (osc, voices = 1, opts = {}) => ({ osc, voices, ...opts });
@@ -17,6 +18,8 @@ const sq = (n, o) => L('square', n, o);
 const tri = (n, o) => L('triangle', n, o);
 const sine = (n, o) => L('sine', n, o);
 const pulse = (n, o) => L('pulse', n, o);
+const reed = (n, o) => L('reed', n, o);
+const chanter = (n, o) => L('chanter', n, o);
 
 export const PRESETS = [
   // --- Cordes ---
@@ -132,6 +135,23 @@ export const PRESETS = [
   { id: 'organ', family: 'keys',
     values: { cutoff: 8000, reso: 0.7, attack: 0.01, release: 0.1, width: 0.6, vibrato: 0.2, chorus: 0.5, rSend: 0.3 },
     voice: { layers: [sine(1), sine(1, { octave: 12, level: 0.7 }), sine(1, { octave: 19, level: 0.4 }), sine(1, { octave: 24, level: 0.3 })], fenv: 0, sustain: 1, vibRate: 6.5, vibDelay: 0 } },
+
+  // --- Breizh (sonneurs bretons ; le Breizh generator les utilise) ---
+  { id: 'bombarde', family: 'breizh',
+    values: { cutoff: 7000, reso: 0.8, attack: 0.012, release: 0.08, drive: 0.25, glide: 0.02, detune: 4, rSend: 0.3, vibrato: 0.12 },
+    voice: { layers: [reed(2, { spread: 4, formant: 'bombarde' })], bend: -0.4, bendTime: 0.04, fenv: 0.15, decay: 0.2, sustain: 0.9, vibRate: 5.2, vibDelay: 0.35, vibRange: 0.3 } },
+  { id: 'biniou', family: 'breizh',
+    values: { cutoff: 9000, reso: 0.7, attack: 0.006, release: 0.06, drive: 0.2, glide: 0.02, detune: 3, rSend: 0.3 },
+    voice: { layers: [chanter(2, { spread: 3, formant: 'pipe' })], bend: -0.3, bendTime: 0.02, fenv: 0.1, decay: 0.2, sustain: 0.95 } },
+  { id: 'cornemuse', family: 'breizh',
+    values: { cutoff: 8000, reso: 0.7, attack: 0.006, release: 0.05, drive: 0.15, glide: 0.02, detune: 3, rSend: 0.35 },
+    voice: { layers: [chanter(1, { formant: 'pipe' }), reed(1, { octave: 12, level: 0.25 })], fenv: 0.05, decay: 0.3, sustain: 1 } },
+  { id: 'bagad', family: 'breizh',
+    values: { cutoff: 7500, reso: 0.7, attack: 0.01, release: 0.08, drive: 0.15, glide: 0.02, detune: 8, rSend: 0.45 },
+    voice: { layers: [chanter(4, { spread: 7, formant: 'pipe' })], fenv: 0.05, decay: 0.3, sustain: 1 } },
+  { id: 'bourdon', family: 'breizh',
+    values: { cutoff: 2500, reso: 0.7, attack: 0.25, release: 0.4, drive: 0.1, glide: 0.02, detune: 3, rSend: 0.3 },
+    voice: { layers: [chanter(2, { spread: 3, formant: 'drone' }), reed(1, { octave: -12, level: 0.5 })], fenv: 0, decay: 1, sustain: 1 } },
 
   // --- Effets ---
   { id: 'kick', family: 'fx',

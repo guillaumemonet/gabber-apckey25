@@ -37,6 +37,30 @@ Un bloc d'accord se manipule comme les autres : le déplacer, l'allonger, le cop
 - **Écouter** une idée, puis **Choisir** : elle devient le brouillon de la mélodie. Chaque choix **apprend votre goût** (la moyenne des traits des idées choisies) : les suggestions suivantes s'en rapprochent de plus en plus. Le goût est enregistré avec le projet.
 - **Suggérer des suites** (onglet Accords) : des suites d'accords d'hymne dans la tonalité de votre suite, construites à partir des enchaînements les plus courants du hardcore et du hardstyle en mineur (i, VI, VII, III, iv, v, V) ; un clic en utilise une.
 
+## Breizh generator
+
+[![Fenêtre Breizh generator : un air de couple de sonneurs en fa mineur et son brouillon dans le piano roll](../screenshots/breizh-fr.png)](../screenshots/breizh-fr.png)
+
+La fenêtre **Breizh generator** (groupe Outils) pose un air à la manière des sonneurs bretons, joué par des instruments bretons, avec son bourdon. Elle marche comme l'onglet Mélodie : un brouillon dans le piano roll, **Écouter**, **Nouvel air**, **Générer**.
+
+- **Instrument** : bombarde (anche double, son puissant et nasillard), biniou kozh (petite cornemuse bretonne, très aiguë), cornemuse, **couple de sonneurs** ou **bagad**.
+  - Couple : la bombarde et le biniou jouent ensemble, le biniou à l'octave au-dessus ; la bombarde respire à la fin de chaque phrase de deux mesures pendant que le biniou continue.
+  - Bagad : un pupitre de cornemuses (plusieurs chalumeaux un peu désaccordés), les bombardes à l'octave au-dessous.
+- **Danse** : le rythme de l'air.
+  - **An dro** : croches régulières.
+  - **Gavotte** : syncopée.
+  - **Marche** : rythme pointé.
+  - **Gwerz** : air lent, notes longues.
+- **Tonique** et **mode** : mineur (éolien), dorien, mixolydien (le mode de la cornemuse) ou majeur. Pour un hymne en fa mineur, prenez fa et mineur (ou dorien).
+- **Forme** : **A A B B** comme un air traditionnel (chaque partie jouée deux fois, la partie B plus haute) ou une seule partie **A**. Chaque partie est une question qui s'arrête sur la quinte, puis une réponse qui revient à la tonique ; la troisième mesure reprend le motif de la première pour que l'air se retienne.
+- **Mesures par partie** (2 ou 4) et **répétitions**.
+- **Notes d'agrément** : des notes très courtes juste avant les notes posées sur le temps, la signature des sonneurs. Pour la cornemuse et le bagad, la note la plus haute du chalumeau (comme les « gracenotes ») ; pour la bombarde et le biniou, la note au-dessus. **Beaucoup** en met plus souvent, parfois deux de suite.
+- **Bourdon** : la tonique tenue sur toute la durée, sur deux octaves (et la quinte avec **Tonique + quinte**), sur sa propre piste.
+
+**Générer** pose un bloc par voix (mélodie, deuxième voix, bourdon) à partir de la mesure de la tête de lecture, sur des pistes libres depuis la piste armée. Le brouillon affiché est l'air de la mélodie : retouchez-le, la deuxième voix et le bourdon suivent.
+
+Les sons existent aussi dans le synthé, famille **Breizh** : bombarde, biniou kozh, cornemuse, bagad (pupitre) et bourdon. Ils sont synthétisés (formes d'onde d'anche et résonances du pavillon), sans échantillon.
+
 ---
 
 ← [Instruments](instruments.md) · [Sommaire](README.md) · [Mixage et effets](mixage.md) →

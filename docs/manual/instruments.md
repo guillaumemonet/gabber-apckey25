@@ -53,7 +53,7 @@ An acid bass line in the style of the Roland TB-303, synthesised live: oscillato
 
 The keyboard plays a layered synth built for hardcore: every preset stacks up to 3 **layers** of oscillators (saw, square, triangle, sine or pulse, each with its own unison, octave and level), with **formants** (string body resonance, "a" / "o" choir vowels), a stereo **ensemble**, unison spread across the stereo field, and a vibrato that comes in after a moment.
 
-**35 presets in 10 families** (Synth window, or **Shift + white key** on the APC = preset of the family, **Shift + C# / D#** = previous / next family):
+**40 presets in 11 families** (Synth window, or **Shift + white key** on the APC = preset of the family, **Shift + C# / D#** = previous / next family):
 
 | Family | Presets |
 |---|---|
@@ -66,6 +66,7 @@ The keyboard plays a layered synth built for hardcore: every preset stacks up to
 | Basses | Distorted, Reese, Sub |
 | Stabs | Rave, Belgian, Orchestra hit |
 | Keys | Rave piano, Organ |
+| Breizh | Bombarde, Biniou kozh, Bagpipe, Pipe band, Drone |
 | FX | Tuned kick, Siren, Laser |
 
 **8 expression knobs**, adapted to the family (in the Synth window and on the APC's Synth page):

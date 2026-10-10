@@ -67,7 +67,7 @@ A nod to Winamp, in the **Studio** group: music visualizations that follow the m
 
 ## Plugin windows
 
-The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Oscillator synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer, Effect designer, Generator), **Studio** (Mixer, Buses, Patch, Launcher, Scenes, Performance, Visualizer) and **System** (MIDI: keyboards, MIDI learn, monitor). Each one opens in a window above the timeline:
+The bar under the header opens and closes the plugins, in four groups: **Instruments** (Pads, TR-909, TB-303, Synth, Oscillator synth, Decks), **Tools** (Piano roll, Pad editor, Kick designer, Effect designer, Generator, Breizh generator), **Studio** (Mixer, Buses, Patch, Launcher, Scenes, Performance, Visualizer) and **System** (MIDI: keyboards, MIDI learn, monitor). Each one opens in a window above the timeline:
 - Each window has a title bar: the **title** on the left, **?** and **✕** on the right.
 - The **active window** (in front) is highlighted; windows open and close with a 3D transition.
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.

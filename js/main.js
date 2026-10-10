@@ -26,6 +26,7 @@ import {
 import { buildCurve } from './app/curve-ui.js';
 import { buildDecks } from './app/decks-ui.js';
 import { FILE_TOOLS, bindFiles, bindKits, openFile, saveFile } from './app/files.js';
+import { buildBreizh } from './app/breizh-ui.js';
 import { buildGen, presetPatch } from './app/gen.js';
 import { buildKick } from './app/kick-ui.js';
 import { applyGlobals, buildApcPage, buildKnobRow, pageForWindow, renderPages } from './app/knobs.js';
@@ -169,6 +170,7 @@ async function start() {
   buildRoll();
   initHistory();
   buildGen();
+  buildBreizh();
   buildScenes();
   bindKits();
   bindFiles();

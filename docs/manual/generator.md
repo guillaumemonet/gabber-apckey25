@@ -37,6 +37,30 @@ A chord block works like any other block: move it, lengthen it, copy it (Alt), o
 - **Listen** to an idea, then **Choose** it: it becomes the melody draft. Each pick **learns your taste** (the average traits of the ideas you chose): later suggestions get closer and closer to it. The taste is saved with the project.
 - **Suggest progressions** (Chords tab): anthem chord progressions in the key of your progression, built from the most common moves of minor-key hardcore and hardstyle (i, VI, VII, III, iv, v, V); click one to use it.
 
+## Breizh generator
+
+[![Breizh generator window: a tune for a pair of pipers in F minor and its draft in the piano roll](../screenshots/breizh-en.png)](../screenshots/breizh-en.png)
+
+The **Breizh generator** window (Tools group) lays down a tune in the style of Breton pipers, played by Breton instruments, with its drone. It works like the Melody tab: a draft in the piano roll, **Listen**, **New tune**, **Generate**.
+
+- **Instrument**: bombarde (double reed, loud and nasal), biniou kozh (small, very high Breton bagpipe), bagpipe, **pair of pipers** or **bagad**.
+  - Pair: the bombarde and the biniou play together, the biniou an octave higher; the bombarde breathes at the end of each two-bar phrase while the biniou goes on.
+  - Bagad: a section of bagpipes (several slightly detuned chanters), the bombardes an octave lower.
+- **Dance**: the rhythm of the tune.
+  - **An dro**: steady eighth notes.
+  - **Gavotte**: syncopated.
+  - **March**: dotted rhythm.
+  - **Gwerz**: slow air, long notes.
+- **Key note** and **mode**: minor (aeolian), dorian, mixolydian (the bagpipe's mode) or major. For an anthem in F minor, choose F and minor (or dorian).
+- **Form**: **A A B B** like a traditional tune (each part played twice, part B higher) or a single part **A**. Each part is a question that stops on the fifth, then an answer that comes back to the key note; the third bar takes up the motif of the first so the tune sticks.
+- **Bars per part** (2 or 4) and **repeat**.
+- **Grace notes**: very short notes just before the notes on the beat, the signature of pipers. For the bagpipe and the bagad, the top note of the chanter; for the bombarde and the biniou, the note above. **Many** adds them more often, sometimes two in a row.
+- **Drone**: the key note held for the whole length, over two octaves (and the fifth with **Key note + fifth**), on its own track.
+
+**Generate** lays one block per voice (melody, second voice, drone) from the playhead bar, on free tracks from the armed track. The draft shown is the melody: edit it, the second voice and the drone follow.
+
+The sounds are also in the synth, family **Breizh**: bombarde, biniou kozh, bagpipe, pipe band and drone. They are synthesized (reed waveforms and bell resonances), with no samples.
+
 ---
 
 ← [Instruments](instruments.md) · [Contents](README.md) · [Mixing and effects](mixing.md) →

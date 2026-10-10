@@ -19,6 +19,7 @@ import { mergeTrState } from '../tr909.js';
 import { mergeWindows } from '../windows.js';
 import { $, BANKS, kit, newPad, setLibAdded, state, tlHistory } from './core.js';
 import { PAD_QUANTS } from './files.js';
+import { defaultBreizh, mergeBreizh } from './breizh-ui.js';
 import { defaultGen, mergeGen } from './gen.js';
 import { libManifest, setLibManifest } from './library-ui.js';
 import { mergeRoll } from './roll-ui.js';
@@ -36,6 +37,7 @@ export async function restore() {
   const saved = await store.loadState().catch(() => null);
   const firstRun = !saved;
   state.gen = defaultGen();
+  state.breizh = defaultBreizh();
   state.viz = mergeViz(saved?.viz);
   state.banks = Array.from({ length: BANKS }, () => new Array(40).fill(null));
   if (!saved) {
@@ -56,6 +58,7 @@ export async function restore() {
     state.scenes = mergeScenes(saved.scenes);
     state.play = mergePlayState(saved.play);
     state.gen = mergeGen(saved.gen);
+    state.breizh = mergeBreizh(saved.breizh);
     state.sc = mergeScState(saved.sc);
     state.acid = mergeAcidState(saved.acid);
     state.kick = mergeKickState(saved.kick);
@@ -165,6 +168,7 @@ export function stateSnapshot() {
     scenes: state.scenes,
     play: state.play,
     gen: state.gen,
+    breizh: state.breizh,
     sc: state.sc,
     acid: state.acid,
     kick: state.kick,

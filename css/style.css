@@ -516,8 +516,8 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .gen-rollbar { justify-content: space-between; align-items: center; flex-wrap: nowrap; }
 .gen-rollbar .gen-edited { flex: 1; }
 .gen-roll { position: relative; height: 260px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-#gen-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; outline: none; }
-#gen-canvas:focus-visible { box-shadow: inset 0 0 0 2px var(--accent-2); }
+#gen-canvas, #breizh-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; outline: none; }
+#gen-canvas:focus-visible, #breizh-canvas:focus-visible { box-shadow: inset 0 0 0 2px var(--accent-2); }
 .gen-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; }
 .gen-row label { display: flex; flex-direction: column; gap: 3px; }
 .gen-row label > span { color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
@@ -773,6 +773,7 @@ header button, header .status { white-space: nowrap; }
 [data-icon="link"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="rest"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M5 12h14%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="wand"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M4 20L15 9M17 3v3M21 7h-3M14 4l1.5 1.5M19.5 11L18 9.5%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
+[data-icon="triskell"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cg fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22%3E%3Cpath transform=%22rotate(0 12 12)%22 d=%22M12 12C12 8 14.5 5 17.5 5.6S21 10 18 10.5%22/%3E%3Cpath transform=%22rotate(120 12 12)%22 d=%22M12 12C12 8 14.5 5 17.5 5.6S21 10 18 10.5%22/%3E%3Cpath transform=%22rotate(240 12 12)%22 d=%22M12 12C12 8 14.5 5 17.5 5.6S21 10 18 10.5%22/%3E%3C/g%3E%3C/svg%3E"); }
 [data-icon="swap"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="lib"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M4 4v16M9 4v16M14 5l5 15%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="phones"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M4 16v-4a8 8 0 0 1 16 0v4M4 15h3v6H4zM17 15h3v6h-3z%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
@@ -857,11 +858,11 @@ header button, header .status { white-space: nowrap; }
 .cm-gain { grid-template-columns: 88px minmax(0, 1fr) 56px; }
 .cm-row input[type=range] { width: 100%; min-width: 0; margin: 0; }
 .clip-menu { width: 290px; box-sizing: border-box; }
-.cm-transpose { min-width: 0; flex-wrap: wrap; }
+.cm-transpose { min-width: 0; }
 .cm-gain em { font-style: normal; text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
 .cm-check input { justify-self: start; width: 16px; height: 16px; accent-color: var(--accent-2); }
-.cm-transpose { display: flex; gap: 4px; }
-.cm-transpose button { flex: 1; padding: 3px 0; font-size: 11px; }
+.cm-transpose { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
+.cm-transpose button { min-width: 0; padding: 3px 0; font-size: 11px; }
 .clip-menu hr { border: none; border-top: 1px solid var(--line); margin: 4px 0; }
 /* Marqueurs de la timeline (sous les numéros de mesure) */
 .tl-corner { display: flex; align-items: flex-end; padding: 0 6px 4px 8px; }
@@ -916,7 +917,7 @@ header button, header .status { white-space: nowrap; }
 @keyframes ln-pulse { from { filter: brightness(1); } to { filter: brightness(1.35); } }
 @media (prefers-reduced-motion: reduce) { .ln-slot.playing { animation: none; } }
 .ln-row { font-size: 11px; padding: 4px 6px; }
-.cm-transpose em { font-style: normal; min-width: 26px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text); align-self: center; }
+.cm-transpose em { font-style: normal; text-align: center; font-variant-numeric: tabular-nums; color: var(--text); align-self: center; }
 /* Effets d'insert dans les voies étroites (mixeur, bus) : la règle de l'éditeur d'effets (libellés larges) ne doit pas écraser le curseur. */
 .strip .fx-param { grid-template-columns: 38px minmax(50px, 1fr) 38px; gap: 3px; }
 .strip .fx-param em { font-size: 10px; }

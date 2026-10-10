@@ -67,7 +67,7 @@ Un clin d'œil à Winamp, dans le groupe **Studio** : des visualisations de la m
 
 ## Fenêtres des plugins
 
-La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Synthé à oscillateurs, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick, Designer d'effet, Générateur), **Studio** (Mixeur, Bus, Câblage, Lanceur, Scènes, Performance, Visualiseur) et **Système** (MIDI : claviers, MIDI learn, moniteur). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
+La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instruments** (Pads, TR-909, TB-303, Synthé, Synthé à oscillateurs, Platines), **Outils** (Piano roll, Éditeur de pad, Designer de kick, Designer d'effet, Générateur, Breizh generator), **Studio** (Mixeur, Bus, Câblage, Lanceur, Scènes, Performance, Visualiseur) et **Système** (MIDI : claviers, MIDI learn, moniteur). Chacun s'ouvre dans une fenêtre au-dessus de la timeline :
 - Chaque fenêtre a une barre de titre : le **titre** à gauche, **?** et **✕** à droite.
 - La **fenêtre active** (au premier plan) est mise en valeur ; les fenêtres s'ouvrent et se ferment avec une transition 3D.
 - **Déplacez**-la par sa barre de titre, **redimensionnez**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.

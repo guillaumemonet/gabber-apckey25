@@ -135,7 +135,7 @@ export const HELP = {
         <li><b>All to master</b> wires every tool straight to the master again.</li>
       </ul>`,
     piano: `
-      <p>The keyboard synth: 35 presets in 10 families, 8 expression knobs, chord mode and arpeggiator.</p>
+      <p>The keyboard synth: 40 presets in 11 families, 8 expression knobs, chord mode and arpeggiator.</p>
       <ul>
         <li><b>Families and presets</b>: click, or on the APC <b>Shift + white key</b> = preset of the family, <b>Shift + C# / D#</b> = previous / next family.</li>
         <li><b>8 knobs</b> adapted to the family (brightness, resonance, attack, release, width, vibrato, ensemble or drive, glide, detune, reverb). Double-click = back to the preset's value.</li>
@@ -155,6 +155,18 @@ export const HELP = {
         <li>The melody is a single note block, repeated over the whole length: double-click it to edit it in the piano roll.</li>
         <li><b>Notes</b>: the piano roll under the settings shows the draft of the tab (one pass of the progression); edit it before laying it. Once edited by hand, the settings no longer change it: <b>Recompute</b> starts again from the settings. Listen and Generate use the draft as shown.</li>
         <li>Blocks are laid from the playhead bar, on the first track that is free for the whole length, starting from the armed track; the song gets longer if needed.</li>
+      </ul>`,
+    breizh: `
+      <p>Lays on the timeline a tune in the style of Breton pipers, played by Breton instruments, with its drone.</p>
+      <ul>
+        <li><b>Instrument</b>: bombarde (double reed), biniou kozh (small high bagpipe), bagpipe, <b>pair of pipers</b> (the bombarde stops to breathe at the end of each two-bar phrase, the biniou plays everything an octave higher) or <b>bagad</b> (a section of bagpipes, bombardes an octave lower).</li>
+        <li><b>Dance</b>: an dro (steady eighth notes), gavotte (syncopated), march (dotted rhythm), gwerz (slow air, long notes). <b>Key note</b> and <b>mode</b> (minor, dorian, mixolydian like the bagpipe, major): choose F minor to fit an anthem in F minor.</li>
+        <li><b>Form</b>: A A B B like a traditional tune (part B goes higher), or a single part A. Each part is a question that stops on the fifth and an answer that comes back to the key note.</li>
+        <li><b>Grace notes</b>: very short notes before the notes on the beat, the signature of pipers (the top note of the chanter for the bagpipe, the note above for the bombarde and the biniou).</li>
+        <li><b>Drone</b>: the key note held for the whole length (and the fifth), on its own track.</li>
+        <li><b>New tune</b> draws another tune and plays it; <b>Listen</b> plays all the voices (click again to stop); <b>Generate</b> lays one block per voice (melody, second voice, drone) from the playhead bar, on free tracks from the armed track.</li>
+        <li>The piano roll under the settings shows the tune (one pass): edit it before laying it; the second voice and the drone follow. <b>Recompute</b> starts again from the settings.</li>
+        <li>The sounds are also in the synth, family <b>Breizh</b> (bombarde, biniou kozh, bagpipe, pipe band, drone).</li>
       </ul>`,
     buses: `
       <p>Four buses (A to D) group tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…</p>
@@ -359,7 +371,7 @@ export const HELP = {
         <li><b>Tout sur le master</b> recâble chaque outil directement sur le master.</li>
       </ul>`,
     piano: `
-      <p>Le synthé du clavier : 35 presets en 10 familles, 8 potentiomètres d'expression, mode accords et arpégiateur.</p>
+      <p>Le synthé du clavier : 40 presets en 11 familles, 8 potentiomètres d'expression, mode accords et arpégiateur.</p>
       <ul>
         <li><b>Familles et presets</b> : clic, ou sur l'APC <b>Maj + touche blanche</b> = preset de la famille, <b>Maj + do# / ré#</b> = famille précédente / suivante.</li>
         <li><b>8 potentiomètres</b> adaptés à la famille (brillance, résonance, attaque, relâche, largeur, vibrato, ensemble ou saturation, glissé, désaccord, réverb). Double-clic = retour à la valeur du preset.</li>
@@ -379,6 +391,18 @@ export const HELP = {
         <li>La mélodie est un seul bloc de notes, répété sur toute la durée : double-cliquez dessus pour la retoucher dans le piano roll.</li>
         <li><b>Notes</b> : le piano roll sous les réglages montre le brouillon de l'onglet (un passage de la suite) ; modifiez-le avant de le poser. Retouché à la main, les réglages ne le changent plus : <b>Recalculer</b> repart des réglages. Écouter et Générer utilisent le brouillon tel qu'il est.</li>
         <li>Les blocs sont posés à partir de la mesure de la tête de lecture, sur la première piste libre sur toute la durée, en partant de la piste armée ; le morceau s'allonge si besoin.</li>
+      </ul>`,
+    breizh: `
+      <p>Pose sur la timeline un air à la manière des sonneurs bretons, joué par des instruments bretons, avec son bourdon.</p>
+      <ul>
+        <li><b>Instrument</b> : bombarde (anche double), biniou kozh (petite cornemuse aiguë), cornemuse, <b>couple de sonneurs</b> (la bombarde s'arrête pour respirer à la fin de chaque phrase de deux mesures, le biniou joue tout à l'octave au-dessus) ou <b>bagad</b> (un pupitre de cornemuses, les bombardes à l'octave au-dessous).</li>
+        <li><b>Danse</b> : an dro (croches régulières), gavotte (syncopée), marche (rythme pointé), gwerz (air lent, notes longues). <b>Tonique</b> et <b>mode</b> (mineur, dorien, mixolydien comme la cornemuse, majeur) : choisissez fa mineur pour aller avec un hymne en fa mineur.</li>
+        <li><b>Forme</b> : A A B B comme un air traditionnel (la partie B monte plus haut), ou une seule partie A. Chaque partie est une question qui s'arrête sur la quinte et une réponse qui revient à la tonique.</li>
+        <li><b>Notes d'agrément</b> : des notes très courtes avant les notes posées sur le temps, la signature des sonneurs (la note la plus haute du chalumeau pour la cornemuse, la note au-dessus pour la bombarde et le biniou).</li>
+        <li><b>Bourdon</b> : la tonique tenue sur toute la durée (et la quinte), sur sa propre piste.</li>
+        <li><b>Nouvel air</b> tire un autre air et le fait écouter ; <b>Écouter</b> joue toutes les voix (un deuxième clic arrête) ; <b>Générer</b> pose un bloc par voix (mélodie, deuxième voix, bourdon) à partir de la mesure de la tête de lecture, sur des pistes libres depuis la piste armée.</li>
+        <li>Le piano roll sous les réglages montre l'air (un passage) : modifiez-le avant de le poser ; la deuxième voix et le bourdon suivent. <b>Recalculer</b> repart des réglages.</li>
+        <li>Les sons sont aussi dans le synthé, famille <b>Breizh</b> (bombarde, biniou kozh, cornemuse, bagad, bourdon).</li>
       </ul>`,
     buses: `
       <p>Quatre bus (A à D) regroupent des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…</p>

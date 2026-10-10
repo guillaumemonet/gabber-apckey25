@@ -99,7 +99,7 @@ function progression() {
 const genStart = () => Math.floor(state.tl.playhead / BEATS_PER_BAR) * BEATS_PER_BAR;
 
 // Pistes entièrement libres sur [start, start + total[, à partir de la piste armée (n pistes différentes) ; null s'il en manque.
-function freeLanes(start, total, n) {
+export function freeLanes(start, total, n) {
   const tracks = state.tl.tracks, out = [];
   for (let k = 0; k < tracks.length && out.length < n; k++) {
     const i = (armedTrack() + k) % tracks.length;

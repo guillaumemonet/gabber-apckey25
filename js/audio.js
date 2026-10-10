@@ -193,6 +193,14 @@ export class Engine {
     const real = new Float32Array(harmonics);
     for (let n = 1; n < harmonics; n++) real[n] = (2 / (n * Math.PI)) * Math.sin(n * Math.PI * 0.25);
     this.pulseWave = ctx.createPeriodicWave(real, new Float32Array(harmonics));
+    // Anches (sons bretons) : bombarde = anche double, fondamentale faible et harmoniques riches ;
+    // chalumeau du biniou et de la cornemuse = très brillant, presque toutes les harmoniques fortes.
+    const spectrum = amp => { const im = new Float32Array(harmonics); for (let n = 1; n < harmonics; n++) im[n] = amp(n); return ctx.createPeriodicWave(new Float32Array(harmonics), im); };
+    this.waves = {
+      pulse: this.pulseWave,
+      reed: spectrum(n => (n === 1 ? 0.45 : Math.pow(n, -0.75)) * (n % 2 ? 1 : 0.85)),
+      chanter: spectrum(n => (n === 1 ? 0.7 : Math.pow(n, -0.55)) * (n <= 6 ? 1.2 : 1)),
+    };
     this.synthBus.connect(this.synthDSend).connect(this.delayIn);
     this.synthBus.connect(this.synthRSend).connect(this.reverbIn);
 
@@ -299,12 +307,20 @@ export class Engine {
   }
 
   // --- Synthé ---
-  // Formants posés après une couche : caisse de résonance des cordes, ou voyelles d'un chœur.
+  // Formants posés après une couche : caisse de résonance des cordes, pavillon d'une anche (bombarde, chalumeau,
+  // bourdon), ou voyelles d'un chœur.
   formant(input, kind) {
     const { ctx } = this;
-    if (kind === 'strings') {
+    const bodies = {
+      strings: [[[350, 4, 1], [1100, 5, 1.2], [2700, 3, 1.5]], 6000, -4],
+      bombarde: [[[350, -6, 0.9], [1000, 7, 1.3], [2600, 6, 1.8]], 7000, -6],
+      pipe: [[[500, -5, 0.8], [1500, 6, 1.2], [3200, 5, 1.6]], 8000, -4],
+      drone: [[[300, 4, 1], [900, 3, 1.2]], 3000, -8],
+    };
+    if (bodies[kind]) {
+      const [peaks, shelfF, shelfG] = bodies[kind];
       let node = input;
-      for (const [f, g, q] of [[350, 4, 1], [1100, 5, 1.2], [2700, 3, 1.5]]) {
+      for (const [f, g, q] of peaks) {
         const b = ctx.createBiquadFilter();
         b.type = 'peaking';
         b.frequency.value = f;
@@ -314,8 +330,8 @@ export class Engine {
       }
       const shelf = ctx.createBiquadFilter();
       shelf.type = 'highshelf';
-      shelf.frequency.value = 6000;
-      shelf.gain.value = -4;
+      shelf.frequency.value = shelfF;
+      shelf.gain.value = shelfG;
       return node.connect(shelf);
     }
     const vowels = { a: [[800, 1, 8], [1150, 0.6, 9], [2900, 0.25, 10]], o: [[450, 1, 8], [800, 0.5, 9], [2830, 0.15, 10]] };
@@ -368,7 +384,7 @@ export class Engine {
       (layer.formant ? this.formant(lg, layer.formant) : lg).connect(filter);
       for (let k = 0; k < n; k++) {
         const osc = ctx.createOscillator();
-        if (layer.osc === 'pulse') osc.setPeriodicWave(this.pulseWave); else osc.type = layer.osc ?? 'sawtooth';
+        if (this.waves[layer.osc]) osc.setPeriodicWave(this.waves[layer.osc]); else osc.type = layer.osc ?? 'sawtooth';
         const spread = n > 1 ? (2 * k) / (n - 1) - 1 : 0;
         const cents = spread * (layer.spread ?? 12);
         osc.detune.value = cents * detune;
