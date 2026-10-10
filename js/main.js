@@ -36,6 +36,7 @@ import { buildBuses } from './app/buses-ui.js';
 import { buildLauncher } from './app/launcher.js';
 import { buildMarkers } from './app/markers.js';
 import { buildMaster } from './app/master-ui.js';
+import { exportMidi } from './app/midi-files.js';
 import { initMidi } from './app/midi-ui.js';
 import { buildMixer } from './app/mixer-ui.js';
 import { buildOsc, oscFor, setKeys } from './app/osc-ui.js';
@@ -162,6 +163,7 @@ async function start() {
   buildSidechain();
   buildTl();
   buildMarkers();
+  $('#tl-midi').addEventListener('click', exportMidi);   // blocs de notes -> fichier .mid
   buildRoll();
   initHistory();
   buildGen();

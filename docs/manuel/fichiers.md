@@ -22,6 +22,11 @@ GabberKey enregistre tout automatiquement dans le navigateur, et vous pouvez aus
 
 Vos banques, vos sons et vos réglages sont sauvegardés automatiquement dans le navigateur.
 
+## Fichiers MIDI
+
+- **MIDI** (barre de la timeline, à côté de WAV et Stems) exporte les **blocs de notes** dans un fichier `.mid`, au tempo du morceau, à ouvrir dans n'importe quel autre logiciel : une piste MIDI par piste de la timeline (motifs dépliés sur toute la longueur des blocs, transpositions comprises). Les coups de pads posés sur la timeline vont sur le **canal 10** (notes 36 et suivantes). Un fichier MIDI contient des notes, pas des sons : les blocs audio n'y sont pas.
+- **Ouvrir…** (en-tête ou timeline) importe aussi un fichier `.mid` : chaque piste du fichier devient un **bloc de notes**, posé à la mesure de la tête de lecture, sur une piste libre pendant sa durée (des pistes sont ajoutées s'il en manque). Les blocs jouent avec le synthé du clavier ; retouchez-les dans le piano roll ou choisissez leur son dans son menu. Le tempo du morceau ne change pas (celui du fichier est indiqué).
+
 ---
 
 ← [Live : platines, scènes, visualiseur](live.md) · [Sommaire](README.md) · [Dépannage](depannage.md) →

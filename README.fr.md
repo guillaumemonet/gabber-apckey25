@@ -66,7 +66,7 @@ Le mode d'emploi complet est dans [docs/manuel](docs/manuel/README.md) ; chaque 
 6. **[Générateur : accords et mélodie](docs/manuel/generateur.md)**
 7. **[Mixage et effets](docs/manuel/mixage.md)** : Designer d'effet, Table de mixage, Bus, Chaîne master et sonie, Câblage
 8. **[Live : platines, scènes, visualiseur](docs/manuel/live.md)** : Platines, Lanceur de clips, Scènes, Visualiseur, Fenêtres des plugins
-9. **[Fichiers et enregistrement](docs/manuel/fichiers.md)** : Enregistrer et ouvrir, Enregistrement et kits
+9. **[Fichiers et enregistrement](docs/manuel/fichiers.md)** : Enregistrer et ouvrir, Enregistrement et kits, Fichiers MIDI
 10. **[Dépannage](docs/manuel/depannage.md)** : Dépannage, Régénérer les banques de sons (facultatif)
 
 ## Feuille de route

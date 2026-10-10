@@ -134,7 +134,7 @@ export async function exportSong(stems) {
 }
 
 export function renderExport() {
-  for (const id of ['#tl-export', '#tl-stems']) $(id).disabled = exporting;
+  for (const id of ['#tl-export', '#tl-stems', '#tl-midi']) $(id).disabled = exporting;
 }
 
 // ---------- Enregistrement ----------

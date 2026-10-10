@@ -66,7 +66,7 @@ The complete guide is in [docs/manual](docs/manual/README.md); every window in t
 6. **[Generator: chords and melody](docs/manual/generator.md)**
 7. **[Mixing and effects](docs/manual/mixing.md)**: Effect designer, Mixer, Buses, Master chain and loudness, Patch
 8. **[Live: turntables, scenes, visualizer](docs/manual/live.md)**: Turntables, Clip launcher, Scenes, Visualizer, Plugin windows
-9. **[Files and recording](docs/manual/files.md)**: Saving and opening, Recording and kits
+9. **[Files and recording](docs/manual/files.md)**: Saving and opening, Recording and kits, MIDI files
 10. **[Troubleshooting](docs/manual/troubleshooting.md)**: Troubleshooting, Rebuilding the sound banks (optional)
 
 ## Roadmap

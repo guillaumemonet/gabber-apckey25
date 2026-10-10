@@ -12,5 +12,5 @@ The complete guide, chapter by chapter. Every window in the app also has its own
 6. **[Generator: chords and melody](generator.md)**
 7. **[Mixing and effects](mixing.md)**: Effect designer, Mixer, Buses, Master chain and loudness, Patch
 8. **[Live: turntables, scenes, visualizer](live.md)**: Turntables, Clip launcher, Scenes, Visualizer, Plugin windows
-9. **[Files and recording](files.md)**: Saving and opening, Recording and kits
+9. **[Files and recording](files.md)**: Saving and opening, Recording and kits, MIDI files
 10. **[Troubleshooting](troubleshooting.md)**: Troubleshooting, Rebuilding the sound banks (optional)

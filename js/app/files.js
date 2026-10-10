@@ -28,6 +28,7 @@ import { renderKick, renderKickKnobs } from './kick-ui.js';
 import { applyGlobals, renderKnobs } from './knobs.js';
 import { renderLibrary } from './library-ui.js';
 import { applyMaster } from './master-ui.js';
+import { importMidiFile, isMidiFile } from './midi-files.js';
 import { renderAll, toast } from './misc.js';
 import { renderFx, renderMixer } from './mixer-ui.js';
 import { oscChanged, oscPresetCache } from './osc-ui.js';
@@ -284,6 +285,6 @@ export function bindFiles() {
   $('#file-input').addEventListener('change', e => {
     const file = e.target.files[0];
     e.target.value = '';
-    if (file) loadFile(file);
+    if (file) (isMidiFile(file) ? importMidiFile(file) : loadFile(file));   // un .mid devient des blocs de notes
   });
 }
