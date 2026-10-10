@@ -913,3 +913,4 @@ header button, header .status { white-space: nowrap; }
 @keyframes ln-pulse { from { filter: brightness(1); } to { filter: brightness(1.35); } }
 @media (prefers-reduced-motion: reduce) { .ln-slot.playing { animation: none; } }
 .ln-row { font-size: 11px; padding: 4px 6px; }
+.cm-transpose em { font-style: normal; min-width: 26px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text); align-self: center; }

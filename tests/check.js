@@ -38,7 +38,7 @@ for (const f of js) {
 }
 
 // Chaque module est dans l'import map d'index.html (version des scripts, contre les anciens caches).
-for (const f of js) if (!f.endsWith('-worklet.js') && !html.includes(`"./js/${f}": "./js/${f}?v=`)) fail(`index.html : module absent de l'import map : js/${f}`);
+for (const f of js) if (!/-(worklet|worker).js$/.test(f) && !html.includes(`"./js/${f}": "./js/${f}?v=`)) fail(`index.html : module absent de l'import map : js/${f}`);
 
 // 3. Aide.
 const { HELP } = await import(pathToFileURL(path.join(ROOT, 'js', 'help.js')));

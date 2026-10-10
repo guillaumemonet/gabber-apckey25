@@ -78,7 +78,7 @@ Goal: make GabberKey a professional tool, in the studio and on stage, step by st
 3. **Editing**: split a block, fades, gain, reverse, transpose, context menu, markers, undo / redo everywhere. *(done)*
 4. **Automation**: setting curves drawn on the timeline. *(done)*
 5. **Live**: clip launcher, MIDI learn for other controllers, MIDI clock. *(done)*
-6. **Key and stretching**: transposition and time-stretching that keeps the pitch (today a 150 BPM loop played at 190 goes up by 4 semitones).
+6. **Key and stretching**: time-stretching that keeps the pitch and transposition of timeline and launcher sounds. *(done; pad loops will follow)*
 7. **Inputs**: audio recording (microphone, sound card) and MIDI files.
 
 Ideas kept for later: a **step sequencer** for any sound, a **vocal sampler and vocoder**, a **build-up designer** (riser, snare roll, sub drop), **several instances** of the TB-303 and TR-909, a **break slicer**, a **TR-808**, an **online version** playable without installing anything, and an **AI loop generator** (an open-source music model running on your own computer).

@@ -159,6 +159,7 @@ export class Timeline {
     this.isDucked = () => false;
     this.getPatch = () => undefined;   // preset d'un bloc -> { cfg, values } ; branché par l'application
     this.getOsc = () => null;          // bloc du synthé à oscillateurs -> { synth, values } ; branché par l'application
+    this.warpOf = () => null;          // (bloc, son, vitesse) -> son étiré / transposé prêt, ou null ; branché par l'application
     this.offs = [];             // fins de notes programmées : { note, key, time }
     this.ons = [];              // départs à créer, au fil de la lecture : { time, run }
     this.synths = new Set();    // synthés qui ont reçu des notes (coupés net à l'arrêt)
@@ -259,10 +260,14 @@ export class Timeline {
         if (!buf) continue;
         const end = clip.start + this.clipBeats(clip);
         if (end <= beat || clip.start >= len) continue;
-        const rate = clip.bpm ? this.engine.bpm / clip.bpm : 1;
+        // « Garder la hauteur » / transposition : le son recalculé (s'il est prêt) se joue à sa vitesse normale ;
+        // sinon le son d'origine, accéléré ou ralenti au tempo (la hauteur suit).
+        const rate0 = clip.bpm ? this.engine.bpm / clip.bpm : 1;
+        const warped = this.warpOf(clip, clip.reverse ? this.reversed(buf) : buf, rate0);
+        const pbuf = warped ?? buf, rate = warped ? 1 : rate0;
         // Secondes déjà écoulées dans le son (un bloc coupé commence `offset` temps plus loin dans son son).
         const into = (Math.max(0, beat - clip.start) + (clip.offset ?? 0)) * bd * rate;
-        if (!clip.loop && into >= buf.duration) continue;
+        if (!clip.loop && into >= pbuf.duration) continue;
         const when = time + Math.max(0, clip.start - beat) * bd;
         let stopAt = time + (end - beat) * bd;
         if (st.loop && !this.recording) stopAt = Math.min(stopAt, endTime);
@@ -270,7 +275,7 @@ export class Timeline {
         if (live) this.scheduleKicks(clip, time, beat, Math.min(end, st.loop && !this.recording ? len : Infinity));
         // Début et fin du bloc sur l'horloge audio (fondus d'entrée et de sortie).
         const span = { t0: time + (clip.start - beat) * bd, t1: time + (end - beat) * bd, bd };
-        jobs.push({ time: when, run: () => this.startClip(clip, buf, rate, into, when, stopAt, out, span) });
+        jobs.push({ time: when, run: () => this.startClip(clip, pbuf, rate, into, when, stopAt, out, span, !!warped) });
       }
     });
     this.ons = this.ons.concat(jobs).sort((a, b) => a.time - b.time);
@@ -283,9 +288,9 @@ export class Timeline {
   }
 
   // Crée la source d'un bloc audio (juste avant qu'il joue).
-  startClip(clip, buf, rate, into, when, stopAt, out, span = null) {
+  startClip(clip, buf, rate, into, when, stopAt, out, span = null, ready = false) {
     const src = this.ctx.createBufferSource();
-    src.buffer = clip.reverse ? this.reversed(buf) : buf;
+    src.buffer = ready || !clip.reverse ? buf : this.reversed(buf);   // un son recalculé est déjà à l'envers s'il le faut
     src.playbackRate.value = rate;
     if (clip.loop) { src.loop = true; src.loopStart = 0; src.loopEnd = buf.duration; }
     const gain = this.ctx.createGain();

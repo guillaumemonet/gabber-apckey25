@@ -25,7 +25,7 @@ export async function tlPreviewClip(track, clip) {
   // Longueur = celle du bloc : l'écoute s'arrête pile à sa fin.
   const st = { bars: beats / BEATS_PER_BAR, loop: false, playhead: 0, tracks: [{ ...state.tl.tracks[track], mute: false, clips: [one], fx: [] }] };
   const tl = new Timeline(engine, () => st, clipBuffer, mixer.input('tl'));
-  Object.assign(tl, { getPad: timeline.getPad, padKey, getPatch: presetPatch, getOsc: c => oscFor(c, oscSynth), keyPrefix: 'tlp:' });
+  Object.assign(tl, { getPad: timeline.getPad, padKey, getPatch: presetPatch, getOsc: c => oscFor(c, oscSynth), keyPrefix: 'tlp:', warpOf: timeline.warpOf });
   tl.onStop = () => { if (tlPrev?.tl === tl) { tlPrev = null; renderTl(); } };
   const origin = engine.origin;
   tl.play(0);

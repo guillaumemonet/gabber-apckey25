@@ -16,6 +16,7 @@ import { BUS_COLORS, BUS_LETTERS, busName, renderBuses } from './buses-ui.js';
 import { autoHead, renderAutoHead, renderAutoLane } from './automation-ui.js';
 import { openClipMenu } from './clip-menu.js';
 import { renderMarkers } from './markers.js';
+import { requestWarps } from './warp.js';
 import { fxOptions, renderInsertRack } from './inserts-ui.js';
 import { arcPath } from './knobs.js';
 import { renderLibrary } from './library-ui.js';
@@ -175,7 +176,7 @@ export async function tlPlaceItem(item, track, beat) {
   if (!buf) { toast(t('lib.loadFail'), 3000); return; }
   const natural = item.bpm ? buf.duration * item.bpm / 60 : buf.duration / timeline.beatDur;
   const len = item.loop ? (item.bars ? item.bars * BEATS_PER_BAR : Math.max(BEATS_PER_BAR, snapBeat(natural))) : Math.max(1, Math.ceil(natural - 0.05));
-  const clip = { id: crypto.randomUUID(), start: beat, len, sampleId: item.sampleId, name: item.name, cat: item.cat, color: catColor(item.cat), bpm: item.bpm, loop: item.loop };
+  const clip = { id: crypto.randomUUID(), start: beat, len, sampleId: item.sampleId, name: item.name, cat: item.cat, color: catColor(item.cat), bpm: item.bpm, loop: item.loop, warp: true };
   state.tl.tracks[track].clips.push(clip);
   growSong(clip);
   tlSelect(track, clip);
@@ -542,6 +543,7 @@ export function renderTl() {
     for (const b of st.tracks[i].fx) fxLane.appendChild(fxEl(i, b, rows.get(b)));
   });
   if (pianoRoll) renderRollBar();
+  requestWarps();   // sons « Garder la hauteur » à préparer (bloc posé, transposé…)
 }
 
 export function peaks(sampleId) {

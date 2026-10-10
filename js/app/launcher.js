@@ -53,7 +53,7 @@ function startPlayer(c, row, at) {
   const st = { bars: beats / BEATS_PER_BAR, loop: true, playhead: 0, tracks: [{ ...track, mute: false, solo: false, bus: null, auto: {}, clips: [one], fx: [] }], buses: [] };
   const tl = new Timeline(engine, () => st, clipBuffer, mixer.input('tl'));
   Object.assign(tl, { getPad: timeline.getPad, padKey, getPatch: presetPatch, getOsc: x => oscFor(x, oscSynth), keyPrefix: `ln${c}:`,
-    duckOutput: timeline.duckOutput, isDucked: timeline.isDucked, isKickPad: timeline.isKickPad, kicksOf: timeline.kicksOf, onKick: timeline.onKick });
+    duckOutput: timeline.duckOutput, isDucked: timeline.isDucked, isKickPad: timeline.isKickPad, kicksOf: timeline.kicksOf, onKick: timeline.onKick, warpOf: timeline.warpOf });
   const keep = engine.origin;
   tl.play(0, at);
   if (keep !== null && (timeline.playing || engine.seqRunning)) engine.origin = keep;   // la grille de la timeline et de la 909 reste la leur
@@ -129,7 +129,7 @@ export async function slotFromLibrary(row, c, item) {
   if (!buf) { toast(t('lib.loadFail'), 3000); return; }
   const natural = item.bpm ? buf.duration * item.bpm / 60 : buf.duration / timeline.beatDur;
   const len = item.loop ? (item.bars ? item.bars * BEATS_PER_BAR : Math.max(BEATS_PER_BAR, Math.round(natural / BEATS_PER_BAR) * BEATS_PER_BAR)) : Math.max(1, Math.ceil(natural - 0.05));
-  setSlot(row, c, { id: crypto.randomUUID(), len, sampleId: item.sampleId, name: item.name, cat: item.cat, color: catColor(item.cat), bpm: item.bpm, loop: item.loop });
+  setSlot(row, c, { id: crypto.randomUUID(), len, sampleId: item.sampleId, name: item.name, cat: item.cat, color: catColor(item.cat), bpm: item.bpm, loop: item.loop, warp: true });
 }
 
 // ---- APC ----

@@ -26,7 +26,7 @@ export default async function (t, A) {
   open('c-a');
   t.ok(menu(), 'clic droit : menu du bloc');
   t.ok(menu().querySelector('.cm-gain input') && menu().querySelector('select[data-key="fadeIn"]') && menu().querySelector('.cm-check input'), 'gain, fondus et inverser pour un bloc audio');
-  t.ok(!menu().querySelector('.cm-transpose'), 'pas de transposition pour un son (étirement temporel : plus tard)');
+  t.ok(menu().querySelector('.cm-transpose'), 'transposition d’un son (sans changer sa vitesse)');
   const g = menu().querySelector('.cm-gain input');
   g.value = -12; g.dispatchEvent(new Event('input')); g.dispatchEvent(new Event('change'));
   t.near(audio.gain, Math.pow(10, -12 / 20), 0.002, 'gain −12 dB');

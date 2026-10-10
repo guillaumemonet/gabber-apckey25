@@ -16,6 +16,7 @@ import { presetPatch } from './gen.js';
 import { globalDef, globalValue } from './knobs.js';
 import { toast } from './misc.js';
 import { fmtDb, fmtLufs, setLastExport } from './master-ui.js';
+import { prepareWarp } from './warp.js';
 import { oscFor } from './osc-ui.js';
 import { clipKicks, isDuckedSound, padCat } from './sidechain-ui.js';
 import { clipBuffer, tlRec, tlStopRec } from './tl.js';
@@ -41,6 +42,11 @@ export async function renderSong(onlyTrack = null) {
   const endBeat = songEndBeats();
   const sr = engine.ctx.sampleRate;
   const octx = new OfflineAudioContext(2, Math.ceil((EXPORT_LEAD + endBeat * bd + EXPORT_TAIL) * sr), sr);
+  // Sons étirés / transposés : tous prêts avant le rendu.
+  await prepareWarp(state.tl.tracks.flatMap(tr => tr.clips).filter(c => !c.type && c.warp).map(clip => {
+    const buf = clipBuffer(clip.sampleId);
+    return buf && { clip, buf: clip.reverse ? timeline.reversed(buf) : buf, rate: clip.bpm ? state.bpm / clip.bpm : 1 };
+  }).filter(Boolean));
   const e = new Engine(octx);
   await e.initMaster();
   // Chaîne master du morceau ; un stem sort sans elle (pas de compression ni de limiteur : c'est au mixage final d'en décider).
@@ -69,7 +75,7 @@ export async function renderSong(onlyTrack = null) {
   const tl = new Timeline(e, () => tlState, clipBuffer, m.input('tl'));
   Object.assign(tl, {
     getPad: (b, i) => state.banks[b]?.[i], padKey, getPatch: presetPatch, getOsc: clip => oscFor(clip, os), duckOutput: sc.tl,
-    isDucked: timeline.isDucked, isKickPad: timeline.isKickPad, kicksOf: clipKicks, onKick: time => sc.kick(time),
+    isDucked: timeline.isDucked, isKickPad: timeline.isKickPad, kicksOf: clipKicks, onKick: time => sc.kick(time), warpOf: timeline.warpOf,
   });
   // Lecture linéaire du début à la fin, sans boucle ; toutes les fins de notes programmées d'un coup.
   tl.recording = true;

@@ -5,6 +5,7 @@ import { $, currentPad, decks, engine, patch, state } from './core.js';
 import { renderDecks } from './decks-ui.js';
 import { renderEditor } from './pads.js';
 import { save } from './save.js';
+import { requestWarps } from './warp.js';
 
 // ---------- Tempo ----------
 
@@ -15,6 +16,7 @@ export function setBpm(bpm) {
   engine.setBpm(bpm);
   if (decks) { decks.update(); renderDecks(); }   // les decks synchronisés suivent le tempo
   patch?.tempoChanged();   // delays et LFO des boîtes calés sur le tempo
+  requestWarps(bpm);       // sons « Garder la hauteur » recalculés au nouveau tempo
   $('#bpm').value = Math.round(bpm * 10) / 10;
   save();
 }

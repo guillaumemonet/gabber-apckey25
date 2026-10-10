@@ -49,6 +49,7 @@ import { buildRoll } from './app/roll-ui.js';
 import { restore, save } from './app/save.js';
 import { buildScenes } from './app/scenes.js';
 import { loadPad } from './app/sounds.js';
+import { needsWarp, warpedBuffer } from './app/warp.js';
 import { buildSidechain, clipKicks, isDuckedSound, padCat, padLoopKicks, soundKicks } from './app/sidechain-ui.js';
 import { buildPresets } from './app/synth-ui.js';
 import { bindTempo } from './app/tempo.js';
@@ -114,6 +115,7 @@ async function start() {
   timeline.padKey = padKey;
   timeline.getPatch = presetPatch;
   timeline.getOsc = clip => oscFor(clip, oscSynth);
+  timeline.warpOf = (clip, buf, rate) => (needsWarp(clip, rate) ? warpedBuffer(clip, buf, rate) : null);   // « Garder la hauteur »
   sidechain.tl.connect(mixer.input('tl'));
   timeline.duckOutput = sidechain.tl;
   timeline.isDucked = clip => isDuckedSound(clip.sampleId, clip.cat) && !clip.kickBeats;

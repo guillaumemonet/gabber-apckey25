@@ -143,6 +143,32 @@ export function openClipMenu(track, clip, x, y, at = null) {
     rev.checked = !!clip.reverse;
     rev.addEventListener('change', () => { for (const c of clips) { if (rev.checked) c.reverse = true; else delete c.reverse; } changed(); });
     row(t('cm.reverse'), rev).classList.add('cm-check');
+    // Garder la hauteur (étirement au tempo du morceau) ; transposer un son (sans changer sa vitesse).
+    const keep = document.createElement('input');
+    keep.type = 'checkbox';
+    keep.checked = !!clip.warp;
+    keep.addEventListener('change', () => { for (const c of clips) { if (keep.checked) c.warp = true; else { delete c.warp; delete c.semi; } } changed(); refreshSemi(); });
+    const kr = row(t('cm.keepPitch'), keep);
+    kr.classList.add('cm-check');
+    kr.title = t('cm.keepPitchTitle');
+    const tr = document.createElement('div');
+    tr.className = 'cm-transpose';
+    const sv = document.createElement('em');
+    const refreshSemi = () => { const v = clip.semi ?? 0; sv.textContent = v ? `${v > 0 ? '+' : ''}${v}` : '0'; keep.checked = !!clip.warp; };
+    for (const [d, label] of [[-12, '−12'], [-1, '−1'], [1, '+1'], [12, '+12']]) {
+      const b = document.createElement('button');
+      b.textContent = label;
+      b.title = t('cm.transposeTitle', { n: d });
+      b.addEventListener('click', () => {
+        for (const c of clips) { c.warp = true; c.semi = Math.max(-24, Math.min(24, (c.semi ?? 0) + d)); if (!c.semi) delete c.semi; }
+        changed();
+        refreshSemi();
+      });
+      tr.appendChild(b);
+    }
+    tr.appendChild(sv);
+    refreshSemi();
+    row(t('cm.transpose'), tr).title = t('cm.transposeAudioTitle');
   }
   if (notes) {
     // Transposer les notes (demi-ton, octave).

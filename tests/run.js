@@ -28,7 +28,7 @@ function firefoxPath() {
 // de l'un des modules de js/app/ (leurs déclarations sont toutes exportées), ou un export des moteurs (js/*.js).
 // `A.store` = js/storage.js ; `A.synthKick` = renderKick de js/kickdesign.js (A.renderKick = celui de la fenêtre).
 const mainSource = () => {
-  const list = dir => fs.readdirSync(path.join(ROOT, 'js', dir)).filter(f => f.endsWith('.js') && !f.startsWith('__') && !f.endsWith('-worklet.js')).sort();
+  const list = dir => fs.readdirSync(path.join(ROOT, 'js', dir)).filter(f => f.endsWith('.js') && !f.startsWith('__') && !/-(worklet|worker).js$/.test(f)).sort();
   const mods = [...list('app').map(f => `./app/${f}`), ...list('').filter(f => f !== 'main.js').map(f => `./${f}`)];
   return fs.readFileSync(path.join(ROOT, 'js', 'main.js'), 'utf8')
     + '\n// --- tests ---\n'
