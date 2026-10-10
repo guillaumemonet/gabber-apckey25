@@ -78,6 +78,7 @@ async function runSpec(spec, port, waiters) {
   fs.writeFileSync(path.join(profile, 'user.js'), [
     'user_pref("media.autoplay.default", 0);', 'user_pref("media.autoplay.blocking_policy", 0);', 'user_pref("intl.accept_languages", "fr-FR, fr");',
     'user_pref("browser.shell.checkDefaultBrowser", false);', 'user_pref("datareporting.policy.dataSubmissionEnabled", false);',
+    'user_pref("media.navigator.streams.fake", true);', 'user_pref("media.navigator.permission.disabled", true);',   // micro simulé (entrée audio)
   ].join('\n'));
   const started = Date.now();
   const result = new Promise(resolve => {

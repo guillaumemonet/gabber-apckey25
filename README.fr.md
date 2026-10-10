@@ -66,7 +66,7 @@ Le mode d'emploi complet est dans [docs/manuel](docs/manuel/README.md) ; chaque 
 6. **[Générateur : accords et mélodie](docs/manuel/generateur.md)**
 7. **[Mixage et effets](docs/manuel/mixage.md)** : Designer d'effet, Table de mixage, Bus, Chaîne master et sonie, Câblage
 8. **[Live : platines, scènes, visualiseur](docs/manuel/live.md)** : Platines, Lanceur de clips, Scènes, Visualiseur, Fenêtres des plugins
-9. **[Fichiers et enregistrement](docs/manuel/fichiers.md)** : Enregistrer et ouvrir, Enregistrement et kits, Fichiers MIDI
+9. **[Fichiers et enregistrement](docs/manuel/fichiers.md)** : Enregistrer et ouvrir, Enregistrement et kits, Fichiers MIDI, Entrée audio (micro, carte son)
 10. **[Dépannage](docs/manuel/depannage.md)** : Dépannage, Régénérer les banques de sons (facultatif)
 
 ## Feuille de route
@@ -79,7 +79,7 @@ Objectif : faire de GabberKey un outil professionnel, au studio comme en live, �
 4. **Automation** : des courbes de réglages dessinées sur la timeline. *(fait)*
 5. **Live** : lanceur de clips, MIDI learn pour d'autres contrôleurs, horloge MIDI. *(fait)*
 6. **Tonalité et étirement** : étirement temporel qui garde la hauteur et transposition des sons de la timeline et du lanceur. *(fait ; les boucles des pads suivront)*
-7. **Entrées** : enregistrement audio (micro, carte son) et fichiers MIDI.
+7. **Entrées** : enregistrement audio (micro, carte son) et fichiers MIDI. *(fait)*
 
 Idées gardées pour plus tard : un **séquenceur de pas** pour n'importe quel son, un **sampler de voix et vocoder**, un **designer de montées** (riser, roulement de caisse claire, chute de sub), **plusieurs exemplaires** de la TB-303 et de la TR-909, un **découpeur de breaks**, une **TR-808**, une **version en ligne** jouable sans rien installer, et un **générateur de boucles par IA** (un modèle de musique open source qui tourne sur votre machine).
 

@@ -27,6 +27,13 @@ Vos banques, vos sons et vos réglages sont sauvegardés automatiquement dans le
 - **MIDI** (barre de la timeline, à côté de WAV et Stems) exporte les **blocs de notes** dans un fichier `.mid`, au tempo du morceau, à ouvrir dans n'importe quel autre logiciel : une piste MIDI par piste de la timeline (motifs dépliés sur toute la longueur des blocs, transpositions comprises). Les coups de pads posés sur la timeline vont sur le **canal 10** (notes 36 et suivantes). Un fichier MIDI contient des notes, pas des sons : les blocs audio n'y sont pas.
 - **Ouvrir…** (en-tête ou timeline) importe aussi un fichier `.mid` : chaque piste du fichier devient un **bloc de notes**, posé à la mesure de la tête de lecture, sur une piste libre pendant sa durée (des pistes sont ajoutées s'il en manque). Les blocs jouent avec le synthé du clavier ; retouchez-les dans le piano roll ou choisissez leur son dans son menu. Le tempo du morceau ne change pas (celui du fichier est indiqué).
 
+## Entrée audio (micro, carte son)
+
+- La fenêtre **Entrée audio** (barre des plugins, groupe Système) : **Activer l'entrée** (le navigateur demande l'autorisation la première fois), choix de l'**appareil** (micro, entrée de carte son), **niveau** et vumètre.
+- **Enregistrer** : choisissez **Entrée audio** comme source d'une piste armée (panneau de la piste) ou dans **Enregistrer**, puis **REC**. La prise devient un bloc audio (et un son de la rubrique Enregistrements), comme celles de la TR-909 ou des platines ; elle peut être enregistrée en même temps que d'autres pistes.
+- **Latence** : en jouant par-dessus le morceau, vous l'entendez un peu en retard, et l'entrée arrive elle aussi en retard. La prise est recalée de cette latence pour tomber en place : **automatique** par défaut (d'après ce qu'annonce le navigateur), ou réglée à la main si une prise reste un peu en retard ou en avance.
+- **Écoute de retour** : envoie l'entrée vers les haut-parleurs (par la voie Timeline du mixeur). Laissez-la coupée avec un micro près des haut-parleurs : larsen.
+
 ---
 
 ← [Live : platines, scènes, visualiseur](live.md) · [Sommaire](README.md) · [Dépannage](depannage.md) →

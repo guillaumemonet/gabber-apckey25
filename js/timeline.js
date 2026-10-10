@@ -24,7 +24,7 @@ const LOOKAHEAD = 1.5;
 export const TRACK_DEFAULTS = { vol: 1, pan: 0, lp: 20000, hp: 20, dly: 0, rev: 0, drive: 0 };
 const num = (v, lo, hi, d) => (Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d);
 // Instruments qu'une piste peut enregistrer (null = « Auto » : le choix « Enregistrer » de la barre de la timeline).
-export const REC_SOURCES = ['pads', 'synth', 'osc', 'tr', 'acid', 'decks'];
+export const REC_SOURCES = ['pads', 'synth', 'osc', 'tr', 'acid', 'decks', 'input'];
 export const MAX_INSERTS = 4;
 // Automation : réglages d'une piste qui suivent une courbe dessinée sur la durée du morceau.
 // Points { b (temps de la timeline), v (0..1) } ; entre deux points, la valeur suit une ligne droite (en position 0..1).

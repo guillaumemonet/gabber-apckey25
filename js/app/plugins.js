@@ -4,6 +4,7 @@ import { t } from '../i18n.js';
 import { WINDOWS } from '../windows.js';
 import { $, viz, wm } from './core.js';
 import { curvePreviewStop, renderCurveCanvas } from './curve-ui.js';
+import { inputWinOpened } from './audio-input.js';
 import { renderBuses } from './buses-ui.js';
 import { drawDeckWave } from './decks-ui.js';
 import { renderGenRoll, stopGenPreview } from './gen.js';
@@ -18,10 +19,10 @@ export const PLUGIN_GROUPS = [
   ['instruments', ['pads', 'tr', 'acid', 'piano', 'osc', 'decks']],
   ['tools', ['roll', 'editor', 'kick', 'curve', 'gen']],
   ['studio', ['mix', 'buses', 'patch', 'launcher', 'scenes', 'perf', 'viz']],
-  ['system', ['monitor']],
+  ['system', ['monitor', 'input']],
 ];
 
-export const PLUGIN_ICONS = { pads: 'pads', tr: 'tr', acid: 'acid', piano: 'keys', osc: 'osc', decks: 'decks', roll: 'roll', editor: 'editor', kick: 'kick', curve: 'curve', gen: 'wand', buses: 'mix', launcher: 'grid', mix: 'mix', patch: 'patch', scenes: 'scenes', perf: 'perf', monitor: 'monitor', viz: 'viz' };
+export const PLUGIN_ICONS = { pads: 'pads', tr: 'tr', acid: 'acid', piano: 'keys', osc: 'osc', decks: 'decks', roll: 'roll', editor: 'editor', kick: 'kick', curve: 'curve', gen: 'wand', buses: 'mix', launcher: 'grid', input: 'rec', mix: 'mix', patch: 'patch', scenes: 'scenes', perf: 'perf', monitor: 'monitor', viz: 'viz' };
 
 export function buildPluginBar() {
   const nav = $('#plugins');
@@ -60,6 +61,7 @@ export function onWindowToggle(id, open) {
   if (open && id === 'curve') requestAnimationFrame(renderCurveCanvas);
   if (open && id === 'gen') requestAnimationFrame(() => renderGenRoll(true));
   if (open && id === 'buses') renderBuses();
+  if (open && id === 'input') inputWinOpened();
   if (!open && id === 'gen') stopGenPreview();
   if (id === 'viz') { if (open) viz.addOutput($('#viz-canvas')); else viz.removeOutput($('#viz-canvas')); }
 }

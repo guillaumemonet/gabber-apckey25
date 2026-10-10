@@ -27,6 +27,13 @@ Your banks, sounds and settings are saved automatically in the browser.
 - **MIDI** (timeline bar, next to WAV and Stems) exports the **note blocks** to a `.mid` file at the song tempo, to open in any other program: one MIDI track per timeline track (patterns unrolled over the whole block length, transpositions included). Pad hits placed on the timeline go to **channel 10** (notes 36 and up). A MIDI file holds notes, not sounds: audio blocks are not in it.
 - **Open…** (header or timeline) also imports a `.mid` file: each track of the file becomes a **note block**, placed at the playhead bar on a track that is free for its length (tracks are added if needed). The blocks play with the keyboard synth; edit them in the piano roll or pick their sound in its menu. The song tempo does not change (the file's tempo is shown).
 
+## Audio input (microphone, sound card)
+
+- The **Audio input** window (plugin bar, System group): **Turn the input on** (the browser asks for permission the first time), choose the **device** (microphone, sound card input), **level** and meter.
+- **Record**: choose **Audio input** as the source of an armed track (track panel) or in **Record**, then **REC**. The take becomes an audio block (and a sound in the Recordings section), like the TR-909 or deck takes; it can be recorded at the same time as other tracks.
+- **Latency**: when you play along with the song you hear it slightly late, and the input arrives late too. The take is shifted by this latency so it lands in time: **automatic** by default (from what the browser reports), or set by hand if a take is still a little late or early.
+- **Monitoring**: sends the input to the speakers (through the mixer's Timeline channel). Keep it off with a microphone near the speakers: feedback.
+
 ---
 
 ← [Live: turntables, scenes, visualizer](live.md) · [Contents](README.md) · [Troubleshooting](troubleshooting.md) →

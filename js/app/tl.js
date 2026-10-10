@@ -13,6 +13,7 @@ import { $, acid, drum, engine, metro, mixer, state, timeline, uiColor, wm } fro
 import { openDemoMenu } from './demo.js';
 import { exportSong, songEndBeats } from './export.js';
 import { BUS_COLORS, BUS_LETTERS, busName, renderBuses } from './buses-ui.js';
+import { inputLatency, inputNode, openInput } from './audio-input.js';
 import { autoHead, renderAutoHead, renderAutoLane } from './automation-ui.js';
 import { openClipMenu } from './clip-menu.js';
 import { renderMarkers } from './markers.js';
@@ -79,11 +80,11 @@ export const tlRecToggle = () => (countingIn ? null : tlRec ? tlStopRec() : tlSt
 
 // Point de captation de l'outil enregistré (après son fader, avant le master).
 export function tlSourceNode(source) {
-  return source === 'master' ? engine.output : mixer.strips[source].mute;
+  return source === 'master' ? engine.output : source === 'input' ? inputNode() : mixer.strips[source].mute;
 }
 
 // Pistes armées et l'instrument que chacune enregistre (le sien, sinon le choix « Enregistrer » de la barre).
-export const AUDIO_SOURCES = new Set(['tr', 'acid', 'decks']);
+export const AUDIO_SOURCES = new Set(['tr', 'acid', 'decks', 'input']);
 export const trackSource = tr => tr.src || state.tl.source;
 export const armedTrack = () => Math.max(0, state.tl.tracks.findIndex(tr => tr.arm));
 
@@ -97,6 +98,9 @@ export async function tlStartRec() {
   for (const x of targets) if (!AUDIO_SOURCES.has(x.src) && events[x.src] === undefined) events[x.src] = x.track;
   const audio = [];
   for (const x of targets) if (AUDIO_SOURCES.has(x.src) && !audio.some(r => r.source === x.src)) audio.push({ source: x.src, track: x.track, kicks: [] });
+  // Entrée audio : ouverte (et autorisée) avant de lancer l'enregistrement ; refusée, la piste n'enregistre rien.
+  const inIdx = audio.findIndex(r => r.source === 'input');
+  if (inIdx >= 0 && !(await openInput())) audio.splice(inIdx, 1);
   for (const r of audio) { r.recorder = new Recorder(engine.ctx, tlSourceNode(r.source)); await r.recorder.start(); }
   if (state.metro.on && state.metro.countIn) {   // une mesure de décompte avant de lancer l'enregistrement
     countingIn = true;
@@ -143,8 +147,9 @@ export async function tlStopRec() {
 // Une prise audio devient un bloc sur sa piste (et un son de la rubrique Enregistrements).
 export async function saveAudioTake(rec, r, raw) {
   const sr = raw.sampleRate;
-  // Retire ce qui a été capté avant le temps de départ.
-  const skip = Math.max(0, Math.round((rec.time - raw.startedAt) * sr));
+  // Retire ce qui a été capté avant le temps de départ (entrée audio : plus sa latence, pour que la prise tombe en place).
+  const late = r.source === 'input' ? inputLatency() : 0;
+  const skip = Math.max(0, Math.round((rec.time - raw.startedAt + late) * sr));
   const chans = raw.channels.map(c => c.subarray(skip));
   if (chans[0].length <= sr * 0.05) return;
   const buffer = engine.ctx.createBuffer(2, chans[0].length, sr);
@@ -432,7 +437,7 @@ export function openTrackKnobs(i, anchor) {
 }
 
 export const trackName = i => state.tl.tracks[i]?.name || t('tl.track', { n: i + 1 });
-export const SRC_ICONS = { pads: 'pads', synth: 'keys', osc: 'osc', tr: 'tr', acid: 'acid', decks: 'decks' };
+export const SRC_ICONS = { pads: 'pads', synth: 'keys', osc: 'osc', tr: 'tr', acid: 'acid', decks: 'decks', input: 'rec' };
 // Couleurs de fond des pistes.
 export const TRACK_COLORS = ['#e5484d', '#f76b15', '#ffc53d', '#46a758', '#12a594', '#0090ff', '#6e56cf', '#d6409f', '#8d8d86'];
 

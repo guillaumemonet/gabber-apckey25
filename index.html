@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=94">
+  <link rel="stylesheet" href="css/style.css?v=95">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -360,6 +360,22 @@
       <div class="roll-view"><canvas id="roll-canvas"></canvas><div id="roll-empty" class="roll-empty" data-i18n="roll.empty"></div></div>
     </section>
 
+    <section class="window input-area" data-win="input">
+      <div class="section-title">
+        <h2 data-i18n="input.title"></h2>
+      </div>
+      <div class="input-box">
+        <div class="row"><button id="input-open" data-icon="rec"></button><span id="input-status" class="hint"></span></div>
+        <label class="fx-param"><span data-i18n="input.deviceLabel"></span><select id="input-device"></select></label>
+        <label class="fx-param"><span data-i18n="input.level"></span><input id="input-level" type="range" min="0" max="2" step="0.01"><em id="input-level-v"></em></label>
+        <canvas id="input-meter" class="input-meter" width="300" height="8"></canvas>
+        <label class="fx-param check"><span data-i18n="input.monitor"></span><input id="input-monitor" type="checkbox"><em></em></label>
+        <label class="fx-param check"><span data-i18n="input.latencyAuto"></span><input id="input-latency-auto" type="checkbox"><em></em></label>
+        <label class="fx-param"><span data-i18n="input.latency"></span><input id="input-latency" type="range" min="0" max="300" step="1"><em id="input-latency-v"></em></label>
+        <p class="hint" data-i18n="input.hint"></p>
+      </div>
+    </section>
+
     <section class="window monitor" data-win="monitor">
       <div class="section-title">
         <h2 data-i18n="monitor.title"></h2>
@@ -377,100 +393,101 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/app/acid-ui.js": "./js/app/acid-ui.js?v=94",
-      "./js/app/actions.js": "./js/app/actions.js?v=94",
-      "./js/app/controller.js": "./js/app/controller.js?v=94",
-      "./js/app/core.js": "./js/app/core.js?v=94",
-      "./js/app/automation-ui.js": "./js/app/automation-ui.js?v=94",
-      "./js/app/buses-ui.js": "./js/app/buses-ui.js?v=94",
-      "./js/app/clip-menu.js": "./js/app/clip-menu.js?v=94",
-      "./js/app/curve-ui.js": "./js/app/curve-ui.js?v=94",
-      "./js/app/decks-ui.js": "./js/app/decks-ui.js?v=94",
-      "./js/app/demo.js": "./js/app/demo.js?v=94",
-      "./js/app/export.js": "./js/app/export.js?v=94",
-      "./js/app/files.js": "./js/app/files.js?v=94",
-      "./js/app/gen.js": "./js/app/gen.js?v=94",
-      "./js/app/inserts-ui.js": "./js/app/inserts-ui.js?v=94",
-      "./js/app/kick-ui.js": "./js/app/kick-ui.js?v=94",
-      "./js/app/knobs.js": "./js/app/knobs.js?v=94",
-      "./js/app/launcher.js": "./js/app/launcher.js?v=94",
-      "./js/app/library-ui.js": "./js/app/library-ui.js?v=94",
-      "./js/app/metro-ui.js": "./js/app/metro-ui.js?v=94",
-      "./js/app/markers.js": "./js/app/markers.js?v=94",
-      "./js/app/master-ui.js": "./js/app/master-ui.js?v=94",
-      "./js/app/midi-files.js": "./js/app/midi-files.js?v=94",
-      "./js/app/midi-ui.js": "./js/app/midi-ui.js?v=94",
-      "./js/app/misc.js": "./js/app/misc.js?v=94",
-      "./js/app/mixer-ui.js": "./js/app/mixer-ui.js?v=94",
-      "./js/app/osc-ui.js": "./js/app/osc-ui.js?v=94",
-      "./js/app/pads.js": "./js/app/pads.js?v=94",
-      "./js/app/patch-ui.js": "./js/app/patch-ui.js?v=94",
-      "./js/app/perf-fx.js": "./js/app/perf-fx.js?v=94",
-      "./js/app/play.js": "./js/app/play.js?v=94",
-      "./js/app/piano.js": "./js/app/piano.js?v=94",
-      "./js/app/plugins.js": "./js/app/plugins.js?v=94",
-      "./js/app/presets-bar.js": "./js/app/presets-bar.js?v=94",
-      "./js/app/roll-ui.js": "./js/app/roll-ui.js?v=94",
-      "./js/app/save.js": "./js/app/save.js?v=94",
-      "./js/app/scenes.js": "./js/app/scenes.js?v=94",
-      "./js/app/sounds.js": "./js/app/sounds.js?v=94",
-      "./js/app/sidechain-ui.js": "./js/app/sidechain-ui.js?v=94",
-      "./js/app/synth-ui.js": "./js/app/synth-ui.js?v=94",
-      "./js/app/tempo.js": "./js/app/tempo.js?v=94",
-      "./js/app/tl-listen.js": "./js/app/tl-listen.js?v=94",
-      "./js/app/tl-record.js": "./js/app/tl-record.js?v=94",
-      "./js/app/tl-select.js": "./js/app/tl-select.js?v=94",
-      "./js/app/tl.js": "./js/app/tl.js?v=94",
-      "./js/app/tr909-ui.js": "./js/app/tr909-ui.js?v=94",
-      "./js/app/trackfx-ui.js": "./js/app/trackfx-ui.js?v=94",
-      "./js/app/undo.js": "./js/app/undo.js?v=94",
-      "./js/app/warp.js": "./js/app/warp.js?v=94",
-      "./js/app/viz-ui.js": "./js/app/viz-ui.js?v=94",
-      "./js/acid.js": "./js/acid.js?v=94",
-      "./js/apc.js": "./js/apc.js?v=94",
-      "./js/audio.js": "./js/audio.js?v=94",
-      "./js/decks.js": "./js/decks.js?v=94",
-      "./js/chords.js": "./js/chords.js?v=94",
-      "./js/help.js": "./js/help.js?v=94",
-      "./js/history.js": "./js/history.js?v=94",
-      "./js/i18n.js": "./js/i18n.js?v=94",
-      "./js/kickdesign.js": "./js/kickdesign.js?v=94",
-      "./js/kit.js": "./js/kit.js?v=94",
-      "./js/kits.js": "./js/kits.js?v=94",
-      "./js/metronome.js": "./js/metronome.js?v=94",
-      "./js/cpumeter.js": "./js/cpumeter.js?v=94",
-      "./js/curves.js": "./js/curves.js?v=94",
-      "./js/library.js": "./js/library.js?v=94",
-      "./js/lufs.js": "./js/lufs.js?v=94",
-      "./js/melody.js": "./js/melody.js?v=94",
-      "./js/midi.js": "./js/midi.js?v=94",
-      "./js/midiclock.js": "./js/midiclock.js?v=94",
-      "./js/smf.js": "./js/smf.js?v=94",
-      "./js/main.js": "./js/main.js?v=94",
-      "./js/mixer.js": "./js/mixer.js?v=94",
-      "./js/notes.js": "./js/notes.js?v=94",
-      "./js/osc.js": "./js/osc.js?v=94",
-      "./js/params.js": "./js/params.js?v=94",
-      "./js/patch.js": "./js/patch.js?v=94",
-      "./js/performer.js": "./js/performer.js?v=94",
-      "./js/pianoroll.js": "./js/pianoroll.js?v=94",
-      "./js/presets.js": "./js/presets.js?v=94",
-      "./js/project.js": "./js/project.js?v=94",
-      "./js/sidechain.js": "./js/sidechain.js?v=94",
-      "./js/recorder.js": "./js/recorder.js?v=94",
-      "./js/timeline.js": "./js/timeline.js?v=94",
-      "./js/storage.js": "./js/storage.js?v=94",
-      "./js/stretch.js": "./js/stretch.js?v=94",
-      "./js/suggest.js": "./js/suggest.js?v=94",
-      "./js/tr909.js": "./js/tr909.js?v=94",
-      "./js/trackfx.js": "./js/trackfx.js?v=94",
-      "./js/visualizer.js": "./js/visualizer.js?v=94",
-      "./js/viz3d.js": "./js/viz3d.js?v=94",
-      "./js/windows.js": "./js/windows.js?v=94",
-      "./js/zip.js": "./js/zip.js?v=94"
+      "./js/app/acid-ui.js": "./js/app/acid-ui.js?v=95",
+      "./js/app/actions.js": "./js/app/actions.js?v=95",
+      "./js/app/controller.js": "./js/app/controller.js?v=95",
+      "./js/app/core.js": "./js/app/core.js?v=95",
+      "./js/app/audio-input.js": "./js/app/audio-input.js?v=95",
+      "./js/app/automation-ui.js": "./js/app/automation-ui.js?v=95",
+      "./js/app/buses-ui.js": "./js/app/buses-ui.js?v=95",
+      "./js/app/clip-menu.js": "./js/app/clip-menu.js?v=95",
+      "./js/app/curve-ui.js": "./js/app/curve-ui.js?v=95",
+      "./js/app/decks-ui.js": "./js/app/decks-ui.js?v=95",
+      "./js/app/demo.js": "./js/app/demo.js?v=95",
+      "./js/app/export.js": "./js/app/export.js?v=95",
+      "./js/app/files.js": "./js/app/files.js?v=95",
+      "./js/app/gen.js": "./js/app/gen.js?v=95",
+      "./js/app/inserts-ui.js": "./js/app/inserts-ui.js?v=95",
+      "./js/app/kick-ui.js": "./js/app/kick-ui.js?v=95",
+      "./js/app/knobs.js": "./js/app/knobs.js?v=95",
+      "./js/app/launcher.js": "./js/app/launcher.js?v=95",
+      "./js/app/library-ui.js": "./js/app/library-ui.js?v=95",
+      "./js/app/metro-ui.js": "./js/app/metro-ui.js?v=95",
+      "./js/app/markers.js": "./js/app/markers.js?v=95",
+      "./js/app/master-ui.js": "./js/app/master-ui.js?v=95",
+      "./js/app/midi-files.js": "./js/app/midi-files.js?v=95",
+      "./js/app/midi-ui.js": "./js/app/midi-ui.js?v=95",
+      "./js/app/misc.js": "./js/app/misc.js?v=95",
+      "./js/app/mixer-ui.js": "./js/app/mixer-ui.js?v=95",
+      "./js/app/osc-ui.js": "./js/app/osc-ui.js?v=95",
+      "./js/app/pads.js": "./js/app/pads.js?v=95",
+      "./js/app/patch-ui.js": "./js/app/patch-ui.js?v=95",
+      "./js/app/perf-fx.js": "./js/app/perf-fx.js?v=95",
+      "./js/app/play.js": "./js/app/play.js?v=95",
+      "./js/app/piano.js": "./js/app/piano.js?v=95",
+      "./js/app/plugins.js": "./js/app/plugins.js?v=95",
+      "./js/app/presets-bar.js": "./js/app/presets-bar.js?v=95",
+      "./js/app/roll-ui.js": "./js/app/roll-ui.js?v=95",
+      "./js/app/save.js": "./js/app/save.js?v=95",
+      "./js/app/scenes.js": "./js/app/scenes.js?v=95",
+      "./js/app/sounds.js": "./js/app/sounds.js?v=95",
+      "./js/app/sidechain-ui.js": "./js/app/sidechain-ui.js?v=95",
+      "./js/app/synth-ui.js": "./js/app/synth-ui.js?v=95",
+      "./js/app/tempo.js": "./js/app/tempo.js?v=95",
+      "./js/app/tl-listen.js": "./js/app/tl-listen.js?v=95",
+      "./js/app/tl-record.js": "./js/app/tl-record.js?v=95",
+      "./js/app/tl-select.js": "./js/app/tl-select.js?v=95",
+      "./js/app/tl.js": "./js/app/tl.js?v=95",
+      "./js/app/tr909-ui.js": "./js/app/tr909-ui.js?v=95",
+      "./js/app/trackfx-ui.js": "./js/app/trackfx-ui.js?v=95",
+      "./js/app/undo.js": "./js/app/undo.js?v=95",
+      "./js/app/warp.js": "./js/app/warp.js?v=95",
+      "./js/app/viz-ui.js": "./js/app/viz-ui.js?v=95",
+      "./js/acid.js": "./js/acid.js?v=95",
+      "./js/apc.js": "./js/apc.js?v=95",
+      "./js/audio.js": "./js/audio.js?v=95",
+      "./js/decks.js": "./js/decks.js?v=95",
+      "./js/chords.js": "./js/chords.js?v=95",
+      "./js/help.js": "./js/help.js?v=95",
+      "./js/history.js": "./js/history.js?v=95",
+      "./js/i18n.js": "./js/i18n.js?v=95",
+      "./js/kickdesign.js": "./js/kickdesign.js?v=95",
+      "./js/kit.js": "./js/kit.js?v=95",
+      "./js/kits.js": "./js/kits.js?v=95",
+      "./js/metronome.js": "./js/metronome.js?v=95",
+      "./js/cpumeter.js": "./js/cpumeter.js?v=95",
+      "./js/curves.js": "./js/curves.js?v=95",
+      "./js/library.js": "./js/library.js?v=95",
+      "./js/lufs.js": "./js/lufs.js?v=95",
+      "./js/melody.js": "./js/melody.js?v=95",
+      "./js/midi.js": "./js/midi.js?v=95",
+      "./js/midiclock.js": "./js/midiclock.js?v=95",
+      "./js/smf.js": "./js/smf.js?v=95",
+      "./js/main.js": "./js/main.js?v=95",
+      "./js/mixer.js": "./js/mixer.js?v=95",
+      "./js/notes.js": "./js/notes.js?v=95",
+      "./js/osc.js": "./js/osc.js?v=95",
+      "./js/params.js": "./js/params.js?v=95",
+      "./js/patch.js": "./js/patch.js?v=95",
+      "./js/performer.js": "./js/performer.js?v=95",
+      "./js/pianoroll.js": "./js/pianoroll.js?v=95",
+      "./js/presets.js": "./js/presets.js?v=95",
+      "./js/project.js": "./js/project.js?v=95",
+      "./js/sidechain.js": "./js/sidechain.js?v=95",
+      "./js/recorder.js": "./js/recorder.js?v=95",
+      "./js/timeline.js": "./js/timeline.js?v=95",
+      "./js/storage.js": "./js/storage.js?v=95",
+      "./js/stretch.js": "./js/stretch.js?v=95",
+      "./js/suggest.js": "./js/suggest.js?v=95",
+      "./js/tr909.js": "./js/tr909.js?v=95",
+      "./js/trackfx.js": "./js/trackfx.js?v=95",
+      "./js/visualizer.js": "./js/visualizer.js?v=95",
+      "./js/viz3d.js": "./js/viz3d.js?v=95",
+      "./js/windows.js": "./js/windows.js?v=95",
+      "./js/zip.js": "./js/zip.js?v=95"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=94"></script>
+  <script type="module" src="js/main.js?v=95"></script>
 </body>
 </html>

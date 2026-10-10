@@ -174,6 +174,14 @@ export const HELP = {
         <li><b>APC grid = launcher</b>: the 40 pads are the slots (top row = row 1), SCENE LAUNCH 1-5 launch the rows, STOP ALL stops all clips, Shift + pad stops its column. A slot waiting for its bar blinks fast.</li>
         <li>Slots are saved with the project and can be undone with Ctrl+Z.</li>
       </ul>`,
+    input: `
+      <p>Record a microphone or a sound card input into the timeline.</p>
+      <ul>
+        <li><b>Turn the input on</b> (the browser asks for permission the first time), choose the <b>device</b> and the <b>level</b>; the meter shows what comes in.</li>
+        <li><b>To record</b>: choose « Audio input » as the source of an armed track (track panel) or in Record, then REC. The take becomes an audio block, like the TR-909 or deck recordings.</li>
+        <li><b>Latency</b>: when you play along with the song, you hear it slightly late and the input arrives late too; the take is shifted by this latency so it lands in time. Automatic by default; set it by hand if a take is still a little late or early.</li>
+        <li><b>Monitoring</b> sends the input to the speakers: keep it off with a microphone near them (feedback).</li>
+      </ul>`,
     knobs: `
       <p>The 8 on-screen knobs follow the APC knobs K1-K8, page by page.</p>
       <ul>
@@ -389,6 +397,14 @@ export const HELP = {
         <li>Les clips suivent les mesures de la timeline quand elle joue (et la grille de la 909) ; sinon, le premier clip lancé part tout de suite et donne les mesures.</li>
         <li><b>Grille APC = lanceur</b> : les 40 pads sont les cases (rangée du haut = ligne 1), SCENE LAUNCH 1-5 lancent les lignes, STOP ALL arrête tous les clips, Maj + pad arrête sa colonne. Une case qui attend sa mesure clignote vite.</li>
         <li>Les cases sont enregistrées avec le projet et s'annulent avec Ctrl+Z.</li>
+      </ul>`,
+    input: `
+      <p>Enregistrez un micro ou une entrée de carte son dans la timeline.</p>
+      <ul>
+        <li><b>Activer l'entrée</b> (le navigateur demande l'autorisation la première fois), choisissez l'<b>appareil</b> et le <b>niveau</b> ; le vumètre montre ce qui arrive.</li>
+        <li><b>Pour enregistrer</b> : choisissez « Entrée audio » comme source d'une piste armée (panneau de piste) ou dans Enregistrer, puis REC. La prise devient un bloc audio, comme les enregistrements de la TR-909 ou des platines.</li>
+        <li><b>Latence</b> : en jouant par-dessus le morceau, vous l'entendez un peu en retard et l'entrée arrive elle aussi en retard ; la prise est recalée de cette latence pour tomber en place. Automatique par défaut ; réglez-la à la main si une prise reste un peu en retard ou en avance.</li>
+        <li><b>L'écoute de retour</b> envoie l'entrée vers les haut-parleurs : laissez-la coupée avec un micro près d'eux (larsen).</li>
       </ul>`,
     knobs: `
       <p>Les 8 potentiomètres à l'écran suivent les potentiomètres K1-K8 de l'APC, page par page.</p>

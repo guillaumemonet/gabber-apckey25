@@ -66,7 +66,7 @@ The complete guide is in [docs/manual](docs/manual/README.md); every window in t
 6. **[Generator: chords and melody](docs/manual/generator.md)**
 7. **[Mixing and effects](docs/manual/mixing.md)**: Effect designer, Mixer, Buses, Master chain and loudness, Patch
 8. **[Live: turntables, scenes, visualizer](docs/manual/live.md)**: Turntables, Clip launcher, Scenes, Visualizer, Plugin windows
-9. **[Files and recording](docs/manual/files.md)**: Saving and opening, Recording and kits, MIDI files
+9. **[Files and recording](docs/manual/files.md)**: Saving and opening, Recording and kits, MIDI files, Audio input (microphone, sound card)
 10. **[Troubleshooting](docs/manual/troubleshooting.md)**: Troubleshooting, Rebuilding the sound banks (optional)
 
 ## Roadmap
@@ -79,7 +79,7 @@ Goal: make GabberKey a professional tool, in the studio and on stage, step by st
 4. **Automation**: setting curves drawn on the timeline. *(done)*
 5. **Live**: clip launcher, MIDI learn for other controllers, MIDI clock. *(done)*
 6. **Key and stretching**: time-stretching that keeps the pitch and transposition of timeline and launcher sounds. *(done; pad loops will follow)*
-7. **Inputs**: audio recording (microphone, sound card) and MIDI files.
+7. **Inputs**: audio recording (microphone, sound card) and MIDI files. *(done)*
 
 Ideas kept for later: a **step sequencer** for any sound, a **vocal sampler and vocoder**, a **build-up designer** (riser, snare roll, sub drop), **several instances** of the TB-303 and TR-909, a **break slicer**, a **TR-808**, an **online version** playable without installing anything, and an **AI loop generator** (an open-source music model running on your own computer).
 
