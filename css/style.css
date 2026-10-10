@@ -854,7 +854,10 @@ header button, header .status { white-space: nowrap; }
 .cm-danger { color: #ff6b5a; }
 .cm-row { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 8px; padding: 4px 8px; color: var(--muted); }
 .cm-row select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 2px 4px; }
-.cm-gain { grid-template-columns: 96px 1fr 58px; }
+.cm-gain { grid-template-columns: 88px minmax(0, 1fr) 56px; }
+.cm-row input[type=range] { width: 100%; min-width: 0; margin: 0; }
+.clip-menu { width: 290px; box-sizing: border-box; }
+.cm-transpose { min-width: 0; flex-wrap: wrap; }
 .cm-gain em { font-style: normal; text-align: right; color: var(--text); font-variant-numeric: tabular-nums; }
 .cm-check input { justify-self: start; width: 16px; height: 16px; accent-color: var(--accent-2); }
 .cm-transpose { display: flex; gap: 4px; }
