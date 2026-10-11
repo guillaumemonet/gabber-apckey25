@@ -51,8 +51,8 @@ export async function renderSong(onlyTrack = null) {
   await prepareKickClips(state.tl.tracks, sr);   // mélodies de kick : tous les kicks calculés avant le rendu
   const e = new Engine(octx);
   await e.initMaster();
-  // Chaîne master du morceau ; un stem sort sans elle (pas de compression ni de limiteur : c'est au mixage final d'en décider).
-  e.setMaster(onlyTrack === null ? state.master : { comp: { ...state.master.comp, on: false }, limit: { ...state.master.limit, on: false } });
+  // Chaîne master du morceau ; un stem sort sans elle (ni compression, ni écrêteur, ni limiteur : c'est au mixage final d'en décider).
+  e.setMaster(onlyTrack === null ? state.master : Object.fromEntries(Object.entries(state.master).map(([g, v]) => [g, { ...v, on: false }])));
   for (const [id, p] of Object.entries(state.globals)) if (globalDef(id)) e.set(id, globalValue(id, p));
   e.setBpm(state.bpm);
   e.setVoice(presetById(state.preset).voice);

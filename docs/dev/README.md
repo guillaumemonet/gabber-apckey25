@@ -23,6 +23,8 @@ js/deck-worklet.js    lecteur à vitesse variable pour le scratch
 js/timeline.js        timeline : pistes, blocs, lecture
 js/trackfx.js         effets de piste (banque d'effets, PCF, 3D)
 js/mixer.js           table de mixage : voies, envois, effets d'insert
+js/dynamics.js        écrêteur et compression multibande façon OTT (master et inserts)
+js/ott-worklet.js     calcul du multibande dans le fil audio
 js/patch.js           câblage : boîtes à effets et câbles
 js/sidechain.js       sidechain (les kicks font baisser le synthé et les sons mélodiques)
 js/library.js         bibliothèque de sons (catégories)

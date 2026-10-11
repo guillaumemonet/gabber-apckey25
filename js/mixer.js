@@ -2,6 +2,7 @@
 // panoramique, fader, envois delay / reverb, muet / solo et vumètre, puis le master du moteur.
 import { t } from './i18n.js';
 import { distCurve, SHAPES } from './tr909.js';
+import { CLIP_PARAMS, OTT_PARAMS, buildClipper, buildOtt } from './dynamics.js';
 
 // Les niveaux de chaque son restent dans leur outil (volume des pads, niveaux de la 909).
 export const CHANNELS = ['pads', 'synth', 'tr', 'tl', 'acid', 'decks', 'osc'];   // TB-303, platines, synthé à oscillateurs : K5, K6, K7 sur les pages mixeur
@@ -15,6 +16,8 @@ export const FX_TYPES = {
   comp: { threshold: [-60, 0, 1, -24], ratio: [1, 20, 0.5, 4], makeup: [0, 24, 0.5, 6] },
   reverb: { size: [0.3, 6, 0.1, 2], mix: [0, 1, 0.01, 0.3] },
   eq: { low: [-12, 12, 0.5, 0], mid: [-12, 12, 0.5, 0], high: [-12, 12, 0.5, 0] },
+  ott: OTT_PARAMS,     // compression multibande façon OTT et écrêteur : les mêmes que sur le master (js/dynamics.js)
+  clip: CLIP_PARAMS,
 };
 // Effets d'insert valides (anciennes sauvegardes, fichiers) : type connu, réglages dans leurs bornes.
 export function cleanInsert(fx) {
@@ -55,7 +58,10 @@ export function fxParamLabel(type, key, v, p = {}) {
   if (type === 'comp' && key !== 'ratio') return `${v} dB`;
   if (type === 'comp') return `${v}:1`;
   if (type === 'reverb' && key === 'size') return `${v.toFixed(1)}s`;
-  if (type === 'eq') return `${v > 0 ? '+' : ''}${v} dB`;
+  if (type === 'eq' || (type === 'ott' && key === 'output')) return `${v > 0 ? '+' : ''}${v} dB`;
+  if (type === 'clip' && key !== 'soft') return `${v > 0 ? '+' : ''}${v} dB`;
+  if (type === 'ott' && key === 'time') return `×${(v / 100).toFixed(2)}`;
+  if (type === 'ott' || type === 'clip') return `${Math.round(v)}%`;
   return pct(v);
 }
 
@@ -129,6 +135,12 @@ export function buildInsert(ctx, fx) {
         mid.gain.setTargetAtTime(p.mid, now(), 0.02);
         hi.gain.setTargetAtTime(p.high, now(), 0.02);
       } };
+    }
+    case 'ott': case 'clip': {
+      const node = fx.type === 'ott' ? buildOtt(ctx) : buildClipper(ctx);
+      input.connect(node.input);
+      node.output.connect(output);
+      return { input, output, update: p => node.update(p) };
     }
     case 'reverb': {
       const conv = ctx.createConvolver();
