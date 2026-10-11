@@ -37,7 +37,7 @@ L'écran principal : la **bibliothèque de sons** à gauche, la **timeline** à 
 
 Faites évoluer un réglage d'une piste au fil du morceau : un filtre qui s'ouvre pendant la montée, une basse qui arrive en fondu, une reverb qui grandit sur le break…
 
-- Le bouton **A** de l'en-tête d'une piste ouvre sa **ligne d'automation**, sous ses blocs. Dans l'en-tête, choisissez le réglage : **volume**, **pano**, **passe-bas**, **passe-haut**, envois **delay** et **reverb** (un point • marque ceux qui ont une courbe).
+- Le bouton **A** de l'en-tête d'une piste ouvre sa **ligne d'automation**, sous ses blocs. Dans l'en-tête, choisissez le réglage : **volume**, **pano**, **passe-bas**, **passe-haut**, envois **delay** et **reverb**, **saturation** (un point • marque ceux qui ont une courbe).
 - **Clic** dans la ligne : un point (calé au quart de temps, Maj = libre). **Glisser** un point : le déplacer. **Clic droit** : le supprimer. La corbeille efface toute la courbe du réglage.
 - Entre deux points, le réglage suit une ligne droite ; avant le premier et après le dernier, il garde leur valeur. Sans courbe, la ligne pointillée montre la valeur du potentiomètre.
 - **Pendant la lecture**, la courbe remplace le potentiomètre de la piste ; à l'arrêt, le potentiomètre reprend la main. Une courbe modifiée pendant la lecture s'entend tout de suite.

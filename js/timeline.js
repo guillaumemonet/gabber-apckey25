@@ -11,7 +11,6 @@
 import { TrackChain, cleanFx } from './trackfx.js';
 import { clipEvents, monoLine } from './notes.js';
 import { buildInsert, cleanInsert } from './mixer.js';
-import { distCurve } from './tr909.js';
 
 export const TL_TRACKS = 16;        // pistes au départ
 export const MIN_TRACKS = 4;
@@ -31,8 +30,18 @@ export const MAX_INSERTS = 4;
 export const AUTO_PARAMS = {
   vol: { min: 0, max: 1.5, def: 1 }, pan: { min: -1, max: 1, def: 0 },
   lp: { min: 200, max: 20000, def: 20000, exp: true }, hp: { min: 20, max: 2000, def: 20, exp: true },
-  dly: { min: 0, max: 1, def: 0 }, rev: { min: 0, max: 1, def: 0 },
+  dly: { min: 0, max: 1, def: 0 }, rev: { min: 0, max: 1, def: 0 }, drive: { min: 0, max: 1, def: 0, steps: true },
 };
+// Saturation « tube » d'une piste (celle de la 909), faite uniquement de réglages audio pour pouvoir être automatisée :
+// distCurve(a, 'tube') = (T(k·x) + 0,1·a·x²) / crête, k = 1 + 60·a². T est une courbe fixe lue à travers un gain
+// d'entrée k / 61, le terme x² passe par une deuxième courbe fixe ; sous 2 %, fondu avec le son sec (0 = transparent).
+const TUBE_K = 61;
+const TUBE_CURVE = Float32Array.from({ length: 8193 }, (_, i) => { const y = i / 4096 - 1; return y >= 0 ? Math.tanh(TUBE_K * y) : Math.tanh(TUBE_K * 0.45 * y) * 0.8; });
+const SQUARE_CURVE = Float32Array.from({ length: 1025 }, (_, i) => (i / 512 - 1) ** 2);
+export function driveGains(a) {
+  const k = 1 + 60 * a * a, w = Math.min(1, a / 0.02), trim = 1 - a * 0.35;   // trim : la saturation monte le niveau
+  return { pre: k / TUBE_K, post: (w * trim) / (Math.tanh(k) + 0.1 * a), sq: 0.1 * a, dry: (1 - w) * trim };
+}
 export const autoValue = (id, v) => { const d = AUTO_PARAMS[id]; return d.exp ? d.min * Math.pow(d.max / d.min, v) : d.min + (d.max - d.min) * v; };
 export const autoPos = (id, x) => { const d = AUTO_PARAMS[id]; return d.exp ? Math.log(x / d.min) / Math.log(d.max / d.min) : (x - d.min) / (d.max - d.min); };
 // Position (0..1) d'une courbe au temps `b`.
@@ -385,8 +394,11 @@ export class Timeline {
 
   audible(ti) { return trackAudible(this.st.tracks, ti, this.st.buses ?? []); }
 
-  // Réglage audio d'une tranche piloté par l'automation `id`.
-  autoNode(s, id) { return { vol: s.gain.gain, pan: s.pan.pan, lp: s.lp.frequency, hp: s.hp.frequency, dly: s.dly.gain, rev: s.rev.gain }[id]; }
+  // Réglages audio d'une tranche pilotés par l'automation `id` : [paramètre, valeur du réglage -> valeur du paramètre].
+  autoNodes(s, id) {
+    if (id === 'drive') return ['pre', 'post', 'sq', 'dry'].map(k => [s.drive[k].gain, a => driveGains(a)[k]]);
+    return [[{ vol: s.gain.gain, pan: s.pan.pan, lp: s.lp.frequency, hp: s.hp.frequency, dly: s.dly.gain, rev: s.rev.gain }[id], v => v]];
+  }
   // Courbes de la piste `ti` programmées sur la tranche `s`, du temps `from` (joué à l'instant `at`) jusqu'à `until`
   // (cycle `c` : { time, beat, bd }). Les réglages fins (filtres) sont échantillonnés au quart de temps.
   automate(s, ti, c, from, at, until) {
@@ -395,13 +407,17 @@ export class Timeline {
     const time = b => c.time + (b - c.beat) * c.bd;
     for (const [id, pts] of Object.entries(tr.auto)) {
       if (!pts.length) continue;
-      const param = this.autoNode(s, id);
-      param.cancelScheduledValues(at);
-      param.setValueAtTime(autoValue(id, autoAt(pts, from)), at);
+      if (id === 'drive') this.wireDrive(s, true);
       const marks = new Set(pts.map(p => p.b).filter(b => b > from && b < until));
-      if (AUTO_PARAMS[id].exp) for (let b = Math.ceil(from * 4) / 4; b < until; b += 0.25) if (b > from) marks.add(b);
-      for (const b of [...marks].sort((x, y) => x - y)) param.linearRampToValueAtTime(autoValue(id, autoAt(pts, b)), time(b));
-      if (Number.isFinite(until)) param.linearRampToValueAtTime(autoValue(id, autoAt(pts, until)), time(until));
+      if (AUTO_PARAMS[id].exp || AUTO_PARAMS[id].steps) for (let b = Math.ceil(from * 4) / 4, end = Math.min(until, pts.at(-1).b); b < end; b += 0.25) if (b > from) marks.add(b);   // après le dernier point, plus rien ne bouge
+      const beats = [...marks].sort((x, y) => x - y);
+      if (Number.isFinite(until)) beats.push(until);
+      for (const [param, map] of this.autoNodes(s, id)) {
+        const value = b => map(autoValue(id, autoAt(pts, b)));
+        param.cancelScheduledValues(at);
+        param.setValueAtTime(value(from), at);
+        for (const b of beats) param.linearRampToValueAtTime(value(b), time(b));
+      }
     }
     s.automated = true;
   }
@@ -421,7 +437,7 @@ export class Timeline {
   // Fin de lecture : les réglages reprennent la valeur des potentiomètres de la piste.
   resetAutomation(s, ti) {
     if (!s.automated) return;
-    for (const id of Object.keys(AUTO_PARAMS)) this.autoNode(s, id).cancelScheduledValues(0);
+    for (const id of Object.keys(AUTO_PARAMS)) for (const [param] of this.autoNodes(s, id)) param.cancelScheduledValues(0);
     s.automated = false;
     this.applyStrip(s, this.st.tracks[ti], true);
   }
@@ -435,13 +451,19 @@ export class Timeline {
     let s = m.get(dest);
     if (!s) {
       const c = this.ctx;
-      s = { input: c.createGain(), hp: c.createBiquadFilter(), lp: c.createBiquadFilter(), shaper: c.createWaveShaper(), dtrim: c.createGain(),
+      s = { input: c.createGain(), hp: c.createBiquadFilter(), lp: c.createBiquadFilter(),
         gain: c.createGain(), mute: c.createGain(), pan: c.createStereoPanner(), dly: c.createGain(), rev: c.createGain(), inserts: [] };
-      s.shaper.oversample = '2x';
       s.hp.type = 'highpass';
       s.lp.type = 'lowpass';
       s.hp.Q.value = s.lp.Q.value = 0.707;
-      s.hp.connect(s.lp).connect(s.shaper).connect(s.dtrim).connect(s.gain).connect(s.mute).connect(s.pan);
+      // Saturation : sec -> volume, et (branché seulement si elle sert) gain d'entrée -> courbe -> gain de sortie.
+      s.drive = { dry: c.createGain(), pre: c.createGain(), shaper: c.createWaveShaper(), sqShaper: c.createWaveShaper(), sq: c.createGain(), post: c.createGain(), on: false };
+      s.drive.shaper.curve = TUBE_CURVE;
+      s.drive.shaper.oversample = '2x';
+      s.drive.sqShaper.curve = SQUARE_CURVE;
+      s.drive.pre.connect(s.drive.shaper).connect(s.drive.post).connect(s.gain);
+      s.drive.sqShaper.connect(s.drive.sq).connect(s.drive.post);
+      s.hp.connect(s.lp).connect(s.drive.dry).connect(s.gain).connect(s.mute).connect(s.pan);
       s.dest = dest;
       s.pan.connect(this.trackOut(ti, dest));
       // Envois pris avant le panoramique : la reverb et le delay restent larges même pour une piste calée d'un côté.
@@ -549,17 +571,26 @@ export class Timeline {
     if (!tr) return;
     const t = this.ctx.currentTime;
     const auto = s.automated && this.playing ? tr.auto ?? {} : {};
-    const set = (p, v) => { if (Object.keys(auto).some(id => this.autoNode(s, id) === p)) return; if (now) p.setValueAtTime(v, t); else p.setTargetAtTime(v, t, 0.02); };
+    const driven = new Set(Object.keys(auto).flatMap(id => this.autoNodes(s, id).map(([p]) => p)));
+    const set = (p, v) => { if (driven.has(p)) return; if (now) p.setValueAtTime(v, t); else p.setTargetAtTime(v, t, 0.02); };
+    this.wireDrive(s, (tr.drive ?? 0) > 0 || !!auto.drive?.length);
     set(s.hp.frequency, tr.hp ?? 20);
     set(s.lp.frequency, tr.lp ?? 20000);
     set(s.gain.gain, tr.vol ?? 1);
     set(s.pan.pan, tr.pan ?? 0);
     set(s.dly.gain, tr.dly ?? 0);
     set(s.rev.gain, tr.rev ?? 0);
-    // Saturation « tube » (celle de la 909) : transparente à 0, niveau compensé quand elle monte.
-    const drive = tr.drive ?? 0;
-    s.shaper.curve = drive > 0.005 ? distCurve(drive, 'tube') : null;
-    set(s.dtrim.gain, 1 - drive * 0.35);
+    // Saturation « tube » : transparente à 0, niveau compensé quand elle monte.
+    const g = driveGains(tr.drive ?? 0);
+    for (const k of ['pre', 'post', 'sq', 'dry']) set(s.drive[k].gain, g[k]);
+  }
+  // Côté saturé branché seulement quand la saturation sert (potentiomètre ou automation) : il coûte du calcul.
+  wireDrive(s, on) {
+    const d = s.drive;
+    if (d.on === on) return;
+    d.on = on;
+    if (on) { s.lp.connect(d.pre); s.lp.connect(d.sqShaper); }
+    else { try { s.lp.disconnect(d.pre); s.lp.disconnect(d.sqShaper); } catch { /* déjà débranché */ } }
   }
 
   // Potentiomètres d'une piste tournés (ou « Annuler ») : le son suit tout de suite.

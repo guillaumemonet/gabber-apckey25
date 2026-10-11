@@ -37,7 +37,7 @@ The main screen: the **sound library** on the left, the **timeline** on the righ
 
 Make a track setting move along the song: a filter opening during the build-up, a bass fading in, a reverb growing over the break…
 
-- The **A** button in a track header opens its **automation lane**, under its blocks. In the header, choose the setting: **volume**, **pan**, **low-pass**, **high-pass**, **delay** and **reverb** sends (a dot • marks those with a curve).
+- The **A** button in a track header opens its **automation lane**, under its blocks. In the header, choose the setting: **volume**, **pan**, **low-pass**, **high-pass**, **delay** and **reverb** sends, **drive** (a dot • marks those with a curve).
 - **Click** in the lane: a point (snapped to the quarter beat, Shift = free). **Drag** a point: move it. **Right-click**: delete it. The bin clears the whole curve of the setting.
 - Between two points the setting follows a straight line; before the first and after the last it keeps their value. With no curve, the dotted line shows the knob value.
 - **While playing**, the curve replaces the track knob; when stopped, the knob takes over again. A curve changed while playing is heard at once.

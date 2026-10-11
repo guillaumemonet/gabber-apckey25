@@ -71,4 +71,25 @@ export default async function (t, A) {
   sel.value = 'vol'; sel.dispatchEvent(new Event('change'));
   head().querySelector('.tl-auto-ctl button').click();
   t.ok(!S.tl.tracks[0].auto.vol, 'Effacer : plus de courbe de volume');
+
+  // Saturation : automatisable comme les autres potentiomètres de la piste.
+  t.ok([...sel.options].some(o => o.value === 'drive'), 'la saturation est dans la liste des réglages');
+  const clean = await A.renderSong();
+  S.tl.tracks[0].auto.drive = [{ b: 0, v: 0 }, { b: 4, v: 0 }, { b: 8, v: 1 }];
+  const dirty = await A.renderSong();
+  const diff = (a, b) => { let s = 0, n = 0; for (let c = 0; c < 2; c++) for (let i = Math.floor(a * sr); i < Math.floor(b * sr); i += 4) { s += (dirty[c][i] - clean[c][i]) ** 2; n++; } return Math.sqrt(s / n); };
+  const before = diff(0.1, 3.5 * bd), after = diff(9 * bd, 12 * bd);
+  t.ok(before < 0.002 && after > 0.02, 'export : le son reste propre puis sature avec la courbe', [before, after]);
+  S.tl.tracks[0].drive = 0.3;
+  S.tl.playhead = 10;
+  t.$('#tl-play').click();
+  await t.wait(400);
+  const d0 = [...TL.strips.get(0).values()][0];
+  t.near(d0.drive.post.gain.value, A.driveGains(1).post, 0.02, 'en lecture, la saturation suit la courbe (à fond), pas le potentiomètre');
+  t.$('#tl-play').click();
+  await t.wait(200);
+  t.near(d0.drive.post.gain.value, A.driveGains(0.3).post, 0.02, 'à l’arrêt, elle revient au potentiomètre');
+  S.tl.tracks[0].drive = 0;
+  S.tl.tracks[0].auto = {};
+  S.tl.playhead = 0;
 }
