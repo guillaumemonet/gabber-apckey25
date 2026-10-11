@@ -135,7 +135,7 @@ export const HELP = {
         <li><b>All to master</b> wires every tool straight to the master again.</li>
       </ul>`,
     piano: `
-      <p>The keyboard synth: 40 presets in 11 families, 8 expression knobs, chord mode and arpeggiator.</p>
+      <p>The keyboard synth: 41 presets in 11 families, 8 expression knobs, chord mode and arpeggiator.</p>
       <ul>
         <li><b>Families and presets</b>: click, or on the APC <b>Shift + white key</b> = preset of the family, <b>Shift + C# / D#</b> = previous / next family.</li>
         <li><b>8 knobs</b> adapted to the family (brightness, resonance, attack, release, width, vibrato, ensemble or drive, glide, detune, reverb). Double-click = back to the preset's value.</li>
@@ -166,7 +166,7 @@ export const HELP = {
         <li><b>Drone</b>: the key note held for the whole length (and the fifth), on its own track.</li>
         <li><b>New tune</b> draws another tune and plays it; <b>Listen</b> plays all the voices (click again to stop); <b>Generate</b> lays one block per voice (melody, second voice, drone) from the playhead bar, on free tracks from the armed track.</li>
         <li>The piano roll under the settings shows the tune (one pass): edit it before laying it; the second voice and the drone follow. <b>Recompute</b> starts again from the settings.</li>
-        <li>The sounds are also in the synth, family <b>Breizh</b> (bombarde, biniou kozh, bagpipe, pipe band, drone).</li>
+        <li>The sounds are also in the synth, family <b>Breizh</b> (bombarde, bombarde section, biniou kozh, bagpipe, pipe band, drone). Each piper breathes and is never perfectly in tune or steady; in the sections, every player starts a little apart.</li>
       </ul>`,
     buses: `
       <p>Four buses (A to D) group tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…</p>
@@ -371,7 +371,7 @@ export const HELP = {
         <li><b>Tout sur le master</b> recâble chaque outil directement sur le master.</li>
       </ul>`,
     piano: `
-      <p>Le synthé du clavier : 40 presets en 11 familles, 8 potentiomètres d'expression, mode accords et arpégiateur.</p>
+      <p>Le synthé du clavier : 41 presets en 11 familles, 8 potentiomètres d'expression, mode accords et arpégiateur.</p>
       <ul>
         <li><b>Familles et presets</b> : clic, ou sur l'APC <b>Maj + touche blanche</b> = preset de la famille, <b>Maj + do# / ré#</b> = famille précédente / suivante.</li>
         <li><b>8 potentiomètres</b> adaptés à la famille (brillance, résonance, attaque, relâche, largeur, vibrato, ensemble ou saturation, glissé, désaccord, réverb). Double-clic = retour à la valeur du preset.</li>
@@ -402,7 +402,7 @@ export const HELP = {
         <li><b>Bourdon</b> : la tonique tenue sur toute la durée (et la quinte), sur sa propre piste.</li>
         <li><b>Nouvel air</b> tire un autre air et le fait écouter ; <b>Écouter</b> joue toutes les voix (un deuxième clic arrête) ; <b>Générer</b> pose un bloc par voix (mélodie, deuxième voix, bourdon) à partir de la mesure de la tête de lecture, sur des pistes libres depuis la piste armée.</li>
         <li>Le piano roll sous les réglages montre l'air (un passage) : modifiez-le avant de le poser ; la deuxième voix et le bourdon suivent. <b>Recalculer</b> repart des réglages.</li>
-        <li>Les sons sont aussi dans le synthé, famille <b>Breizh</b> (bombarde, biniou kozh, cornemuse, bagad, bourdon).</li>
+        <li>Les sons sont aussi dans le synthé, famille <b>Breizh</b> (bombarde, pupitre de bombardes, biniou kozh, cornemuse, bagad, bourdon). Chaque sonneur souffle et n'est jamais parfaitement juste ni stable ; dans les pupitres, chacun attaque un peu à part.</li>
       </ul>`,
     buses: `
       <p>Quatre bus (A à D) regroupent des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…</p>

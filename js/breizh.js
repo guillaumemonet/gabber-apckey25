@@ -18,7 +18,7 @@ export const BZ_INSTRUMENTS = {
   biniou: { lead: 'biniou', low: 74 },
   cornemuse: { lead: 'cornemuse', low: 64 },
   couple: { lead: 'bombarde', low: 62, breathe: true, second: { preset: 'biniou', shift: 12 } },
-  bagad: { lead: 'bagad', low: 64, second: { preset: 'bombarde', shift: -12 } },
+  bagad: { lead: 'bagad', low: 64, second: { preset: 'bombardes', shift: -12 } },
 };
 
 // Cellules rythmiques d'une mesure de 4 temps ([début, longueur] en temps) ; `end` : mesure de fin de phrase (note longue).

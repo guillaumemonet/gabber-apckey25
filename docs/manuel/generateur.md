@@ -45,7 +45,7 @@ La fenêtre **Breizh generator** (groupe Outils) pose un air à la manière des 
 
 - **Instrument** : bombarde (anche double, son puissant et nasillard), biniou kozh (petite cornemuse bretonne, très aiguë), cornemuse, **couple de sonneurs** ou **bagad**.
   - Couple : la bombarde et le biniou jouent ensemble, le biniou à l'octave au-dessus ; la bombarde respire à la fin de chaque phrase de deux mesures pendant que le biniou continue.
-  - Bagad : un pupitre de cornemuses (plusieurs chalumeaux un peu désaccordés), les bombardes à l'octave au-dessous.
+  - Bagad : un pupitre de cornemuses (neuf sonneurs, chacun un peu désaccordé), le pupitre de bombardes à l'octave au-dessous.
 - **Danse** : le rythme de l'air.
   - **An dro** : croches régulières.
   - **Gavotte** : syncopée.
@@ -59,7 +59,7 @@ La fenêtre **Breizh generator** (groupe Outils) pose un air à la manière des 
 
 **Générer** pose un bloc par voix (mélodie, deuxième voix, bourdon) à partir de la mesure de la tête de lecture, sur des pistes libres depuis la piste armée. Le brouillon affiché est l'air de la mélodie : retouchez-le, la deuxième voix et le bourdon suivent.
 
-Les sons existent aussi dans le synthé, famille **Breizh** : bombarde, biniou kozh, cornemuse, bagad (pupitre) et bourdon. Ils sont synthétisés (formes d'onde d'anche et résonances du pavillon), sans échantillon.
+Les sons existent aussi dans le synthé, famille **Breizh** : bombarde, pupitre de bombardes, biniou kozh, cornemuse, bagad (pupitre de cornemuses) et bourdon. Ils sont synthétisés, sans échantillon : formes d'onde d'anche, résonances du pavillon, souffle, et une hauteur qui bouge un peu comme celle d'un vrai sonneur. Dans les pupitres (bagad, bombardes, bourdons), chaque sonneur est un peu désaccordé et attaque un peu à part des autres.
 
 ---
 

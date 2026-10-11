@@ -219,7 +219,8 @@ export class Timeline {
       const live = this.audible(ti);
       for (const clip of track.clips) {
         if (clip.type === 'note') {
-          // Chaque note du bloc (motif répété) ; une note à moitié passée n'est pas rejouée.
+          // Chaque note du bloc (motif répété) ; une note déjà commencée (lecture partie du milieu d'un bourdon,
+          // d'une note tenue) part tout de suite pour le temps qui lui reste.
           // Synthé à oscillateurs (clip.osc) ou synthé du clavier (preset du bloc, sinon celui en cours).
           const osc = clip.osc ? this.getOsc(clip) : null;
           const syn = osc?.synth ?? this.engine;
@@ -227,15 +228,16 @@ export class Timeline {
           const dest = osc ? osc.synth.out : this.engine.synthIn;
           const events = osc && osc.synth.isMono(osc.values) ? monoLine(clipEvents(clip)) : clipEvents(clip);
           for (const n of events) {
-            const at = clip.start + n.t;
-            if (at < beat - 1e-6 || at >= len) continue;
+            const at0 = clip.start + n.t;
+            if (at0 >= len || (at0 < beat - 1e-6 && at0 + n.len <= beat + 0.05)) continue;
+            const at = Math.max(at0, beat), left = n.len - (at - at0);
             const when = time + (at - beat) * bd;
             const key = `${this.keyPrefix}${clip.id}:${n.i}`;
             const out = this.trackIn(ti, dest);
             jobs.push({ time: when, run: () => {
               this.synths.add(syn);
               syn.noteOn(n.note, Math.min(1, n.vel * (clip.gain ?? 1)), when, key, patch, out, n.from);
-              this.offs.push({ note: n.note, key, time: when + n.len * bd - 0.005, syn });
+              this.offs.push({ note: n.note, key, time: when + left * bd - 0.005, syn });
               this.offsDirty = true;
             } });
           }

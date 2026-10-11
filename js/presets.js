@@ -1,10 +1,11 @@
 // Presets du synthé joué au clavier, rangés par famille (nom affiché : t(`preset.${id}`)).
 // `values` = potentiomètres d'expression (voir PAGES.synth), `voice` = caractère du son :
-//   layers : couches d'oscillateurs { osc ('sawtooth', 'square', 'pulse', 'reed', 'chanter'…), voices (unisson),
+//   layers : couches d'oscillateurs { osc ('sawtooth', 'square', 'pulse', 'reed', 'chanter', 'bombarde', 'biniou', 'drone'…), voices (unisson),
 //            spread (centièmes à « Désaccord » = 12), octave (demi-tons), level,
-//            formant ('strings' | 'bombarde' | 'pipe' | 'drone' | 'a' | 'o') }
+//            formant ('strings' | 'bombarde' | 'biniou' | 'pipe' | 'drone' | 'a' | 'o') }
 //   fenv (enveloppe du filtre), decay, sustain, sub, bend, bendTime, vibRate, vibDelay, vibRange (demi-tons au max),
-//   filterType, lfoRate / lfoDepth (LFO sur la coupure), mono, glide, octave.
+//   filterType, lfoRate / lfoDepth (LFO sur la coupure), mono, glide, octave,
+//   velSens, breath, jitter, drift, stagger (sons acoustiques, voir DEFAULT_VOICE dans js/audio.js).
 // Sur l'APC : Maj + touche blanche = preset de la famille, Maj + do# / ré# = famille précédente / suivante.
 import { t } from './i18n.js';
 
@@ -18,7 +19,6 @@ const sq = (n, o) => L('square', n, o);
 const tri = (n, o) => L('triangle', n, o);
 const sine = (n, o) => L('sine', n, o);
 const pulse = (n, o) => L('pulse', n, o);
-const reed = (n, o) => L('reed', n, o);
 const chanter = (n, o) => L('chanter', n, o);
 
 export const PRESETS = [
@@ -137,21 +137,29 @@ export const PRESETS = [
     voice: { layers: [sine(1), sine(1, { octave: 12, level: 0.7 }), sine(1, { octave: 19, level: 0.4 }), sine(1, { octave: 24, level: 0.3 })], fenv: 0, sustain: 1, vibRate: 6.5, vibDelay: 0 } },
 
   // --- Breizh (sonneurs bretons ; le Breizh generator les utilise) ---
+  // Un vrai sonneur n'est jamais parfaitement juste ni parfaitement stable : souffle, grain (jitter) et dérive (drift).
+  // Les cornemuses n'ont pas de nuances (le sac souffle toujours pareil) : velSens 0.
   { id: 'bombarde', family: 'breizh',
-    values: { cutoff: 7000, reso: 0.8, attack: 0.012, release: 0.08, drive: 0.25, glide: 0.02, detune: 4, rSend: 0.3, vibrato: 0.12 },
-    voice: { layers: [reed(2, { spread: 4, formant: 'bombarde' })], bend: -0.4, bendTime: 0.04, fenv: 0.15, decay: 0.2, sustain: 0.9, vibRate: 5.2, vibDelay: 0.35, vibRange: 0.3 } },
+    values: { cutoff: 6500, reso: 0.8, attack: 0.02, release: 0.07, drive: 0.35, glide: 0.02, detune: 12, rSend: 0.3, vibrato: 0.1 },
+    voice: { layers: [L('bombarde', 1, { formant: 'bombarde' })], bend: -0.7, bendTime: 0.05, fenv: 0.25, decay: 0.25, sustain: 0.85,
+      breath: 0.1, jitter: 7, drift: 5, vibRate: 5, vibDelay: 0.4, vibRange: 0.3 } },
+  { id: 'bombardes', family: 'breizh',
+    values: { cutoff: 6500, reso: 0.8, attack: 0.025, release: 0.1, drive: 0.3, glide: 0.02, detune: 12, width: 0.9, rSend: 0.5 },
+    voice: { layers: [L('bombarde', 5, { spread: 10, formant: 'bombarde' })], bend: -0.5, bendTime: 0.05, fenv: 0.2, decay: 0.25, sustain: 0.85,
+      breath: 0.06, jitter: 5, drift: 7, stagger: 0.04 } },
   { id: 'biniou', family: 'breizh',
-    values: { cutoff: 9000, reso: 0.7, attack: 0.006, release: 0.06, drive: 0.2, glide: 0.02, detune: 3, rSend: 0.3 },
-    voice: { layers: [chanter(2, { spread: 3, formant: 'pipe' })], bend: -0.3, bendTime: 0.02, fenv: 0.1, decay: 0.2, sustain: 0.95 } },
+    values: { cutoff: 11000, reso: 0.7, attack: 0.004, release: 0.04, drive: 0.15, glide: 0.01, detune: 12, rSend: 0.25 },
+    voice: { layers: [L('biniou', 1, { formant: 'biniou' })], fenv: 0, decay: 0.2, sustain: 1, velSens: 0, breath: 0.02, jitter: 4, drift: 4 } },
   { id: 'cornemuse', family: 'breizh',
-    values: { cutoff: 8000, reso: 0.7, attack: 0.006, release: 0.05, drive: 0.15, glide: 0.02, detune: 3, rSend: 0.35 },
-    voice: { layers: [chanter(1, { formant: 'pipe' }), reed(1, { octave: 12, level: 0.25 })], fenv: 0.05, decay: 0.3, sustain: 1 } },
+    values: { cutoff: 8500, reso: 0.7, attack: 0.005, release: 0.05, drive: 0.15, glide: 0.01, detune: 12, rSend: 0.35 },
+    voice: { layers: [chanter(1, { formant: 'pipe' })], fenv: 0, decay: 0.3, sustain: 1, velSens: 0, breath: 0.02, jitter: 3, drift: 4 } },
   { id: 'bagad', family: 'breizh',
-    values: { cutoff: 7500, reso: 0.7, attack: 0.01, release: 0.08, drive: 0.15, glide: 0.02, detune: 8, rSend: 0.45 },
-    voice: { layers: [chanter(4, { spread: 7, formant: 'pipe' })], fenv: 0.05, decay: 0.3, sustain: 1 } },
+    values: { cutoff: 8000, reso: 0.7, attack: 0.01, release: 0.1, drive: 0.15, glide: 0.01, detune: 12, width: 1, rSend: 0.55 },
+    voice: { layers: [chanter(9, { spread: 9, formant: 'pipe' })], fenv: 0, decay: 0.3, sustain: 1, velSens: 0, jitter: 3, drift: 7, stagger: 0.04 } },
   { id: 'bourdon', family: 'breizh',
-    values: { cutoff: 2500, reso: 0.7, attack: 0.25, release: 0.4, drive: 0.1, glide: 0.02, detune: 3, rSend: 0.3 },
-    voice: { layers: [chanter(2, { spread: 3, formant: 'drone' }), reed(1, { octave: -12, level: 0.5 })], fenv: 0, decay: 1, sustain: 1 } },
+    values: { cutoff: 3000, reso: 0.7, attack: 0.25, release: 0.4, drive: 0.1, glide: 0.02, detune: 12, width: 0.7, rSend: 0.35 },
+    voice: { layers: [L('drone', 3, { spread: 4, formant: 'drone' }), L('drone', 2, { spread: 3, octave: -12, level: 0.6 })],
+      fenv: 0, decay: 1, sustain: 1, velSens: 0, jitter: 2, drift: 3, stagger: 0.15 } },
 
   // --- Effets ---
   { id: 'kick', family: 'fx',

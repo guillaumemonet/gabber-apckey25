@@ -45,7 +45,7 @@ The **Breizh generator** window (Tools group) lays down a tune in the style of B
 
 - **Instrument**: bombarde (double reed, loud and nasal), biniou kozh (small, very high Breton bagpipe), bagpipe, **pair of pipers** or **bagad**.
   - Pair: the bombarde and the biniou play together, the biniou an octave higher; the bombarde breathes at the end of each two-bar phrase while the biniou goes on.
-  - Bagad: a section of bagpipes (several slightly detuned chanters), the bombardes an octave lower.
+  - Bagad: a section of bagpipes (nine pipers, each slightly out of tune), the bombarde section an octave lower.
 - **Dance**: the rhythm of the tune.
   - **An dro**: steady eighth notes.
   - **Gavotte**: syncopated.
@@ -59,7 +59,7 @@ The **Breizh generator** window (Tools group) lays down a tune in the style of B
 
 **Generate** lays one block per voice (melody, second voice, drone) from the playhead bar, on free tracks from the armed track. The draft shown is the melody: edit it, the second voice and the drone follow.
 
-The sounds are also in the synth, family **Breizh**: bombarde, biniou kozh, bagpipe, pipe band and drone. They are synthesized (reed waveforms and bell resonances), with no samples.
+The sounds are also in the synth, family **Breizh**: bombarde, bombarde section, biniou kozh, bagpipe, pipe band (bagpipe section) and drone. They are synthesized, with no samples: reed waveforms, bell resonances, breath, and a pitch that moves a little like a real piper's. In the sections (pipe band, bombardes, drones), each player is slightly out of tune and starts a little apart from the others.
 
 ---
 

@@ -69,8 +69,18 @@ export default async function (t, A) {
   t.$('#tl-play').click();
   t.ok(await t.until(() => E.voices.size === 0, 4000), 'à l’arrêt, plus aucune voix');
 
+  // Lecture partie du milieu des blocs : le bourdon tenu et les notes en cours partent tout de suite.
+  S.tl.playhead = 50.3;
+  t.$('#tl-play').click();
+  await t.wait(250);
+  const drone = clips[2];
+  t.eq([...E.voices.keys()].filter(k => String(k).includes(`:${drone.id}:`)).length, 3, 'le bourdon sonne quand la lecture part du milieu');
+  t.$('#tl-play').click();
+  t.ok(await t.until(() => E.voices.size === 0, 4000), 'puis s’arrête');
+  S.tl.playhead = 0;
+
   // Sons dans le synthé (famille Breizh).
-  t.eq(A.PRESETS.filter(p => p.family === 'breizh').map(p => p.id), ['bombarde', 'biniou', 'cornemuse', 'bagad', 'bourdon'], 'famille Breizh du synthé');
+  t.eq(A.PRESETS.filter(p => p.family === 'breizh').map(p => p.id), ['bombarde', 'bombardes', 'biniou', 'cornemuse', 'bagad', 'bourdon'], 'famille Breizh du synthé');
   t.ok(A.engine.waves.reed && A.engine.waves.chanter, 'ondes d’anche');
   A.stopBreizhPreview();
 }

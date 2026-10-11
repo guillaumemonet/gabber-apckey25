@@ -28,6 +28,11 @@ export const DEFAULT_VOICE = {
   layers: null,       // couches d'oscillateurs (voir js/presets.js) ; null = scies en unisson
   fenv: 0.4,          // enveloppe du filtre
   vibRange: 0.5,      // vibrato maximal (demi-tons) quand le potentiomètre est au bout
+  velSens: 1,         // effet de la vélocité sur le niveau et la brillance (0 : cornemuse, toujours à fond)
+  breath: 0,          // souffle (bruit) sous le son, avec une bouffée à l'attaque
+  jitter: 0,          // instabilité rapide de la hauteur (centièmes), le grain d'une anche
+  drift: 0,           // dérive lente et propre à chaque oscillateur (centièmes) : des sonneurs jamais tout à fait justes
+  stagger: 0,         // départ décalé de chaque oscillateur (secondes) : plusieurs sonneurs qui n'attaquent pas ensemble
 };
 
 function makeImpulse(ctx, seconds) {
@@ -200,7 +205,28 @@ export class Engine {
       pulse: this.pulseWave,
       reed: spectrum(n => (n === 1 ? 0.45 : Math.pow(n, -0.75)) * (n % 2 ? 1 : 0.85)),
       chanter: spectrum(n => (n === 1 ? 0.7 : Math.pow(n, -0.55)) * (n <= 6 ? 1.2 : 1)),
+      // Bombarde (perce conique, anche double) : fondamentale discrète, harmoniques 2 à 5 très fortes, nasillard.
+      bombarde: spectrum(n => (n === 1 ? 0.4 : n <= 5 ? 0.95 * Math.pow(n, -0.25) : Math.pow(n, -0.75))),
+      // Biniou kozh : perçant, harmoniques impaires dominantes, presque pas de fondamentale.
+      biniou: spectrum(n => (n === 1 ? 0.35 : (n % 2 ? 1 : 0.35) * Math.pow(n, -0.45))),
+      // Bourdon (perce cylindrique) : harmoniques impaires, comme une clarinette qui bourdonne.
+      drone: spectrum(n => (n % 2 ? 1 : 0.12) * Math.pow(n, -0.85)),
     };
+    // Bruits des sons acoustiques : souffle (bruit blanc) et bruit lissé (±1, 25 valeurs par seconde, en boucle)
+    // qui fait bouger la hauteur, lu vite pour le grain de l'anche, lentement pour la dérive d'un sonneur.
+    const sr = ctx.sampleRate;
+    this.breathBuf = ctx.createBuffer(1, sr * 2, sr);
+    const white = this.breathBuf.getChannelData(0);
+    for (let i = 0; i < white.length; i++) white[i] = Math.random() * 2 - 1;
+    const points = Array.from({ length: 100 }, () => Math.random() * 2 - 1);
+    this.wobbleBuf = ctx.createBuffer(1, sr * 4, sr);
+    const smooth = this.wobbleBuf.getChannelData(0);
+    const step = smooth.length / points.length;
+    for (let i = 0; i < smooth.length; i++) {
+      const k = Math.floor(i / step), x = (i / step) - k;
+      const a = points[k], b = points[(k + 1) % points.length];
+      smooth[i] = a + (b - a) * (1 - Math.cos(Math.PI * x)) / 2;
+    }
     this.synthBus.connect(this.synthDSend).connect(this.delayIn);
     this.synthBus.connect(this.synthRSend).connect(this.reverbIn);
 
@@ -313,8 +339,9 @@ export class Engine {
     const { ctx } = this;
     const bodies = {
       strings: [[[350, 4, 1], [1100, 5, 1.2], [2700, 3, 1.5]], 6000, -4],
-      bombarde: [[[350, -6, 0.9], [1000, 7, 1.3], [2600, 6, 1.8]], 7000, -6],
-      pipe: [[[500, -5, 0.8], [1500, 6, 1.2], [3200, 5, 1.6]], 8000, -4],
+      bombarde: [[[300, -5, 0.8], [1150, 9, 1.4], [2400, 5, 2], [4200, -4, 1]], 6500, -8],
+      biniou: [[[600, -9, 0.7], [2800, 9, 1.5], [5200, 4, 2]], 9500, -3],
+      pipe: [[[450, -5, 0.8], [1700, 6, 1.2], [3500, 6, 1.6]], 8000, -4],
       drone: [[[300, 4, 1], [900, 3, 1.2]], 3000, -8],
     };
     if (bodies[kind]) {
@@ -348,6 +375,19 @@ export class Engine {
     return sum;
   }
 
+  // Bruit lissé qui module un paramètre (detune) : `rate` = vitesse de lecture, `depth` = amplitude.
+  wobble(param, rate, depth, t, srcs) {
+    const src = this.ctx.createBufferSource();
+    src.buffer = this.wobbleBuf;
+    src.loop = true;
+    src.playbackRate.value = rate;
+    const g = this.ctx.createGain();
+    g.gain.value = depth;
+    src.connect(g).connect(param);
+    src.start(t, Math.random() * this.wobbleBuf.duration);
+    srcs.push(src);
+  }
+
   // `when` : instant (horloge audio) de départ, pour les notes programmées par la timeline.
   // `patch` : { cfg, values } d'un autre preset que celui en cours (blocs de nappes de la timeline).
   makeVoice(f, velocity, fromFreq, when, patch, out) {
@@ -357,6 +397,8 @@ export class Engine {
     const t = Math.max(ctx.currentTime, when ?? 0);
     const attack = p.attack ?? 0.005;
     const fenv = c.fenv ?? 0.4;
+    velocity = 1 - (c.velSens ?? 1) * (1 - velocity);
+    const srcs = [];   // sources de bruit, arrêtées avec la voix
 
     const filter = ctx.createBiquadFilter();
     filter.type = c.filterType;
@@ -390,7 +432,16 @@ export class Engine {
         osc.detune.value = cents * detune;
         const pan = ctx.createStereoPanner();
         pan.pan.value = spread * width;
-        osc.connect(pan).connect(lg);
+        if (c.stagger) {   // un sonneur de plus : il attaque un peu après les autres, un peu plus ou moins fort
+          const player = ctx.createGain();
+          const at = t + Math.random() * c.stagger;
+          player.gain.setValueAtTime(0, t);
+          player.gain.setValueAtTime(0, at);
+          player.gain.linearRampToValueAtTime(0.75 + Math.random() * 0.25, at + 0.02);
+          osc.connect(player).connect(pan);
+        } else osc.connect(pan);
+        pan.connect(lg);
+        if (c.drift) this.wobble(osc.detune, 0.02 + Math.random() * 0.03, c.drift, t, srcs);
         oscs.push({ osc, spread, cents, pan, ratio: Math.pow(2, (layer.octave ?? 0) / 12) });
       }
     }
@@ -434,9 +485,32 @@ export class Engine {
       lfos.push(lfo);
     }
 
+    if (c.jitter) {   // grain de l'anche : la même instabilité rapide pour tous les oscillateurs
+      const j = ctx.createGain();
+      for (const o of oscs) j.connect(o.osc.detune);
+      this.wobble(j, 0.8 + Math.random() * 0.4, c.jitter, t, srcs);
+    }
+    if (c.breath) {   // souffle : bouffée à l'attaque puis un fond de souffle, dans le même filtre que le son
+      const noise = ctx.createBufferSource();
+      noise.buffer = this.breathBuf;
+      noise.loop = true;
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'bandpass';
+      hp.frequency.value = Math.min(6000, Math.max(1500, f * 3));
+      hp.Q.value = 0.7;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(c.breath * 3, t + attack + 0.01);
+      g.gain.setTargetAtTime(c.breath, t + attack + 0.01, 0.06);
+      noise.connect(hp).connect(g).connect(filter);
+      noise.start(t, Math.random() * this.breathBuf.duration);
+      srcs.push(noise);
+    }
+
     filter.connect(amp).connect(out ?? this.synthIn);   // out : chaîne d'effets d'une piste de la timeline
     for (const o of oscs) o.osc.start(t);
     for (const l of lfos) l.start(t);
+    lfos.push(...srcs);   // déjà lancées ; s'arrêtent avec les LFO
     return { oscs, lfos, filter, amp, vibGain, freq: f, patched: !!patch, release: p.release };
   }
 
