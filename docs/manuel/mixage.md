@@ -30,7 +30,7 @@ Chaque voie a des effets d'insert (**+ FX**, jusqu'à 4, appliqués dans l'ordre
 - **Compresseur** : seuil, ratio et gain.
 - **Reverb** : taille et dosage.
 - **Égaliseur (3 bandes)** : grave, médium et aigu.
-- **Multibande (OTT)** et **Écrêteur** : les mêmes que dans la chaîne master (voir plus bas), avec les mêmes réglages. Un écrêteur sur le bus ou la piste des kicks donne un kick plus fort sans toucher au reste.
+- **Multibande (OTT)**, **Écrêteur** et **Stéréo (graves mono)** : les mêmes que dans la chaîne master (voir plus bas), avec les mêmes réglages. Un écrêteur sur le bus ou la piste des kicks donne un kick plus fort sans toucher au reste ; une stéréo à largeur 0 % rend une piste mono.
 
 Double-clic sur un réglage pour le remettre à zéro. Sur l'APC, **Maj + bouton de piste 1 / 2 / 3 / 4** transforme les potentiomètres en volumes / panoramiques / envois delay / envois reverb du mixeur : K1 = Pads, K2 = Synthé, K3 = TR-909, K4 = Timeline, K5 = TB-303, K6 = Platines, K7 = Synthé à oscillateurs, K8 = volume général. Les réglages du mixeur sont sauvegardés et inclus dans les exports de session.
 
@@ -52,7 +52,7 @@ En haut de la fenêtre de la table de mixage. Quand il est **Activé**, chaque k
 La fenêtre **Bus** (barre des plugins, groupe Studio) regroupe des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…
 
 - **Envoyer une piste vers un bus** : dans le panneau de la piste (bouton cadran de son en-tête), choisissez le **Bus** (A à D). La lettre du bus s'affiche dans l'en-tête de la piste, et le bus liste ses pistes.
-- Chaque bus a un **nom**, jusqu'à 4 **effets d'insert** (égaliseur, compresseur, distorsion, filtre, reverb, multibande, écrêteur), un **panoramique**, un **volume** et un vumètre ; double-clic sur un réglage = valeur par défaut.
+- Chaque bus a un **nom**, jusqu'à 4 **effets d'insert** (égaliseur, compresseur, distorsion, filtre, reverb, multibande, écrêteur, stéréo), un **panoramique**, un **volume** et un vumètre ; double-clic sur un réglage = valeur par défaut.
 - **M** coupe toutes les pistes du bus, **S** le met en solo : on n'entend plus que ses pistes (et les pistes en solo).
 - Le son d'un bus continue vers la même destination que celui de ses pistes (synthé, pads, chemin du sidechain…) : mettre une piste dans un bus ne change ni son niveau ni son sidechain, cela ajoute seulement le traitement du bus.
 - L'envoi d'une piste vers un bus s'annule avec Ctrl+Z ; les bus sont enregistrés avec le projet et dans les fichiers morceau, et l'export WAV passe par eux.
@@ -61,6 +61,9 @@ La fenêtre **Bus** (barre des plugins, groupe Studio) regroupe des pistes de la
 
 Sous les voies du mixeur, la **chaîne master** traite tout ce qui sort, dans cet ordre :
 
+- **Stéréo** : met les **graves en mono** et règle la **largeur** du reste. En club, la sono est souvent en mono dans le grave : un kick ou une basse un peu stéréo y perd de la force, et les compresseurs réagissent mieux à un grave identique sur les deux canaux. **Coupé par défaut.**
+  - **Mono sous** (20 à 300 Hz, 120 Hz par défaut) : sous cette fréquence, le son devient mono (pente de 24 dB par octave). Au-dessus, l'image stéréo ne bouge pas.
+  - **Largeur** (0 à 200 %, 100 % par défaut) : 0 % = tout en mono, 100 % = largeur d'origine, 200 % = élargie. Au-delà de 130 % environ, surveillez la **phase**.
 - **Compresseur master** : seuil, taux, coude, attaque, relâche, gain de sortie. Ses réglages de départ sont ceux de l'ancien limiteur de GabberKey : un morceau existant sonne exactement pareil. Baissez le taux (2 à 4) et montez le seuil pour un compresseur de « colle » plus doux.
 - **Multibande (façon OTT)** : compression multibande façon OTT, le son « tout est fort et détaillé » du hardcore et du hardstyle. Le son est séparé en trois bandes (sous 88 Hz, de 88 Hz à 2,5 kHz, au-dessus de 2,5 kHz) ; dans chaque bande, ce qui dépasse un seuil est baissé et les passages faibles sous un autre seuil sont remontés (queues, reverbs, détails), puis les bandes traitées sont mélangées aux bandes intactes. **Coupé par défaut.**
   - **Dosage** (0 à 100 %, 30 % à l'activation) : la part du son traité dans le mélange. À 0 %, le son passe intact.
@@ -75,6 +78,7 @@ Sous les voies du mixeur, la **chaîne master** traite tout ce qui sort, dans ce
   - Ordre : le multibande vient avant l'écrêteur (il façonne les bandes, puis l'écrêteur rase ce qui dépasse), et le limiteur, en dernier, ne rattrape plus que ce qui reste.
 - **Limiteur** : il anticipe de 5 ms pour qu'**aucun échantillon ne dépasse le plafond** (−0,3 dB par défaut), sans écrêtage. Le **gain d'entrée** pousse le son contre le plafond : c'est le réglage qui rend le morceau plus fort. **Relâche** : la vitesse à laquelle le gain remonte après un pic (plus long = plus doux, plus court = plus fort mais plus « pompé »).
 - **Sonie** : la mesure en **LUFS** (norme EBU R128), celle qu'utilisent les plateformes d'écoute. **Momentanée** (400 ms), **court terme** (3 s), **intégrée** (depuis la dernière **remise à zéro**), **crête** et **réduction de gain** du limiteur. La barre montre la sonie court terme ; la zone verte est la cible.
+- **Phase** : la corrélation entre les deux canaux. +1 = mono, autour de +0,5 = une stéréo large et saine, 0 = deux canaux sans rapport ; **sous 0 (en rouge)**, des parties du son s'annulent quand on l'écoute en mono (sono de club, téléphone). Baissez alors la largeur ou cherchez l'effet trop large.
 - **Cible pour du hardcore** : environ **−8 à −6 LUFS intégrés**, crête au plafond. Montez le gain d'entrée du limiteur jusqu'à la zone, en surveillant la réduction de gain : au-delà de 6 à 8 dB de réduction permanente, le son s'écrase. Pour aller plus loin proprement, activez l'écrêteur (gain d'entrée de 3 à 6 dB) et laissez le limiteur ne rattraper que quelques dB ; ajoutez un peu de multibande (dosage de 20 à 40 %) pour la densité.
 - Chaque bouton **Actif / Coupé** contourne son étage ; double-clic sur un réglage = valeur par défaut. La chaîne est enregistrée avec le projet et dans le fichier de réglages du mixeur, et l'**export WAV** passe par elle.
 

@@ -1,5 +1,6 @@
-// Chaîne master (fenêtre Mixeur) : compresseur, compression multibande, écrêteur, limiteur et compteur de sonie en LUFS (momentané, court terme, intégré),
-// crête, réduction de gain, sonie du dernier export.
+// Chaîne master (fenêtre Mixeur) : stéréo (graves en mono, largeur), compresseur, compression multibande, écrêteur, limiteur
+// et compteur de sonie en LUFS (momentané, court terme, intégré), crête, réduction de gain, corrélation de phase, sonie du
+// dernier export.
 import { MASTER_PARAMS, defaultMasterState } from '../audio.js';
 import { t } from '../i18n.js';
 import { LoudnessMeter } from '../lufs.js';
@@ -17,10 +18,10 @@ const num = (v, d = 1) => new Intl.NumberFormat(document.documentElement.lang ||
 export const fmtLufs = v => (Number.isFinite(v) && v > -70 ? `${num(v)} LUFS` : '— LUFS');
 export const fmtDb = v => (Number.isFinite(v) ? `${num(v)} dB` : '−∞ dB');
 const UNITS = { threshold: 'dB', knee: 'dB', makeup: 'dB', gain: 'dB', ceiling: 'dB', drive: 'dB', output: 'dB', attack: 'ms', release: 'ms', ratio: ':1' };
-const PCT = new Set(['soft', 'depth', 'up', 'down']);
-const fmtParam = (k, v) => (k === 'ratio' ? `${num(v, 1)}:1` : k === 'time' ? `×${num(v / 100, 2)}` : PCT.has(k) ? `${num(v, 0)}%`
+const PCT = new Set(['soft', 'depth', 'up', 'down', 'width']);
+const fmtParam = (k, v) => (k === 'freq' ? `${num(v, 0)} Hz` : k === 'ratio' ? `${num(v, 1)}:1` : k === 'time' ? `×${num(v / 100, 2)}` : PCT.has(k) ? `${num(v, 0)}%`
   : `${num(v, k === 'attack' || k === 'ceiling' ? 1 : k === 'release' ? 0 : 1)} ${UNITS[k]}`);
-const HINTS = { ott: 'master.ottHint', clip: 'master.clipHint' };
+const HINTS = { stereo: 'master.stereoHint', ott: 'master.ottHint', clip: 'master.clipHint' };
 
 export function setLastExport(l) { lastExport = l; renderMasterMeters(); }
 
@@ -34,7 +35,7 @@ export function buildMaster() {
   box.innerHTML = `${groups}
     <div class="mc-group mc-meters">
       <div class="mc-head"><b>${t('master.loudness')}</b><button class="mc-reset" title="${t('master.resetTitle')}">${t('master.reset')}</button></div>
-      <div class="mc-lufs"><span>${t('master.momentary')}</span><b data-m="momentary"></b><span>${t('master.short')}</span><b data-m="shortTerm"></b><span>${t('master.integrated')}</span><b data-m="integrated"></b><span>${t('master.peak')}</span><b data-m="peak"></b><span>${t('master.gr')}</span><b data-m="gr"></b></div>
+      <div class="mc-lufs"><span>${t('master.momentary')}</span><b data-m="momentary"></b><span>${t('master.short')}</span><b data-m="shortTerm"></b><span>${t('master.integrated')}</span><b data-m="integrated"></b><span>${t('master.peak')}</span><b data-m="peak"></b><span>${t('master.gr')}</span><b data-m="gr"></b><span title="${t('master.phaseTitle')}">${t('master.phase')}</span><b data-m="phase" title="${t('master.phaseTitle')}"></b></div>
       <div class="mc-bar" title="${t('master.barTitle')}"><i class="mc-target"></i><i class="mc-level"></i></div>
       <div class="hint mc-hint">${t('master.target', { lo: TARGET[0], hi: TARGET[1] })}</div>
       <div class="hint mc-export"></div>
@@ -90,6 +91,10 @@ export function renderMasterMeters() {
   set('integrated', fmtLufs(m.integrated));
   set('peak', fmtDb(m.peak > 0 ? 20 * Math.log10(m.peak) : -Infinity));
   set('gr', gr < 0.999 ? fmtDb(20 * Math.log10(gr)) : fmtDb(0));
+  // Corrélation de phase : en rouge sous 0 (des parties du son s'annulent en mono, sur une sono de club par exemple).
+  const ph = engine.phaseCorrelation?.();
+  set('phase', ph === null || ph === undefined ? '—' : `${ph > 0 ? '+' : ''}${num(ph, 2)}`);
+  box.querySelector('[data-m="phase"]').classList.toggle('bad', ph !== null && ph < 0);
   // Barre : sonie court terme de -30 à 0 LUFS, zone visée en surbrillance.
   const pos = v => `${Math.min(100, Math.max(0, (v + 30) / 30 * 100))}%`;
   const target = box.querySelector('.mc-target');

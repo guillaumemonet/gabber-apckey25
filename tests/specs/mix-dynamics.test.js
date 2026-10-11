@@ -75,7 +75,7 @@ export default async function (t, A) {
   t.eq([S.master.ott.on, S.master.clip.on], [false, false], 'master : multibande et écrêteur coupés par défaut');
   A.wm.toggle('mix', true);
   const box = t.$('#master-chain');
-  t.eq([...box.querySelectorAll('.mc-on')].map(b => b.dataset.g), ['comp', 'ott', 'clip', 'limit'], 'fenêtre : compresseur, multibande, écrêteur, limiteur');
+  t.eq([...box.querySelectorAll('.mc-on')].map(b => b.dataset.g), ['stereo', 'comp', 'ott', 'clip', 'limit'], 'fenêtre : stéréo, compresseur, multibande, écrêteur, limiteur');
   t.eq(box.querySelectorAll('[data-g="ott"][data-k]').length, 5, 'multibande : Depth, Time, Up, Down, Sortie');
   t.eq(box.querySelectorAll('[data-g="clip"][data-k]').length, 3, 'écrêteur : drive, plafond, douceur');
   box.querySelector('.mc-on[data-g="ott"]').click();

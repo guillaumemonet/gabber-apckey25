@@ -6,7 +6,7 @@ export default async function (t, A) {
   t.eq([S.master.comp.threshold, S.master.comp.ratio, S.master.comp.on, S.master.limit.on], [-3, 20, true, true], 'réglages par défaut : le compresseur reprend l’ancien limiteur');
   A.wm.toggle('mix', true);
   const box = t.$('#master-chain');
-  t.eq(box.querySelectorAll('.mc-on').length, 4, 'compresseur, multibande, écrêteur et limiteur, chacun avec son bouton');
+  t.eq(box.querySelectorAll('.mc-on').length, 5, 'stéréo, compresseur, multibande, écrêteur et limiteur, chacun avec son bouton');
   t.ok(box.querySelectorAll('input[type=range]').length >= 9, 'réglages de la chaîne master');
 
   // Un son fort en boucle sur la timeline.

@@ -847,6 +847,7 @@ header button, header .status { white-space: nowrap; }
 .mc-lufs { display: grid; grid-template-columns: 1fr auto 1fr auto; gap: 2px 10px; font-variant-numeric: tabular-nums; }
 .mc-lufs span { color: var(--muted); }
 .mc-lufs b { text-align: right; }
+.mc-lufs b.bad { color: var(--danger, #ff5c5c); }
 .mc-bar { position: relative; height: 8px; margin: 6px 0 2px; border-radius: 4px; background: var(--line); overflow: hidden; }
 .mc-bar i { position: absolute; top: 0; bottom: 0; left: 0; }
 .mc-target { background: rgba(61, 214, 140, .35); }

@@ -1,4 +1,4 @@
-// Écrêteur (clipper) et compression multibande façon OTT : le son fort et propre d'un master hardcore.
+// Écrêteur (clipper), compression multibande façon OTT et stéréo (graves en mono, largeur) : le son fort et propre d'un master hardcore.
 // Mêmes chaînes pour le master (js/audio.js) et pour les inserts des voies, pistes et bus (js/mixer.js).
 // Chaque chaîne : { input, output, update(p, on) } ; coupée, l'entrée passe directement à la sortie (rien n'est calculé).
 
@@ -106,5 +106,43 @@ export function buildOtt(ctx) {
     node?.port.postMessage(last);
     set(!!on, first || isOffline(ctx));
     first = false;
+  } };
+}
+
+// ---- Stéréo : graves en mono et largeur ----
+// Milieu / côtés : M = (G + D) / 2, C = (G − D) / 2 ; G = M + C, D = M − C. Les côtés passent par un passe-haut
+// Linkwitz-Riley 24 dB/oct. (deux Butterworth) : sous la fréquence, il ne reste que le milieu (graves en mono).
+// Le milieu passe par un passe-tout du 2e ordre à la même fréquence (la somme passe-bas + passe-haut d'un LR4) :
+// milieu et côtés gardent la même phase, l'image ne bouge pas au-dessus de la coupure. Largeur : gain des côtés
+// (0 % = mono, 100 % = intact, 200 % = élargi).
+
+export const STEREO_PARAMS = { freq: [20, 300, 5, 120], width: [0, 200, 1, 100] };
+
+export function buildStereo(ctx) {
+  const input = ctx.createGain(), output = ctx.createGain();
+  const split = ctx.createChannelSplitter(2), merge = ctx.createChannelMerger(2);
+  const half = () => { const g = ctx.createGain(); g.gain.value = 0.5; return g; };
+  const mid = ctx.createGain(), side = ctx.createGain();
+  const lm = half(), rm = half(), ls = half(), rs = half();
+  rs.gain.value = -0.5;
+  split.connect(lm, 0); split.connect(rm, 1); split.connect(ls, 0); split.connect(rs, 1);
+  lm.connect(mid); rm.connect(mid); ls.connect(side); rs.connect(side);
+  const ap = ctx.createBiquadFilter();
+  ap.type = 'allpass'; ap.Q.value = Math.SQRT1_2;
+  const hp = [0, 1].map(() => { const f = ctx.createBiquadFilter(); f.type = 'highpass'; f.Q.value = Math.SQRT1_2; return f; });
+  const width = ctx.createGain(), inv = ctx.createGain();
+  inv.gain.value = -1;
+  mid.connect(ap);
+  side.connect(hp[0]).connect(hp[1]).connect(width);
+  ap.connect(merge, 0, 0); ap.connect(merge, 0, 1);
+  width.connect(merge, 0, 0); width.connect(inv).connect(merge, 0, 1);
+  const set = bypass(ctx, input, output, split, merge);
+  let first = true;
+  return { input, output, update(p, on = true) {
+    const now = first || isOffline(ctx);
+    first = false;
+    for (const f of [ap, ...hp]) setParam(ctx, f.frequency, p.freq, now);
+    setParam(ctx, width.gain, p.width / 100, now);
+    set(!!on, now);
   } };
 }

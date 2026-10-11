@@ -2,7 +2,7 @@
 // effets de performance (roll, filtres, tape-stop, pump) et égaliseur général.
 import { PAGES, WAVES, MODES, toValue } from './params.js';
 import { kWeighting } from './lufs.js';
-import { CLIP_PARAMS, OTT_PARAMS, buildClipper, buildOtt, loadOttWorklet } from './dynamics.js';
+import { CLIP_PARAMS, OTT_PARAMS, STEREO_PARAMS, buildClipper, buildOtt, buildStereo, loadOttWorklet } from './dynamics.js';
 
 const MASTER_WORKLET = 'js/master-worklet.js?v=2';
 
@@ -56,16 +56,18 @@ function driveCurve(amount) {
   return curve;
 }
 
-// Chaîne master : compresseur, compression multibande façon OTT, écrêteur, limiteur (dans cet ordre, voir le constructeur).
-// Valeurs par défaut du compresseur = l'ancien limiteur du moteur ; multibande et écrêteur coupés par défaut
+// Chaîne master : stéréo (graves en mono, largeur), compresseur, compression multibande façon OTT, écrêteur, limiteur
+// (dans cet ordre, voir le constructeur). Valeurs par défaut du compresseur = l'ancien limiteur du moteur ; stéréo,
+// multibande et écrêteur coupés par défaut
 // (les anciens projets sonnent comme avant).
 export const MASTER_PARAMS = {
+  stereo: STEREO_PARAMS,
   comp: { threshold: [-40, 0, 0.5, -3], ratio: [1, 20, 0.5, 20], knee: [0, 40, 1, 30], attack: [0.5, 100, 0.5, 2], release: [20, 1000, 5, 100], makeup: [0, 12, 0.5, 0] },
   ott: OTT_PARAMS,
   clip: CLIP_PARAMS,
   limit: { gain: [0, 18, 0.5, 0], ceiling: [-6, 0, 0.1, -0.3], release: [10, 500, 5, 80] },
 };
-const MASTER_ON = { comp: true, ott: false, clip: false, limit: true };
+const MASTER_ON = { stereo: false, comp: true, ott: false, clip: false, limit: true };
 export function defaultMasterState() {
   const pick = g => Object.fromEntries(Object.entries(MASTER_PARAMS[g]).map(([k, v]) => [k, v[3]]));
   return Object.fromEntries(Object.keys(MASTER_PARAMS).map(g => [g, { on: MASTER_ON[g], ...pick(g) }]));
@@ -141,6 +143,9 @@ export class Engine {
     // initMaster ; en attendant : passage direct). Le multibande vient avant l'écrêteur : il remonte les détails et
     // tient les bandes avant que l'écrêteur rase les crêtes (des crêtes déjà rasées pomperaient dans ses détecteurs) ;
     // le limiteur, à la fin, ne rattrape plus que les quelques crêtes qui dépassent encore (suréchantillonnage).
+    // La stéréo vient en premier : les graves passent en mono avant les compresseurs, qui réagissent alors au même
+    // grave sur les deux canaux.
+    this.stereo = buildStereo(ctx);
     this.comp = ctx.createDynamicsCompressor();
     this.compMakeup = gain();
     this.compWet = gain(1);
@@ -149,8 +154,9 @@ export class Engine {
     this.clipper = buildClipper(ctx);
     this.limitIn = gain();
     this.limitOut = gain();
-    this.eqGain.connect(this.comp).connect(this.compMakeup).connect(this.compWet).connect(this.ott.input);
-    this.eqGain.connect(this.compDry).connect(this.ott.input);
+    this.eqGain.connect(this.stereo.input);
+    this.stereo.output.connect(this.comp).connect(this.compMakeup).connect(this.compWet).connect(this.ott.input);
+    this.stereo.output.connect(this.compDry).connect(this.ott.input);
     this.ott.output.connect(this.clipper.input);
     this.clipper.output.connect(this.limitIn);
     this.limitIn.connect(this.limitOut);
@@ -163,6 +169,12 @@ export class Engine {
     node.connect(this.eqGain);
     this.output = this.limitOut;   // point d'écoute de l'enregistreur
     this.limitOut.connect(this.analyser).connect(ctx.destination);
+    // Corrélation de phase (fenêtre Mixeur) : un analyseur par canal, lu à la demande.
+    this.phaseSplit = ctx.createChannelSplitter(2);
+    this.phaseL = ctx.createAnalyser(); this.phaseR = ctx.createAnalyser();
+    this.phaseL.fftSize = this.phaseR.fftSize = 4096;
+    this.limitOut.connect(this.phaseSplit);
+    this.phaseSplit.connect(this.phaseL, 0); this.phaseSplit.connect(this.phaseR, 1);
     this.masterSettings = defaultMasterState();
     this.setMaster(this.masterSettings);
 
@@ -250,6 +262,17 @@ export class Engine {
 
   get seqRunning() { return this.seqs.size > 0; }
 
+  // Corrélation de phase du master sur les ~85 derniers ms : +1 = mono, 0 = canaux sans rapport, −1 = en opposition
+  // (le son disparaît en mono). null dans le silence.
+  phaseCorrelation() {
+    const n = this.phaseL.fftSize;
+    const l = this.phaseBufL ??= new Float32Array(n), r = this.phaseBufR ??= new Float32Array(n);
+    this.phaseL.getFloatTimeDomainData(l); this.phaseR.getFloatTimeDomainData(r);
+    let lr = 0, ll = 0, rr = 0;
+    for (let i = 0; i < n; i++) { lr += l[i] * r[i]; ll += l[i] * l[i]; rr += r[i] * r[i]; }
+    return ll * rr < 1e-10 ? null : lr / Math.sqrt(ll * rr);
+  }
+
   resume() { return this.ctx.resume(); }
 
   // Branche le limiteur et le compteur de sonie (module du fil audio, chargé une fois par contexte).
@@ -281,6 +304,7 @@ export class Engine {
     this.comp.attack.setTargetAtTime(c.attack / 1000, t, 0.02);
     this.comp.release.setTargetAtTime(c.release / 1000, t, 0.02);
     this.compMakeup.gain.setTargetAtTime(Math.pow(10, c.makeup / 20), t, 0.02);
+    this.stereo.update(m.stereo, m.stereo.on);
     this.ott.update(m.ott, m.ott.on);
     this.clipper.update(m.clip, m.clip.on);
     this.limiterNode?.port.postMessage({ on: m.limit.on, gain: m.limit.gain, ceiling: m.limit.ceiling, release: m.limit.release });
