@@ -13,6 +13,7 @@ import { renderLeds } from './controller.js';
 import { $, acid, drum, engine, metro, mixer, state, timeline, uiColor, wm } from './core.js';
 import { openDemoMenu } from './demo.js';
 import { exportSong, songEndBeats } from './export.js';
+import { bounceTrack, freezeState, freezeTrack, openTrackMenu, unfreezeTrack } from './freeze.js';
 import { BUS_COLORS, BUS_LETTERS, busName, renderBuses } from './buses-ui.js';
 import { inputLatency, inputNode, openInput } from './audio-input.js';
 import { autoHead, renderAutoHead, renderAutoLane } from './automation-ui.js';
@@ -93,7 +94,7 @@ export const armedTrack = () => Math.max(0, state.tl.tracks.findIndex(tr => tr.a
 // Pads / synthés : chaque coup ou note devient un bloc, en direct ; TR-909 / TB-303 / platines : audio.
 export async function tlStartRec() {
   if (timeline.playing) timeline.stop(true);
-  const targets = state.tl.tracks.map((tr, i) => ({ track: i, src: trackSource(tr), arm: tr.arm })).filter(x => x.arm);
+  const targets = state.tl.tracks.map((tr, i) => ({ track: i, src: trackSource(tr), arm: tr.arm && !tr.frozen })).filter(x => x.arm);   // une piste gelée n'enregistre pas
   if (!targets.length) { toast(t('tl.noArmed'), 3500); return; }
   const events = {};
   for (const x of targets) if (!AUDIO_SOURCES.has(x.src) && events[x.src] === undefined) events[x.src] = x.track;
@@ -172,12 +173,20 @@ export async function saveAudioTake(rec, r, raw) {
   save();
 }
 
+// Piste gelée : ses blocs sont verrouillés (message) ; la dégeler pour les modifier.
+export function frozenLocked(track) {
+  if (!state.tl.tracks[track]?.frozen) return false;
+  toast(t('frz.locked', { track: trackName(track) }), 3000);
+  return true;
+}
+
 export function growSong(clip) {
   state.tl.bars = Math.max(state.tl.bars, Math.ceil((clip.start + clip.len) / BEATS_PER_BAR));
 }
 
 // Pose un son de la bibliothèque : une boucle occupe ses mesures, un son court sa durée arrondie au temps.
 export async function tlPlaceItem(item, track, beat) {
+  if (frozenLocked(track)) return;
   const buf = await ensureBuffer(item.sampleId);
   if (!buf) { toast(t('lib.loadFail'), 3000); return; }
   const natural = item.bpm ? buf.duration * item.bpm / 60 : buf.duration / timeline.beatDur;
@@ -273,12 +282,15 @@ export function buildTrackRows() {
   state.tl.tracks.forEach((_, i) => {
     const head = document.createElement('div');
     head.className = 'tl-head';
-    head.innerHTML = `<i class="tl-src" hidden></i><span class="tl-name" title="${t('tl.renameTitle')}"></span><b class="tl-bus" hidden></b><button class="tl-knobs icon-only" data-icon="dial" title="${t('tl.knobs')}" aria-label="${t('tl.knobs')}"></button><button class="tl-arm" title="${t('tl.arm')}">●</button><button class="tl-mute" title="${t('mix.mute')}">M</button><button class="tl-solo" title="${t('tl.soloTitle')}">S</button>`;
+    head.innerHTML = `<i class="tl-src" hidden></i><span class="tl-name" title="${t('tl.renameTitle')}"></span><b class="tl-bus" hidden></b><button class="tl-frozen icon-only" data-icon="freeze" hidden></button><button class="tl-knobs icon-only" data-icon="dial" title="${t('tl.knobs')}" aria-label="${t('tl.knobs')}"></button><button class="tl-arm" title="${t('tl.arm')}">●</button><button class="tl-mute" title="${t('mix.mute')}">M</button><button class="tl-solo" title="${t('tl.soloTitle')}">S</button>`;
     head.querySelector('.tl-name').addEventListener('dblclick', e => renameTrack(i, e.currentTarget));
     head.querySelector('.tl-arm').addEventListener('click', () => { const tr = state.tl.tracks[i]; tr.arm = !tr.arm; renderTl(); save(); });
     head.querySelector('.tl-mute').addEventListener('click', () => { state.tl.tracks[i].mute = !state.tl.tracks[i].mute; timeline.updateMutes(); renderTl(); save(); });
     head.querySelector('.tl-solo').addEventListener('click', () => { state.tl.tracks[i].solo = !state.tl.tracks[i].solo; timeline.updateMutes(); renderTl(); save(); });
     head.querySelector('.tl-knobs').addEventListener('click', e => openTrackKnobs(i, e.currentTarget));
+    // Menu de la piste (geler, rendre en audio) : clic droit sur l'en-tête, ou le badge d'une piste gelée.
+    head.querySelector('.tl-frozen').addEventListener('click', e => { const r = e.currentTarget.getBoundingClientRect(); openTrackMenu(i, r.left, r.bottom + 4); });
+    head.addEventListener('contextmenu', e => { if (e.target.closest('input')) return; e.preventDefault(); openTrackMenu(i, e.clientX, e.clientY); });
     autoHead(head, i);
     const lane = document.createElement('div');
     lane.className = 'tl-lane';
@@ -290,6 +302,7 @@ export function buildTrackRows() {
     // Clic dans une case vide : pose le dernier son choisi dans la bibliothèque.
     lane.addEventListener('pointerdown', e => {
       if ((e.target !== lane && !e.target.classList.contains('tl-fxlane')) || e.button !== 0) return;
+      if (state.tl.tracks[i]?.frozen && !e.shiftKey && !e.ctrlKey && !e.metaKey) { frozenLocked(i); return; }
       tlLaneDown(e);
     });
     grid.insertBefore(head, line);
@@ -331,6 +344,7 @@ export const TRACK_KNOBS = [
   { id: 'rev', min: 0, max: 1, def: 0, fmt: v => `${Math.round(v * 100)}%` },
   { id: 'drive', min: 0, max: 1, def: 0, fmt: v => `${Math.round(v * 100)}%` },
 ];
+export const FROZEN_KNOBS = ['lp', 'hp', 'drive'];   // réglages figés dans le son d'une piste gelée
 export const trackTouched = tr => tr.inserts?.length > 0 || TRACK_KNOBS.some(d => Math.abs((tr[d.id] ?? d.def) - d.def) > 1e-6);
 
 export function openTrackKnobs(i, anchor) {
@@ -348,7 +362,9 @@ export function openTrackKnobs(i, anchor) {
       <label>${t('tl.trackBus')}<select class="tk-bus"></select></label>
       <div class="tk-colors"><span>${t('tl.trackColor')}</span></div>
     </div>
-    <div class="mini-knobs track-knob-row"></div><div class="row track-knob-foot"><button class="tk-reset" data-icon="reset">${t('tl.knobsReset')}</button></div>
+    <div class="mini-knobs track-knob-row"></div><div class="row track-knob-foot"><button class="tk-reset" data-icon="reset">${t('tl.knobsReset')}</button>
+      <button class="tk-freeze" data-icon="freeze"></button><button class="tk-bounce" data-icon="bounce" title="${t('frz.bounceTitle')}">${t('frz.bounce')}</button></div>
+    <p class="tk-frozen-note hint" hidden>${t('frz.lockedKnobs')}</p>
     <div class="track-inserts"><div class="tk-ins-head"><span>${t('tl.inserts')}</span><select class="fx-add"><option value="">${t('mix.addFx')}</option>${fxOptions()}</select></div><div class="fx-list"></div></div>`;
   box.querySelector('.win-close').addEventListener('click', closeFxEditor);
   const title = () => { box.querySelector('b').textContent = `${trackName(i)} · ${t('tl.knobs')}`; };
@@ -396,7 +412,7 @@ export function openTrackKnobs(i, anchor) {
   const changed = () => { timeline.updateTrack(i); render.forEach(f => f()); renderTrackHeads(); };
   for (const d of TRACK_KNOBS) {
     const el = document.createElement('div');
-    el.className = 'knob';
+    el.className = 'knob' + (tr.frozen && FROZEN_KNOBS.includes(d.id) ? ' frozen-lock' : '');
     el.innerHTML = `
       <svg viewBox="0 0 80 80">
         <path class="track" d="${arcPath(1)}" fill="none" stroke-width="8" stroke-linecap="round"/>
@@ -423,7 +439,21 @@ export function openTrackKnobs(i, anchor) {
     el.addEventListener('dblclick', () => { tr[d.id] = d.def; changed(); save(); });
     row.appendChild(el);
   }
-  box.querySelector('.tk-reset').addEventListener('click', () => { Object.assign(tr, TRACK_DEFAULTS); changed(); save(); });
+  box.querySelector('.tk-reset').addEventListener('click', () => {
+    // Piste gelée : les réglages figés dans le son gardent leur valeur.
+    Object.assign(tr, tr.frozen ? Object.fromEntries(Object.entries(TRACK_DEFAULTS).filter(([k]) => !FROZEN_KNOBS.includes(k))) : TRACK_DEFAULTS);
+    changed();
+    save();
+  });
+  // Geler / dégeler, rendre en audio ; piste gelée : filtres, saturation et inserts verrouillés (ils sont dans le son rendu).
+  const fz = box.querySelector('.tk-freeze');
+  fz.textContent = t(tr.frozen ? 'frz.unfreeze' : 'frz.freeze');
+  fz.title = t(tr.frozen ? 'frz.unfreezeTitle' : 'frz.freezeTitle');
+  fz.classList.toggle('active', !!tr.frozen);
+  fz.addEventListener('click', () => (tr.frozen ? unfreezeTrack(i) : freezeTrack(i)));
+  box.querySelector('.tk-bounce').addEventListener('click', () => bounceTrack(i));
+  box.querySelector('.tk-frozen-note').hidden = !tr.frozen;
+  box.querySelector('.track-inserts').classList.toggle('frozen-lock', !!tr.frozen);
   // Effets d'insert de la piste : toujours actifs (les blocs d'effet, eux, n'agissent que pendant leur durée).
   renderInsertRack(box.querySelector('.track-inserts .fx-list'), box.querySelector('.track-inserts .fx-add'), () => tr.inserts,
     { max: MAX_INSERTS, rebuild: () => { timeline.rebuildInserts(i); renderTrackHeads(); }, update: k => timeline.updateInsert(i, k) });
@@ -483,6 +513,13 @@ export function renderTrackHeads() {
     const bus = h.querySelector('.tl-bus');
     bus.hidden = tr.bus === null || tr.bus === undefined;
     if (!bus.hidden) { bus.textContent = BUS_LETTERS[tr.bus]; bus.style.setProperty('--bc', BUS_COLORS[tr.bus]); bus.title = t('tl.inBus', { bus: busName(tr.bus) }); }
+    // Badge « gelée » : le son rendu joue à la place des blocs (il clignote pendant le rendu).
+    const fz = h.querySelector('.tl-frozen');
+    const frz = freezeState(i);
+    fz.hidden = !frz;
+    fz.classList.toggle('pending', frz === 'pending');
+    if (frz) { fz.title = t(frz === 'pending' ? 'frz.badgePending' : 'frz.badge'); fz.setAttribute('aria-label', fz.title); }
+    h.classList.toggle('frozen', !!frz);
     const k = h.querySelector('.tl-knobs');
     k.classList.toggle('active', trackTouched(tr));
     k.classList.toggle('open', fxEditing?.track === i);
@@ -536,6 +573,7 @@ export function renderTl() {
   $('#tl-tracks-more').disabled = st.tracks.length >= MAX_TRACKS;
   lanes.forEach((lane, i) => {
     lane.classList.toggle('muted', !trackAudible(st.tracks, i, st.buses));
+    lane.classList.toggle('frozen', !!st.tracks[i].frozen);   // blocs grisés et verrouillés
     lane.style.setProperty('--tc', st.tracks[i].color || 'transparent');
     lane.classList.toggle('colored', !!st.tracks[i].color);
     lane.querySelectorAll('.tl-clip').forEach(c => c.remove());

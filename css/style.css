@@ -956,3 +956,16 @@ header button, header .status { white-space: nowrap; }
 .input-box select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 3px; grid-column: 2 / 4; }
 .input-meter { width: 100%; height: 8px; border-radius: 4px; background: var(--bg); }
 #input-open.active { background: #d1242f; border-color: #d1242f; color: #fff; }
+
+/* Piste gelée (js/app/freeze.js) : badge dans l'en-tête, blocs grisés et verrouillés, réglages figés dans le son */
+[data-icon="freeze"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7M9 4l3 3 3-3M9 20l3-3 3 3M4 10.5l4.1.6-1.6 3.8M20 13.5l-4.1-.6 1.6-3.8M4 13.5l4.1-.6-1.6-3.8M20 10.5l-4.1.6 1.6 3.8%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
+[data-icon="bounce"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M3 12h2l2-6 3 12 3-9 2 6 2-3h4M17 4l3 3-3 3%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
+.tl-head .tl-frozen { flex: none; padding: 2px 4px; color: #7fd4ff; border-color: #7fd4ff; }
+.tl-head .tl-frozen.pending { animation: blink .8s infinite; }
+.tl-head.frozen { box-shadow: inset 3px 0 0 #7fd4ff; }
+.tl-lane.frozen .tl-clip, .tl-lane.frozen .tl-fx { filter: grayscale(1); opacity: .5; pointer-events: none; }
+.tl-lane.frozen { cursor: not-allowed; background-color: rgba(127, 212, 255, .05); }
+.frozen-lock { opacity: .4; pointer-events: none; }
+.tk-frozen-note { margin: 0 10px 10px; }
+.track-knob-foot { gap: 6px; flex-wrap: wrap; }
+.tk-freeze.active { background: #7fd4ff; border-color: #7fd4ff; color: #111; }

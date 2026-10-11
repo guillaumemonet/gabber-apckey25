@@ -179,6 +179,7 @@ export const HELP = {
         <li><b>M</b> mutes every track of the bus, <b>S</b> solos the bus (with the soloed tracks).</li>
         <li>A bus keeps sending each sound where it went before (synth, pads, sidechain…): putting a track in a bus does not change its level.</li>
         <li>Buses are saved with the project and in song files, and the WAV export goes through them.</li>
+        <li><b>Heavy track?</b> Right-click its header (or its panel) › <b>Freeze track</b>: it is rendered to audio once and that audio plays instead of its blocks (snowflake in the header, blocks greyed and locked). Volume, pan, sends, mute / solo and bus stay live, so a frozen track can still go through its bus. <b>Render to audio</b> turns it into an audio block on a free track instead (undo brings it back).</li>
       </ul>`,
     launcher: `
       <p>Play the song live, clip by clip, like on stage: 8 columns (the first 8 timeline tracks) and 5 rows of slots.</p>
@@ -188,6 +189,7 @@ export const HELP = {
         <li>Clips follow the timeline bars when it plays (and the 909 grid); otherwise the first launched clip starts at once and sets the bars.</li>
         <li><b>APC grid = launcher</b>: the 40 pads are the slots (top row = row 1), SCENE LAUNCH 1-5 launch the rows, STOP ALL stops all clips, Shift + pad stops its column. A slot waiting for its bar blinks fast.</li>
         <li>Slots are saved with the project and can be undone with Ctrl+Z.</li>
+        <li>A clip of a <b>frozen track</b> still plays live, with its track settings.</li>
       </ul>`,
     input: `
       <p>Record a microphone or a sound card input into the timeline.</p>
@@ -419,6 +421,7 @@ export const HELP = {
         <li><b>M</b> coupe toutes les pistes du bus, <b>S</b> met le bus en solo (avec les pistes en solo).</li>
         <li>Un bus envoie chaque son là où il allait avant (synthé, pads, sidechain…) : mettre une piste dans un bus ne change pas son niveau.</li>
         <li>Les bus sont enregistrés avec le projet et dans les fichiers morceau, et l'export WAV passe par eux.</li>
+        <li><b>Piste trop lourde ?</b> Clic droit sur son en-tête (ou son panneau) › <b>Geler la piste</b> : elle est rendue en audio une fois, et ce son joue à la place de ses blocs (flocon dans l'en-tête, blocs grisés et verrouillés). Le volume, le panoramique, les envois, le muet / solo et le bus restent en direct : une piste gelée passe toujours par son bus. <b>Rendre en audio</b> la transforme plutôt en un bloc audio sur une piste libre (« Annuler » la rétablit).</li>
       </ul>`,
     launcher: `
       <p>Jouez le morceau en direct, clip par clip, comme sur scène : 8 colonnes (les 8 premières pistes de la timeline) et 5 lignes de cases.</p>
@@ -428,6 +431,7 @@ export const HELP = {
         <li>Les clips suivent les mesures de la timeline quand elle joue (et la grille de la 909) ; sinon, le premier clip lancé part tout de suite et donne les mesures.</li>
         <li><b>Grille APC = lanceur</b> : les 40 pads sont les cases (rangée du haut = ligne 1), SCENE LAUNCH 1-5 lancent les lignes, STOP ALL arrête tous les clips, Maj + pad arrête sa colonne. Une case qui attend sa mesure clignote vite.</li>
         <li>Les cases sont enregistrées avec le projet et s'annulent avec Ctrl+Z.</li>
+        <li>Le clip d'une <b>piste gelée</b> joue toujours en direct, avec les réglages de sa piste.</li>
       </ul>`,
     input: `
       <p>Enregistrez un micro ou une entrée de carte son dans la timeline.</p>

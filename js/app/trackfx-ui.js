@@ -7,7 +7,7 @@ import { FX_BANK, FX_FAMILY_COLORS, FX_TYPES as TFX_TYPES, bankName, fxDefaults 
 import { state, uiColor } from './core.js';
 import { curveById, curveItems, curveName, curveSvg, openCurve } from './curve-ui.js';
 import { save } from './save.js';
-import { beatPx, growSong, renderTl, renderTrackHeads, setTlSel, snapBeat, tlSel } from './tl.js';
+import { beatPx, frozenLocked, growSong, renderTl, renderTrackHeads, setTlSel, snapBeat, tlSel } from './tl.js';
 import { tlGroupDown, tlPicked, tlSelect } from './tl-select.js';
 
 // ---------- Effets de piste (timeline) ----------
@@ -20,6 +20,7 @@ export const fxItems = () => [...FX_BANK.map(b => ({ kind: 'fx', sampleId: `fx:$
 export const FX_FAMILIES = [...new Set([...FX_BANK.map(b => TFX_TYPES[b.fx].family), 'curve'])];
 
 export function tlPlaceFx(item, track, beat) {
+  if (frozenLocked(track)) return;
   const block = { id: crypto.randomUUID(), fx: item.fx, start: beat, len: item.len, p: { ...fxDefaults(item.fx), ...item.p }, name: item.name };
   state.tl.tracks[track].fx.push(block);
   growSong(block);

@@ -28,10 +28,12 @@ export function tlSelect(track, obj) {
   setTlSel(obj ? (isFxBlock(obj) ? { track, fx: obj } : { track, clip: obj }) : null);
 }
 
-// Blocs sélectionnés avec leur piste (ceux qui ont disparu, après « Annuler » par exemple, sont oubliés).
+// Blocs sélectionnés avec leur piste (ceux qui ont disparu, après « Annuler » par exemple, sont oubliés,
+// comme ceux d'une piste gelée : ils sont verrouillés).
 export function tlItems() {
   const out = [];
   state.tl.tracks.forEach((tr, track) => {
+    if (tr.frozen) return;
     for (const obj of tr.clips) if (tlPicked.has(obj)) out.push({ obj, track });
     for (const obj of tr.fx) if (tlPicked.has(obj)) out.push({ obj, track });
   });
@@ -71,7 +73,8 @@ export function tlGroupDown(e, obj, track) {
     const dx = (ev.clientX - startX) / beatPx();
     const delta = Math.max(-minStart, Math.max(0, snapBeat(o.start + dx, ev.shiftKey)) - o.start);
     const lane = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.tl-lane');
-    const dTrack = Math.max(-minTrack, Math.min(state.tl.tracks.length - 1 - maxTrack, (lane ? +lane.dataset.track : o.cur) - o.track));
+    let dTrack = Math.max(-minTrack, Math.min(state.tl.tracks.length - 1 - maxTrack, (lane ? +lane.dataset.track : o.cur) - o.track));
+    if (orig.some(x => state.tl.tracks[x.track + dTrack]?.frozen)) dTrack = o.cur - o.track;   // pas sur une piste gelée
     if (orig.every(x => x.obj.start === x.start + delta && x.cur === x.track + dTrack)) return;
     for (const x of orig) {
       x.obj.start = x.start + delta;
@@ -155,6 +158,7 @@ export function tlPaste(at = state.tl.playhead) {
   if (!tlClipboard) return;
   tlPicked.clear();
   for (const it of tlClipboard.items) {
+    if (state.tl.tracks[it.track]?.frozen) continue;   // piste gelée : verrouillée
     const obj = { ...cloneBlock(it.obj), start: at + it.obj.start };
     tlList(obj, it.track).push(obj);
     tlPicked.add(obj);
