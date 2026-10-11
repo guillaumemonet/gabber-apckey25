@@ -169,6 +169,7 @@ export class Timeline {
     this.isDucked = () => false;
     this.getPatch = () => undefined;   // preset d'un bloc -> { cfg, values } ; branché par l'application
     this.getOsc = () => null;          // bloc du synthé à oscillateurs -> { synth, values } ; branché par l'application
+    this.getKick = () => null;         // bloc de mélodie de kick -> { synth, values } ; branché par l'application
     this.warpOf = () => null;          // (bloc, son, vitesse) -> son étiré / transposé prêt, ou null ; branché par l'application
     this.offs = [];             // fins de notes programmées : { note, key, time }
     this.ons = [];              // départs à créer, au fil de la lecture : { time, run }
@@ -230,17 +231,20 @@ export class Timeline {
         if (clip.type === 'note') {
           // Chaque note du bloc (motif répété) ; une note déjà commencée (lecture partie du milieu d'un bourdon,
           // d'une note tenue) part tout de suite pour le temps qui lui reste.
-          // Synthé à oscillateurs (clip.osc) ou synthé du clavier (preset du bloc, sinon celui en cours).
-          const osc = clip.osc ? this.getOsc(clip) : null;
-          const syn = osc?.synth ?? this.engine;
-          const patch = osc ? osc.values : clip.preset ? this.getPatch(clip.preset) : undefined;
-          const dest = osc ? osc.synth.out : this.engine.synthIn;
+          // Kick du designer (clip.kick : mélodie de kick), synthé à oscillateurs (clip.osc) ou synthé du clavier
+          // (preset du bloc, sinon celui en cours).
+          const kick = clip.kick ? this.getKick(clip) : null;
+          const osc = !kick && clip.osc ? this.getOsc(clip) : null;
+          const syn = kick?.synth ?? osc?.synth ?? this.engine;
+          const patch = kick ? kick.values : osc ? osc.values : clip.preset ? this.getPatch(clip.preset) : undefined;
+          const dest = kick ? kick.synth.out : osc ? osc.synth.out : this.engine.synthIn;
           const events = osc && osc.synth.isMono(osc.values) ? monoLine(clipEvents(clip)) : clipEvents(clip);
           for (const n of events) {
             const at0 = clip.start + n.t;
             if (at0 >= len || (at0 < beat - 1e-6 && at0 + n.len <= beat + 0.05)) continue;
             const at = Math.max(at0, beat), left = n.len - (at - at0);
             const when = time + (at - beat) * bd;
+            if (kick && live && at0 >= beat - 1e-6) this.onKick(when);   // chaque kick de la mélodie pompe le sidechain
             const key = `${this.keyPrefix}${clip.id}:${n.i}`;
             const out = this.trackIn(ti, dest);
             jobs.push({ time: when, run: () => {

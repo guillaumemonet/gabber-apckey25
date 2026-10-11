@@ -6,6 +6,7 @@ import { toPos, toValue } from '../params.js';
 import { presetById } from '../presets.js';
 import { Recorder, encodeWav } from '../recorder.js';
 import * as store from '../storage.js';
+import { prepareKickClips } from '../kicksynth.js';
 import { BEATS_PER_BAR, MAX_INSERTS, MAX_TRACKS, MIN_TRACKS, REC_SOURCES, TRACK_DEFAULTS, newTrack, trackAudible } from '../timeline.js';
 import { renderAcid } from './acid-ui.js';
 import { renderLeds } from './controller.js';
@@ -505,6 +506,7 @@ export function renderTlTime(pos) {
 
 export function renderTl() {
   tlSongBeats = songEndBeats();
+  prepareKickClips(state.tl.tracks, engine.ctx.sampleRate);   // mélodies de kick : les kicks prêts avant de jouer
   const st = state.tl;
   const grid = $('#tl-grid');
   if (!grid.querySelector('.tl-ruler')) return;

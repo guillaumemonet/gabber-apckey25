@@ -39,6 +39,7 @@ export const $ = sel => document.querySelector(sel);
 /** @type {import('../decks.js').Decks} */ export let decks;
 /** @type {import('../patch.js').Patch} */ export let patch;
 /** @type {import('../osc.js').OscSynth} */ export let oscSynth;
+/** @type {import('../kicksynth.js').KickSynth} */ export let kickSynth;
 /** @type {import('../visualizer.js').Visualizer} */ export let viz;
 /** @type {import('../metronome.js').Metronome} */ export let metro;
 export let libAdded = [];   // banques de la bibliothèque ajoutées à ce démarrage
@@ -125,6 +126,7 @@ export function provide(services) {
   if ('decks' in services) decks = services.decks;
   if ('patch' in services) patch = services.patch;
   if ('oscSynth' in services) oscSynth = services.oscSynth;
+  if ('kickSynth' in services) kickSynth = services.kickSynth;
   if ('viz' in services) viz = services.viz;
   if ('metro' in services) metro = services.metro;
 }

@@ -1,7 +1,7 @@
 // Écoute d'un bloc de la timeline (double-clic).
 import { t } from '../i18n.js';
 import { BEATS_PER_BAR, Timeline } from '../timeline.js';
-import { engine, mixer, oscSynth, padKey, state, timeline } from './core.js';
+import { engine, kickSynth, mixer, oscSynth, padKey, state, timeline } from './core.js';
 import { presetPatch } from './gen.js';
 import { toast } from './misc.js';
 import { oscFor } from './osc-ui.js';
@@ -25,7 +25,7 @@ export async function tlPreviewClip(track, clip) {
   // Longueur = celle du bloc : l'écoute s'arrête pile à sa fin.
   const st = { bars: beats / BEATS_PER_BAR, loop: false, playhead: 0, tracks: [{ ...state.tl.tracks[track], mute: false, clips: [one], fx: [] }] };
   const tl = new Timeline(engine, () => st, clipBuffer, mixer.input('tl'));
-  Object.assign(tl, { getPad: timeline.getPad, padKey, getPatch: presetPatch, getOsc: c => oscFor(c, oscSynth), keyPrefix: 'tlp:', warpOf: timeline.warpOf });
+  Object.assign(tl, { getPad: timeline.getPad, padKey, getPatch: presetPatch, getOsc: c => oscFor(c, oscSynth), getKick: c => ({ synth: kickSynth, values: c.kick }), keyPrefix: 'tlp:', warpOf: timeline.warpOf });
   tl.onStop = () => { if (tlPrev?.tl === tl) { tlPrev = null; renderTl(); } };
   const origin = engine.origin;
   tl.play(0);

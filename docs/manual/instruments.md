@@ -107,7 +107,7 @@ An analogue-style synth to build your own sounds, next to the layered synth.
 
 [![Kick designer: presets, 12 knobs and the waveform](../screenshots/kick-en.png)](../screenshots/kick-en.png)
 
-Build your own gabber / hardcore kick, computed by the browser in a few milliseconds from 12 knobs:
+Build your own gabber / hardcore kick, computed by the browser in a few milliseconds. In **Simple** mode, 12 knobs:
 
 - **Presets**: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore (buttons), also in a menu by category (Gabber, Hardcore, Mainstream / uptempo) with your own kicks. Turning a knob makes the sound custom; type a name, choose a category and **Save** to keep your own (★ in the menu), the bin deletes it.
 - **Tail**: **Tune** (note of the tail, in tune with the banks), **Punch** and **Sweep** (how high the pitch starts and how fast it drops), **Tail drop** (how far it keeps falling), **Length**, **Zaag** (sawtooth for the raw, buzzing tail of uptempo kicks).
@@ -115,6 +115,28 @@ Build your own gabber / hardcore kick, computed by the browser in a few millisec
 - **Attack**: **Click** (noise) and **Attack** (short punchy layer).
 - **Auto-listen** plays the kick each time you release a knob; the waveform and the length are shown.
 - **→ Pad** puts it on the selected pad, **→ Library** adds it to the **Kicks** category of the library (drag it onto the timeline; right-click it there to remove it), **⤓ WAV** downloads it. Your kicks trigger the sidechain like any other kick.
+
+### Expert mode: click, body and tail
+
+[![Kick designer in expert mode: the three layers and the waveform of each layer](../screenshots/kick-expert-en.png)](../screenshots/kick-expert-en.png)
+
+The **Expert** button replaces the 12 knobs with the three layers of the kick, each set apart. The waveform shows each layer in its color. **Solo** on a layer plays it alone (**Play** and auto-listen); click again for the whole kick. Nothing is lost when switching modes: the 12 knobs of the simple mode are also in the layers, and the expert-only settings have a neutral value (a kick made in simple mode sounds the same).
+
+- **Click**: **Click** (noise level), **Tone** (higher = thinner, sharper), **Decay**; **Attack** (the blip that drops very fast) and its **Attack pitch**.
+- **Body**: a clean sine that dives down to an octave under the tail note, the "punch" you add under a heavily distorted tail. **Body** (level, off in the factory kicks), starting **Pitch**, **Drop**, **Decay**, **Drive**.
+- **Tail**: **Tail** (level), the tail and distortion settings of the simple mode, and:
+  - **Deboom**: cuts the low end of the tail under the chosen frequency, to leave room for the bass or a separate sub;
+  - **Tail start**: the tail fades in, the click and the body make the attack alone.
+
+### Tail note and kick melody
+
+The tail note is shown above the knobs (for example "Tail: F3 (175 Hz)").
+
+- **Tune to the key** tunes the tail to the key of the song: the root of the first chord of the **Generator**, the closest to the current note.
+- **Kick melody** lays on the timeline a note block played by this kick, one kick per beat, and opens it in the **piano roll**. Each note retunes the tail: change the notes to make the kick sing, as in frenchcore or uptempo. If there is a chord progression in the Generator, the melody follows the root of each chord; otherwise it stays on the tail note.
+  - Each kick cuts the previous one, and a short note gives a short tail.
+  - The block keeps the kick as it was when you laid it. To give it the current kick of the designer, choose **Kick of the designer** in the sound list of the piano roll; this choice also turns any note block into a kick melody.
+  - The kicks of the melody trigger the sidechain.
 
 ---
 

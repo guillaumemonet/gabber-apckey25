@@ -112,6 +112,9 @@ export const HELP = {
         <li><b>Attack</b>: <b>Click</b> (noise) and <b>Attack</b> (short punchy layer).</li>
         <li><b>Auto-listen</b> plays the kick each time you release a knob. The waveform and the length are shown below the knobs.</li>
         <li><b>→ Pad</b> puts it on the selected pad, <b>→ Library</b> adds it to the Kicks category of the library (drag it onto the timeline; right-click it there to remove it), <b>⤓ WAV</b> downloads it.</li>
+        <li><b>Expert</b>: the kick in three layers set apart, each in its color on the waveform, <b>Solo</b> to hear one alone. <b>Click</b> (noise and attack blip), <b>Body</b> (a clean sine diving an octave under the tail: the punch; off in the factory kicks), <b>Tail</b> (tuned and distorted) with <b>Deboom</b> (cuts the low end of the tail) and <b>Tail start</b> (the tail fades in). The expert settings are neutral by default: switching modes doesn't change the sound.</li>
+        <li>The tail note is shown above the knobs. <b>Tune to the key</b> tunes it to the first chord of the Generator.</li>
+        <li><b>Kick melody</b> lays a note block played by this kick (one per beat, on the Generator chords if any) and opens it in the piano roll: each note retunes the tail, each kick cuts the previous one. In the piano roll, the sound <b>Kick of the designer</b> gives a block the current kick.</li>
       </ul>`,
     decks: `
       <p>Two turntables to mix and scratch any sound: library loops, your recordings, your own files.</p>
@@ -348,6 +351,9 @@ export const HELP = {
         <li><b>Attaque</b> : <b>Clic</b> (bruit) et <b>Attaque</b> (couche courte et percutante).</li>
         <li><b>Écoute auto</b> joue le kick à chaque potentiomètre relâché. La forme d'onde et la longueur s'affichent sous les potentiomètres.</li>
         <li><b>→ Pad</b> le met sur le pad sélectionné, <b>→ Bibliothèque</b> l'ajoute à la catégorie Kicks de la bibliothèque (à glisser sur la timeline ; clic droit dessus pour le retirer), <b>⤓ WAV</b> le télécharge.</li>
+        <li><b>Expert</b> : le kick en trois couches réglées à part, chacune dans sa couleur sur la forme d'onde, <b>Solo</b> pour en écouter une seule. <b>Clic</b> (bruit et blip d'attaque), <b>Corps</b> (un sinus propre qui plonge une octave sous la queue : le punch ; coupé dans les kicks d'usine), <b>Queue</b> (accordée et saturée) avec <b>Deboom</b> (retire le grave de la queue) et <b>Départ queue</b> (la queue entre en fondu). Les réglages experts sont neutres par défaut : changer de mode ne change pas le son.</li>
+        <li>La note de la queue s'affiche au-dessus des potentiomètres. <b>Accorder sur la tonalité</b> l'accorde sur le premier accord du Générateur.</li>
+        <li><b>Mélodie de kick</b> pose un bloc de notes joué par ce kick (un par temps, sur les accords du Générateur s'il y en a) et l'ouvre dans le piano roll : chaque note accorde la queue, chaque kick coupe le précédent. Dans le piano roll, le son <b>Kick du designer</b> donne à un bloc le kick actuel.</li>
       </ul>`,
     decks: `
       <p>Deux platines pour mixer et scratcher n'importe quel son : boucles de la bibliothèque, vos enregistrements, vos propres fichiers.</p>

@@ -5,9 +5,10 @@ import { catColor } from '../library.js';
 import { clipEvents, mergeNotes, patLen, toSeq } from '../notes.js';
 import { OSC_PRESETS } from '../osc.js';
 import { PAT_LENGTHS, PianoRoll, ROLL_GRIDS } from '../pianoroll.js';
+import { prepareKickClips } from '../kicksynth.js';
 import { FAMILIES, PRESETS } from '../presets.js';
 import { BEATS_PER_BAR } from '../timeline.js';
-import { $, defaultRoll, engine, oscSynth, state, timeline, uiColor, wm } from './core.js';
+import { $, defaultRoll, engine, kickSynth, oscSynth, state, timeline, uiColor, wm } from './core.js';
 import { presetPatch } from './gen.js';
 import { toast } from './misc.js';
 import { oscFor, oscSound } from './osc-ui.js';
@@ -40,9 +41,10 @@ export function rollFind() {
   }
   return null;
 }
-// Son du bloc édité : { syn, V } (synthé à oscillateurs, ou synthé avec le preset du bloc).
+// Son du bloc édité : { syn, V } (kick du designer, synthé à oscillateurs, ou synthé avec le preset du bloc).
 export function rollSound() {
   const c = rollFind()?.clip;
+  if (c?.kick) return { syn: kickSynth, V: c.kick };
   if (c?.osc) { const o = oscFor(c, oscSynth); return { syn: oscSynth, V: o.values === oscSynth.values ? { ...o.values } : o.values }; }
   return { syn: engine, V: c?.preset ? presetPatch(c.preset) : undefined };
 }
@@ -89,7 +91,9 @@ export function buildRoll() {
     if (!f) return;
     delete f.clip.preset;
     delete f.clip.osc;
-    if (preset.value.startsWith('osc:')) f.clip.osc = preset.value.slice(4);
+    delete f.clip.kick;
+    if (preset.value === 'kick') { f.clip.kick = { ...state.kick.params }; prepareKickClips(state.tl.tracks, engine.ctx.sampleRate); }   // mélodie de kick : le kick du designer, tel qu'il est maintenant
+    else if (preset.value.startsWith('osc:')) f.clip.osc = preset.value.slice(4);
     else if (preset.value) f.clip.preset = preset.value;
     rollHeld.clear();
     renderTl();
@@ -126,7 +130,7 @@ export function renderRollBar() {
   $('#roll-grid').value = ROLL_GRIDS.findIndex(g => Math.abs(g - state.roll.grid) < 1e-6);
   const name = $('#roll-name');
   if (document.activeElement !== name) name.value = clip?.name ?? '';
-  $('#roll-preset').value = clip?.osc ? `osc:${[...$('#roll-preset').options].some(o => o.value === `osc:${clip.osc}`) ? clip.osc : 'live'}` : clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
+  $('#roll-preset').value = clip?.kick ? 'kick' : clip?.osc ? `osc:${[...$('#roll-preset').options].some(o => o.value === `osc:${clip.osc}`) ? clip.osc : 'live'}` : clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
   const pat = clip ? patLen(clip) : 0;
   $('#roll-len').textContent = clip ? rollLenLabel(pat) : '—';
   $('#roll-where').textContent = clip ? t('roll.where', {
@@ -154,6 +158,10 @@ export function rollPresetOptions() {
   for (const p of OSC_PRESETS) grp.appendChild(new Option(t(`osc.preset.${p.id}`), `osc:${p.id}`));
   for (const u of state.osc.user) grp.appendChild(new Option(`★ ${u.name}`, `osc:${u.id}`));
   sel.appendChild(grp);
+  const kick = document.createElement('optgroup');
+  kick.label = t('win.kick');
+  kick.appendChild(new Option(t('roll.kick'), 'kick'));
+  sel.appendChild(kick);
   sel.value = value;
 }
 
@@ -196,7 +204,7 @@ export function rollMerge() {
   const f = rollFind();
   if (!f) return;
   const list = state.tl.tracks[f.track].clips;
-  const same = c => c.type === 'note' && (c.preset || '') === (f.clip.preset || '') && (c.osc || '') === (f.clip.osc || '');
+  const same = c => c.type === 'note' && (c.preset || '') === (f.clip.preset || '') && (c.osc || '') === (f.clip.osc || '') && JSON.stringify(c.kick ?? null) === JSON.stringify(f.clip.kick ?? null);
   const group = [f.clip];
   let s = f.clip.start, e = f.clip.start + f.clip.len, grew = true;
   while (grew) {

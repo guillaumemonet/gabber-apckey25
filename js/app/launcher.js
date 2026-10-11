@@ -8,7 +8,7 @@ import { PALETTE } from '../apc.js';
 import { t } from '../i18n.js';
 import { catColor } from '../library.js';
 import { BEATS_PER_BAR, Timeline } from '../timeline.js';
-import { $, apc, engine, mixer, oscSynth, padKey, state, timeline, uiColor, wm } from './core.js';
+import { $, apc, engine, kickSynth, mixer, oscSynth, padKey, state, timeline, uiColor, wm } from './core.js';
 import { presetPatch } from './gen.js';
 import { toast } from './misc.js';
 import { oscFor } from './osc-ui.js';
@@ -52,7 +52,7 @@ function startPlayer(c, row, at) {
   const track = state.tl.tracks[c] ?? {};
   const st = { bars: beats / BEATS_PER_BAR, loop: true, playhead: 0, tracks: [{ ...track, mute: false, solo: false, bus: null, auto: {}, clips: [one], fx: [] }], buses: [] };
   const tl = new Timeline(engine, () => st, clipBuffer, mixer.input('tl'));
-  Object.assign(tl, { getPad: timeline.getPad, padKey, getPatch: presetPatch, getOsc: x => oscFor(x, oscSynth), keyPrefix: `ln${c}:`,
+  Object.assign(tl, { getPad: timeline.getPad, padKey, getPatch: presetPatch, getOsc: x => oscFor(x, oscSynth), getKick: x => ({ synth: kickSynth, values: x.kick }), keyPrefix: `ln${c}:`,
     duckOutput: timeline.duckOutput, isDucked: timeline.isDucked, isKickPad: timeline.isKickPad, kicksOf: timeline.kicksOf, onKick: timeline.onKick, warpOf: timeline.warpOf });
   const keep = engine.origin;
   tl.play(0, at);

@@ -107,7 +107,7 @@ Un synthé façon analogique pour fabriquer vos propres sons, à côté du synth
 
 [![Designer de kick : presets, 12 potentiomètres et la forme d'onde](../screenshots/kick-fr.png)](../screenshots/kick-fr.png)
 
-Fabriquez votre propre kick gabber / hardcore, calculé par le navigateur en quelques millisecondes à partir de 12 potentiomètres :
+Fabriquez votre propre kick gabber / hardcore, calculé par le navigateur en quelques millisecondes. En mode **Simple**, 12 potentiomètres :
 
 - **Presets** : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore (boutons), aussi dans un menu par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et **Enregistrer** pour garder le vôtre (★ dans le menu), la corbeille le supprime.
 - **Queue** : **Note** (accordée avec les banques), **Punch** et **Chute** (de combien la hauteur part haut et à quelle vitesse elle tombe), **Plongée** (de combien elle continue de descendre), **Longueur**, **Zaag** (scie pour la queue brute et bourdonnante des kicks uptempo).
@@ -115,6 +115,28 @@ Fabriquez votre propre kick gabber / hardcore, calculé par le navigateur en que
 - **Attaque** : **Clic** (bruit) et **Attaque** (couche courte et percutante).
 - **Écoute auto** joue le kick à chaque potentiomètre relâché ; la forme d'onde et la longueur s'affichent.
 - **→ Pad** le met sur le pad sélectionné, **→ Bibliothèque** l'ajoute à la catégorie **Kicks** de la bibliothèque (à glisser sur la timeline ; clic droit dessus pour le retirer), **⤓ WAV** le télécharge. Vos kicks déclenchent le sidechain comme les autres.
+
+### Mode expert : clic, corps et queue
+
+[![Designer de kick en mode expert : les trois couches et la forme d'onde de chaque couche](../screenshots/kick-expert-fr.png)](../screenshots/kick-expert-fr.png)
+
+Le bouton **Expert** remplace les 12 potentiomètres par les trois couches du kick, réglées à part. La forme d'onde montre chaque couche dans sa couleur. **Solo** sur une couche la fait écouter seule (**Écouter** et l'écoute auto) ; un deuxième clic revient au kick entier. Rien n'est perdu en passant d'un mode à l'autre : les 12 potentiomètres du mode simple sont aussi dans les couches, et les réglages propres au mode expert ont une valeur neutre (un kick fait en mode simple sonne pareil).
+
+- **Clic** : **Clic** (niveau du bruit), **Timbre** (plus haut = plus fin, plus sec), **Durée** ; **Attaque** (le blip qui tombe très vite) et sa **Hauteur**.
+- **Corps** : un sinus propre qui plonge jusqu'à une octave sous la note de la queue, le « punch » qu'on ajoute sous une queue très saturée. **Corps** (niveau, coupé dans les kicks d'usine), **Hauteur** de départ, **Chute**, **Durée**, **Drive**.
+- **Queue** : **Queue** (niveau), les réglages de queue et de distorsion du mode simple, et :
+  - **Deboom** : retire le grave de la queue sous la fréquence choisie, pour laisser la place à la basse ou à un sub à part ;
+  - **Départ queue** : la queue entre en fondu, le clic et le corps font seuls l'attaque.
+
+### Note de la queue et mélodie de kick
+
+La note de la queue s'affiche au-dessus des potentiomètres (par exemple « Queue : fa3 (175 Hz) »).
+
+- **Accorder sur la tonalité** accorde la queue sur la tonalité du morceau : la fondamentale du premier accord du **Générateur**, au plus près de la note actuelle.
+- **Mélodie de kick** pose sur la timeline un bloc de notes joué par ce kick, un kick par temps, et l'ouvre dans le **piano roll**. Chaque note accorde la queue : changez les notes pour faire chanter le kick, comme en frenchcore ou en uptempo. S'il y a une suite d'accords dans le Générateur, la mélodie suit la fondamentale de chaque accord ; sinon elle reste sur la note de la queue.
+  - Chaque kick coupe le précédent, et une note courte donne une queue courte.
+  - Le bloc garde le kick tel qu'il était quand vous l'avez posé. Pour lui donner le kick actuel du designer, choisissez **Kick du designer** dans la liste des sons du piano roll ; ce choix transforme aussi n'importe quel bloc de notes en mélodie de kick.
+  - Les kicks de la mélodie déclenchent le sidechain.
 
 ---
 

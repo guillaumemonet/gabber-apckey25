@@ -1,5 +1,6 @@
 // Enregistrement du master et export rapide (WAV, stems) hors temps réel.
 import { Engine } from '../audio.js';
+import { KickSynth, prepareKickClips } from '../kicksynth.js';
 import { measureLoudness } from '../lufs.js';
 import { t } from '../i18n.js';
 import { Mixer } from '../mixer.js';
@@ -47,6 +48,7 @@ export async function renderSong(onlyTrack = null) {
     const buf = clipBuffer(clip.sampleId);
     return buf && { clip, buf: clip.reverse ? timeline.reversed(buf) : buf, rate: clip.bpm ? state.bpm / clip.bpm : 1 };
   }).filter(Boolean));
+  await prepareKickClips(state.tl.tracks, sr);   // mélodies de kick : tous les kicks calculés avant le rendu
   const e = new Engine(octx);
   await e.initMaster();
   // Chaîne master du morceau ; un stem sort sans elle (pas de compression ni de limiteur : c'est au mixage final d'en décider).
@@ -68,13 +70,14 @@ export async function renderSong(onlyTrack = null) {
   os.setValues({ ...oscSynth.values });
   os.out.connect(sc.osc).connect(m.input('osc'));
   e.padOut = pad => (isDuckedSound(pad.sampleId, padCat(pad)) ? sc.pads : e.padBus);
+  const ks = new KickSynth(octx, e.padBus);
   // Ce qu'on entend (muet / solo), ou une seule piste pour un stem.
   const tracks = state.tl.tracks.map((tr, i) => ({ ...tr, solo: false, mute: onlyTrack !== null ? i !== onlyTrack : !trackAudible(state.tl.tracks, i, state.tl.buses) }));
   const buses = state.tl.buses.map(b => ({ ...b, solo: false, mute: false }));   // muet / solo des bus déjà dans `mute` ci-dessus
   const tlState = { ...state.tl, tracks, buses };
   const tl = new Timeline(e, () => tlState, clipBuffer, m.input('tl'));
   Object.assign(tl, {
-    getPad: (b, i) => state.banks[b]?.[i], padKey, getPatch: presetPatch, getOsc: clip => oscFor(clip, os), duckOutput: sc.tl,
+    getPad: (b, i) => state.banks[b]?.[i], padKey, getPatch: presetPatch, getOsc: clip => oscFor(clip, os), getKick: clip => ({ synth: ks, values: clip.kick }), duckOutput: sc.tl,
     isDucked: timeline.isDucked, isKickPad: timeline.isKickPad, kicksOf: clipKicks, onKick: time => sc.kick(time), warpOf: timeline.warpOf,
   });
   // Lecture linéaire du début à la fin, sans boucle ; toutes les fins de notes programmées d'un coup.

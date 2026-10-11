@@ -16,7 +16,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Sampler 40 pads** avec 25 banques (les sons d'une banque se chargent quand vous l'affichez : démarrage rapide), des LEDs synchronisées avec l'écran, et le glisser-déposer de vos propres sons ;
   - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
   - **Piano roll** : éditez les notes des blocs du synthé (hauteur, durée, vélocité, copier / coller, quantification, saisie pas à pas au clavier de l'APC) ;
-  - **Designer de kick** : fabriquez votre propre kick distordu avec 12 potentiomètres et 8 presets, puis envoyez-le sur un pad ou dans la bibliothèque ;
+  - **Designer de kick** : fabriquez votre propre kick distordu avec 12 potentiomètres et 8 presets, ou en mode expert couche par couche (clic, corps, queue avec deboom), accordez sa queue sur la tonalité du morceau, faites-lui jouer une mélodie de kick dans le piano roll, puis envoyez-le sur un pad ou dans la bibliothèque ;
   - **Designer d'effet** : dessinez la courbe d'un effet (volume, filtres, panoramique, saturation, envois) sur 1, 2 ou 4 temps et posez-la sur n'importe quelle piste ;
   - **Générateur** : accords et mélodie d'hymne à partir d'une suite d'accords, avec des suggestions qui apprennent votre goût ;
   - **Breizh generator** : des airs à la manière des sonneurs bretons (an dro, gavotte, marche, gwerz) joués par la bombarde, le biniou, la cornemuse, un couple de sonneurs ou un bagad, avec notes d'agrément et bourdons ;

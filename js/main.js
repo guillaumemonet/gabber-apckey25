@@ -8,6 +8,7 @@ import { t } from './i18n.js';
 import { renderDefaultKit } from './kit.js';
 import { Mixer } from './mixer.js';
 import { OscSynth, oscValues } from './osc.js';
+import { KickSynth } from './kicksynth.js';
 import { Patch } from './patch.js';
 import { Performer } from './performer.js';
 import { presetById } from './presets.js';
@@ -20,7 +21,7 @@ import { buildAcid } from './app/acid-ui.js';
 import { onPadState, setPage } from './app/actions.js';
 import { bindController, renderLeds, setStatus } from './app/controller.js';
 import {
-  $, acid, apc, decks, drum, engine, libAdded, mixer, oscSynth, padKey, performer, provide, sidechain, state, timeline,
+  $, acid, apc, decks, drum, engine, kickSynth, libAdded, mixer, oscSynth, padKey, performer, provide, sidechain, state, timeline,
   viz, wm
 } from './app/core.js';
 import { buildCurve } from './app/curve-ui.js';
@@ -118,6 +119,8 @@ async function start() {
   timeline.padKey = padKey;
   timeline.getPatch = presetPatch;
   timeline.getOsc = clip => oscFor(clip, oscSynth);
+  provide({ kickSynth: new KickSynth(engine.ctx, engine.padBus) });   // mélodies de kick : avec les pads
+  timeline.getKick = clip => ({ synth: kickSynth, values: clip.kick });
   timeline.warpOf = (clip, buf, rate) => (needsWarp(clip, rate) ? warpedBuffer(clip, buf, rate) : null);   // « Garder la hauteur »
   sidechain.tl.connect(mixer.input('tl'));
   timeline.duckOutput = sidechain.tl;
