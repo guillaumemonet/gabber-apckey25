@@ -3,9 +3,9 @@ import { Engine } from '../audio.js';
 import { KickSynth, prepareKickClips } from '../kicksynth.js';
 import { measureLoudness } from '../lufs.js';
 import { t } from '../i18n.js';
-import { Mixer } from '../mixer.js';
+import { Mixer, defaultMixState } from '../mixer.js';
 import { OscSynth } from '../osc.js';
-import { Patch } from '../patch.js';
+import { Patch, defaultPatch } from '../patch.js';
 import { presetById } from '../presets.js';
 import { download, encodeWav, stamp } from '../recorder.js';
 import { Sidechain } from '../sidechain.js';
@@ -37,10 +37,27 @@ export function songEndBeats() {
   return end;
 }
 
+// Fin des blocs d'une piste (en temps), ou des seuls blocs `ids`.
+export function trackEndBeats(tr, ids = null) {
+  const len = state.tl.bars * BEATS_PER_BAR;
+  let end = 0;
+  for (const c of tr.clips) if (c.start < len && (!ids || ids.has(c.id))) end = Math.max(end, c.start + timeline.clipBeats(c));
+  return end;
+}
+// Réglages d'une piste qui restent en direct sur une piste gelée ou rendue en audio (ils ne sont pas dans le son rendu).
+export const LIVE_KNOBS = ['vol', 'pan', 'dly', 'rev'];
+export const BAKED_AUTO = ['lp', 'hp', 'drive'];
+
 // Rend la timeline (ou une seule piste, pour un stem) et renvoie ses deux canaux.
-export async function renderSong(onlyTrack = null) {
+// opts.freeze : son d'une piste gelée (js/app/freeze.js) : ses blocs, effets, inserts, filtres et saturation, puis la table
+// de mixage (muets et solos ignorés), pris à l'entrée du master, jusqu'à la fin de ses blocs ; volume, pano, envois et bus
+// de la piste neutres (ils restent en direct). Les autres pistes ne sonnent pas, mais leurs kicks pompent le sidechain.
+// opts.bounce : pareil, avec une table de mixage neutre et le câblage par défaut (le son devient un bloc audio, qui passera
+// par la voie Timeline) ; opts.clips : ids des seuls blocs à rendre ; opts.kicks : reçoit les kicks de la piste (en temps).
+export async function renderSong(onlyTrack = null, opts = {}) {
   const bd = 60 / state.bpm;
-  const endBeat = songEndBeats();
+  const solo = !!(opts.freeze || opts.bounce) && onlyTrack !== null;
+  const endBeat = solo ? trackEndBeats(state.tl.tracks[onlyTrack], opts.clips) : songEndBeats();
   const sr = engine.ctx.sampleRate;
   const octx = new OfflineAudioContext(2, Math.ceil((EXPORT_LEAD + endBeat * bd + EXPORT_TAIL) * sr), sr);
   // Sons étirés / transposés : tous prêts avant le rendu.
@@ -54,12 +71,21 @@ export async function renderSong(onlyTrack = null) {
   // Chaîne master du morceau ; un stem sort sans elle (ni compression, ni écrêteur, ni limiteur : c'est au mixage final d'en décider).
   e.setMaster(onlyTrack === null ? state.master : Object.fromEntries(Object.entries(state.master).map(([g, v]) => [g, { ...v, on: false }])));
   for (const [id, p] of Object.entries(state.globals)) if (globalDef(id)) e.set(id, globalValue(id, p));
+  if (solo) {
+    // Son pris à l'entrée du master : ni volume général, ni égaliseur, ni chaîne du master (ils s'appliquent en direct après).
+    e.master.disconnect();
+    e.master.gain.cancelScheduledValues(0);
+    e.master.gain.value = 1;
+    e.master.connect(octx.destination);
+  }
   e.setBpm(state.bpm);
   e.setVoice(presetById(state.preset).voice);
-  const m = new Mixer(e, () => state.mix);
+  const mix = opts.bounce ? defaultMixState() : opts.freeze ? { ...state.mix, channels: Object.fromEntries(Object.entries(state.mix.channels).map(([id, ch]) => [id, { ...ch, mute: false, solo: false }])) } : state.mix;
+  const m = new Mixer(e, () => mix);
   e.padBus.disconnect();
   e.padBus.connect(m.input('pads'));
-  const pt = new Patch(e, m, () => state.patch, false);   // même câblage que le son en direct
+  const patch = opts.bounce ? defaultPatch() : state.patch;
+  const pt = new Patch(e, m, () => patch, false);   // même câblage que le son en direct
   const sc = new Sidechain(e, () => state.sc);
   clearInterval(sc.timer);   // tout est programmé d'avance ci-dessous
   e.pumpGain.disconnect();
@@ -72,14 +98,23 @@ export async function renderSong(onlyTrack = null) {
   e.padOut = pad => (isDuckedSound(pad.sampleId, padCat(pad)) ? sc.pads : e.padBus);
   const ks = new KickSynth(octx, e.padBus);
   // Ce qu'on entend (muet / solo), ou une seule piste pour un stem.
-  const tracks = state.tl.tracks.map((tr, i) => ({ ...tr, solo: false, mute: onlyTrack !== null ? i !== onlyTrack : !trackAudible(state.tl.tracks, i, state.tl.buses) }));
+  const tracks = state.tl.tracks.map((tr, i) => ({ ...tr, solo: false, mute: onlyTrack !== null && !solo ? i !== onlyTrack : !trackAudible(state.tl.tracks, i, state.tl.buses) }));
+  if (solo) {
+    // Piste gelée / rendue : réglages en direct neutres, sans bus ; seuls ses blocs `opts.clips` s'il y en a.
+    const tr = state.tl.tracks[onlyTrack];
+    tracks[onlyTrack] = { ...tr, ...Object.fromEntries(LIVE_KNOBS.map(k => [k, 0])), vol: 1, bus: null, mute: false, solo: false,
+      auto: Object.fromEntries(Object.entries(tr.auto ?? {}).filter(([id]) => BAKED_AUTO.includes(id))),
+      clips: opts.clips ? tr.clips.filter(c => opts.clips.has(c.id)) : tr.clips };
+  }
   const buses = state.tl.buses.map(b => ({ ...b, solo: false, mute: false }));   // muet / solo des bus déjà dans `mute` ci-dessus
   const tlState = { ...state.tl, tracks, buses };
   const tl = new Timeline(e, () => tlState, clipBuffer, m.input('tl'));
   Object.assign(tl, {
     getPad: (b, i) => state.banks[b]?.[i], padKey, getPatch: presetPatch, getOsc: clip => oscFor(clip, os), getKick: clip => ({ synth: ks, values: clip.kick }), duckOutput: sc.tl,
-    isDucked: timeline.isDucked, isKickPad: timeline.isKickPad, kicksOf: clipKicks, onKick: time => sc.kick(time), warpOf: timeline.warpOf,
+    isDucked: timeline.isDucked, isKickPad: timeline.isKickPad, kicksOf: clipKicks, warpOf: timeline.warpOf,
+    onKick: (time, ti) => { sc.kick(time); if (solo && ti === onlyTrack) opts.kicks?.push((time - EXPORT_LEAD) / bd); },
   });
+  if (solo) tl.frozenOf = i => (i === onlyTrack ? null : { buf: null });   // les autres pistes : leurs kicks seulement
   // Lecture linéaire du début à la fin, sans boucle ; toutes les fins de notes programmées d'un coup.
   tl.recording = true;
   tl.playing = true;

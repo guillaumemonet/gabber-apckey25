@@ -1,9 +1,10 @@
 // Menu contextuel d'un bloc de la timeline (clic droit) : écouter, gain, fondus, inverser, transposer (notes),
-// dupliquer, ouvrir dans le piano roll, supprimer. Sur un bloc sélectionné, les réglages s'appliquent à toute la sélection.
+// dupliquer, ouvrir dans le piano roll, rendre en audio, supprimer. Sur un bloc sélectionné, les réglages s'appliquent à toute la sélection.
 import { t } from '../i18n.js';
 import { clipEvents } from '../notes.js';
 import { BEATS_PER_BAR } from '../timeline.js';
 import { state, timeline } from './core.js';
+import { bounceTrack } from './freeze.js';
 import { sendToLauncher } from './launcher.js';
 import { openRoll } from './roll-ui.js';
 import { save } from './save.js';
@@ -70,7 +71,7 @@ export function splitAtPlayhead() {
   let list = [];
   state.tl.tracks.forEach((tr, i) => { for (const c of tr.clips) if (tlPicked.has(c)) list.push({ track: i, clip: c }); });
   if (!list.length) state.tl.tracks.forEach((tr, i) => { if (tr.arm) for (const c of tr.clips) list.push({ track: i, clip: c }); });
-  list = list.filter(l => canSplit(l.clip, at));
+  list = list.filter(l => !state.tl.tracks[l.track].frozen && canSplit(l.clip, at));   // piste gelée : verrouillée
   for (const l of list) splitClip(l.track, l.clip, at);
   if (list.length) { renderTl(); save(); }
   return list.length;
@@ -197,6 +198,9 @@ export function openClipMenu(track, clip, x, y, at = null) {
   item(t('cm.duplicate'), () => { closeClipMenu(); duplicateClips(list); }, '', 'plus');
   if (clips.length === 1 && clip.type !== 'pad') item(t('cm.launcher'), () => { closeClipMenu(); sendToLauncher(track, clip); }, '', 'grid');
   if (notes && clips.length === 1) item(t('cm.roll'), () => { closeClipMenu(); openRoll(clip, true); }, '', 'roll');
+  // Rendre en audio les blocs visés de cette piste (avec ses effets) : un bloc audio sur une piste libre.
+  const mine = new Set(list.filter(l => l.track === track).map(l => l.clip.id));
+  item(t('frz.bounceSel', { n: mine.size }), () => { closeClipMenu(); bounceTrack(track, mine); }, '', 'bounce').title = t('frz.bounceSelTitle');
   item(t('cm.delete'), () => { closeClipMenu(); for (const l of list) tlDelete(l.track, l.clip); }, 'cm-danger', 'trash');
 
   document.body.appendChild(menu);

@@ -16,6 +16,7 @@ export const TL_TRACKS = 16;        // pistes au départ
 export const MIN_TRACKS = 4;
 export const MAX_TRACKS = 64;
 export const BEATS_PER_BAR = 4;
+const FROZEN_CLIP = { loop: false };   // son rendu d'une piste gelée : lu comme un bloc audio, sans fondu ni boucle
 // Les notes et les sons ne sont créés qu'un peu avant de jouer (secondes) : tout créer d'avance
 // (des milliers de nœuds audio pour un morceau entier) écroulerait le moteur audio.
 const LOOKAHEAD = 1.5;
@@ -104,6 +105,7 @@ export function cleanTrack(tr) {
     auto: cleanAuto(tr?.auto),                                           // courbes d'automation : { vol: [{ b, v }], … }
     autoParam: tr?.autoParam in AUTO_PARAMS ? tr.autoParam : 'vol',      // réglage affiché dans la ligne d'automation
     autoOpen: !!tr?.autoOpen,                                            // ligne d'automation ouverte
+    frozen: !!tr?.frozen,                                                // piste gelée : jouée depuis son rendu audio (js/app/freeze.js)
   };
 }
 
@@ -171,6 +173,11 @@ export class Timeline {
     this.getOsc = () => null;          // bloc du synthé à oscillateurs -> { synth, values } ; branché par l'application
     this.getKick = () => null;         // bloc de mélodie de kick -> { synth, values } ; branché par l'application
     this.warpOf = () => null;          // (bloc, son, vitesse) -> son étiré / transposé prêt, ou null ; branché par l'application
+    // Piste gelée (branché par l'application) : null = jouée en direct ; { buf } = son rendu de la piste, lu depuis le temps 0
+    // à la place de ses blocs ; { buf: null } = rien ne sonne (rendu hors temps réel d'une autre piste). Dans les deux cas,
+    // les kicks de ses blocs pompent toujours le sidechain.
+    this.frozenOf = () => null;
+    this.frozenDest = engine.master ?? null;   // sortie d'une piste gelée : l'entrée du master (son rendu après la table de mixage)
     this.offs = [];             // fins de notes programmées : { note, key, time }
     this.ons = [];              // départs à créer, au fil de la lecture : { time, run }
     this.synths = new Set();    // synthés qui ont reçu des notes (coupés net à l'arrêt)
@@ -227,6 +234,21 @@ export class Timeline {
       // Une piste muette est programmée quand même (son volume est à zéro) : on peut la rallumer en pleine lecture.
       // Ses kicks ne déclenchent pas le sidechain.
       const live = this.audible(ti);
+      const frozen = this.frozenOf(ti);
+      if (frozen) {
+        if (live) this.ghostKicks(track, ti, time, beat, len, this.cycle.until);
+        if (frozen.buf) {
+          // Son rendu de la piste : il commence au temps 0 du morceau ; en boucle, il s'arrête à la fin de la boucle.
+          const into = beat * bd;
+          if (into < frozen.buf.duration) {
+            let stopAt = time + frozen.buf.duration - into;
+            if (st.loop && !this.recording) stopAt = Math.min(stopAt, endTime);
+            const out = this.strip(ti, this.frozenDest);
+            jobs.push({ time, run: () => this.startClip(FROZEN_CLIP, frozen.buf, 1, into, time, stopAt, out, null, true) });
+          }
+        }
+        return;
+      }
       for (const clip of track.clips) {
         if (clip.type === 'note') {
           // Chaque note du bloc (motif répété) ; une note déjà commencée (lecture partie du milieu d'un bourdon,
@@ -244,7 +266,7 @@ export class Timeline {
             if (at0 >= len || (at0 < beat - 1e-6 && at0 + n.len <= beat + 0.05)) continue;
             const at = Math.max(at0, beat), left = n.len - (at - at0);
             const when = time + (at - beat) * bd;
-            if (kick && live && at0 >= beat - 1e-6) this.onKick(when);   // chaque kick de la mélodie pompe le sidechain
+            if (kick && live && at0 >= beat - 1e-6) this.onKick(when, ti);   // chaque kick de la mélodie pompe le sidechain
             const key = `${this.keyPrefix}${clip.id}:${n.i}`;
             const out = this.trackIn(ti, dest);
             jobs.push({ time: when, run: () => {
@@ -268,7 +290,7 @@ export class Timeline {
               const v = this.engine.playPad(key, pad, { when, oneShot: true, vel: (clip.vel ?? 1) * (clip.gain ?? 1), out });
               if (v) this.padHits.add({ key, v });
             } });
-            if (live && this.isKickPad(pad)) this.onKick(when);
+            if (live && this.isKickPad(pad)) this.onKick(when, ti);
           } else if (pad) this.loadPad(pad);   // pas encore décodé : prêt pour le prochain passage
           continue;
         }
@@ -288,7 +310,7 @@ export class Timeline {
         let stopAt = time + (end - beat) * bd;
         if (st.loop && !this.recording) stopAt = Math.min(stopAt, endTime);
         const out = this.trackIn(ti, this.duckOutput && this.isDucked(clip) ? this.duckOutput : this.output);
-        if (live) this.scheduleKicks(clip, time, beat, Math.min(end, st.loop && !this.recording ? len : Infinity));
+        if (live) this.scheduleKicks(clip, time, beat, Math.min(end, st.loop && !this.recording ? len : Infinity), ti);
         // Début et fin du bloc sur l'horloge audio (fondus d'entrée et de sortie).
         const span = { t0: time + (clip.start - beat) * bd, t1: time + (end - beat) * bd, bd };
         jobs.push({ time: when, run: () => this.startClip(clip, pbuf, rate, into, when, stopAt, out, span, !!warped) });
@@ -301,6 +323,23 @@ export class Timeline {
     const lead = (endTime - this.ctx.currentTime - 0.25) * 1000;
     if (st.loop) this.timer = setTimeout(() => { if (this.playing) this.scheduleCycle(endTime, 0); }, Math.max(0, lead));
     else this.timer = setTimeout(() => this.stop(), Math.max(0, (endTime - this.ctx.currentTime) * 1000));
+  }
+
+  // Piste gelée : ses blocs ne jouent plus, mais leurs kicks pompent toujours le sidechain (mêmes instants qu'en direct).
+  ghostKicks(track, ti, time, beat, len, until) {
+    const bd = this.beatDur;
+    for (const clip of track.clips) {
+      if (clip.type === 'note') {
+        if (!clip.kick) continue;
+        for (const n of clipEvents(clip)) { const at0 = clip.start + n.t; if (at0 >= beat - 1e-6 && at0 < len) this.onKick(time + (at0 - beat) * bd, ti); }
+      } else if (clip.type === 'pad') {
+        const pad = this.getPad(clip.bank, clip.pad);
+        if (pad && clip.start >= beat - 1e-6 && clip.start < len && this.isKickPad(pad)) this.onKick(time + (clip.start - beat) * bd, ti);
+      } else if (this.bufferOf(clip.sampleId)) {
+        const end = clip.start + this.clipBeats(clip);
+        if (end > beat && clip.start < len) this.scheduleKicks(clip, time, beat, Math.min(end, until), ti);
+      }
+    }
   }
 
   // Crée la source d'un bloc audio (juste avant qu'il joue).
@@ -469,6 +508,10 @@ export class Timeline {
       s.drive.sqShaper.connect(s.drive.sq).connect(s.drive.post);
       s.hp.connect(s.lp).connect(s.drive.dry).connect(s.gain).connect(s.mute).connect(s.pan);
       s.dest = dest;
+      // Tranche d'une piste gelée : ses effets, filtres et saturation sont déjà dans le son rendu ; restent le volume,
+      // le muet, le pano, les envois et le bus.
+      s.bare = dest === this.frozenDest;
+      if (s.bare) s.after = s.gain;
       s.pan.connect(this.trackOut(ti, dest));
       // Envois pris avant le panoramique : la reverb et le delay restent larges même pour une piste calée d'un côté.
       s.mute.connect(s.dly).connect(this.engine.delayIn);
@@ -486,8 +529,9 @@ export class Timeline {
   wireInserts(s, owner) {
     s.input.disconnect();
     for (const f of s.inserts) f.output.disconnect();
-    s.inserts = (owner?.inserts ?? []).map(fx => { const node = buildInsert(this.ctx, fx); node.update(fx.p); return node; });
-    s.insSig = (owner?.inserts ?? []).map(f => f.type).join();
+    const list = s.bare ? [] : owner?.inserts ?? [];
+    s.inserts = list.map(fx => { const node = buildInsert(this.ctx, fx); node.update(fx.p); return node; });
+    s.insSig = list.map(f => f.type).join();
     let prev = s.input;
     for (const f of s.inserts) { prev.connect(f.input); prev = f.output; }
     prev.connect(s.after ?? s.hp);
@@ -557,6 +601,7 @@ export class Timeline {
     const list = this.st.tracks[ti]?.inserts ?? [];
     const sig = list.map(f => f.type).join();
     for (const s of this.strips.get(ti)?.values() ?? []) {
+      if (s.bare) continue;
       if (s.insSig === sig) s.inserts.forEach((n, k) => n.update(list[k].p));
       else this.wireInserts(s, this.st.tracks[ti]);
     }
@@ -609,7 +654,7 @@ export class Timeline {
   }
 
   // Kicks d'un bloc audio entre le temps `beat` (joué à l'instant `time`) et `until` (en temps de la timeline).
-  scheduleKicks(clip, time, beat, until) {
+  scheduleKicks(clip, time, beat, until, ti = null) {
     const kicks = this.kicksOf(clip);
     if (!kicks?.length) return;
     const bd = this.beatDur;
@@ -622,7 +667,7 @@ export class Timeline {
     for (let rep = first; rep < Math.min(until, last); rep += period) {
       for (const k of kicks) {
         const b = rep + k;
-        if (b >= clip.start - 1e-6 && b >= beat - 1e-6 && b < until && b < last) this.onKick(time + (b - beat) * bd);
+        if (b >= clip.start - 1e-6 && b >= beat - 1e-6 && b < until && b < last) this.onKick(time + (b - beat) * bd, ti);
       }
       if (period === Infinity) break;
     }

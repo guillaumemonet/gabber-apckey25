@@ -50,6 +50,7 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 | `plugins.js` | Barre des plugins et ouverture des fenêtres |
 | `files.js` | Fichiers : kits, projet, morceau, réglages de chaque outil |
 | `export.js` | Enregistrement du master et export rapide (WAV, stems) hors temps réel |
+| `freeze.js` | Geler une piste (son rendu hors temps réel joué à la place de ses blocs), rendre une piste en audio |
 | `demo.js` | Morceaux de démonstration |
 | `misc.js` | Divers : message temporaire, vumètre, rendu global, boutons Panique et Réinitialiser |
 
