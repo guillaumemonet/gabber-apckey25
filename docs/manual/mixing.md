@@ -29,6 +29,8 @@ Each channel has insert effects (**+ FX**, up to 4, applied in order), reverb an
 - **Filter**: low-pass or high-pass, cutoff and resonance.
 - **Compressor**: threshold, ratio and gain.
 - **Reverb**: size and mix.
+- **EQ (3 bands)**: low, mid and high.
+- **Multiband (OTT)** and **Clipper**: the same as in the master chain (see below), with the same settings. A clipper on the kick bus or on the kick track gives a louder kick without touching the rest.
 
 Double-click a control to reset it. On the APC, **Shift + track button 1 / 2 / 3 / 4** turns the knobs into the mixer's volumes / pans / delay sends / reverb sends: K1 = Pads, K2 = Synth, K3 = TR-909, K4 = Timeline, K5 = TB-303, K6 = Decks, K7 = Oscillator synth, K8 = master volume. The mixer settings are saved and included in session exports.
 
@@ -50,7 +52,7 @@ At the top of the mixer window. When it is **On**, every kick ducks the **synth*
 The **Buses** window (plugin bar, Studio group) groups tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…
 
 - **Send a track to a bus**: in the track's panel (dial button in its header), choose the **Bus** (A to D). The bus letter shows in the track header, and the bus lists its tracks.
-- Each bus has a **name**, up to 4 **insert effects** (EQ, compressor, distortion, filter, reverb), **pan**, **volume** and a meter; double-click a setting to reset it.
+- Each bus has a **name**, up to 4 **insert effects** (EQ, compressor, distortion, filter, reverb, multiband, clipper), **pan**, **volume** and a meter; double-click a setting to reset it.
 - **M** mutes every track of the bus, **S** solos it: only its tracks are heard (with the soloed tracks).
 - A bus keeps sending each sound where its tracks sent it (synth, pads, sidechain path…): putting a track in a bus changes neither its level nor its sidechain, it only adds the bus processing.
 - Sending a track to a bus can be undone with Ctrl+Z; buses are saved with the project and in song files, and the WAV export goes through them.
@@ -60,9 +62,20 @@ The **Buses** window (plugin bar, Studio group) groups tracks of the timeline so
 Below the mixer channels, the **master chain** processes everything that goes out, in this order:
 
 - **Master compressor**: threshold, ratio, knee, attack, release, makeup. Its starting settings are those of GabberKey's old limiter: an existing song sounds exactly the same. Lower the ratio (2 to 4) and raise the threshold for a gentler "glue" compressor.
+- **Multiband (OTT-style)**: OTT-style multiband compression, the "everything loud and detailed" sound of hardcore and hardstyle. The sound is split into three bands (below 88 Hz, 88 Hz to 2.5 kHz, above 2.5 kHz); in each band, the parts above a threshold are pushed down and the quiet parts below another threshold are brought up (tails, reverbs, details), then the processed bands are blended with the untouched ones. **Off by default.**
+  - **Depth** (0 to 100 %, 30 % when you turn it on): how much of the processed sound is blended in. At 0 % the sound passes untouched.
+  - **Time** (×0.10 to ×5): scales the attack and release of the three bands together (shorter = more aggressive, longer = smoother).
+  - **Up** / **Down** (0 to 100 %): how much upward and downward compression is applied. Down at 0 % = it only brings up the quiet parts.
+  - **Output** (−12 to +12 dB): level after the multiband.
+  - Very quiet sound (below about −70 dB: noise, silence) is never brought up.
+- **Clipper**: shaves the peaks at the **ceiling**, before the limiter. A kick's peaks are very short: cutting them costs little to the ear and leaves the limiter much less to do, so the song gets louder and cleaner than by pushing the limiter alone. The clipping is computed at 4× the sample rate (less aliasing). **Off by default.**
+  - **Drive** (0 to +12 dB, +3 dB by default): pushes the sound into the ceiling.
+  - **Ceiling** (−12 to 0 dB, −0.5 dB by default): no peak goes beyond it.
+  - **Softness** (0 to 100 %, 30 % by default): 0 % = hard clipping (cleanest on a kick), 100 % = round saturation that starts well below the ceiling.
+  - Order: the multiband comes before the clipper (it shapes the bands, then the clipper shaves what sticks out), and the limiter last only catches what is left.
 - **Limiter**: it looks 5 ms ahead so that **no sample goes over the ceiling** (−0.3 dB by default), without clipping. **Input gain** pushes the sound against the ceiling: it is the setting that makes the song louder. **Release**: how fast the gain comes back after a peak (longer = smoother, shorter = louder but more "pumping").
 - **Loudness**: measured in **LUFS** (EBU R128), as streaming platforms do. **Momentary** (400 ms), **short term** (3 s), **integrated** (since the last **reset**), **peak** and the limiter's **gain reduction**. The bar shows the short-term loudness; the green zone is the target.
-- **Target for hardcore**: about **−8 to −6 LUFS integrated**, peak at the ceiling. Raise the limiter input gain until you reach the zone, keeping an eye on the gain reduction: beyond 6 to 8 dB of constant reduction, the sound gets squashed.
+- **Target for hardcore**: about **−8 to −6 LUFS integrated**, peak at the ceiling. Raise the limiter input gain until you reach the zone, keeping an eye on the gain reduction: beyond 6 to 8 dB of constant reduction, the sound gets squashed. To go further cleanly, turn on the clipper (drive 3 to 6 dB) and let the limiter catch only a few dB; add some multiband (Depth 20 to 40 %) for density.
 - Each **On / Off** button bypasses its stage; double-click a setting to reset it. The chain is saved with the project and in the mixer settings file, and the **WAV export** goes through it.
 
 ## Patch

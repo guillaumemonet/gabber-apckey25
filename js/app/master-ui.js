@@ -1,4 +1,4 @@
-// Chaîne master (fenêtre Mixeur) : compresseur, limiteur et compteur de sonie en LUFS (momentané, court terme, intégré),
+// Chaîne master (fenêtre Mixeur) : compresseur, compression multibande, écrêteur, limiteur et compteur de sonie en LUFS (momentané, court terme, intégré),
 // crête, réduction de gain, sonie du dernier export.
 import { MASTER_PARAMS, defaultMasterState } from '../audio.js';
 import { t } from '../i18n.js';
@@ -16,8 +16,11 @@ const num = (v, d = 1) => new Intl.NumberFormat(document.documentElement.lang ||
 // En dessous de -70 LUFS (silence), la norme ne mesure plus rien : un tiret.
 export const fmtLufs = v => (Number.isFinite(v) && v > -70 ? `${num(v)} LUFS` : '— LUFS');
 export const fmtDb = v => (Number.isFinite(v) ? `${num(v)} dB` : '−∞ dB');
-const UNITS = { threshold: 'dB', knee: 'dB', makeup: 'dB', gain: 'dB', ceiling: 'dB', attack: 'ms', release: 'ms', ratio: ':1' };
-const fmtParam = (k, v) => (k === 'ratio' ? `${num(v, 1)}:1` : `${num(v, k === 'attack' || k === 'ceiling' ? 1 : k === 'release' ? 0 : 1)} ${UNITS[k]}`);
+const UNITS = { threshold: 'dB', knee: 'dB', makeup: 'dB', gain: 'dB', ceiling: 'dB', drive: 'dB', output: 'dB', attack: 'ms', release: 'ms', ratio: ':1' };
+const PCT = new Set(['soft', 'depth', 'up', 'down']);
+const fmtParam = (k, v) => (k === 'ratio' ? `${num(v, 1)}:1` : k === 'time' ? `×${num(v / 100, 2)}` : PCT.has(k) ? `${num(v, 0)}%`
+  : `${num(v, k === 'attack' || k === 'ceiling' ? 1 : k === 'release' ? 0 : 1)} ${UNITS[k]}`);
+const HINTS = { ott: 'master.ottHint', clip: 'master.clipHint' };
 
 export function setLastExport(l) { lastExport = l; renderMasterMeters(); }
 
@@ -26,7 +29,7 @@ export function buildMaster() {
   const groups = Object.keys(MASTER_PARAMS).map(g => {
     const sliders = Object.entries(MASTER_PARAMS[g]).map(([k, [min, max, step]]) =>
       `<label class="fx-param"><span>${t(`master.${k}`)}</span><input type="range" data-g="${g}" data-k="${k}" min="${min}" max="${max}" step="${step}"><em></em></label>`).join('');
-    return `<div class="mc-group" data-group="${g}"><div class="mc-head"><b>${t(`master.${g}`)}</b><button class="mc-on" data-g="${g}">${t('master.on')}</button></div><div class="mc-params">${sliders}</div></div>`;
+    return `<div class="mc-group" data-group="${g}"><div class="mc-head"><b>${t(`master.${g}`)}</b><button class="mc-on" data-g="${g}">${t('master.on')}</button></div><div class="mc-params">${sliders}</div>${HINTS[g] ? `<div class="hint mc-hint">${t(HINTS[g])}</div>` : ''}</div>`;
   }).join('');
   box.innerHTML = `${groups}
     <div class="mc-group mc-meters">

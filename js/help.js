@@ -172,7 +172,7 @@ export const HELP = {
       <p>Four buses (A to D) group tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…</p>
       <ul>
         <li><b>Send a track to a bus</b>: in the track's panel (dial button in its header), choose <b>Bus</b>. The bus letter then shows in the track header; the bus lists its tracks.</li>
-        <li><b>Insert effects</b> (up to 4: EQ, compressor, distortion, filter, reverb), <b>pan</b> and <b>volume</b> act on the whole group; double-click a setting to reset it.</li>
+        <li><b>Insert effects</b> (up to 4: EQ, compressor, distortion, filter, reverb, multiband, clipper: a clipper on the kick bus for a louder kick), <b>pan</b> and <b>volume</b> act on the whole group; double-click a setting to reset it.</li>
         <li><b>M</b> mutes every track of the bus, <b>S</b> solos the bus (with the soloed tracks).</li>
         <li>A bus keeps sending each sound where it went before (synth, pads, sidechain…): putting a track in a bus does not change its level.</li>
         <li>Buses are saved with the project and in song files, and the WAV export goes through them.</li>
@@ -216,7 +216,8 @@ export const HELP = {
     mix: `
       <p>One channel per tool (Pads, Synth, TR-909, Timeline), then the master.</p>
       <ul>
-        <li>Each channel: insert effects (<b>+ FX</b>, up to 4: distortion, filter, compressor, reverb), reverb and delay sends, pan, fader, <b>M</b>ute, <b>S</b>olo, meter. Double-click = reset.</li>
+        <li>Each channel: insert effects (<b>+ FX</b>, up to 4: distortion, filter, compressor, reverb, EQ, multiband, clipper), reverb and delay sends, pan, fader, <b>M</b>ute, <b>S</b>olo, meter. Double-click = reset.</li>
+        <li><b>Master chain</b>: compressor → <b>multiband</b> (OTT-style compression in 3 bands: quiet parts come up, loud parts are held; <b>Depth</b> 0 = untouched, <b>Time</b> scales attack and release, <b>Up</b> / <b>Down</b> dose each direction) → <b>clipper</b> (shaves the peaks at the <b>ceiling</b>; <b>drive</b> pushes into it, <b>softness</b> rounds the corner) → limiter, then the LUFS loudness. Multiband and clipper are off by default.</li>
         <li><b>Sidechain</b> (top): every kick ducks the synth and the melodic sounds (bass, pads, leads, keys, voices), which come back up smoothly. Triggered by <b>the kicks</b> (909, kick pads and blocks, kicks of the GabberKey loops) or on <b>every beat</b> (for other loops). Depth, release, targets; the meter shows the ducking.</li>
         <li><b>Master</b> (bottom): master EQ (5 bands, low-pass, high-pass, gain) and global effects and volumes (delay time and feedback, reverb size, sends and volumes of the synth and pads, master volume).</li>
         <li>APC: Shift + track 1 / 2 / 3 / 4 = volumes / pans / delay / reverb (K1 Pads, K2 Synth, K3 TR-909, K4 Timeline, K5 TB-303, K6 Decks, K8 master).</li>
@@ -408,7 +409,7 @@ export const HELP = {
       <p>Quatre bus (A à D) regroupent des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…</p>
       <ul>
         <li><b>Envoyer une piste vers un bus</b> : dans le panneau de la piste (bouton cadran de son en-tête), choisissez le <b>Bus</b>. La lettre du bus s'affiche alors dans l'en-tête de la piste ; le bus liste ses pistes.</li>
-        <li><b>Effets d'insert</b> (jusqu'à 4 : égaliseur, compresseur, distorsion, filtre, reverb), <b>panoramique</b> et <b>volume</b> agissent sur tout le groupe ; double-clic sur un réglage = valeur par défaut.</li>
+        <li><b>Effets d'insert</b> (jusqu'à 4 : égaliseur, compresseur, distorsion, filtre, reverb, multibande, écrêteur : un écrêteur sur le bus des kicks pour un kick plus fort), <b>panoramique</b> et <b>volume</b> agissent sur tout le groupe ; double-clic sur un réglage = valeur par défaut.</li>
         <li><b>M</b> coupe toutes les pistes du bus, <b>S</b> met le bus en solo (avec les pistes en solo).</li>
         <li>Un bus envoie chaque son là où il allait avant (synthé, pads, sidechain…) : mettre une piste dans un bus ne change pas son niveau.</li>
         <li>Les bus sont enregistrés avec le projet et dans les fichiers morceau, et l'export WAV passe par eux.</li>
@@ -452,7 +453,8 @@ export const HELP = {
     mix: `
       <p>Une voie par outil (Pads, Synthé, TR-909, Timeline), puis le master.</p>
       <ul>
-        <li>Chaque voie : effets d'insert (<b>+ FX</b>, jusqu'à 4 : distorsion, filtre, compresseur, reverb), envois reverb et delay, panoramique, fader, <b>M</b>uet, <b>S</b>olo, vumètre. Double-clic = remise à zéro.</li>
+        <li>Chaque voie : effets d'insert (<b>+ FX</b>, jusqu'à 4 : distorsion, filtre, compresseur, reverb, égaliseur, multibande, écrêteur), envois reverb et delay, panoramique, fader, <b>M</b>uet, <b>S</b>olo, vumètre. Double-clic = remise à zéro.</li>
+        <li><b>Chaîne master</b> : compresseur → <b>multibande</b> (compression multibande façon OTT, en 3 bandes : les passages faibles remontent, les passages forts sont tenus ; <b>Dosage</b> à 0 = son intact, <b>Temps</b> règle ensemble attaque et relâche, <b>Vers le haut</b> / <b>Vers le bas</b> dosent chaque sens) → <b>écrêteur</b> (rase les crêtes au <b>plafond</b> ; le <b>gain d'entrée</b> pousse le son contre lui, la <b>douceur</b> arrondit l'angle) → limiteur, puis la sonie en LUFS. Multibande et écrêteur sont coupés par défaut.</li>
         <li><b>Sidechain</b> (en haut) : chaque kick fait baisser le synthé et les sons mélodiques (basses, nappes, leads, claviers, voix), qui remontent en douceur. Déclenché par <b>les kicks</b> (909, pads et blocs de kick, kicks des boucles GabberKey) ou à <b>chaque temps</b> (pour les autres boucles). Profondeur, relâche, cibles ; le témoin montre la baisse.</li>
         <li><b>Master</b> (en bas) : l'EQ du master (5 bandes, passe-bas, passe-haut, gain) et les effets globaux et volumes (temps et répétitions du delay, taille de la reverb, envois et volumes du synthé et des pads, volume général).</li>
         <li>APC : Maj + piste 1 / 2 / 3 / 4 = volumes / panos / delay / reverb (K1 Pads, K2 Synthé, K3 TR-909, K4 Timeline, K5 TB-303, K6 Platines, K8 master).</li>

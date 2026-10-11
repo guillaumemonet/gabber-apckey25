@@ -813,10 +813,11 @@ header button, header .status { white-space: nowrap; }
 [data-icon="v-reaction"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M5 5c3 0 3 4 6 4s3-4 6-4M5 12c3 0 3 4 6 4s3-4 6-4M5 19c3 0 3-3 6-3%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="v-vu"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M3 17a9 9 0 0 1 18 0M12 17l4-7M6.5 11.5l1 1M17.5 11.5l-1 1M12 8v1.5%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 /* Chaîne master (fenêtre Mixeur) */
-.master-chain { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+.master-chain { display: grid; grid-template-columns: 1.6fr 1.6fr 1fr; gap: 10px; margin-top: 10px; }
+.master-chain .mc-meters { grid-column: span 2; }
 @media (max-width: 1100px) { .master-chain { grid-template-columns: 1fr 1fr; } }
 .mc-params { display: grid; grid-template-columns: 1fr; gap: 1px 14px; }
-.mc-group[data-group="comp"] .mc-params { grid-template-columns: 1fr 1fr; }
+.mc-group[data-group="comp"] .mc-params, .mc-group[data-group="ott"] .mc-params { grid-template-columns: 1fr 1fr; }
 .mc-group { display: flex; flex-direction: column; gap: 4px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 11px; }
 .mc-group.off .fx-param { opacity: .45; }
 .mc-group .fx-param { grid-template-columns: 64px 1fr 54px; }

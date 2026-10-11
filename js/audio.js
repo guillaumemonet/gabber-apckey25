@@ -2,6 +2,7 @@
 // effets de performance (roll, filtres, tape-stop, pump) et égaliseur général.
 import { PAGES, WAVES, MODES, toValue } from './params.js';
 import { kWeighting } from './lufs.js';
+import { CLIP_PARAMS, OTT_PARAMS, buildClipper, buildOtt, loadOttWorklet } from './dynamics.js';
 
 const MASTER_WORKLET = 'js/master-worklet.js?v=2';
 
@@ -55,18 +56,23 @@ function driveCurve(amount) {
   return curve;
 }
 
-// Chaîne master : compresseur puis limiteur. Valeurs par défaut du compresseur = l'ancien limiteur du moteur.
+// Chaîne master : compresseur, compression multibande façon OTT, écrêteur, limiteur (dans cet ordre, voir le constructeur).
+// Valeurs par défaut du compresseur = l'ancien limiteur du moteur ; multibande et écrêteur coupés par défaut
+// (les anciens projets sonnent comme avant).
 export const MASTER_PARAMS = {
   comp: { threshold: [-40, 0, 0.5, -3], ratio: [1, 20, 0.5, 20], knee: [0, 40, 1, 30], attack: [0.5, 100, 0.5, 2], release: [20, 1000, 5, 100], makeup: [0, 12, 0.5, 0] },
+  ott: OTT_PARAMS,
+  clip: CLIP_PARAMS,
   limit: { gain: [0, 18, 0.5, 0], ceiling: [-6, 0, 0.1, -0.3], release: [10, 500, 5, 80] },
 };
+const MASTER_ON = { comp: true, ott: false, clip: false, limit: true };
 export function defaultMasterState() {
   const pick = g => Object.fromEntries(Object.entries(MASTER_PARAMS[g]).map(([k, v]) => [k, v[3]]));
-  return { comp: { on: true, ...pick('comp') }, limit: { on: true, ...pick('limit') } };
+  return Object.fromEntries(Object.keys(MASTER_PARAMS).map(g => [g, { on: MASTER_ON[g], ...pick(g) }]));
 }
 export function mergeMasterState(saved) {
   const m = defaultMasterState();
-  for (const g of ['comp', 'limit']) {
+  for (const g of Object.keys(MASTER_PARAMS)) {
     if (typeof saved?.[g]?.on === 'boolean') m[g].on = saved[g].on;
     for (const [k, [min, max]] of Object.entries(MASTER_PARAMS[g])) {
       const v = saved?.[g]?.[k];
@@ -130,16 +136,23 @@ export class Engine {
       eqHP: band('highpass', 20, 0.9),
     };
     this.eqGain = gain();
-    // Chaîne master : compresseur (réglé par défaut comme l'ancien limiteur : le son ne change pas), puis limiteur
-    // à anticipation et compteur de sonie (js/master-worklet.js, branché par initMaster ; en attendant : passage direct).
+    // Chaîne master : compresseur (réglé par défaut comme l'ancien limiteur : le son ne change pas), compression
+    // multibande, écrêteur, puis limiteur à anticipation et compteur de sonie (js/master-worklet.js, branché par
+    // initMaster ; en attendant : passage direct). Le multibande vient avant l'écrêteur : il remonte les détails et
+    // tient les bandes avant que l'écrêteur rase les crêtes (des crêtes déjà rasées pomperaient dans ses détecteurs) ;
+    // le limiteur, à la fin, ne rattrape plus que les quelques crêtes qui dépassent encore (suréchantillonnage).
     this.comp = ctx.createDynamicsCompressor();
     this.compMakeup = gain();
     this.compWet = gain(1);
     this.compDry = gain(0);
+    this.ott = buildOtt(ctx);
+    this.clipper = buildClipper(ctx);
     this.limitIn = gain();
     this.limitOut = gain();
-    this.eqGain.connect(this.comp).connect(this.compMakeup).connect(this.compWet).connect(this.limitIn);
-    this.eqGain.connect(this.compDry).connect(this.limitIn);
+    this.eqGain.connect(this.comp).connect(this.compMakeup).connect(this.compWet).connect(this.ott.input);
+    this.eqGain.connect(this.compDry).connect(this.ott.input);
+    this.ott.output.connect(this.clipper.input);
+    this.clipper.output.connect(this.limitIn);
     this.limitIn.connect(this.limitOut);
     this.limiterNode = null;
     this.onMeter = () => {};   // { e (énergie pondérée K de 100 ms), peak, gr } : voir js/lufs.js
@@ -241,6 +254,7 @@ export class Engine {
 
   // Branche le limiteur et le compteur de sonie (module du fil audio, chargé une fois par contexte).
   async initMaster() {
+    try { await loadOttWorklet(this.ctx); } catch (err) { console.warn('Compression multibande indisponible', err); }
     try {
       await this.ctx.audioWorklet.addModule(MASTER_WORKLET);
       const node = new AudioWorkletNode(this.ctx, 'gk-master', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [2],
@@ -267,6 +281,8 @@ export class Engine {
     this.comp.attack.setTargetAtTime(c.attack / 1000, t, 0.02);
     this.comp.release.setTargetAtTime(c.release / 1000, t, 0.02);
     this.compMakeup.gain.setTargetAtTime(Math.pow(10, c.makeup / 20), t, 0.02);
+    this.ott.update(m.ott, m.ott.on);
+    this.clipper.update(m.clip, m.clip.on);
     this.limiterNode?.port.postMessage({ on: m.limit.on, gain: m.limit.gain, ceiling: m.limit.ceiling, release: m.limit.release });
   }
 
