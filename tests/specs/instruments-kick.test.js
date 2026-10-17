@@ -32,17 +32,17 @@ export default async function (t, A) {
   await t.wait(50);
   t.eq(t.$$('#kick-knobs .knob').length, 12, '12 potentiomètres');
   const presets = t.$$('#kick-presets button');
-  t.eq(presets.length, 8, '8 presets');
+  t.eq(presets.length, 9, '9 presets');
   // Hauteur de la queue : fa (87 Hz), puis une octave au-dessus.
   const base = { ...S.kick.params, length: 0.6, bend: 0, drive: 0.3, zaag: 0 };
   const k1 = await A.synthKick(base, sr);
   const k2 = await A.synthKick({ ...base, tune: 1 }, sr);
   let peak = 0; for (const v of k1) peak = Math.max(peak, Math.abs(v));
   t.ok(peak > 0.3 && peak <= 1.0001, 'kick rendu à bon niveau', peak);
-  // Hauteur attendue : fa3 (175 Hz) décalé de Tune (-12..+12 demi-tons), voir js/kickdesign.js.
-  const expect = tune => 440 * 2 ** ((53 + Math.round(tune * 24) - 12 - 69) / 12);
-  t.near(pitch(k1, sr), expect(base.tune), expect(base.tune) * 0.05, 'queue accordée sur Tune (fa3 au centre)');
-  t.near(pitch(k2, sr), expect(1), expect(1) * 0.05, 'Tune au maximum : une octave au-dessus de fa3');
+  // Hauteur attendue : fa2 (87 Hz, comme les kicks des banques) décalé de Tune (-12..+12 demi-tons), voir js/kickdesign.js.
+  const expect = tune => 440 * 2 ** ((41 + Math.round(tune * 24) - 12 - 69) / 12);
+  t.near(pitch(k1, sr), expect(base.tune), expect(base.tune) * 0.05, 'queue accordée sur Tune (fa2 au centre)');
+  t.near(pitch(k2, sr), expect(1), expect(1) * 0.05, 'Tune au maximum : une octave au-dessus de fa2');
   // Chaque preset change le son.
   const lens = new Set();
   for (const b of presets) {

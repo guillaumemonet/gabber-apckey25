@@ -17,7 +17,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **40-pad sampler** with 25 banks (a bank's sounds load when you show it, so startup is fast), pad LEDs synced to the screen, and drag & drop of your own sounds;
   - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
   - **Piano roll**: edit the notes of the synth blocks (pitch, length, velocity, copy / paste, quantize, step input from the APC keyboard);
-  - **Kick designer**: build your own distorted kick from 12 knobs and 8 presets, or in expert mode layer by layer (click, body, tail with deboom), tune its tail to the key of the song, make it play a kick melody in the piano roll, then send it to a pad or the library;
+  - **Kick designer**: build your own distorted kick from 12 knobs and 9 presets, or in expert mode layer by layer (click, body, tail with deboom), tune its tail to the key of the song, make it play a kick melody in the piano roll, then send it to a pad or the library;
   - **Effect designer**: draw the curve of an effect (volume, filters, pan, saturation, sends) over 1, 2 or 4 beats and put it on any track;
   - **Generator**: anthem chords and melody from a chord progression, with suggestions that learn your taste;
   - **Breizh generator**: tunes in the style of Breton pipers (an dro, gavotte, march, gwerz) played by the bombarde, the biniou, the bagpipe, a pair of pipers or a bagad, with grace notes and drones;

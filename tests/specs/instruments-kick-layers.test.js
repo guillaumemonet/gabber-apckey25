@@ -34,7 +34,7 @@ export default async function (t, A) {
   t.eq(t.$$('#kick-layers .kick-layer').map(c => c.querySelectorAll('.knob').length), [5, 5, 13], 'clic 5, corps 5, queue 13 potentiomètres');
 
   // Réglages experts neutres : un kick d'usine n'a pas de corps ; la queue seule et le clic seul sonnent.
-  const base = { ...A.kickDefaults(), ...A.KICK_PRESETS.rotterdam, length: 0.6, bend: 0, drive: 0.3, zaag: 0 };
+  const base = { ...A.kickDefaults(), ...A.KICK_PRESETS.rotterdam, tune: 0.5, length: 0.6, bend: 0, drive: 0.3, zaag: 0 };
   const peak = d => d.reduce((m, v) => Math.max(m, Math.abs(v)), 0);
   t.ok(peak(await A.synthKick(base, sr, { only: 'body' })) < 1e-4, 'kick d’usine : pas de corps');
   t.ok(peak(await A.synthKick(base, sr, { only: 'tail' })) > 0.3 && peak(await A.synthKick(base, sr, { only: 'click' })) > 0.01, 'la queue et le clic sonnent seuls');
@@ -45,9 +45,9 @@ export default async function (t, A) {
     t.ok(rms(clk, 0.015, 0.06, sr) < rms(full, 0.015, 0.06, sr) * 0.03, `${name} : le clic s’éteint en quelques millisecondes`, [rms(clk, 0.015, 0.06, sr), rms(full, 0.015, 0.06, sr)]);
   }
 
-  // Corps : plonge jusqu'à une octave sous la queue (fa2 = 87 Hz).
+  // Corps : plonge jusqu'à une octave sous la queue (fa1 = 44 Hz).
   const body = await A.synthKick({ ...base, body: 1, bodyDecay: 1 }, sr, { only: 'body' });
-  t.near(pitch(body, sr, 0.1, 0.25), 87.3, 6, 'le corps finit une octave sous la queue', pitch(body, sr, 0.1, 0.25));
+  t.near(pitch(body, sr, 0.1, 0.25), 43.7, 4, 'le corps finit une octave sous la queue', pitch(body, sr, 0.1, 0.25));
 
   // Queue accordée sur une note (mélodie de kick) : fa4 = 349 Hz.
   const f4 = await A.synthKick(base, sr, { note: 65, only: 'tail' });
@@ -56,7 +56,7 @@ export default async function (t, A) {
   // Deboom : la fondamentale de la queue est retirée.
   const plain = await A.synthKick(base, sr, { only: 'tail' });
   const deboom = await A.synthKick({ ...base, deboom: 0.9 }, sr, { only: 'tail' });
-  t.ok(share(deboom, sr, 174.6) < share(plain, sr, 174.6) * 0.3, 'deboom : la fondamentale de la queue s’efface', [share(plain, sr, 174.6), share(deboom, sr, 174.6)]);
+  t.ok(share(deboom, sr, 87.3) < share(plain, sr, 87.3) * 0.3, 'deboom : la fondamentale de la queue s’efface', [share(plain, sr, 87.3), share(deboom, sr, 87.3)]);
 
   // Départ de la queue : elle entre en fondu, le début est fait par le clic et le corps.
   const late = await A.synthKick({ ...base, tailDelay: 1 }, sr, { only: 'tail' });
@@ -73,11 +73,11 @@ export default async function (t, A) {
   // Note de la queue affichée ; Accorder sur la tonalité (premier accord du Générateur).
   S.kick.params = { ...base };
   A.renderKick();
-  t.ok(/fa3|F3/.test(t.$('#kick-note').textContent), 'note de la queue affichée', t.$('#kick-note').textContent);
+  t.ok(/fa2|F2/.test(t.$('#kick-note').textContent), 'note de la queue affichée', t.$('#kick-note').textContent);
   S.gen.prog = 'Gm Eb F Dm';
   t.$('#kick-key').click();
   await t.wait(80);
-  t.eq(A.kickTailNote(S.kick.params), 55, 'accordée sur sol (le plus près de fa3)');
+  t.eq(A.kickTailNote(S.kick.params), 43, 'accordée sur sol (le plus près de fa2)');
 
   // Mélodie de kick : un kick par temps, sur les fondamentales des accords (sol, mi♭, fa, ré), 2 mesures par accord.
   S.gen.bars = 2;
@@ -85,11 +85,11 @@ export default async function (t, A) {
   await t.wait(100);
   const clip = S.tl.tracks.flatMap(tr => tr.clips).find(c => c.kick);
   t.ok(clip && clip.len === 32 && clip.seq.length === 32, 'bloc de 8 mesures, un kick par temps', clip && [clip.len, clip.seq.length]);
-  t.eq([0, 8, 16, 24].map(b => clip.seq.find(n => n.t === b).note), [55, 51, 53, 50], 'les notes suivent les accords, au plus près de la queue');
+  t.eq([0, 8, 16, 24].map(b => clip.seq.find(n => n.t === b).note), [43, 39, 41, 38], 'les notes suivent les accords, au plus près de la queue');
   t.eq(clip.kick.tune, S.kick.params.tune, 'le bloc garde les réglages du kick');
   t.ok(A.wm.isOpen('roll') && t.$('#roll-preset').value === 'kick', 'ouvert dans le piano roll, son « Kick du designer »');
   await A.prepareKickClips(S.tl.tracks, sr);
-  t.ok(A.kickReady(clip.kick, 51), 'les kicks du bloc sont calculés à l’avance');
+  t.ok(A.kickReady(clip.kick, 39), 'les kicks du bloc sont calculés à l’avance');
 
   // Lecture : le synthé de kick joue, chaque kick coupe le précédent.
   const level = t.meter(E.output);

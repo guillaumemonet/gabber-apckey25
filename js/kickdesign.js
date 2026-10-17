@@ -13,7 +13,7 @@ const ms = v => (v < 1 ? `${Math.round(v * 1000)} ms` : `${v.toFixed(2)} s`);
 const pct = v => `${Math.round(v * 100)}%`;
 const NOTE_NAMES = () => t('notes');
 const around = (mid, ratio) => p => mid * Math.pow(ratio, (p - 0.5) * 2);   // 0.5 = mid, 0 / 1 = mid ÷ / × ratio
-export const KICK_BASE_NOTE = 53;   // fa3 = 175 Hz : la hauteur des queues des kicks des banques (« Note » = 0)
+export const KICK_BASE_NOTE = 41;   // fa2 = 87 Hz : la hauteur des queues des kicks des banques (tools/gabber.py, « Note » = 0)
 export const kickNoteName = note => `${NOTE_NAMES()[note % 12]}${Math.floor(note / 12) - 1}`;
 
 // Potentiomètres : position 0..1 -> valeur réelle ; affichage.
@@ -59,19 +59,22 @@ export const kickSteps = id => PARAMS[id].steps;
 export const kickDefaults = () => Object.fromEntries(KICK_PARAMS.map(id => [id, PARAMS[id].def]));
 
 // Presets (positions des potentiomètres) ; les autres potentiomètres gardent leur valeur par défaut.
+// Notes des queues comme les kicks des banques : Rotterdam +2, Early +5, Terror +7 demi-tons au-dessus de fa2.
 export const KICK_PRESETS = {
-  rotterdam: { pitch: 0.35, sweep: 0.3, bend: 0.15, length: 0.38, zaag: 0, drive: 0.78, shape: 0.5, tone: 0.42, bite: 0.5, click: 0.35, top: 0.45 },
+  rotterdam: { tune: 0.58, pitch: 0.35, sweep: 0.3, bend: 0.15, length: 0.38, zaag: 0, drive: 0.78, shape: 0.5, tone: 0.42, bite: 0.5, click: 0.35, top: 0.45 },
   mainstream: { pitch: 0.5, sweep: 0.22, bend: 0.3, length: 0.45, zaag: 0.12, drive: 0.62, shape: 0.25, tone: 0.5, bite: 0.55, click: 0.6, top: 0.8 },
   uptempo: { pitch: 0.55, sweep: 0.2, bend: 0.3, length: 0.5, zaag: 0.7, drive: 0.55, shape: 0.25, tone: 0.58, bite: 0.65, click: 0.8, top: 0.9 },
   raw: { pitch: 0.5, sweep: 0.25, bend: 0.75, length: 0.45, zaag: 0.45, drive: 0.6, shape: 0.25, tone: 0.35, bite: 0.6, click: 0.7, top: 0.85 },
-  terror: { pitch: 0.75, sweep: 0.12, bend: 0.1, length: 0.08, zaag: 0.1, drive: 0.95, shape: 0.25, tone: 0.55, bite: 0.7, click: 0.8, top: 0.6 },
+  terror: { tune: 0.79, pitch: 0.75, sweep: 0.12, bend: 0.1, length: 0.08, zaag: 0.1, drive: 0.95, shape: 0.25, tone: 0.55, bite: 0.7, click: 0.8, top: 0.6 },
   industrial: { pitch: 0.4, sweep: 0.3, bend: 0.2, length: 0.4, zaag: 0.2, drive: 0.7, shape: 1, tone: 0.5, bite: 0.5, click: 0.5, top: 0.5 },
-  early: { pitch: 0.3, sweep: 0.35, bend: 0.1, length: 0.62, zaag: 0, drive: 0.3, shape: 0, tone: 0.3, bite: 0.25, click: 0.25, top: 0.3 },
+  early: { tune: 0.71, pitch: 0.3, sweep: 0.35, bend: 0.1, length: 0.62, zaag: 0, drive: 0.3, shape: 0, tone: 0.3, bite: 0.25, click: 0.25, top: 0.3 },
   frenchcore: { pitch: 0.6, sweep: 0.15, bend: 0.2, length: 0.36, zaag: 0.25, drive: 0.7, shape: 0.25, tone: 0.65, bite: 0.6, click: 0.9, top: 1 },
+  // 909 : queue vers 55 Hz (la), balayage court depuis ~250 Hz, presque pas de distorsion, attaque douce.
+  tr909: { tune: 0.17, pitch: 0.47, sweep: 0.52, bend: 0.05, length: 0.5, zaag: 0, drive: 0.1, shape: 0, tone: 0.3, bite: 0.1, click: 0.3, top: 0.2 },
 };
 
 export const KICK_CATS = ['gabber', 'hardcore', 'modern'];
-export const KICK_PRESET_CAT = { rotterdam: 'gabber', early: 'gabber', terror: 'hardcore', industrial: 'hardcore', frenchcore: 'hardcore', mainstream: 'modern', uptempo: 'modern', raw: 'modern' };
+export const KICK_PRESET_CAT = { rotterdam: 'gabber', early: 'gabber', tr909: 'gabber', terror: 'hardcore', industrial: 'hardcore', frenchcore: 'hardcore', mainstream: 'modern', uptempo: 'modern', raw: 'modern' };
 
 export function defaultKickState() {
   return { params: { ...kickDefaults(), ...KICK_PRESETS.mainstream }, preset: 'mainstream', auto: true, user: [], expert: false, solo: null };

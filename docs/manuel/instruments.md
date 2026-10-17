@@ -109,7 +109,7 @@ Un synthé façon analogique pour fabriquer vos propres sons, à côté du synth
 
 Fabriquez votre propre kick gabber / hardcore, calculé par le navigateur en quelques millisecondes. En mode **Simple**, 12 potentiomètres :
 
-- **Presets** : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore (boutons), aussi dans un menu par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et **Enregistrer** pour garder le vôtre (★ dans le menu), la corbeille le supprime.
+- **Presets** : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909 (boutons), aussi dans un menu par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et **Enregistrer** pour garder le vôtre (★ dans le menu), la corbeille le supprime.
 - **Queue** : **Note** (accordée avec les banques), **Punch** et **Chute** (de combien la hauteur part haut et à quelle vitesse elle tombe), **Plongée** (de combien elle continue de descendre), **Longueur**, **Zaag** (scie pour la queue brute et bourdonnante des kicks uptempo).
 - **Distorsion** : **Drive** et **Forme** (les 5 formes de la 909), puis **Formant** et **Mordant**, qui font « parler » la queue.
 - **Attaque** : **Clic** (bruit) et **Attaque** (couche courte et percutante).
@@ -130,7 +130,7 @@ Le bouton **Expert** remplace les 12 potentiomètres par les trois couches du ki
 
 ### Note de la queue et mélodie de kick
 
-La note de la queue s'affiche au-dessus des potentiomètres (par exemple « Queue : fa3 (175 Hz) »).
+La note de la queue s'affiche au-dessus des potentiomètres (par exemple « Queue : fa2 (87 Hz) »).
 
 - **Accorder sur la tonalité** accorde la queue sur la tonalité du morceau : la fondamentale du premier accord du **Générateur**, au plus près de la note actuelle.
 - **Mélodie de kick** pose sur la timeline un bloc de notes joué par ce kick, un kick par temps, et l'ouvre dans le **piano roll**. Chaque note accorde la queue : changez les notes pour faire chanter le kick, comme en frenchcore ou en uptempo. S'il y a une suite d'accords dans le Générateur, la mélodie suit la fondamentale de chaque accord ; sinon elle reste sur la note de la queue.

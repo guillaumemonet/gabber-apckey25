@@ -109,7 +109,7 @@ An analogue-style synth to build your own sounds, next to the layered synth.
 
 Build your own gabber / hardcore kick, computed by the browser in a few milliseconds. In **Simple** mode, 12 knobs:
 
-- **Presets**: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore (buttons), also in a menu by category (Gabber, Hardcore, Mainstream / uptempo) with your own kicks. Turning a knob makes the sound custom; type a name, choose a category and **Save** to keep your own (★ in the menu), the bin deletes it.
+- **Presets**: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909 (buttons), also in a menu by category (Gabber, Hardcore, Mainstream / uptempo) with your own kicks. Turning a knob makes the sound custom; type a name, choose a category and **Save** to keep your own (★ in the menu), the bin deletes it.
 - **Tail**: **Tune** (note of the tail, in tune with the banks), **Punch** and **Sweep** (how high the pitch starts and how fast it drops), **Tail drop** (how far it keeps falling), **Length**, **Zaag** (sawtooth for the raw, buzzing tail of uptempo kicks).
 - **Distortion**: **Drive** and **Shape** (the 909's 5 shapes), then **Formant** and **Bite**, which make the tail "talk".
 - **Attack**: **Click** (noise) and **Attack** (short punchy layer).
@@ -130,7 +130,7 @@ The **Expert** button replaces the 12 knobs with the three layers of the kick, e
 
 ### Tail note and kick melody
 
-The tail note is shown above the knobs (for example "Tail: F3 (175 Hz)").
+The tail note is shown above the knobs (for example "Tail: F2 (87 Hz)").
 
 - **Tune to the key** tunes the tail to the key of the song: the root of the first chord of the **Generator**, the closest to the current note.
 - **Kick melody** lays on the timeline a note block played by this kick, one kick per beat, and opens it in the **piano roll**. Each note retunes the tail: change the notes to make the kick sing, as in frenchcore or uptempo. If there is a chord progression in the Generator, the melody follows the root of each chord; otherwise it stays on the tail note.

@@ -106,7 +106,7 @@ export const HELP = {
     kick: `
       <p>Build your own gabber / hardcore kick, computed in a few milliseconds, then use it anywhere.</p>
       <ul>
-        <li><b>Presets</b>: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore. Start from one, then shape it. The menu under the buttons sorts them by category (Gabber, Hardcore, Mainstream / uptempo) with your own kicks. Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
+        <li><b>Presets</b>: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909. Start from one, then shape it. The menu under the buttons sorts them by category (Gabber, Hardcore, Mainstream / uptempo) with your own kicks. Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
         <li><b>Tail</b>: <b>Tune</b> (note of the tail, F = the key of the banks), <b>Punch</b> and <b>Sweep</b> (how high the pitch starts and how fast it drops), <b>Tail drop</b> (how far it keeps falling), <b>Length</b>, <b>Zaag</b> (sawtooth for a raw, buzzing tail).</li>
         <li><b>Distortion</b>: <b>Drive</b> and <b>Shape</b> (the 909's 5 shapes), then <b>Formant</b> and <b>Bite</b>, which make the tail "talk".</li>
         <li><b>Attack</b>: <b>Click</b> (noise) and <b>Attack</b> (short punchy layer).</li>
@@ -348,7 +348,7 @@ export const HELP = {
     kick: `
       <p>Fabriquez votre propre kick gabber / hardcore, calculé en quelques millisecondes, puis utilisez-le partout.</p>
       <ul>
-        <li><b>Presets</b> : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore. Partez de l'un d'eux, puis sculptez-le. Le menu sous les boutons les range par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
+        <li><b>Presets</b> : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909. Partez de l'un d'eux, puis sculptez-le. Le menu sous les boutons les range par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
         <li><b>Queue</b> : <b>Note</b> (fa = la tonalité des banques), <b>Punch</b> et <b>Chute</b> (de combien la hauteur part haut et à quelle vitesse elle tombe), <b>Plongée</b> (de combien elle continue de descendre), <b>Longueur</b>, <b>Zaag</b> (scie pour une queue brute qui bourdonne).</li>
         <li><b>Distorsion</b> : <b>Drive</b> et <b>Forme</b> (les 5 formes de la 909), puis <b>Formant</b> et <b>Mordant</b>, qui font « parler » la queue.</li>
         <li><b>Attaque</b> : <b>Clic</b> (bruit) et <b>Attaque</b> (couche courte et percutante).</li>
