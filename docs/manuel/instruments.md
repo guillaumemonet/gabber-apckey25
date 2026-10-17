@@ -135,7 +135,7 @@ La note de la queue s'affiche au-dessus des potentiomètres (par exemple « Queu
 - **Accorder sur la tonalité** accorde la queue sur la tonalité du morceau : la fondamentale du premier accord du **Générateur**, au plus près de la note actuelle.
 - **Mélodie de kick** pose sur la timeline un bloc de notes joué par ce kick, un kick par temps, et l'ouvre dans le **piano roll**. Chaque note accorde la queue : changez les notes pour faire chanter le kick, comme en frenchcore ou en uptempo. S'il y a une suite d'accords dans le Générateur, la mélodie suit la fondamentale de chaque accord ; sinon elle reste sur la note de la queue.
   - Chaque kick coupe le précédent, et une note courte donne une queue courte.
-  - Le bloc garde le kick tel qu'il était quand vous l'avez posé. Pour lui donner le kick actuel du designer, choisissez **Kick du designer** dans la liste des sons du piano roll ; ce choix transforme aussi n'importe quel bloc de notes en mélodie de kick.
+  - Le bloc suit le designer : chaque réglage que vous changez dans le designer s'entend aussitôt dans la mélodie. Dans la liste des sons du piano roll, **Kick du designer** transforme aussi n'importe quel bloc de notes en mélodie de kick.
   - Les kicks de la mélodie déclenchent le sidechain.
 
 ---

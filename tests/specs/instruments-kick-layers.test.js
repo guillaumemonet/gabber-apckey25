@@ -111,6 +111,18 @@ export default async function (t, A) {
   const bd = 60 / S.bpm;
   t.ok(rms(ch[0], 0, 4 * bd, sr) > 0.02, 'export : la mélodie de kick est rendue', rms(ch[0], 0, 4 * bd, sr));
 
+  // Le bloc suit le designer : un réglage changé lui est reporté.
+  S.kick.params.drive = 0.9;
+  A.kickChanged(false);
+  t.ok(await t.until(() => clip.kick.drive === 0.9, 2000), 'la mélodie de kick suit le designer');
+  // Transposer (piano roll) : toutes les notes du bloc, sans sélection.
+  const before = clip.seq.map(n => n.note);
+  t.$('.roll-transpose [data-tr="12"]').click();
+  t.eq(clip.seq.map(n => n.note), before.map(n => n + 12), 'Transposer +12 : toutes les notes montent d’une octave');
+  t.$('.roll-transpose [data-tr="-1"]').click();
+  t.eq(clip.seq[0].note, before[0] + 11, 'Transposer −1 : un demi-ton plus bas');
+  t.$('.roll-transpose [data-tr="-12"]').click();
+  t.$('.roll-transpose [data-tr="1"]').click();
   // Piano roll : un autre son, puis de nouveau le kick.
   const sel = t.$('#roll-preset');
   sel.value = 'epic_strings'; sel.dispatchEvent(new Event('change'));

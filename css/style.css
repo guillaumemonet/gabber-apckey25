@@ -719,6 +719,8 @@ header button, header .status { white-space: nowrap; }
 .roll-info .roll-hint { flex: 1; min-width: 0; font-size: 11px; }
 .roll-view { position: relative; flex: 1; min-height: 260px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
 #roll-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.roll-transpose { align-items: center; }
+.roll-tr-label { color: var(--muted); font-size: 11px; margin-right: 2px; }
 .roll-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; color: var(--muted); pointer-events: none; }
 .roll-empty[hidden] { display: none; }
 #roll-step.active, #roll-play.active { background: var(--accent-2); color: #111; }

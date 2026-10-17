@@ -66,7 +66,13 @@ export function openRoll(clip, show) {
 export function buildRoll() {
   pianoRoll = new PianoRoll($('#roll-canvas'), {
     clip: () => rollFind()?.clip ?? null,
-    changed: () => { const f = rollFind(); if (f) growSong(f.clip); renderTl(); save(); },
+    changed: () => {
+      const f = rollFind();
+      if (f) growSong(f.clip);
+      if (f?.clip.kick) prepareKickClips(state.tl.tracks, engine.ctx.sampleRate);   // mélodie de kick : les kicks des nouvelles notes
+      renderTl();
+      save();
+    },
     noteOn: (n, v) => { const s = rollSound(); rollHeld.set(n, s.syn); s.syn.noteOn(n, v, undefined, `roll:${n}`, s.V); },
     noteOff: n => { (rollHeld.get(n) ?? engine).noteOff(n, false, undefined, `roll:${n}`); rollHeld.delete(n); },
     playhead: rollPlayhead,
@@ -78,6 +84,8 @@ export function buildRoll() {
   $('#roll-new').addEventListener('click', rollNew);
   $('#roll-merge').addEventListener('click', rollMerge);
   $('#roll-quant').addEventListener('click', () => pianoRoll.quantize());
+  // Transposer : les notes sélectionnées, ou toutes les notes du bloc (comme les flèches ↑ ↓, Maj = octave).
+  for (const b of document.querySelectorAll('.roll-transpose button')) b.addEventListener('click', () => pianoRoll.transpose(+b.dataset.tr));
   $('#roll-step').addEventListener('click', () => { state.roll.step = !state.roll.step; renderRollBar(); save(); });
   $('#roll-shorter').addEventListener('click', () => rollLength(-1));
   $('#roll-longer').addEventListener('click', () => rollLength(1));
@@ -123,6 +131,7 @@ export function renderRollBar() {
   const clip = f?.clip;
   $('#roll-empty').hidden = !!clip;
   for (const id of ['#roll-play', '#roll-preset', '#roll-shorter', '#roll-longer', '#roll-quant', '#roll-merge', '#roll-name']) $(id).disabled = !clip;
+  for (const b of document.querySelectorAll('.roll-transpose button')) b.disabled = !clip;
   $('#roll-play').textContent = rollPlay ? t('tr.stop') : t('roll.listen');
   $('#roll-play').dataset.icon = rollPlay ? 'stop' : 'play';
   $('#roll-play').classList.toggle('active', !!rollPlay);

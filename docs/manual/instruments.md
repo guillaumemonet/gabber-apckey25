@@ -135,7 +135,7 @@ The tail note is shown above the knobs (for example "Tail: F2 (87 Hz)").
 - **Tune to the key** tunes the tail to the key of the song: the root of the first chord of the **Generator**, the closest to the current note.
 - **Kick melody** lays on the timeline a note block played by this kick, one kick per beat, and opens it in the **piano roll**. Each note retunes the tail: change the notes to make the kick sing, as in frenchcore or uptempo. If there is a chord progression in the Generator, the melody follows the root of each chord; otherwise it stays on the tail note.
   - Each kick cuts the previous one, and a short note gives a short tail.
-  - The block keeps the kick as it was when you laid it. To give it the current kick of the designer, choose **Kick of the designer** in the sound list of the piano roll; this choice also turns any note block into a kick melody.
+  - The block follows the designer: each setting you change in the designer is heard at once in the melody. In the sound list of the piano roll, **Kick of the designer** also turns any note block into a kick melody.
   - The kicks of the melody trigger the sidechain.
 
 ---
