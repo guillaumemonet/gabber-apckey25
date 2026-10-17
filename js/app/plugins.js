@@ -7,6 +7,7 @@ import { curvePreviewStop, renderCurveCanvas } from './curve-ui.js';
 import { inputWinOpened } from './audio-input.js';
 import { renderBreizh, renderBreizhRoll, stopBreizhPreview } from './breizh-ui.js';
 import { renderVoiceWin, stopVoicePreview } from './voice-ui.js';
+import { renderTuneWin, scheduleTuneRender, stopTunePreview } from './tune-ui.js';
 import { renderBuses } from './buses-ui.js';
 import { drawDeckWave } from './decks-ui.js';
 import { renderGenRoll, stopGenPreview } from './gen.js';
@@ -19,12 +20,12 @@ import { pianoRoll, rollStop } from './roll-ui.js';
 // Barre des plugins rangée en groupes : instruments, outils, studio, système.
 export const PLUGIN_GROUPS = [
   ['instruments', ['pads', 'tr', 'acid', 'piano', 'osc', 'decks']],
-  ['tools', ['roll', 'editor', 'kick', 'curve', 'gen', 'breizh', 'voice']],
+  ['tools', ['roll', 'editor', 'kick', 'curve', 'gen', 'breizh', 'voice', 'tune']],
   ['studio', ['mix', 'buses', 'patch', 'launcher', 'scenes', 'perf', 'viz']],
   ['system', ['monitor', 'input']],
 ];
 
-export const PLUGIN_ICONS = { pads: 'pads', tr: 'tr', acid: 'acid', piano: 'keys', osc: 'osc', decks: 'decks', roll: 'roll', editor: 'editor', kick: 'kick', curve: 'curve', gen: 'wand', breizh: 'triskell', voice: 'voice', buses: 'mix', launcher: 'grid', input: 'rec', mix: 'mix', patch: 'patch', scenes: 'scenes', perf: 'perf', monitor: 'monitor', viz: 'viz' };
+export const PLUGIN_ICONS = { pads: 'pads', tr: 'tr', acid: 'acid', piano: 'keys', osc: 'osc', decks: 'decks', roll: 'roll', editor: 'editor', kick: 'kick', curve: 'curve', gen: 'wand', breizh: 'triskell', voice: 'voice', tune: 'tune', buses: 'mix', launcher: 'grid', input: 'rec', mix: 'mix', patch: 'patch', scenes: 'scenes', perf: 'perf', monitor: 'monitor', viz: 'viz' };
 
 export function buildPluginBar() {
   const nav = $('#plugins');
@@ -64,10 +65,12 @@ export function onWindowToggle(id, open) {
   if (open && id === 'gen') requestAnimationFrame(() => renderGenRoll(true));
   if (open && id === 'breizh') { renderBreizh(); requestAnimationFrame(() => renderBreizhRoll(true)); }
   if (open && id === 'voice') renderVoiceWin();
+  if (open && id === 'tune') { renderTuneWin(); scheduleTuneRender(); }
   if (open && id === 'buses') renderBuses();
   if (open && id === 'input') inputWinOpened();
   if (!open && id === 'gen') stopGenPreview();
   if (!open && id === 'breizh') stopBreizhPreview();
   if (!open && id === 'voice') stopVoicePreview();
+  if (!open && id === 'tune') stopTunePreview();
   if (id === 'viz') { if (open) viz.addOutput($('#viz-canvas')); else viz.removeOutput($('#viz-canvas')); }
 }

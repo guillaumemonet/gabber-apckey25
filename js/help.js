@@ -182,6 +182,17 @@ export const HELP = {
         <li><b>Listen</b>, then <b>Generate</b>: an audio block on a free track, saved with the project. The syllables are shown with their note under the buttons.</li>
         <li>The engine and the voice are downloaded on first use (60 to 80 MB per voice), then kept by the browser. Only voices free for any use; their licence is shown at the bottom.</li>
       </ul>`,
+    tune: `
+      <p>Puts a recorded voice in tune: an audio block of the timeline (a take recorded with REC, an imported sound, a rendered voice).</p>
+      <ul>
+        <li><b>Open</b>: right-click an audio block › <b>Pitch correction…</b>, or select the block with this window open (the window follows the selected audio block).</li>
+        <li><b>Target</b>: <b>Key</b> (each note goes to the nearest note of the scale; <b>Generator</b> takes the key of the Generator chords) or <b>Note block</b> (the voice follows the melody of a lead or chord block, each note in the octave closest to the voice).</li>
+        <li><b>Retune speed</b>: 0 = instant, the robotic effect with clean steps between notes; 50 to 400 ms = natural. <b>Humanize</b> keeps the vibrato and the small inflections around the right note. <b>Robot</b>, <b>Tight</b>, <b>Natural</b> set both at once.</li>
+        <li><b>Formant</b>: smaller (+) or bigger (−) voice without changing the pitch. <b>Mix</b>: corrected voice / original voice (below 100 %, a doubling effect).</li>
+        <li>The curve shows the sung pitch (grey), the corrected pitch (colour) and the target notes (wide line). <b>Listen</b> plays the corrected block alone, <b>Original</b> the block as it was.</li>
+        <li><b>Apply</b>: the block plays the corrected voice (Ctrl+Z goes back). The original sound is kept: opening the pitch correction again on that block starts from it, <b>Remove</b> puts it back.</li>
+        <li>Only the clearly pitched parts of the voice are processed: unvoiced consonants (s, f, t…), breaths, noise and silences stay exactly as recorded. Works best on a dry, solo voice (no reverb, no other instrument).</li>
+      </ul>`,
     buses: `
       <p>Four buses (A to D) group tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…</p>
       <ul>
@@ -434,6 +445,17 @@ export const HELP = {
         <li><b>Chœur</b> : plusieurs interprètes sur la même ligne, répartis en stéréo. <b>Harmonie</b> : une voix par note de l'accord (sur un bloc de nappe).</li>
         <li><b>Écouter</b>, puis <b>Générer</b> : un bloc audio sur une piste libre, enregistré avec le projet. Les syllabes s'affichent avec leur note sous les boutons.</li>
         <li>Le moteur et la voix sont téléchargés à la première utilisation (60 à 80 Mo par voix), puis gardés par le navigateur. Seulement des voix libres pour tout usage ; leur licence est rappelée en bas.</li>
+      </ul>`,
+    tune: `
+      <p>Corrige la justesse d'une voix enregistrée : un bloc audio de la timeline (une prise enregistrée avec REC, un son importé, une voix rendue).</p>
+      <ul>
+        <li><b>Ouvrir</b> : clic droit sur un bloc audio › <b>Corriger la justesse…</b>, ou sélectionnez le bloc avec cette fenêtre ouverte (la fenêtre suit le bloc audio sélectionné).</li>
+        <li><b>Cible</b> : <b>Tonalité</b> (chaque note va vers la note la plus proche de la gamme ; <b>Générateur</b> reprend la tonalité des accords du Générateur) ou <b>Bloc de notes</b> (la voix suit la mélodie d'un bloc de lead ou d'accords, chaque note dans l'octave la plus proche de la voix).</li>
+        <li><b>Vitesse de correction</b> : 0 = immédiate, l'effet robotique avec des marches nettes entre les notes ; 50 à 400 ms = naturelle. <b>Humanisation</b> conserve le vibrato et les petites inflexions autour de la note juste. <b>Robot</b>, <b>Serré</b>, <b>Naturel</b> règlent les deux d'un coup.</li>
+        <li><b>Formants</b> : voix plus petite (+) ou plus grosse (−) sans changer la hauteur. <b>Mélange</b> : voix corrigée / voix d'origine (sous 100 %, un effet de doublage).</li>
+        <li>La courbe montre la hauteur chantée (gris), la hauteur corrigée (couleur) et les notes visées (trait large). <b>Écouter</b> joue le bloc corrigé seul, <b>Original</b> le bloc tel qu'il était.</li>
+        <li><b>Appliquer</b> : le bloc joue la voix corrigée (Ctrl+Z revient en arrière). Le son d'origine est conservé : rouvrir la correction de justesse sur ce bloc repart de lui, <b>Retirer</b> le remet.</li>
+        <li>Seules les parties nettement chantées de la voix sont traitées : les consonnes sourdes (s, f, t…), les souffles, le bruit et les silences restent exactement tels qu'enregistrés. Meilleur résultat sur une voix seule et sèche (sans reverb ni autre instrument).</li>
       </ul>`,
     buses: `
       <p>Quatre bus (A à D) regroupent des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…</p>

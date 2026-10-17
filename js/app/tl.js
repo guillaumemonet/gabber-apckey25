@@ -32,6 +32,7 @@ import { stopTlPreview, tlPrev, tlPreviewClip } from './tl-listen.js';
 import { growHeldNote, lastRecRender, setLastRecRender } from './tl-record.js';
 import { setTlFocus, tlGroupDown, tlKey, tlLaneDown, tlPicked, tlSelect } from './tl-select.js';
 import { renderTr } from './tr909-ui.js';
+import { renderTuneTarget } from './tune-ui.js';
 import { FX_ROW, closeFxEditor, fxEditing, fxEl, fxOutside, fxRows, setFxEditing } from './trackfx-ui.js';
 
 // ---------- Timeline (écran principal, façon eJay) ----------
@@ -590,6 +591,7 @@ export function renderTl() {
   });
   if (pianoRoll) renderRollBar();
   requestWarps();   // sons « Garder la hauteur » à préparer (bloc posé, transposé…)
+  renderTuneTarget();   // la fenêtre Autotune suit le bloc sélectionné
 }
 
 export function peaks(sampleId) {

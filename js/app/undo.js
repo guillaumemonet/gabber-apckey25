@@ -104,7 +104,7 @@ export function renderUndo() {
 // Enregistrements (« rec: ») et sons importés (« user: ») qui ne servent plus nulle part (pads, timeline, platines,
 // bibliothèque) : effacés au démarrage, pas à la suppression (« Annuler » doit pouvoir les ramener).
 export async function cleanRecordings() {
-  const used = new Set([...state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)), ...state.banks.flat().map(p => p?.sampleId),
+  const used = new Set([...state.tl.tracks.flatMap(tr => tr.clips.flatMap(c => [c.sampleId, c.tune?.src])), ...state.banks.flat().map(p => p?.sampleId),
     ...DECK_IDS.map(id => state.decks[id].sampleId), ...state.userSounds.map(u => u.sampleId)]);
   const ids = await store.listSampleIds().catch(() => []);
   for (const id of ids) if (typeof id === 'string' && /^(rec|user):/.test(id) && !used.has(id)) store.deleteSample(id).catch(() => {});

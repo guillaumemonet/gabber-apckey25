@@ -7,7 +7,7 @@ Le mode d'emploi complet, chapitre par chapitre. Chaque fenêtre de l'applicatio
 1. **[Premiers pas](demarrage.md)** : Prérequis, Installation, Lancement, Langue, Compatibilité matérielle
 2. **[Le contrôleur APC Key 25](apc.md)** : Commandes sur l'APC, Potentiomètres, Effets de performance, Autres claviers MIDI et MIDI learn
 3. **[Pads et banques](pads.md)** : Banques, Tempo et boucles
-4. **[Timeline, bibliothèque et piano roll](timeline.md)** : Timeline et bibliothèque de sons, Automation, Marqueurs, Effets de piste, Geler une piste, Piano roll, Démo
+4. **[Timeline, bibliothèque et piano roll](timeline.md)** : Timeline et bibliothèque de sons, Automation, Marqueurs, Effets de piste, Geler une piste, Correction de justesse, Piano roll, Démo
 5. **[Instruments](instruments.md)** : TR-909, TB-303, Synthé, Synthé à oscillateurs, Designer de kick
 6. **[Générateur : accords, mélodie et voix](generateur.md)**
 7. **[Mixage et effets](mixage.md)** : Designer d'effet, Table de mixage, Bus, Chaîne master et sonie, Câblage

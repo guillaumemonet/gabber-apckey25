@@ -1,5 +1,5 @@
 // Menu contextuel d'un bloc de la timeline (clic droit) : écouter, gain, fondus, inverser, transposer (notes),
-// dupliquer, ouvrir dans le piano roll, rendre en audio, supprimer. Sur un bloc sélectionné, les réglages s'appliquent à toute la sélection.
+// autotune (son), dupliquer, ouvrir dans le piano roll, rendre en audio, supprimer. Sur un bloc sélectionné, les réglages s'appliquent à toute la sélection.
 import { t } from '../i18n.js';
 import { clipEvents } from '../notes.js';
 import { BEATS_PER_BAR } from '../timeline.js';
@@ -11,6 +11,7 @@ import { save } from './save.js';
 import { tlDelete, renderTl } from './tl.js';
 import { tlPreviewClip } from './tl-listen.js';
 import { tlPicked, tlSelect } from './tl-select.js';
+import { openTune } from './tune-ui.js';
 
 export const FADES = [0, 0.25, 0.5, 1, 2, 4, 8, 16];   // durées de fondu proposées (en temps)
 const dbOf = g => (g > 0 ? 20 * Math.log10(g) : -60);
@@ -198,6 +199,8 @@ export function openClipMenu(track, clip, x, y, at = null) {
   item(t('cm.duplicate'), () => { closeClipMenu(); duplicateClips(list); }, '', 'plus');
   if (clips.length === 1 && clip.type !== 'pad') item(t('cm.launcher'), () => { closeClipMenu(); sendToLauncher(track, clip); }, '', 'grid');
   if (notes && clips.length === 1) item(t('cm.roll'), () => { closeClipMenu(); openRoll(clip, true); }, '', 'roll');
+  // Autotune : la voix du bloc recalée sur une gamme ou sur une mélodie (fenêtre Autotune).
+  if (audio && clips.length === 1 && clip.sampleId && !state.tl.tracks[track].frozen) item(clip.tune ? t('cm.tuneOn') : t('cm.tune'), () => { closeClipMenu(); openTune(track, clip); }, '', 'tune').title = t('cm.tuneTitle');
   // Rendre en audio les blocs visés de cette piste (avec ses effets) : un bloc audio sur une piste libre.
   const mine = new Set(list.filter(l => l.track === track).map(l => l.clip.id));
   item(t('frz.bounceSel', { n: mine.size }), () => { closeClipMenu(); bounceTrack(track, mine); }, '', 'bounce').title = t('frz.bounceSelTitle');

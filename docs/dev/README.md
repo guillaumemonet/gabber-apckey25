@@ -43,7 +43,9 @@ js/notes.js           blocs de notes (motifs, regroupement, quantification)
 js/chords.js          suites d'accords (générateur)
 js/melody.js          générateur de mélodie (lead)
 js/voice.js           générateur de voix : phonèmes, syllabes, voix neuronale (Piper, chargée à la demande)
-js/psola.js           hauteur (YIN) et recalage des syllabes sur les notes (TD-PSOLA)
+js/psola.js           hauteur (YIN, robuste pour une voix enregistrée) et TD-PSOLA (hauteur, durée, formants)
+js/autotune.js        correction de justesse : courbe de correction (gamme ou mélodie), voix recalculée
+js/tune-worker.js     correction de justesse hors du fil de l'interface
 js/params.js          paramètres des potentiomètres
 js/i18n.js            traductions anglais / français
 js/kit.js             kit de départ (synthétisé)

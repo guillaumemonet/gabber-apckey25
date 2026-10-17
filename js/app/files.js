@@ -194,7 +194,8 @@ export const TOOL_IO = {
 export const FILE_TOOLS = Object.keys(TOOL_IO);
 
 // Sons utilisés par le morceau, par le projet.
-export const songSampleIds = () => state.tl.tracks.flatMap(tr => tr.clips.map(c => c.sampleId)).filter(Boolean);
+// (avec le son d'origine d'un bloc passé à l'autotune : il peut être retouché ou retrouvé)
+export const songSampleIds = () => state.tl.tracks.flatMap(tr => tr.clips.flatMap(c => [c.sampleId, c.tune?.src])).filter(Boolean);
 export const projectSampleIds = () => [
   ...songSampleIds(), ...state.banks.flat().map(p => p?.sampleId), ...state.userSounds.map(s => s.sampleId),
   ...DECK_IDS.map(id => state.decks[id]?.sampleId),
