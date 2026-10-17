@@ -92,7 +92,7 @@ export function buildRoll() {
     delete f.clip.preset;
     delete f.clip.osc;
     delete f.clip.kick;
-    if (preset.value === 'kick') { f.clip.kick = { ...state.kick.params }; prepareKickClips(state.tl.tracks, engine.ctx.sampleRate); }   // mélodie de kick : le kick du designer, tel qu'il est maintenant
+    if (preset.value === ROLL_KICK) { f.clip.kick = { ...state.kick.params }; prepareKickClips(state.tl.tracks, engine.ctx.sampleRate); }   // mélodie de kick : le kick du designer, tel qu'il est maintenant
     else if (preset.value.startsWith('osc:')) f.clip.osc = preset.value.slice(4);
     else if (preset.value) f.clip.preset = preset.value;
     rollHeld.clear();
@@ -130,7 +130,7 @@ export function renderRollBar() {
   $('#roll-grid').value = ROLL_GRIDS.findIndex(g => Math.abs(g - state.roll.grid) < 1e-6);
   const name = $('#roll-name');
   if (document.activeElement !== name) name.value = clip?.name ?? '';
-  $('#roll-preset').value = clip?.kick ? 'kick' : clip?.osc ? `osc:${[...$('#roll-preset').options].some(o => o.value === `osc:${clip.osc}`) ? clip.osc : 'live'}` : clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
+  $('#roll-preset').value = clip?.kick ? ROLL_KICK : clip?.osc ? `osc:${[...$('#roll-preset').options].some(o => o.value === `osc:${clip.osc}`) ? clip.osc : 'live'}` : clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
   const pat = clip ? patLen(clip) : 0;
   $('#roll-len').textContent = clip ? rollLenLabel(pat) : '—';
   $('#roll-where').textContent = clip ? t('roll.where', {
@@ -139,6 +139,10 @@ export function renderRollBar() {
   }) : '';
   pianoRoll.draw();
 }
+
+// Valeur de « Kick du designer » dans la liste des sons : distincte de l'id d'un preset du synthé (« kick » = le
+// preset « Kick accordé », qui reprenait la place du kick du designer à chaque réaffichage).
+export const ROLL_KICK = 'designer:kick';
 
 export function rollPresetOptions() {
   const sel = $('#roll-preset');
@@ -160,7 +164,7 @@ export function rollPresetOptions() {
   sel.appendChild(grp);
   const kick = document.createElement('optgroup');
   kick.label = t('win.kick');
-  kick.appendChild(new Option(t('roll.kick'), 'kick'));
+  kick.appendChild(new Option(t('roll.kick'), ROLL_KICK));
   sel.appendChild(kick);
   sel.value = value;
 }

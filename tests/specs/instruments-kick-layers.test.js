@@ -87,9 +87,13 @@ export default async function (t, A) {
   t.ok(clip && clip.len === 32 && clip.seq.length === 32, 'bloc de 8 mesures, un kick par temps', clip && [clip.len, clip.seq.length]);
   t.eq([0, 8, 16, 24].map(b => clip.seq.find(n => n.t === b).note), [43, 39, 41, 38], 'les notes suivent les accords, au plus près de la queue');
   t.eq(clip.kick.tune, S.kick.params.tune, 'le bloc garde les réglages du kick');
-  t.ok(A.wm.isOpen('roll') && t.$('#roll-preset').value === 'kick', 'ouvert dans le piano roll, son « Kick du designer »');
+  t.ok(A.wm.isOpen('roll') && t.$('#roll-preset').value === A.ROLL_KICK, 'ouvert dans le piano roll, son « Kick du designer »');
   await A.prepareKickClips(S.tl.tracks, sr);
   t.ok(A.kickReady(clip.kick, 39), 'les kicks du bloc sont calculés à l’avance');
+  // Joué en direct (piano roll) sur une note pas encore calculée : il part dès qu'il est prêt.
+  A.kickSynth.noteOn(78, 1, undefined, 'roll:78', clip.kick);
+  t.ok(await t.until(() => A.kickSynth.voices.has('roll:78'), 3000), 'note jouée en direct : le kick part une fois calculé');
+  A.kickSynth.noteOff(78, true, undefined, 'roll:78');
 
   // Lecture : le synthé de kick joue, chaque kick coupe le précédent.
   const level = t.meter(E.output);
@@ -111,8 +115,11 @@ export default async function (t, A) {
   const sel = t.$('#roll-preset');
   sel.value = 'epic_strings'; sel.dispatchEvent(new Event('change'));
   t.ok(!clip.kick && clip.preset === 'epic_strings', 'un autre son : le bloc n’est plus un kick');
-  sel.value = 'kick'; sel.dispatchEvent(new Event('change'));
+  sel.value = A.ROLL_KICK; sel.dispatchEvent(new Event('change'));
   t.ok(clip.kick && !clip.preset, 'de nouveau le kick du designer');
+  t.eq(sel.value, A.ROLL_KICK, 'la liste affiche bien « Kick du designer » (pas le preset « Kick accordé »)');
+  sel.value = 'kick'; sel.dispatchEvent(new Event('change'));
+  t.ok(!clip.kick && clip.preset === 'kick' && sel.value === 'kick', 'le preset « Kick accordé » reste un son du synthé');
 
   t.$('#kick-mode [data-mode="simple"]').click();
   t.ok(!t.$('#kick-knobs').hidden, 'retour au mode simple');

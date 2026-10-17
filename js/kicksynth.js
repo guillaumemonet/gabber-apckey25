@@ -32,6 +32,7 @@ export class KickSynth {
     this.out = out ?? ctx.createGain();
     this.voices = new Map();   // clé -> { src, gain, block }
     this.buffers = new WeakMap();
+    this.pending = new Set();   // notes jouées en direct dont le kick est en cours de calcul
   }
   isMono() { return false; }
   buffer(data) {
@@ -44,8 +45,15 @@ export class KickSynth {
     const now = this.ctx.currentTime;
     const t0 = Math.max(when ?? now, now);
     const data = kickReady(params, note);
-    if (!data) {   // pas encore calculé : il le sera pour le prochain passage (et joue s'il arrive à temps)
-      prepareKick(params, [note], this.ctx.sampleRate).then(() => { if (this.ctx.currentTime < t0 - 0.005) this.noteOn(note, vel, t0, key, params, out); });
+    if (!data) {
+      // Pas encore calculé : programmé, il joue s'il est prêt à temps ; joué en direct (piano roll, clavier), il part
+      // dès qu'il est prêt (quelques dizaines de ms) si la touche est encore tenue.
+      const live = when === undefined;
+      if (live) this.pending.add(key);
+      prepareKick(params, [note], this.ctx.sampleRate).then(() => {
+        if (live) { if (this.pending.delete(key)) this.noteOn(note, vel, undefined, key, params, out); }
+        else if (this.ctx.currentTime < t0 - 0.005) this.noteOn(note, vel, t0, key, params, out);
+      });
       return;
     }
     const block = String(key).slice(0, String(key).lastIndexOf(':') + 1) || String(key);
@@ -68,12 +76,17 @@ export class KickSynth {
   }
   // Fin de la note : le kick s'arrête (une note courte = une queue courte).
   noteOff(note, immediate = false, when, key = note) {
+    this.pending.delete(key);
     const v = this.voices.get(key);
     if (!v) return;
     this.voices.delete(key);
     this.stop(v, Math.max(when ?? this.ctx.currentTime, this.ctx.currentTime), immediate ? 0.004 : 0.012);
   }
-  allNotesOff() { for (const v of this.voices.values()) this.stop(v, this.ctx.currentTime); this.voices.clear(); }
+  allNotesOff() {
+    this.pending.clear();
+    for (const v of this.voices.values()) this.stop(v, this.ctx.currentTime);
+    this.voices.clear();
+  }
   cut(prefix) {
     for (const [k, v] of this.voices) if (String(k).startsWith(prefix)) { this.stop(v, this.ctx.currentTime, 0.004); this.voices.delete(k); }
   }
