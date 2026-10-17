@@ -20,6 +20,7 @@ import { mergeWindows } from '../windows.js';
 import { $, BANKS, kit, newPad, setLibAdded, state, tlHistory } from './core.js';
 import { PAD_QUANTS } from './files.js';
 import { defaultBreizh, mergeBreizh } from './breizh-ui.js';
+import { mergeVoiceState } from './voice-ui.js';
 import { defaultGen, mergeGen } from './gen.js';
 import { libManifest, setLibManifest } from './library-ui.js';
 import { mergeRoll } from './roll-ui.js';
@@ -38,6 +39,7 @@ export async function restore() {
   const firstRun = !saved;
   state.gen = defaultGen();
   state.breizh = defaultBreizh();
+  state.voice = mergeVoiceState(saved?.voice);
   state.viz = mergeViz(saved?.viz);
   state.banks = Array.from({ length: BANKS }, () => new Array(40).fill(null));
   if (!saved) {
@@ -169,6 +171,7 @@ export function stateSnapshot() {
     play: state.play,
     gen: state.gen,
     breizh: state.breizh,
+    voice: state.voice,
     sc: state.sc,
     acid: state.acid,
     kick: state.kick,

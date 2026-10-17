@@ -61,6 +61,41 @@ The **Breizh generator** window (Tools group) lays down a tune in the style of B
 
 The sounds are also in the synth, family **Breizh**: bombarde, bombarde section, biniou kozh, bagpipe, pipe band (bagpipe section) and drone. They are synthesized, with no samples: reed waveforms, bell resonances, breath, and a pitch that moves a little like a real piper's. In the sections (pipe band, bombardes, drones), each player is slightly out of tune and starts a little apart from the others.
 
+
+## Voice generator
+
+[![Voice generator window: a text sung on the hook of demo 2, each syllable with its note](../screenshots/voice-en.png)](../screenshots/voice-en.png)
+
+The **Voice generator** window (Tools group) makes a neural voice sing a text, on the notes of a timeline block: the lead, the pad, a Generator melody.
+
+1. Type the **text**.
+2. Choose the **notes** block that gives the melody and rhythm. By default it is the selected block, otherwise the first lead.
+3. Choose the **voice** and the **style**.
+4. **Listen**, then **Generate**: the voice becomes an audio block on a free track, lined up with the notes block. The leading consonants fall just before the note, as with a real singer.
+
+The text is split into syllables, **one syllable per note**. If there are more syllables than notes, the notes pattern starts again; **Repeat the text** starts the text again until the last note of the block. A lone **_** between two words holds the previous syllable over the next note (it glides from one note to the other). After a render, each syllable is shown under the buttons with its note: check the placement, and change the notes in the piano roll if needed.
+
+- **Style**:
+  - **Sung**: each syllable takes the pitch of its note, the vowel holds the note, with a light vibrato on long notes and a bit of the voice's natural intonation.
+  - **Rapped (MC)**: the voice keeps its spoken intonation, only the rhythm and placement follow the notes; for MC announcements and shouts.
+  - **Robot**: the exact note, no vibrato or intonation, like a vocoder.
+- **Voice**:
+  - French: Siwis (woman), Gilles (man), Jessica and Pierre, and a model with **125 French voices**;
+  - English: LJ (woman), **904 English voices** and **109 British voices**.
+  - In the models with several voices, pick the **singer** by number (or at random with the wand).
+- **Octave**: **Auto** sings as close as possible to the voice's natural pitch (a man's voice doesn't sing a lead at its original octave); −2 to +2 shifts from the written notes.
+- **Timbre**: to the right, a smaller, brighter voice; to the left, bigger and darker. Double-click: neutral.
+- **Choir** (×2, ×4, ×8): the same line by several singers, slightly apart in time and tuning, spread in stereo.
+- **Harmony (chords)**: on a chords block (a pad), one voice per note of the chord, from the highest to the lowest (up to 4), multiplied by the choir (8 voices at most).
+
+How it works: the text is turned into phonemes (espeak-ng), split into syllables, each syllable is said by the neural voice (Piper), then moved onto its note. Pitch and length change without changing the voice's timbre (TD-PSOLA). It remains a speaking voice that sings: an "autotune" sound, closer to an MC than to a studio singer.
+
+**Download**: nothing is loaded until the generator is used. On the first render, the browser downloads the engine (a few MB), the phoneme converter (18 MB) and the chosen voice (63 to 78 MB), then keeps them: the next times, the voice is ready in a few seconds. An Internet connection is needed the first time.
+
+**Licences**: only voices whose licence allows any use, commercial included, are offered (CC0, CC BY, CC BY-SA, public domain). The licence and source of the chosen voice are shown at the bottom of the window; for CC BY and CC BY-SA, credit them in your track. The Piper engine and espeak-ng (GPL licence) are not part of GabberKey: they are downloaded from their public repositories.
+
+The block is a recording like an audio take: saved with the project, named "Voice ·" with the start of the text, and filed in the Voice category of the library.
+
 ---
 
 ← [Instruments](instruments.md) · [Contents](README.md) · [Mixing and effects](mixing.md) →

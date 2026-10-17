@@ -42,6 +42,8 @@ js/project.js         fichiers .gabber (projet, morceau, réglages des outils)
 js/notes.js           blocs de notes (motifs, regroupement, quantification)
 js/chords.js          suites d'accords (générateur)
 js/melody.js          générateur de mélodie (lead)
+js/voice.js           générateur de voix : phonèmes, syllabes, voix neuronale (Piper, chargée à la demande)
+js/psola.js           hauteur (YIN) et recalage des syllabes sur les notes (TD-PSOLA)
 js/params.js          paramètres des potentiomètres
 js/i18n.js            traductions anglais / français
 js/kit.js             kit de départ (synthétisé)

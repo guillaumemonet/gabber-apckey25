@@ -171,6 +171,17 @@ export const HELP = {
         <li>The piano roll under the settings shows the tune (one pass): edit it before laying it; the second voice and the drone follow. <b>Recompute</b> starts again from the settings.</li>
         <li>The sounds are also in the synth, family <b>Breizh</b> (bombarde, bombarde section, biniou kozh, bagpipe, pipe band, drone). Each piper breathes and is never perfectly in tune or steady; in the sections, every player starts a little apart.</li>
       </ul>`,
+    voice: `
+      <p>Makes a neural voice sing a text on the notes of a timeline block (lead, pad).</p>
+      <ul>
+        <li><b>Text</b>: one syllable per note. A lone <b>_</b> holds the previous syllable over the next note. <b>Repeat the text</b> fills the whole block.</li>
+        <li><b>Notes</b>: the block that gives the melody and rhythm (by default the selected block, otherwise the first lead).</li>
+        <li><b>Style</b>: <b>Sung</b> (on the notes, vibrato on long notes), <b>Rapped (MC)</b> (spoken intonation, rhythm of the notes), <b>Robot</b> (exact notes, flat).</li>
+        <li><b>Voice</b>: French and English voices, some models with many singers (pick a number, or the wand for a random one). <b>Octave</b> Auto keeps the voice in its range. <b>Timbre</b>: smaller / bigger voice.</li>
+        <li><b>Choir</b>: several singers on the same line, spread in stereo. <b>Harmony</b>: one voice per chord note (on a pad block).</li>
+        <li><b>Listen</b>, then <b>Generate</b>: an audio block on a free track, saved with the project. The syllables are shown with their note under the buttons.</li>
+        <li>The engine and the voice are downloaded on first use (60 to 80 MB per voice), then kept by the browser. Only voices free for any use; their licence is shown at the bottom.</li>
+      </ul>`,
     buses: `
       <p>Four buses (A to D) group tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…</p>
       <ul>
@@ -412,6 +423,17 @@ export const HELP = {
         <li><b>Nouvel air</b> tire un autre air et le fait écouter ; <b>Écouter</b> joue toutes les voix (un deuxième clic arrête) ; <b>Générer</b> pose un bloc par voix (mélodie, deuxième voix, bourdon) à partir de la mesure de la tête de lecture, sur des pistes libres depuis la piste armée.</li>
         <li>Le piano roll sous les réglages montre l'air (un passage) : modifiez-le avant de le poser ; la deuxième voix et le bourdon suivent. <b>Recalculer</b> repart des réglages.</li>
         <li>Les sons sont aussi dans le synthé, famille <b>Breizh</b> (bombarde, pupitre de bombardes, biniou kozh, cornemuse, bagad, bourdon). Chaque sonneur souffle et n'est jamais parfaitement juste ni stable ; dans les pupitres, chacun attaque un peu à part.</li>
+      </ul>`,
+    voice: `
+      <p>Fait chanter un texte par une voix neuronale sur les notes d'un bloc de la timeline (lead, nappe).</p>
+      <ul>
+        <li><b>Texte</b> : une syllabe par note. Un <b>_</b> seul fait tenir la syllabe d'avant sur la note suivante. <b>Répéter le texte</b> remplit tout le bloc.</li>
+        <li><b>Notes</b> : le bloc qui donne la mélodie et le rythme (par défaut le bloc sélectionné, sinon le premier lead).</li>
+        <li><b>Style</b> : <b>Chanté</b> (sur les notes, vibrato sur les notes longues), <b>Scandé (MC)</b> (intonation parlée, rythme des notes), <b>Robot</b> (notes exactes, sans relief).</li>
+        <li><b>Voix</b> : voix françaises et anglaises, certains modèles avec beaucoup d'interprètes (choisissez un numéro, ou la baguette pour le hasard). <b>Octave</b> Auto garde la voix dans sa tessiture. <b>Timbre</b> : voix plus petite / plus grande.</li>
+        <li><b>Chœur</b> : plusieurs interprètes sur la même ligne, répartis en stéréo. <b>Harmonie</b> : une voix par note de l'accord (sur un bloc de nappe).</li>
+        <li><b>Écouter</b>, puis <b>Générer</b> : un bloc audio sur une piste libre, enregistré avec le projet. Les syllabes s'affichent avec leur note sous les boutons.</li>
+        <li>Le moteur et la voix sont téléchargés à la première utilisation (60 à 80 Mo par voix), puis gardés par le navigateur. Seulement des voix libres pour tout usage ; leur licence est rappelée en bas.</li>
       </ul>`,
     buses: `
       <p>Quatre bus (A à D) regroupent des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…</p>

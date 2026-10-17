@@ -21,6 +21,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Designer d'effet** : dessinez la courbe d'un effet (volume, filtres, panoramique, saturation, envois) sur 1, 2 ou 4 temps et posez-la sur n'importe quelle piste ;
   - **Générateur** : accords et mélodie d'hymne à partir d'une suite d'accords, avec des suggestions qui apprennent votre goût ;
   - **Breizh generator** : des airs à la manière des sonneurs bretons (an dro, gavotte, marche, gwerz) joués par la bombarde, le biniou, la cornemuse, un couple de sonneurs ou un bagad, avec notes d'agrément et bourdons ;
+  - **Générateur de voix** : tapez un texte, une voix neuronale le chante, le scande ou le dit en robot sur les notes d'un lead ou d'une nappe, avec plusieurs voix (françaises et anglaises), chœur et harmonie ;
   - **Platines** : deux decks avec disques à scratcher (en avant et en arrière), sync, cue, égaliseur, filtre DJ et crossfader ;
   - **Basse acid façon TB-303** : séquenceur 16 pas avec accent et slide, filtre résonant à enveloppe, distorsion, saisie au clavier de l'APC, calée sur la 909 ;
   - **Synthé à oscillateurs** : 3 oscillateurs avec unisson, FM, modulation en anneau, bruit, filtre 12 / 24 dB, 2 enveloppes, LFO calé sur le tempo, poly / mono / legato, 12 presets et les vôtres ;

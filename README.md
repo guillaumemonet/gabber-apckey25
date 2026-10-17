@@ -21,6 +21,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Effect designer**: draw the curve of an effect (volume, filters, pan, saturation, sends) over 1, 2 or 4 beats and put it on any track;
   - **Generator**: anthem chords and melody from a chord progression, with suggestions that learn your taste;
   - **Breizh generator**: tunes in the style of Breton pipers (an dro, gavotte, march, gwerz) played by the bombarde, the biniou, the bagpipe, a pair of pipers or a bagad, with grace notes and drones;
+  - **Voice generator**: type a text, a neural voice sings it, raps it or says it like a robot on the notes of a lead or a pad, with several voices (French and English), choir and harmony;
   - **Turntables**: two decks with scratchable records (forwards and backwards), sync, cue, EQ, DJ filter and crossfader;
   - **TB-303-style acid bass line**: 16-step sequencer with accent and slide, resonant filter with envelope, distortion, step entry from the APC keyboard, in sync with the 909;
   - **Oscillator synth**: 3 oscillators with unison, FM, ring modulation, noise, 12 / 24 dB filter, 2 envelopes, tempo-synced LFO, poly / mono / legato, 12 presets and your own;

@@ -22,6 +22,7 @@ BOX = lambda x, y, w, h: f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="1"
 ICONS = {
     # Transport, fichiers
     'play': F('M7 4.5v15l12.5-7.5z'),
+    'voice': S('M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zM5 11a7 7 0 0 0 14 0M12 18v3M8 21h8'),
     'stop': F('M6 6h12v12H6z'),
     'pause': F('M6 5h4v14H6zM14 5h4v14h-4z'),
     'rec': DOT(12, 12, 6.5),

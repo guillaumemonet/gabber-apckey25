@@ -61,6 +61,40 @@ La fenêtre **Breizh generator** (groupe Outils) pose un air à la manière des 
 
 Les sons existent aussi dans le synthé, famille **Breizh** : bombarde, pupitre de bombardes, biniou kozh, cornemuse, bagad (pupitre de cornemuses) et bourdon. Ils sont synthétisés, sans échantillon : formes d'onde d'anche, résonances du pavillon, souffle, et une hauteur qui bouge un peu comme celle d'un vrai sonneur. Dans les pupitres (bagad, bombardes, bourdons), chaque sonneur est un peu désaccordé et attaque un peu à part des autres.
 
+## Générateur de voix
+
+[![Fenêtre Générateur de voix : un texte chanté sur le hook de la démo 2, chaque syllabe avec sa note](../screenshots/voice-fr.png)](../screenshots/voice-fr.png)
+
+La fenêtre **Générateur de voix** (groupe Outils) fait chanter un texte par une voix neuronale, sur les notes d'un bloc de la timeline : le lead, la nappe, une mélodie du Générateur.
+
+1. Tapez le **texte**.
+2. Choisissez le bloc de **notes** qui donne la mélodie et le rythme. Par défaut, c'est le bloc sélectionné, sinon le premier lead.
+3. Choisissez la **voix** et le **style**.
+4. **Écouter**, puis **Générer** : la voix devient un bloc audio sur une piste libre, calé sur le bloc de notes. Les consonnes du début tombent juste avant la note, comme chez un vrai chanteur.
+
+Le texte est découpé en syllabes, **une syllabe par note**. S'il y a plus de syllabes que de notes, le motif de notes recommence ; **Répéter le texte** reprend le texte jusqu'à la dernière note du bloc. Un **_** seul entre deux mots fait tenir la syllabe d'avant sur la note suivante (elle glisse d'une note à l'autre). Après un rendu, chaque syllabe s'affiche sous les boutons avec sa note : vérifiez le placement, et changez les notes dans le piano roll si besoin.
+
+- **Style** :
+  - **Chanté** : chaque syllabe prend la hauteur de sa note, la voyelle tient la note, avec un léger vibrato sur les notes longues et un peu de l'intonation naturelle de la voix.
+  - **Scandé (MC)** : la voix garde son intonation parlée, seuls le rythme et le placement suivent les notes ; pour les annonces et les cris de MC.
+  - **Robot** : la note exacte, sans vibrato ni intonation, comme un vocodeur.
+- **Voix** :
+  - français : Siwis (femme), Gilles (homme), Jessica et Pierre, et un modèle de **125 voix françaises** ;
+  - anglais : LJ (femme), **904 voix anglaises** et **109 voix britanniques**.
+  - Dans les modèles à plusieurs voix, l'**interprète** se choisit par son numéro (ou au hasard avec la baguette).
+- **Octave** : **Auto** chante au plus près de la hauteur naturelle de la voix (une voix d'homme ne chante pas un lead à l'octave d'origine) ; −2 à +2 décale par rapport aux notes écrites.
+- **Timbre** : à droite, une voix plus petite et plus claire ; à gauche, plus grande et plus sombre. Double-clic : neutre.
+- **Chœur** (×2, ×4, ×8) : la même ligne par plusieurs interprètes, un peu décalés en temps et en justesse, répartis en stéréo.
+- **Harmonie (accords)** : sur un bloc d'accords (une nappe), une voix par note de l'accord, de la plus aiguë à la plus grave (jusqu'à 4), multipliée par le chœur (8 voix au plus).
+
+Comment ça marche : le texte est converti en phonèmes (espeak-ng), découpé en syllabes, chaque syllabe est dite par la voix neuronale (Piper), puis recalée sur sa note. La hauteur et la durée changent sans changer le timbre de la voix (TD-PSOLA). La voix reste une voix parlée qui chante : un rendu « autotune », plus proche d'un MC que d'une chanteuse de studio.
+
+**Téléchargement** : rien n'est chargé tant que le générateur ne sert pas. Au premier rendu, le navigateur télécharge le moteur (quelques Mo), le convertisseur de phonèmes (18 Mo) et la voix choisie (63 à 78 Mo), puis les garde : les fois suivantes, la voix est prête en quelques secondes. Il faut une connexion Internet la première fois.
+
+**Licences** : seules des voix dont la licence permet tout usage, y compris commercial, sont proposées (CC0, CC BY, CC BY-SA, domaine public). La licence et la source de la voix choisie sont rappelées en bas de la fenêtre ; pour CC BY et CC BY-SA, citez-les dans les crédits de votre morceau. Le moteur Piper et espeak-ng (licence GPL) ne font pas partie de GabberKey : ils sont téléchargés depuis leurs dépôts publics.
+
+Le bloc posé est un enregistrement comme une prise audio : enregistré avec le projet, avec le nom « Voix · » et le début du texte, et rangé dans la catégorie Voix de la bibliothèque.
+
 ---
 
 ← [Instruments](instruments.md) · [Sommaire](README.md) · [Mixage et effets](mixage.md) →

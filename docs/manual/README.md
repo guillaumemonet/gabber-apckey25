@@ -9,7 +9,7 @@ The complete guide, chapter by chapter. Every window in the app also has its own
 3. **[Pads and banks](pads.md)**: Banks, Tempo and loops
 4. **[Timeline, library and piano roll](timeline.md)**: Timeline and sound library, Automation, Markers, Track effects, Freeze a track, Piano roll, Demo
 5. **[Instruments](instruments.md)**: TR-909, TB-303, Synth, Oscillator synth, Kick designer
-6. **[Generator: chords and melody](generator.md)**
+6. **[Generator: chords, melody and voice](generator.md)**
 7. **[Mixing and effects](mixing.md)**: Effect designer, Mixer, Buses, Master chain and loudness, Patch
 8. **[Live: turntables, scenes, visualizer](live.md)**: Turntables, Clip launcher, Scenes, Visualizer, Plugin windows
 9. **[Files and recording](files.md)**: Saving and opening, Recording and kits, MIDI files, Audio input (microphone, sound card)
