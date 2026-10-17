@@ -13,12 +13,14 @@ export const BZ_DRONES = ['none', 'tonic', 'fifth'];
 export const BZ_FORMS = ['A', 'AB'];
 // Instruments : preset de la mélodie, note la plus grave possible pour la tonique, deuxième voix (couple de sonneurs, bagad).
 // Couple : la bombarde reprend son souffle à la fin de chaque phrase de deux mesures, le biniou joue tout à l'octave au-dessus.
+// `pipe` : chalumeau de cornemuse, joué avec sa propre gamme (voir TUNINGS dans js/notes.js) comme ses bourdons,
+// et ses notes d'agrément sur le sol aigu.
 export const BZ_INSTRUMENTS = {
   bombarde: { lead: 'bombarde', low: 62 },
   biniou: { lead: 'biniou', low: 74 },
-  cornemuse: { lead: 'cornemuse', low: 64 },
+  cornemuse: { lead: 'cornemuse', low: 64, pipe: true },
   couple: { lead: 'bombarde', low: 62, breathe: true, second: { preset: 'biniou', shift: 12 } },
-  bagad: { lead: 'bagad', low: 64, second: { preset: 'bombardes', shift: -12 } },
+  bagad: { lead: 'bagad', low: 64, pipe: true, second: { preset: 'bombardes', shift: -12 } },
 };
 
 // Cellules rythmiques d'une mesure de 4 temps ([début, longueur] en temps) ; `end` : mesure de fin de phrase (note longue).
@@ -93,17 +95,18 @@ function phrase(r, o, tonic, high) {
 }
 
 // Notes d'agrément : une (ou deux) notes très courtes avant les notes posées sur un temps.
-// Cornemuse et bagad : la note la plus haute du chalumeau (comme le sol aigu des gracenotes) ; bombarde et biniou : le degré au-dessus.
+// Cornemuse et bagad : le sol aigu (septième degré au-dessus de la tonique), l'agrément le plus courant du chalumeau ;
+// sur le sol aigu lui-même, le la aigu. Bombarde et biniou : le degré au-dessus.
 function ornament(seq, r, o, tonic) {
   const amount = o.ornaments === 'rich' ? 0.75 : o.ornaments === 'light' ? 0.35 : 0;
   if (!amount) return seq;
-  const pipes = o.instrument === 'cornemuse' || o.instrument === 'bagad';
+  const pipes = !!BZ_INSTRUMENTS[o.instrument]?.pipe;
   const out = [];
   for (let i = 0; i < seq.length; i++) {
     const n = seq[i], prev = out[out.length - 1];
     const room = prev ? n.t - prev.t : n.t;
     if (n.t % 1 === 0 && n.len >= 0.5 && room >= 0.5 && r() < amount) {
-      const top = pipes ? bzDegree(tonic, o.mode, n.d >= 7 ? 8 : 7) : bzDegree(tonic, o.mode, n.d + 1);
+      const top = pipes ? bzDegree(tonic, o.mode, n.d === 6 ? 7 : 6) : bzDegree(tonic, o.mode, n.d + 1);
       const graces = o.ornaments === 'rich' && n.len >= 1 && r() < 0.5 ? [top, bzDegree(tonic, o.mode, n.d + 1)] : [top];
       const start = n.t - graces.length * GRACE;
       if (start >= 0) {
@@ -140,10 +143,13 @@ export const bzBreathe = seq => seq.filter(n => n.t % 8 < 7 - 1e-6)
   .map(n => ({ ...n, len: +Math.min(n.len, Math.floor(n.t / 8) * 8 + 7.5 - n.t).toFixed(4) }));
 // Deuxième voix (biniou à l'octave au-dessus, bombardes du bagad à l'octave au-dessous).
 export const bzShift = (seq, shift) => seq.map(n => ({ ...n, note: n.note + shift })).filter(n => n.note >= 24 && n.note <= 108);
-// Notes du bourdon : tonique une et deux octaves sous la mélodie, et la quinte pour « tonique + quinte ».
+// Notes du bourdon : la tonique une octave sous la mélodie (deux pour le biniou), et la quinte pour « tonique + quinte ».
+// Le preset Bourdon joue chaque note comme un jeu de bourdons : deux ténors et une basse à l'octave au-dessous.
 export function bzDroneNotes(o) {
   if (!o.drone || o.drone === 'none') return [];
   const t0 = bzTonic(o.instrument, o.tonic ?? 5);
   const base = BZ_INSTRUMENTS[o.instrument]?.low >= 74 ? t0 - 24 : t0 - 12;
-  return o.drone === 'fifth' ? [base - 12, base, base + 7] : [base - 12, base];
+  return o.drone === 'fifth' ? [base, base + 7] : [base];
 }
+// Justesse d'une voix (champ `tune` du bloc) : la gamme de la cornemuse autour de la tonique de l'air, sinon aucune.
+export const bzTune = o => (BZ_INSTRUMENTS[o.instrument]?.pipe ? { root: bzTonic(o.instrument, o.tonic ?? 5), scale: 'pipe' } : null);

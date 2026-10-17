@@ -40,6 +40,22 @@ export function clipEvents(clip) {
   return out;
 }
 
+// Justesse propre d'un instrument (bloc avec `tune: { root, scale }`, posé par le Breizh generator) : écart en centièmes
+// avec le tempérament égal, selon l'intervalle entre la note et la tonique `root` (note MIDI).
+// pipe = chalumeau de la cornemuse écossaise, mesuré sur des enregistrements (la grave = tonique) : seconde, tierce, quarte,
+// quinte, sixte presque justes (9/8, 5/4, 4/3 un peu haute, 3/2, 5/3) ; le sol grave sous la tonique très bas (7/8,
+// la septième « bémol » de la cornemuse), le sol aigu au contraire un peu haut (9/5). Les degrés absents du chalumeau
+// prennent l'intervalle juste le plus simple.
+export const TUNINGS = {
+  pipe: { cents: [0, 12, 3, 16, -9, 10, -10, 7, 14, -9, 17, -12], below: { 10: -29 } },
+};
+export function tunedNote(note, tune) {
+  const s = TUNINGS[tune?.scale];
+  if (!s || !Number.isFinite(tune.root)) return note;
+  const iv = note - tune.root, pc = ((iv % 12) + 12) % 12;
+  return note + ((iv < 0 ? s.below?.[pc] : undefined) ?? s.cents[pc]) / 100;
+}
+
 // Ligne monophonique (synthé à oscillateurs en mono / legato) : une note s'arrête quand la suivante commence,
 // et la suivante glisse depuis elle si elles se touchent.
 export function monoLine(events) {

@@ -5,7 +5,7 @@
 //            formant ('strings' | 'bombarde' | 'biniou' | 'pipe' | 'drone' | 'a' | 'o') }
 //   fenv (enveloppe du filtre), decay, sustain, sub, bend, bendTime, vibRate, vibDelay, vibRange (demi-tons au max),
 //   filterType, lfoRate / lfoDepth (LFO sur la coupure), mono, glide, octave,
-//   velSens, breath, jitter, drift, stagger (sons acoustiques, voir DEFAULT_VOICE dans js/audio.js).
+//   velSens, breath, jitter, drift, stagger, shimmer, tongue (sons acoustiques, voir DEFAULT_VOICE dans js/audio.js).
 // Sur l'APC : Maj + touche blanche = preset de la famille, Maj + do# / ré# = famille précédente / suivante.
 import { t } from './i18n.js';
 
@@ -140,26 +140,27 @@ export const PRESETS = [
   // Un vrai sonneur n'est jamais parfaitement juste ni parfaitement stable : souffle, grain (jitter) et dérive (drift).
   // Les cornemuses n'ont pas de nuances (le sac souffle toujours pareil) : velSens 0.
   { id: 'bombarde', family: 'breizh',
-    values: { cutoff: 6500, reso: 0.8, attack: 0.02, release: 0.07, drive: 0.35, glide: 0.02, detune: 12, rSend: 0.3, vibrato: 0.1 },
+    values: { cutoff: 9000, reso: 0.7, attack: 0.02, release: 0.07, drive: 0.1, glide: 0.02, detune: 12, rSend: 0.3, vibrato: 0.1 },
     voice: { layers: [L('bombarde', 1, { formant: 'bombarde' })], bend: -0.7, bendTime: 0.05, fenv: 0.25, decay: 0.25, sustain: 0.85,
-      breath: 0.1, jitter: 7, drift: 5, vibRate: 5, vibDelay: 0.4, vibRange: 0.3 } },
+      breath: 0.1, jitter: 10, drift: 5, shimmer: 0.3, tongue: 0.03, vibRate: 5, vibDelay: 0.4, vibRange: 0.3 } },
   { id: 'bombardes', family: 'breizh',
-    values: { cutoff: 6500, reso: 0.8, attack: 0.025, release: 0.1, drive: 0.3, glide: 0.02, detune: 12, width: 0.9, rSend: 0.5 },
-    voice: { layers: [L('bombarde', 5, { spread: 10, formant: 'bombarde' })], bend: -0.5, bendTime: 0.05, fenv: 0.2, decay: 0.25, sustain: 0.85,
-      breath: 0.06, jitter: 5, drift: 7, stagger: 0.04 } },
+    values: { cutoff: 9000, reso: 0.7, attack: 0.025, release: 0.1, drive: 0.1, glide: 0.02, detune: 12, width: 0.9, rSend: 0.5 },
+    voice: { layers: [L('bombarde', 5, { spread: 8, formant: 'bombarde' })], bend: -0.5, bendTime: 0.05, fenv: 0.2, decay: 0.25, sustain: 0.85,
+      breath: 0.06, jitter: 5, drift: 6, stagger: 0.04, tongue: 0.03 } },
   { id: 'biniou', family: 'breizh',
-    values: { cutoff: 11000, reso: 0.7, attack: 0.004, release: 0.04, drive: 0.15, glide: 0.01, detune: 12, rSend: 0.25 },
-    voice: { layers: [L('biniou', 1, { formant: 'biniou' })], fenv: 0, decay: 0.2, sustain: 1, velSens: 0, breath: 0.02, jitter: 4, drift: 4 } },
+    values: { cutoff: 12000, reso: 0.7, attack: 0.004, release: 0.02, drive: 0.1, glide: 0.01, detune: 12, rSend: 0.25 },
+    voice: { layers: [L('biniou', 1, { formant: 'biniou' })], fenv: 0, decay: 0.2, sustain: 1, velSens: 0, breath: 0.02, jitter: 6, drift: 6, shimmer: 0.3 } },
   { id: 'cornemuse', family: 'breizh',
-    values: { cutoff: 8500, reso: 0.7, attack: 0.005, release: 0.05, drive: 0.15, glide: 0.01, detune: 12, rSend: 0.35 },
-    voice: { layers: [chanter(1, { formant: 'pipe' })], fenv: 0, decay: 0.3, sustain: 1, velSens: 0, breath: 0.02, jitter: 3, drift: 4 } },
+    values: { cutoff: 9000, reso: 0.7, attack: 0.005, release: 0.02, drive: 0.1, glide: 0.01, detune: 12, rSend: 0.35 },
+    voice: { layers: [chanter(1, { formant: 'pipe' })], fenv: 0, decay: 0.3, sustain: 1, velSens: 0, breath: 0.02, jitter: 3, drift: 3, shimmer: 0.35 } },
   { id: 'bagad', family: 'breizh',
-    values: { cutoff: 8000, reso: 0.7, attack: 0.01, release: 0.1, drive: 0.15, glide: 0.01, detune: 12, width: 1, rSend: 0.55 },
-    voice: { layers: [chanter(9, { spread: 9, formant: 'pipe' })], fenv: 0, decay: 0.3, sustain: 1, velSens: 0, jitter: 3, drift: 7, stagger: 0.04 } },
+    values: { cutoff: 9000, reso: 0.7, attack: 0.01, release: 0.03, drive: 0.1, glide: 0.01, detune: 12, width: 1, rSend: 0.55 },
+    voice: { layers: [chanter(9, { spread: 5, formant: 'pipe' })], fenv: 0, decay: 0.3, sustain: 1, velSens: 0, jitter: 3, drift: 4, stagger: 0.04 } },
+  // Jeu de bourdons : deux ténors presque à l'unisson (battements lents) et une basse à l'octave au-dessous.
   { id: 'bourdon', family: 'breizh',
     values: { cutoff: 3000, reso: 0.7, attack: 0.25, release: 0.4, drive: 0.1, glide: 0.02, detune: 12, width: 0.7, rSend: 0.35 },
-    voice: { layers: [L('drone', 3, { spread: 4, formant: 'drone' }), L('drone', 2, { spread: 3, octave: -12, level: 0.6 })],
-      fenv: 0, decay: 1, sustain: 1, velSens: 0, jitter: 2, drift: 3, stagger: 0.15 } },
+    voice: { layers: [L('drone', 2, { spread: 0.7, formant: 'drone' }), L('drone', 1, { octave: -12, formant: 'drone', level: 2.7 })],
+      fenv: 0, decay: 1, sustain: 1, velSens: 0, jitter: 1, drift: 1.5, stagger: 0.15 } },
 
   // --- Effets ---
   { id: 'kick', family: 'fx',

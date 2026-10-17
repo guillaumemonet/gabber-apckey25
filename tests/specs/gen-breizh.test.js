@@ -35,7 +35,7 @@ export default async function (t, A) {
   const [bomb, bin] = parts;
   t.ok(bomb.seq.every(n => n.t % 8 + n.len <= 7.5 + 1e-6) && bin.seq.some(n => n.t % 8 + n.len > 7.5), 'la bombarde respire à la fin des phrases de deux mesures, pas le biniou');
   t.eq(bin.seq.map(n => n.note), A.breizhDraft().seq.map(n => n.note + 12), 'le biniou joue tout l’air à l’octave');
-  t.eq(parts[2].notes.map(n => n % 12), [5, 5, 0], 'bourdon : tonique sur deux octaves et quinte');
+  t.eq(parts[2].notes.map(n => n % 12), [5, 0], 'bourdon : tonique et quinte (le preset ajoute la basse à l’octave)');
 
   // Écoute (un deuxième clic arrête).
   const level = t.meter(E.output);
@@ -52,7 +52,7 @@ export default async function (t, A) {
   const clips = S.tl.tracks.flatMap(tr => tr.clips);
   t.eq(clips.map(c => c.preset), ['bombarde', 'biniou', 'bourdon'], 'trois blocs');
   t.ok(clips.every(c => c.start === 0 && c.len === 128), 'sur toute la durée', clips.map(c => c.len));
-  t.ok(clips[0].pat === 64 && clips[2].notes.length === 3, 'motif de l’air, bourdon tenu');
+  t.ok(clips[0].pat === 64 && clips[2].notes.length === 2, 'motif de l’air, bourdon tenu');
   t.eq(new Set(S.tl.tracks.map((tr, i) => (tr.clips.length ? i : -1)).filter(i => i >= 0)).size, 3, 'chaque voix sur sa piste');
 
   // Retouche du brouillon : Nouvel air ne la remplace qu'à la demande ; la retouche suit dans les voix.
@@ -74,7 +74,7 @@ export default async function (t, A) {
   t.$('#tl-play').click();
   await t.wait(250);
   const drone = clips[2];
-  t.eq([...E.voices.keys()].filter(k => String(k).includes(`:${drone.id}:`)).length, 3, 'le bourdon sonne quand la lecture part du milieu');
+  t.eq([...E.voices.keys()].filter(k => String(k).includes(`:${drone.id}:`)).length, 2, 'le bourdon sonne quand la lecture part du milieu');
   t.$('#tl-play').click();
   t.ok(await t.until(() => E.voices.size === 0, 4000), 'puis s’arrête');
   S.tl.playhead = 0;

@@ -2,8 +2,9 @@
 // la cornemuse, un couple de sonneurs ou un bagad, avec ses bourdons. Comme le générateur de mélodie : un brouillon
 // (un passage de l'air) affiché dans un piano roll sous les réglages, Écouter, Nouvel air, Générer.
 // Générer pose un bloc de notes pour la mélodie, un pour la deuxième voix (couple, bagad) et un pour le bourdon.
-import { BZ_DANCES, BZ_DRONES, BZ_FORMS, BZ_INSTRUMENTS, BZ_MODES, BZ_ORNAMENTS, bzBreathe, bzDroneNotes, bzPhraseBeats, bzShift, generateBreizh } from '../breizh.js';
+import { BZ_DANCES, BZ_DRONES, BZ_FORMS, BZ_INSTRUMENTS, BZ_MODES, BZ_ORNAMENTS, bzBreathe, bzDroneNotes, bzPhraseBeats, bzShift, bzTune, generateBreizh } from '../breizh.js';
 import { t } from '../i18n.js';
+import { tunedNote } from '../notes.js';
 import { catColor } from '../library.js';
 import { PALETTE } from '../apc.js';
 import { PianoRoll } from '../pianoroll.js';
@@ -55,15 +56,17 @@ export function refreshBreizh(force = false) {
   if (b.draft?.edited && !force) return;
   b.draft = { seq: breizhSeq(), edited: false, pat: 0, len: 0 };
 }
-// Voix posées par Générer (et jouées par Écouter) : [{ seq | notes, preset, name, cat }].
+// Voix posées par Générer (et jouées par Écouter) : [{ seq | notes, preset, name, cat, tune }].
+// tune : gamme propre de la cornemuse (mélodie et bourdons du chalumeau ; les bombardes du bagad restent tempérées).
 export function breizhParts() {
   const b = state.breizh, ins = BZ_INSTRUMENTS[b.instrument];
   const d = breizhDraft(), end = d.pat;
   const seq = d.seq.filter(n => n.t < end - 1e-6).map(n => ({ ...n, len: Math.min(n.len, end - n.t) }));
-  const parts = [{ seq: ins.breathe ? bzBreathe(seq) : seq, preset: ins.lead, cat: 'lead' }];
-  if (ins.second) parts.push({ seq: bzShift(seq, ins.second.shift), preset: ins.second.preset, cat: 'lead' });
+  const tune = bzTune(b);
+  const parts = [{ seq: ins.breathe ? bzBreathe(seq) : seq, preset: ins.lead, cat: 'lead', tune }];
+  if (ins.second) parts.push({ seq: bzShift(seq, ins.second.shift), preset: ins.second.preset, cat: 'lead', tune: null });
   const drone = bzDroneNotes(b);
-  if (drone.length) parts.push({ notes: drone, preset: 'bourdon', cat: 'pad' });
+  if (drone.length) parts.push({ notes: drone, preset: 'bourdon', cat: 'pad', tune });
   return parts;
 }
 
@@ -76,7 +79,7 @@ export function generateBreizhClips() {
   if (!lanes) return;
   const name = `${t(`breizh.ins.${b.instrument}`)} · ${t(`breizh.dance.${b.dance}`)}`;
   parts.forEach((p, k) => {
-    const common = { id: crypto.randomUUID(), type: 'note', preset: p.preset, cat: p.cat, color: catColor(p.cat), start, len: total, loop: false };
+    const common = { id: crypto.randomUUID(), type: 'note', preset: p.preset, cat: p.cat, color: catColor(p.cat), start, len: total, loop: false, ...(p.tune ? { tune: p.tune } : {}) };
     const clip = p.notes ? { ...common, notes: p.notes, vel: 0.6, name: t('preset.bourdon') }
       : { ...common, seq: p.seq.map(n => ({ ...n })), pat: phrase, name: k === 0 ? name : t(`preset.${p.preset}`) };
     state.tl.tracks[lanes[k]].clips.push(clip);
@@ -106,7 +109,8 @@ export function previewBreizh() {
   previewT0 = engine.ctx.currentTime + 0.05;
   previewEnd = previewT0 + end * bd + 0.3;
   // Notes programmées au fil de l'écoute (un peu d'avance), chacune avec le son de sa voix.
-  const queue = breizhParts().flatMap((p, pi) => (p.notes ? p.notes.map(note => ({ t: 0, len: end, note, vel: 0.6 })) : p.seq).map((n, k) => ({ ...n, key: `bz:${pi}:${k}`, patch: presetPatch(p.preset) })))
+  const queue = breizhParts().flatMap((p, pi) => (p.notes ? p.notes.map(note => ({ t: 0, len: end, note, vel: 0.6 })) : p.seq)
+    .map((n, k) => ({ ...n, note: p.tune ? tunedNote(n.note, p.tune) : n.note, key: `bz:${pi}:${k}`, patch: presetPatch(p.preset) })))
     .sort((a, b) => a.t - b.t);
   let next = 0;
   const pump = () => {
@@ -213,7 +217,7 @@ export function buildBreizh() {
   breizhRoll = new PianoRoll(cv, {
     clip: () => breizhDraft(),
     changed: () => { state.breizh.draft.edited = true; save(); renderBreizhEdited(); },
-    noteOn: (n, v) => engine.noteOn(n, v, undefined, `bzroll:${n}`, presetPatch(preset())),
+    noteOn: (n, v) => { const tune = bzTune(state.breizh); engine.noteOn(tune ? tunedNote(n, tune) : n, v, undefined, `bzroll:${n}`, presetPatch(preset())); },
     noteOff: n => engine.noteOff(n, false, undefined, `bzroll:${n}`),
     playhead: () => (breizhPreviewing() ? (engine.ctx.currentTime - previewT0) / (60 / state.bpm) : null),
     color: () => PALETTE[uiColor(catColor('lead'))],

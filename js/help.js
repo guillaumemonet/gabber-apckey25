@@ -165,11 +165,12 @@ export const HELP = {
         <li><b>Instrument</b>: bombarde (double reed), biniou kozh (small high bagpipe), bagpipe, <b>pair of pipers</b> (the bombarde stops to breathe at the end of each two-bar phrase, the biniou plays everything an octave higher) or <b>bagad</b> (a section of bagpipes, bombardes an octave lower).</li>
         <li><b>Dance</b>: an dro (steady eighth notes), gavotte (syncopated), march (dotted rhythm), gwerz (slow air, long notes). <b>Key note</b> and <b>mode</b> (minor, dorian, mixolydian like the bagpipe, major): choose F minor to fit an anthem in F minor.</li>
         <li><b>Form</b>: A A B B like a traditional tune (part B goes higher), or a single part A. Each part is a question that stops on the fifth and an answer that comes back to the key note.</li>
-        <li><b>Grace notes</b>: very short notes before the notes on the beat, the signature of pipers (the top note of the chanter for the bagpipe, the note above for the bombarde and the biniou).</li>
-        <li><b>Drone</b>: the key note held for the whole length (and the fifth), on its own track.</li>
+        <li><b>Grace notes</b>: very short notes before the notes on the beat, the signature of pipers (the high G of the chanter for the bagpipe, the note above for the bombarde and the biniou).</li>
+        <li><b>Drone</b>: the key note held for the whole length (and the fifth), on its own track: two tenor drones that beat slowly and a bass drone an octave lower.</li>
+        <li>The bagpipe and the bagad play in the chanter's own scale, tuned to the drones: near-pure intervals, a very low G under the key note, a slightly high top G.</li>
         <li><b>New tune</b> draws another tune and plays it; <b>Listen</b> plays all the voices (click again to stop); <b>Generate</b> lays one block per voice (melody, second voice, drone) from the playhead bar, on free tracks from the armed track.</li>
         <li>The piano roll under the settings shows the tune (one pass): edit it before laying it; the second voice and the drone follow. <b>Recompute</b> starts again from the settings.</li>
-        <li>The sounds are also in the synth, family <b>Breizh</b> (bombarde, bombarde section, biniou kozh, bagpipe, pipe band, drone). Each piper breathes and is never perfectly in tune or steady; in the sections, every player starts a little apart.</li>
+        <li>The sounds are also in the synth, family <b>Breizh</b> (bombarde, bombarde section, biniou kozh, bagpipe, pipe band, drone). Their tone was measured on real recordings. Each piper breathes and is never perfectly in tune or steady; the bagpipes link their notes, the bombarde tongues them; in the sections, every player starts a little apart.</li>
       </ul>`,
     buses: `
       <p>Four buses (A to D) group tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…</p>
@@ -407,11 +408,12 @@ export const HELP = {
         <li><b>Instrument</b> : bombarde (anche double), biniou kozh (petite cornemuse aiguë), cornemuse, <b>couple de sonneurs</b> (la bombarde s'arrête pour respirer à la fin de chaque phrase de deux mesures, le biniou joue tout à l'octave au-dessus) ou <b>bagad</b> (un pupitre de cornemuses, les bombardes à l'octave au-dessous).</li>
         <li><b>Danse</b> : an dro (croches régulières), gavotte (syncopée), marche (rythme pointé), gwerz (air lent, notes longues). <b>Tonique</b> et <b>mode</b> (mineur, dorien, mixolydien comme la cornemuse, majeur) : choisissez fa mineur pour aller avec un hymne en fa mineur.</li>
         <li><b>Forme</b> : A A B B comme un air traditionnel (la partie B monte plus haut), ou une seule partie A. Chaque partie est une question qui s'arrête sur la quinte et une réponse qui revient à la tonique.</li>
-        <li><b>Notes d'agrément</b> : des notes très courtes avant les notes posées sur le temps, la signature des sonneurs (la note la plus haute du chalumeau pour la cornemuse, la note au-dessus pour la bombarde et le biniou).</li>
-        <li><b>Bourdon</b> : la tonique tenue sur toute la durée (et la quinte), sur sa propre piste.</li>
+        <li><b>Notes d'agrément</b> : des notes très courtes avant les notes posées sur le temps, la signature des sonneurs (le sol aigu du chalumeau pour la cornemuse, la note au-dessus pour la bombarde et le biniou).</li>
+        <li><b>Bourdon</b> : la tonique tenue sur toute la durée (et la quinte), sur sa propre piste : deux bourdons ténors qui battent lentement et un bourdon basse à l'octave au-dessous.</li>
+        <li>La cornemuse et le bagad jouent dans la gamme propre du chalumeau, accordée sur les bourdons : intervalles presque purs, sol très bas sous la tonique, sol aigu un peu haut.</li>
         <li><b>Nouvel air</b> tire un autre air et le fait écouter ; <b>Écouter</b> joue toutes les voix (un deuxième clic arrête) ; <b>Générer</b> pose un bloc par voix (mélodie, deuxième voix, bourdon) à partir de la mesure de la tête de lecture, sur des pistes libres depuis la piste armée.</li>
         <li>Le piano roll sous les réglages montre l'air (un passage) : modifiez-le avant de le poser ; la deuxième voix et le bourdon suivent. <b>Recalculer</b> repart des réglages.</li>
-        <li>Les sons sont aussi dans le synthé, famille <b>Breizh</b> (bombarde, pupitre de bombardes, biniou kozh, cornemuse, bagad, bourdon). Chaque sonneur souffle et n'est jamais parfaitement juste ni stable ; dans les pupitres, chacun attaque un peu à part.</li>
+        <li>Les sons sont aussi dans le synthé, famille <b>Breizh</b> (bombarde, pupitre de bombardes, biniou kozh, cornemuse, bagad, bourdon). Leur timbre a été mesuré sur de vrais enregistrements. Chaque sonneur souffle et n'est jamais parfaitement juste ni stable ; les cornemuses lient leurs notes, la bombarde les détache d'un coup de langue ; dans les pupitres, chacun attaque un peu à part.</li>
       </ul>`,
     buses: `
       <p>Quatre bus (A à D) regroupent des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…</p>

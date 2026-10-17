@@ -46,6 +46,7 @@ The **Breizh generator** window (Tools group) lays down a tune in the style of B
 - **Instrument**: bombarde (double reed, loud and nasal), biniou kozh (small, very high Breton bagpipe), bagpipe, **pair of pipers** or **bagad**.
   - Pair: the bombarde and the biniou play together, the biniou an octave higher; the bombarde breathes at the end of each two-bar phrase while the biniou goes on.
   - Bagad: a section of bagpipes (nine pipers, each slightly out of tune), the bombarde section an octave lower.
+  - The bagpipe and the bagad play in the chanter's own scale, tuned to the drones, measured on recordings of pipers: near-pure second, third, fourth, fifth and sixth, a very low G under the key note (the bagpipe's "flat" seventh), a slightly high top G. The bagad's bombardes stay in equal temperament.
 - **Dance**: the rhythm of the tune.
   - **An dro**: steady eighth notes.
   - **Gavotte**: syncopated.
@@ -54,12 +55,12 @@ The **Breizh generator** window (Tools group) lays down a tune in the style of B
 - **Key note** and **mode**: minor (aeolian), dorian, mixolydian (the bagpipe's mode) or major. For an anthem in F minor, choose F and minor (or dorian).
 - **Form**: **A A B B** like a traditional tune (each part played twice, part B higher) or a single part **A**. Each part is a question that stops on the fifth, then an answer that comes back to the key note; the third bar takes up the motif of the first so the tune sticks.
 - **Bars per part** (2 or 4) and **repeat**.
-- **Grace notes**: very short notes just before the notes on the beat, the signature of pipers. For the bagpipe and the bagad, the top note of the chanter; for the bombarde and the biniou, the note above. **Many** adds them more often, sometimes two in a row.
-- **Drone**: the key note held for the whole length, over two octaves (and the fifth with **Key note + fifth**), on its own track.
+- **Grace notes**: very short notes just before the notes on the beat, the signature of pipers. For the bagpipe and the bagad, the high G of the chanter (high A on the high G), the pipers' most common grace note; for the bombarde and the biniou, the note above. **Many** adds them more often, sometimes two in a row.
+- **Drone**: the key note held for the whole length (and the fifth with **Key note + fifth**), on its own track. Each drone note is a full set: two tenor drones almost in unison, beating slowly, and a bass drone an octave lower.
 
 **Generate** lays one block per voice (melody, second voice, drone) from the playhead bar, on free tracks from the armed track. The draft shown is the melody: edit it, the second voice and the drone follow.
 
-The sounds are also in the synth, family **Breizh**: bombarde, bombarde section, biniou kozh, bagpipe, pipe band (bagpipe section) and drone. They are synthesized, with no samples: reed waveforms, bell resonances, breath, and a pitch that moves a little like a real piper's. In the sections (pipe band, bombardes, drones), each player is slightly out of tune and starts a little apart from the others.
+The sounds are also in the synth, family **Breizh**: bombarde, bombarde section, biniou kozh, bagpipe, pipe band (bagpipe section) and drone. They are synthesized, with no samples: reed waveforms, bell resonances, breath, and a pitch that moves a little like a real piper's. Their tone (waveform and resonances) was fitted on freely licensed recordings of bombardes, biniou, bagpipe chanter and drones. Level and tone move a little, like the pressure of a bag or a breath; the bagpipes link their notes without a break, the bombarde tongues them. In the sections (pipe band, bombardes), each player is slightly out of tune and starts a little apart from the others.
 
 ---
 
