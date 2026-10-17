@@ -78,7 +78,8 @@ The text is split into syllables, **one syllable per note**. If there are more s
 - **Style**:
   - **Sung**: each syllable takes the pitch of its note, the vowel holds the note, with a light vibrato on long notes and a bit of the voice's natural intonation.
   - **Rapped (MC)**: the voice keeps its spoken intonation, only the rhythm and placement follow the notes; for MC announcements and shouts.
-  - **Robot**: the exact note, no vibrato or intonation, like a vocoder.
+  - **Robot**: the exact note, no vibrato or intonation.
+  - **Vocoder**: the voice, said in the rhythm of the notes, modulates a synth (saw waves) playing the notes; with **Harmony**, the whole chord. The classic hardcore vocoder sound; hissing consonants stay audible.
 - **Voice**:
   - French: Siwis (woman), Gilles (man), Jessica and Pierre, and a model with **125 French voices**;
   - English: LJ (woman), **904 English voices** and **109 British voices**.
@@ -88,7 +89,7 @@ The text is split into syllables, **one syllable per note**. If there are more s
 - **Choir** (×2, ×4, ×8): the same line by several singers, slightly apart in time and tuning, spread in stereo.
 - **Harmony (chords)**: on a chords block (a pad), one voice per note of the chord, from the highest to the lowest (up to 4), multiplied by the choir (8 voices at most).
 
-How it works: the text is turned into phonemes (espeak-ng), split into syllables, each syllable is said by the neural voice (Piper), then moved onto its note. Pitch and length change without changing the voice's timbre (TD-PSOLA). It remains a speaking voice that sings: an "autotune" sound, closer to an MC than to a studio singer.
+How it works: the text is turned into phonemes (espeak-ng) and split into syllables. Each phrase (up to a rest between two notes) is said in one go by the neural voice (Piper), with a length set for each phoneme: the vowel of each syllable starts on its note, the onset consonants just before (like a singer), the vowel holds the note. The transitions between sounds stay natural. Then the pitch is moved note by note over the whole phrase (the same correction as the Pitch correction window: timbre kept, unvoiced consonants untouched). It remains a speaking voice that sings: a tuned-voice sound, closer to an MC than to a studio singer; very long vowels (over a second) get a more static timbre.
 
 **Download**: nothing is loaded until the generator is used. On the first render, the browser downloads the engine (a few MB), the phoneme converter (18 MB) and the chosen voice (63 to 78 MB), then keeps them: the next times, the voice is ready in a few seconds. An Internet connection is needed the first time.
 

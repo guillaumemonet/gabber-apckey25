@@ -77,7 +77,8 @@ Le texte est découpé en syllabes, **une syllabe par note**. S'il y a plus de s
 - **Style** :
   - **Chanté** : chaque syllabe prend la hauteur de sa note, la voyelle tient la note, avec un léger vibrato sur les notes longues et un peu de l'intonation naturelle de la voix.
   - **Scandé (MC)** : la voix garde son intonation parlée, seuls le rythme et le placement suivent les notes ; pour les annonces et les cris de MC.
-  - **Robot** : la note exacte, sans vibrato ni intonation, comme un vocodeur.
+  - **Robot** : la note exacte, sans vibrato ni intonation.
+  - **Vocodeur** : la voix, dite au rythme des notes, module un synthé (dents de scie) qui joue les notes ; avec **Harmonie**, tout l'accord. Le son vocodeur classique du hardcore ; les consonnes sifflantes restent audibles.
 - **Voix** :
   - français : Siwis (femme), Gilles (homme), Jessica et Pierre, et un modèle de **125 voix françaises** ;
   - anglais : LJ (femme), **904 voix anglaises** et **109 voix britanniques**.
@@ -87,7 +88,7 @@ Le texte est découpé en syllabes, **une syllabe par note**. S'il y a plus de s
 - **Chœur** (×2, ×4, ×8) : la même ligne par plusieurs interprètes, un peu décalés en temps et en justesse, répartis en stéréo.
 - **Harmonie (accords)** : sur un bloc d'accords (une nappe), une voix par note de l'accord, de la plus aiguë à la plus grave (jusqu'à 4), multipliée par le chœur (8 voix au plus).
 
-Comment ça marche : le texte est converti en phonèmes (espeak-ng), découpé en syllabes, chaque syllabe est dite par la voix neuronale (Piper), puis recalée sur sa note. La hauteur et la durée changent sans changer le timbre de la voix (TD-PSOLA). La voix reste une voix parlée qui chante : un rendu « autotune », plus proche d'un MC que d'une chanteuse de studio.
+Comment ça marche : le texte est converti en phonèmes (espeak-ng) et découpé en syllabes. Chaque phrase (jusqu'à un silence entre deux notes) est dite d'un seul tenant par la voix neuronale (Piper), avec une durée imposée à chaque phonème : la voyelle de chaque syllabe commence sur sa note, les consonnes d'attaque juste avant (comme un chanteur), la voyelle tient la note. Les liaisons entre les sons restent donc naturelles. Puis la hauteur est recalée note par note sur la phrase entière (la même correction que la fenêtre Correction de justesse : timbre conservé, consonnes sourdes intactes). La voix reste une voix parlée qui chante : un rendu de voix corrigée, plus proche d'un MC que d'une chanteuse de studio ; les voyelles très longues (plus d'une seconde) prennent un timbre plus figé.
 
 **Téléchargement** : rien n'est chargé tant que le générateur ne sert pas. Au premier rendu, le navigateur télécharge le moteur (quelques Mo), le convertisseur de phonèmes (18 Mo) et la voix choisie (63 à 78 Mo), puis les garde : les fois suivantes, la voix est prête en quelques secondes. Il faut une connexion Internet la première fois.
 

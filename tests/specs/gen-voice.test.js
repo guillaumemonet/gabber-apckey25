@@ -82,6 +82,56 @@ export default async function (t, A) {
   t.ok(dl > 0.01, 'chœur réparti en stéréo');
   t.ok(Math.max(...harm.left.map(Math.abs)) <= 0.9, 'pas de saturation');
 
+  // ---- Phrases d'un seul tenant (modèle aux durées imposées, factice) ----
+  // Jeton = caractère ; durée naturelle : voyelle 8 trames, consonne 4, liaison 1 ; rendu : voyelle à 180 Hz (phase
+  // continue d'un jeton à l'autre), consonne = bruit.
+  const HOP = 256, isV = c => /[aeiouy]/.test(c);
+  let timedCalls = 0;
+  const timedSynth = { phonemize: async lines => lines.map(l => [...l.toLowerCase().replace(/[^a-z ]/g, '')].concat(' ')), synth: async () => ({ data: vowel(180, 0.2), sr }) };
+  timedSynth.timed = async () => {
+    const chars = new Map(), id = c => { if (c === '_') return 0; if (!chars.has(c)) chars.set(c, chars.size + 1); return chars.get(c); };
+    const charOf = i => [...chars].find(([, v]) => v === i)?.[0] ?? '_';
+    return {
+      sr, hop: HOP, id,
+      durations: async ids => Float32Array.from(ids.map(i => { const c = charOf(i); return c === '_' ? 1 : isV(c) ? 8 : 4; })),
+      render: async (ids, frames) => {
+        timedCalls++;
+        const out = new Float32Array(frames.reduce((a, b) => a + b, 0) * HOP);
+        let p = 0, ph = 0, kind = 'n';
+        ids.forEach((i, k) => {
+          const c = charOf(i);
+          if (c !== '_') kind = isV(c) ? 'v' : /[\^$ ]/.test(c) ? 's' : 'n';
+          for (let j = 0; j < frames[k] * HOP; j++, p++) {
+            ph += 2 * Math.PI * 180 / sr;
+            out[p] = kind === 'v' ? 0.2 * (Math.sin(ph) + 0.5 * Math.sin(2 * ph) + 0.3 * Math.sin(3 * ph)) : kind === 'n' ? (Math.random() - 0.5) * 0.05 : 0;
+          }
+        });
+        return out;
+      },
+    };
+  };
+  A.setVoiceBackend(timedSynth);
+  const ph1 = await A.renderVoice('la ti lo', notes.slice(0, 3), 8, bpm, { model: 'fr-siwis', speaker: 0, mode: 'robot', octave: 0, choir: 1 });
+  t.ok(ph1.phrase && timedCalls === 1, 'une seule phrase rendue d’un tenant', [ph1.phrase, timedCalls]);
+  const pl1 = ph1.plans[0].at;
+  t.ok(pl1.every((a, k) => Math.abs(a.v - notes[k].t * bd) < 1e-6), 'chaque voyelle commence sur sa note', pl1.map(a => a.v));
+  t.ok(pl1.every(a => a.s0 < a.v), 'les consonnes d’attaque viennent juste avant');
+  const vow = pl1.map((a, k) => { const s = Math.round((ph1.pre + a.v + 0.04) * sr), e = Math.round((ph1.pre + a.v + 0.8 * (a.e - a.v)) * sr); return midiOf(A.medianF0(A.pitchTrack(ph1.left.slice(s, e), sr))); });
+  t.ok(vow.every((m, k) => Math.abs(m - notes[k].note) < 0.2), 'robot : chaque voyelle juste sur sa note', vow.map(m => m.toFixed(2)));
+  const ph2 = await A.renderVoice('la ti lo', notes.slice(0, 3), 8, bpm, { model: 'fr-siwis', speaker: 0, mode: 'vocoder', octave: 0, choir: 1 });
+  const vv = ph2.plans[0].at.map((a, k) => { const s = Math.round((ph2.pre + a.v + 0.04) * sr), e = Math.round((ph2.pre + a.v + 0.8 * (a.e - a.v)) * sr); return midiOf(A.medianF0(A.pitchTrack(ph2.left.slice(s, e), sr))); });
+  t.ok(vv.every((m, k) => Math.abs(m - notes[k].note) < 0.3), 'vocodeur : la porteuse joue les notes', vv.map(m => m.toFixed(2)));
+  t.ok((await A.renderVoice('la ti lo', notes.slice(0, 3), 8, bpm, { model: 'fr-siwis', speaker: 0, mode: 'robot', octave: 0, choir: 1, phrase: false })).phrase === false, 'syllabe par syllabe toujours possible');
+  A.setVoiceBackend({ phonemize: timedSynth.phonemize, synth: async (model, p, { speaker = 0, length = 1 }) => {
+    synthCalls++;
+    const cons = Float32Array.from({ length: Math.round(sr * 0.03) }, () => (Math.random() - 0.5) * 0.05);
+    const v = vowel(180 + 10 * (speaker % 5), 0.22 * length, speaker + 1);
+    const out = new Float32Array(cons.length + v.length);
+    out.set(cons);
+    out.set(v, cons.length);
+    return { data: out, sr };
+  } });
+
   // ---- Fenêtre ----
   for (const tk of S.tl.tracks) tk.clips = [];
   S.bpm = bpm;

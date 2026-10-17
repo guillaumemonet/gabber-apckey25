@@ -1,11 +1,14 @@
 // Générateur de voix : un texte chanté, scandé ou dit en robot sur les notes d'un bloc (lead, nappe), par une voix
 // neuronale (Piper, synthèse vocale libre qui tourne dans le navigateur). Le texte est converti en phonèmes
-// (espeak-ng), découpé en syllabes ; chaque syllabe est dite seule par la voix, puis recalée sur sa note
-// (js/psola.js : hauteur et durée, timbre gardé). Chœur : plusieurs interprètes légèrement décalés ; harmonie : une
-// voix par note des accords.
+// (espeak-ng), découpé en syllabes ; chaque phrase est dite d'un seul tenant par la voix, chaque phonème à la durée
+// voulue (modèle retouché, voir piperTimedModel), puis la hauteur est recalée note par note (js/autotune.js).
+// Si le modèle ne s'y prête pas : chaque syllabe dite seule, recalée sur sa note (js/psola.js). Vocodeur : la voix
+// module une porteuse qui joue les notes. Chœur : plusieurs interprètes légèrement décalés ; harmonie : une voix par
+// note des accords.
 // Moteur, modèle de calcul et voix sont téléchargés à la première utilisation (puis gardés dans le cache du
 // navigateur) : rien n'est chargé tant que le générateur ne sert pas.
-import { medianF0, pitchMarks, pitchTrack, psola } from './psola.js';
+import { tuneCurve } from './autotune.js';
+import { analyzePitch, medianF0, pitchMarks, pitchTrack, psola, psolaShift } from './psola.js';
 
 const ORT_URL = 'https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/';
 const PHONEMIZER_JS = 'https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web@1.0.3/dist/piper-DeOu3H9E.js';
@@ -24,7 +27,7 @@ export const VOICE_MODELS = {
   'en-libritts': { lang: 'en', path: 'en/en_US/libritts_r/medium/en_US-libritts_r-medium', mb: 78, license: 'CC BY 4.0', credit: 'LibriTTS-R', speakers: 904, gender: 'x' },
   'en-vctk': { lang: 'en', path: 'en/en_GB/vctk/medium/en_GB-vctk-medium', mb: 76, license: 'CC BY 4.0', credit: 'VCTK (Université d\'Édimbourg)', speakers: 109, gender: 'x' },
 };
-export const VOICE_MODES = ['sing', 'rap', 'robot'];
+export const VOICE_MODES = ['sing', 'rap', 'robot', 'vocoder'];
 export const VOICE_CHOIR = [1, 2, 4, 8];
 export const MAX_VOICE_PARTS = 8;
 
@@ -103,7 +106,8 @@ export function spellSyllables(word, n) {
 export const textTokens = text => text.replace(/[’']/g, '\' ').split(/\s+/).map(w => w.replace(/^[^\p{L}\p{N}_]+|[^\p{L}\p{N}_]+$/gu, '')).filter(Boolean);
 
 /**
- * Syllabes du texte, dans l'ordre : [{ ph: [son, …], label, hold? }] ; hold = « _ » (prolonge la précédente).
+ * Syllabes du texte, dans l'ordre : [{ ph: [son, …], label, end, hold? }] ; end = dernière syllabe d'un mot ;
+ * hold = « _ » (prolonge la précédente).
  * `phonemes` : sortie d'espeak pour le texte sans les « _ ». Si le nombre de mots ne correspond pas (mots collés par
  * espeak), les « _ » sont ignorés et les libellés viennent des phonèmes.
  */
@@ -117,7 +121,7 @@ export function textSyllables(text, phonemes, lang = 'fr') {
   const push = (ph, label) => {
     const syls = syllabify(ph, lang);
     const labels = label ? spellSyllables(label, syls.length) : syls.map(s => s.join('').replace(/[ˈˌ]/g, ''));
-    syls.forEach((s, k) => out.push({ ph: s, label: labels[k] }));
+    syls.forEach((s, k) => out.push({ ph: s, label: labels[k], end: k === syls.length - 1 }));   // end : fin du mot
   };
   if (same) {
     for (const tok of tokens) {
@@ -129,12 +133,12 @@ export function textSyllables(text, phonemes, lang = 'fr') {
   // Syllabes sans voyelle (l', d'…) : collées à la suivante.
   for (let i = out.length - 2; i >= 0; i--) {
     if (out[i].hold || out[i + 1].hold || out[i].ph.some(isVowel)) continue;
-    out[i + 1] = { ph: [...out[i].ph, ...out[i + 1].ph], label: out[i].label + out[i + 1].label };
+    out[i + 1] = { ph: [...out[i].ph, ...out[i + 1].ph], label: out[i].label + out[i + 1].label, end: out[i + 1].end };
     out.splice(i, 1);
   }
   if (out.length && !out[out.length - 1].hold && !out[out.length - 1].ph.some(isVowel) && out.length > 1) {
     const last = out.pop();
-    out[out.length - 1] = { ph: [...out[out.length - 1].ph, ...last.ph], label: out[out.length - 1].label + last.label };
+    out[out.length - 1] = { ph: [...out[out.length - 1].ph, ...last.ph], label: out[out.length - 1].label + last.label, end: true };
   }
   return out;
 }
@@ -158,7 +162,7 @@ export function noteSlots(events) {
 /**
  * Syllabes posées sur les notes : la syllabe k prend la note k (« _ » ajoute la note suivante à la syllabe d'avant).
  * Le motif de notes est répété (décalé de `span` temps) s'il y a plus de syllabes que de notes ; `fill` répète le
- * texte jusqu'à la fin des notes. -> [{ ph, label, notes: [slot, …] }]
+ * texte jusqu'à la fin des notes. -> [{ ph, label, notes: [slot, …], end }]
  */
 export function placeSyllables(syls, slots, span, { fill = false } = {}) {
   const out = [];
@@ -168,9 +172,62 @@ export function placeSyllables(syls, slots, span, { fill = false } = {}) {
     const s = syls[k % syls.length], n = slots[k % slots.length];
     const slot = { ...n, t: n.t + Math.floor(k / slots.length) * span, notes: [...n.notes] };
     if (s.hold) { if (out.length) out[out.length - 1].notes.push(slot); continue; }
-    out.push({ ph: s.ph, label: s.label, notes: [slot] });
+    out.push({ ph: s.ph, label: s.label, notes: [slot], end: !!s.end });
   }
   return out;
+}
+
+// ---------- Modèle Piper : durées des phonèmes ----------
+// Le modèle publié ne rend que le son. Son graphe (format ONNX, protobuf) est retouché au chargement : le nœud qui
+// arrondit les durées prédites (« Ceil ») est retiré et son résultat devient une entrée (durées imposées, en trames),
+// et les durées prédites (avant arrondi) deviennent une sortie. Une phrase entière peut alors être dite d'un seul
+// tenant (liaisons et coarticulation naturelles) avec chaque phonème calé sur le temps voulu.
+
+function pbFields(b, s, e) {
+  const out = [];
+  let p = s;
+  const varint = () => { let r = 0, m = 1; for (;;) { const c = b[p++]; r += (c & 0x7f) * m; if (!(c & 0x80)) break; m *= 128; } return r; };
+  while (p < e) {
+    const at = p, key = varint(), f = Math.floor(key / 8), w = key & 7;
+    let vs = p, ve;
+    if (w === 0) { varint(); ve = p; } else if (w === 2) { const l = varint(); vs = p; ve = p + l; p = ve; } else if (w === 5) { p += 4; ve = p; } else if (w === 1) { p += 8; ve = p; } else throw new Error('onnx');
+    out.push({ f, w, at, vs, ve, end: p });
+  }
+  return out;
+}
+const pbVarint = n => { const o = []; do { let c = n % 128; n = Math.floor(n / 128); if (n) c |= 128; o.push(c); } while (n); return o; };
+const pbBytes = (f, bytes) => [...pbVarint(f * 8 + 2), ...pbVarint(bytes.length), ...bytes];
+const pbStr = s => [...new TextEncoder().encode(s)];
+// ValueInfoProto : nom, tenseur float de rang 3 (dimensions libres).
+const floatInfo = name => pbBytes(1, pbStr(name)).concat(pbBytes(2, pbBytes(1, [8, 1, ...pbBytes(2, [...pbBytes(1, pbBytes(2, pbStr('a'))), ...pbBytes(1, pbBytes(2, pbStr('b'))), ...pbBytes(1, pbBytes(2, pbStr('c')))])])));
+
+/** Modèle Piper retouché (voir plus haut). -> octets du modèle, ou null si le graphe n'a pas la forme attendue. */
+export function piperTimedModel(bytes) {
+  const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  const top = pbFields(b, 0, b.length);
+  const g = top.find(x => x.f === 7 && x.w === 2);
+  if (!g) return null;
+  const parts = pbFields(b, g.vs, g.ve);
+  const dec = new TextDecoder();
+  let ceil = null;
+  for (const x of parts) {
+    if (x.f !== 1) continue;
+    const n = pbFields(b, x.vs, x.ve), str = k => n.filter(y => y.f === k).map(y => dec.decode(b.subarray(y.vs, y.ve)));
+    if (str(4)[0] === 'Ceil') { if (ceil) return null; ceil = { x, input: str(1)[0], output: str(2)[0] }; }
+  }
+  if (!ceil) return null;
+  const extra = [...pbBytes(11, floatInfo(ceil.output)), ...pbBytes(12, floatInfo(ceil.input))];
+  const kept = parts.filter(x => x !== ceil.x);
+  const glen = kept.reduce((s, x) => s + x.end - x.at, 0) + extra.length;
+  const head = pbVarint(7 * 8 + 2).concat(pbVarint(glen));
+  const out = new Uint8Array(g.at + head.length + glen + (b.length - g.end));
+  let p = 0;
+  out.set(b.subarray(0, g.at), p); p += g.at;
+  out.set(head, p); p += head.length;
+  for (const x of kept) { out.set(b.subarray(x.at, x.end), p); p += x.end - x.at; }
+  out.set(extra, p); p += extra.length;
+  out.set(b.subarray(g.end), p);
+  return { bytes: out, durIn: ceil.output, durOut: ceil.input };
 }
 
 // ---------- Moteur (Piper), chargé à la demande ----------
@@ -225,9 +282,12 @@ async function piperSession(model, onProgress) {
       const m = VOICE_MODELS[model];
       const ort = await loadOrt();
       const cfg = await (await fetchCached(`${VOICES_URL}${m.path}.onnx.json`)).json();
-      const bytes = await (await fetchCached(`${VOICES_URL}${m.path}.onnx`, onProgress)).arrayBuffer();
-      const session = await ort.InferenceSession.create(bytes);
-      return { session, cfg, ort };
+      const bytes = new Uint8Array(await (await fetchCached(`${VOICES_URL}${m.path}.onnx`, onProgress)).arrayBuffer());
+      // Modèle retouché pour imposer les durées des phonèmes (sinon, le modèle tel quel : syllabe par syllabe).
+      let timed = null;
+      try { timed = piperTimedModel(bytes); } catch { timed = null; }
+      const session = await ort.InferenceSession.create(timed?.bytes ?? bytes);
+      return { session, cfg, ort, durIn: timed?.durIn ?? null, durOut: timed?.durOut ?? null };
     })();
     sessions.set(model, p);
     p.catch(() => sessions.delete(model));
@@ -253,23 +313,51 @@ const piper = {
     }
     return res;
   },
-  async synth(model, ph, { speaker = 0, length = 1, noise = 1 }, onProgress) {
-    const { session, cfg, ort } = await piperSession(model, onProgress);
-    const map = cfg.phoneme_id_map, id = p => map[p]?.[0];
+  // Une syllabe seule, durées naturelles (rendu syllabe par syllabe).
+  async synth(model, ph, opts, onProgress) {
+    const s = await piperSession(model, onProgress);
+    const map = s.cfg.phoneme_id_map, id = p => map[p]?.[0];
     const ids = [id('^'), 0];
     for (const p of ph) for (const c of [...p]) if (id(c) !== undefined) ids.push(id(c), 0);
     ids.push(id('$'));
-    const inf = cfg.inference;
-    const feeds = {
-      input: new ort.Tensor('int64', BigInt64Array.from(ids.map(BigInt)), [1, ids.length]),
-      input_lengths: new ort.Tensor('int64', BigInt64Array.from([BigInt(ids.length)]), [1]),
-      scales: new ort.Tensor('float32', Float32Array.from([inf.noise_scale * noise, inf.length_scale * length, inf.noise_w]), [3]),
+    let frames;
+    if (s.durIn) frames = [...(await s.session.run(piperFeeds(s, ids, opts)))[s.durOut].data].map(Math.ceil);
+    const r = await s.session.run(piperFeeds(s, ids, opts, frames));
+    return { data: r.output.data, sr: s.cfg.audio.sample_rate };
+  },
+  // Phrase entière aux durées imposées (null si le modèle ne s'y prête pas).
+  async timed(model, onProgress) {
+    const s = await piperSession(model, onProgress);
+    if (!s.durIn) return null;
+    const map = s.cfg.phoneme_id_map;
+    let hop = 256;
+    return {
+      sr: s.cfg.audio.sample_rate,
+      get hop() { return hop; },
+      id: c => map[c]?.[0],
+      // Durées naturelles prédites (trames, fractionnaires).
+      async durations(ids, opts) {
+        const r = await s.session.run(piperFeeds(s, ids, opts));
+        hop = Math.round(r.output.data.length / ids.length) || hop;   // une trame par jeton : la taille d'une trame
+        return Float32Array.from(r[s.durOut].data);
+      },
+      async render(ids, frames, opts) { return (await s.session.run(piperFeeds(s, ids, opts, frames))).output.data; },
     };
-    if (cfg.num_speakers > 1) feeds.sid = new ort.Tensor('int64', BigInt64Array.from([BigInt(speaker % cfg.num_speakers)]), [1]);
-    const r = await session.run(feeds);
-    return { data: r.output.data, sr: cfg.audio.sample_rate };
   },
 };
+
+// Entrées du modèle : jetons (phonèmes), réglages, interprète, durées imposées (trames) s'il les accepte.
+function piperFeeds(s, ids, { speaker = 0, length = 1, noise = 1 }, frames) {
+  const { ort, cfg } = s, inf = cfg.inference;
+  const feeds = {
+    input: new ort.Tensor('int64', BigInt64Array.from(ids.map(BigInt)), [1, ids.length]),
+    input_lengths: new ort.Tensor('int64', BigInt64Array.from([BigInt(ids.length)]), [1]),
+    scales: new ort.Tensor('float32', Float32Array.from([inf.noise_scale * noise, inf.length_scale * length, inf.noise_w]), [3]),
+  };
+  if (cfg.num_speakers > 1) feeds.sid = new ort.Tensor('int64', BigInt64Array.from([BigInt(speaker % cfg.num_speakers)]), [1]);
+  if (s.durIn) feeds[s.durIn] = new ort.Tensor('float32', Float32Array.from(frames ?? ids.map(() => 1)), [1, 1, ids.length]);
+  return feeds;
+}
 const engineOf = () => backend ?? piper;
 export const espeakLang = model => (model === 'en-vctk' ? 'en-gb-x-rp' : VOICE_MODELS[model].lang === 'en' ? 'en-us' : 'fr');
 
@@ -389,6 +477,203 @@ async function renderPart(placed, model, part, mode, pre, onStep) {
   return { data: out, sr };
 }
 
+// ---------- Rendu par phrases (modèle aux durées imposées) ----------
+// Toute une phrase (jusqu'à un silence) est dite d'un seul tenant : chaque phonème reçoit sa durée pour que la voyelle
+// de chaque syllabe commence sur sa note (les consonnes d'attaque juste avant, comme un chanteur), la voyelle tient la
+// note, les consonnes finales viennent avant la syllabe suivante. Puis la hauteur est recalée note par note
+// (js/autotune.js : glissé, vibrato) sur la phrase entière : transitions naturelles, pas de collage.
+
+export const PHRASE_REST = 0.25;   // silence (s) entre deux notes au-delà duquel une nouvelle phrase commence
+
+/**
+ * Jetons d'une phrase pour le modèle : [{ id, syl (indice dans la phrase, −1 = début), role, vowel }]. role : 'lead'
+ * (début), 'on' (consonnes d'attaque, accent), 'nuc' (voyelle et liants), 'coda' (consonnes finales, espace entre deux
+ * mots), 'tail' (fin). Chaque phonème est suivi d'un jeton de liaison (« _ »), comme pour Piper.
+ */
+export function phraseTokens(syls, id) {
+  const pad = id('_') ?? 0, toks = [];
+  const push = (c, syl, role, vowel = false) => { const i = id(c); if (i === undefined) return; toks.push({ id: i, syl, role, vowel }, { id: pad, syl, role, vowel }); };
+  push('^', -1, 'lead');
+  syls.forEach((s, k) => {
+    const first = s.ph.findIndex(isVowel), last = s.ph.length - 1 - [...s.ph].reverse().findIndex(isVowel);
+    s.ph.forEach((u, j) => {
+      const role = first < 0 || j < first ? 'on' : j <= last ? 'nuc' : 'coda';
+      for (const c of u) push(c, k, role, role === 'nuc' && isVowel(u));
+    });
+    if (s.end && k < syls.length - 1) push(' ', k, 'coda');
+  });
+  const end = toks.length;
+  push('$', syls.length - 1, 'tail');
+  if (toks.length > end) toks.length = end + 1;   // pas de liaison après la fin
+  return toks;
+}
+
+/**
+ * Durées (s) des jetons d'une phrase. dur : durées naturelles (s) ; on[k] / end[k] : début de la voyelle et fin de la
+ * dernière note de la syllabe k (s, depuis le début du morceau).
+ * -> { start (s : début du son de la phrase), secs: [durée de chaque jeton], at: [{ s0 (début de l'attaque), v (voyelle), e (fin) }] }
+ */
+export function phrasePlan(toks, dur, on, end) {
+  const n = on.length, sum = (k, role) => toks.reduce((s, t, i) => s + (t.syl === k && t.role === role ? dur[i] : 0), 0);
+  const O = [], C = [], scaleOn = [], scaleCoda = [], nuc = [];
+  for (let k = 0; k < n; k++) {
+    O.push(sum(k, 'on'));
+    C.push(sum(k, 'coda'));
+    // Attaque raccourcie si les notes se suivent vite (au plus 35 % de la note d'avant, 250 ms) : la voyelle garde
+    // au moins un tiers de la note.
+    const o = Math.min(O[k], 0.25, k ? 0.35 * Math.max(0.02, on[k] - on[k - 1]) : Infinity);
+    scaleOn.push(O[k] > 0 ? o / O[k] : 1);
+    O[k] = o;
+  }
+  const at = [];
+  for (let k = 0; k < n; k++) {
+    const next = k + 1 < n ? on[k + 1] - O[k + 1] : end[k];
+    const avail = Math.max(0.04, next - on[k]);
+    const c = Math.min(C[k], (k + 1 < n ? 0.3 : 0.4) * avail);
+    scaleCoda.push(C[k] > 0 ? c / C[k] : 1);
+    nuc.push(Math.max(0.03, avail - c));
+    at.push({ s0: on[k] - O[k], v: on[k], e: on[k] + nuc[k] + c });
+  }
+  const secs = toks.map((t, i) => {
+    if (t.role === 'on') return dur[i] * scaleOn[t.syl];
+    if (t.role === 'coda') return dur[i] * scaleCoda[t.syl];
+    return dur[i];
+  });
+  // Noyau : le temps qui reste va aux voyelles (au prorata de leur durée naturelle), les accents gardent la leur.
+  for (let k = 0; k < n; k++) {
+    const idx = toks.map((t, i) => i).filter(i => toks[i].syl === k && toks[i].role === 'nuc');
+    const fixed = idx.filter(i => !toks[i].vowel).reduce((s, i) => s + secs[i], 0);
+    const vow = idx.filter(i => toks[i].vowel), vsum = vow.reduce((s, i) => s + dur[i], 0);
+    const left = Math.max(0.02, nuc[k] - fixed);
+    for (const i of vow) secs[i] = vsum > 0 ? left * dur[i] / vsum : left / vow.length;
+    if (!vow.length && idx.length) for (const i of idx) secs[i] = nuc[k] / idx.length;
+  }
+  const lead = toks.reduce((s, t, i) => s + (t.role === 'lead' ? secs[i] : 0), 0);
+  return { start: at[0].s0 - lead, secs, at };
+}
+
+/**
+ * Rend une partie phrase par phrase avec le modèle aux durées imposées. Mêmes réglages que renderPart.
+ * -> { data, sr } (mono, avec `pre` secondes avant le temps 0)
+ */
+async function renderTimedPart(placed, eng, part, mode, pre, onStep) {
+  const sr = eng.sr;
+  const end = Math.max(...placed.map(s => { const l = s.notes[s.notes.length - 1]; return l.t + l.len; }));
+  const out = new Float32Array(Math.ceil((end + pre + 1) * sr));
+  // Phrases : coupées aux silences.
+  const phrases = [];
+  placed.forEach((s, i) => {
+    const prev = placed[i - 1], gap = prev ? s.notes[0].t - (prev.notes[prev.notes.length - 1].t + prev.notes[prev.notes.length - 1].len) : Infinity;
+    if (gap > PHRASE_REST || phrases[phrases.length - 1].length >= 32) phrases.push([]);
+    phrases[phrases.length - 1].push(i);
+  });
+  const opts = { speaker: part.speaker, noise: part.noise, length: 1 };
+  for (const idx of phrases) {
+    const syls = idx.map(i => placed[i]);
+    const toks = phraseTokens(syls, eng.id);
+    const ids = toks.map(t => t.id);
+    const nat = await eng.durations(ids, opts);
+    const fs = eng.hop / sr;
+    const on = idx.map(i => placed[i].notes[0].t + part.jitter(i));
+    const ends = syls.map((s, k) => { const l = s.notes[s.notes.length - 1]; return Math.max(on[k] + 0.05, l.t + l.len + part.jitter(idx[k])); });
+    const plan = phrasePlan(toks, [...nat].map(d => d * fs), on, ends);
+    // Durées en trames : bornes arrondies sur le cumul (l'erreur ne s'accumule pas).
+    const frames = [];
+    let acc = 0, prevF = 0;
+    for (const s of plan.secs) { acc += s; const f = Math.round(acc / fs); frames.push(Math.max(0, f - prevF)); prevF = f; }
+    const y = Float32Array.from(await eng.render(ids, frames, opts));
+    part.plans?.push({ start: plan.start, at: plan.at, labels: syls.map(x => x.label), frames, toks: toks.map(x => `${x.role}:${x.syl}`), nat: [...nat] });
+    onStep?.(idx.length);
+    // Hauteur : chaque syllabe sur sa note (ses notes, avec « _ »), de son attaque à l'attaque suivante.
+    const t0 = plan.start, shift = 12 * part.octave + part.detune;
+    let ratio;
+    const track = analyzePitch(y, sr);
+    if (mode === 'rap') ratio = () => Math.pow(2, shift / 12);
+    else {
+      const notes = [];
+      syls.forEach((s, k) => {
+        const a = plan.at[k], b = k + 1 < syls.length ? plan.at[k + 1].s0 : a.e + 0.3;
+        s.notes.forEach((n, j) => {
+          const from = j ? a.v + (n.t - s.notes[0].t) : (k ? a.s0 : t0);
+          const to = j + 1 < s.notes.length ? a.v + (s.notes[j + 1].t - s.notes[0].t) : b;
+          notes.push({ t0: from - t0, t1: to - t0, note: part.pick(n.notes) + shift });
+        });
+      });
+      const curve = tuneCurve(track, { mode: 'notes', notes, exact: true, speed: mode === 'robot' ? 0 : 35, humanize: mode === 'robot' ? 0 : 0.1, vibrato: mode === 'sing' ? 0.3 : 0 });
+      const N = curve.corr.length;
+      ratio = i => { const p = (i - track.start) / track.hop, k = Math.max(0, Math.min(N - 1, Math.round(p))); return Math.pow(2, curve.corr[k] / 12); };
+    }
+    const [z] = psolaShift([y], sr, track, ratio, { formant: part.formant });
+    // Niveau : la phrase à un niveau voisé constant ; petits fondus aux bords.
+    let e = 0, nv = 0;
+    track.f0.forEach((f, k) => { if (f) { const c = k * track.hop; for (let j = c; j < Math.min(z.length, c + track.hop); j++) { e += z[j] * z[j]; nv++; } } });
+    const g = 0.2 / Math.max(1e-4, Math.sqrt(e / Math.max(1, nv)));
+    const at = Math.round((t0 + pre) * sr), fin = Math.round(sr * 0.005), fout = Math.round(sr * 0.03);
+    for (let j = 0; j < z.length; j++) {
+      const o = at + j;
+      if (o < 0 || o >= out.length) continue;
+      out[o] += z[j] * g * Math.min(1, (j + 1) / fin, (z.length - j) / fout);
+    }
+  }
+  return { data: out, sr };
+}
+
+// ---------- Vocodeur ----------
+
+// Filtre passe-bande (biquad, gain 1 au centre) : -> fonction qui filtre un échantillon.
+function bandpass(sr, fc, q) {
+  const w = 2 * Math.PI * fc / sr, al = Math.sin(w) / (2 * q), a0 = 1 + al;
+  const b0 = al / a0, b2 = -al / a0, a1 = -2 * Math.cos(w) / a0, a2 = (1 - al) / a0;
+  let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+  return x => { const y = b0 * x + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = x; y2 = y1; y1 = y; return y; };
+}
+
+/**
+ * Vocodeur à bandes : la voix (modulateur) donne, bande par bande, son enveloppe à une porteuse de dents de scie qui
+ * jouent les notes (deux par note, légèrement désaccordées). 24 bandes de 100 Hz à 8 kHz, deux filtres par bande.
+ * Les consonnes sourdes (au-dessus de 4 kHz) sont ajoutées telles quelles, pour que le texte reste compris.
+ * notes : [{ t0, t1 (s), notes: [hauteurs MIDI] }]. -> nouveau signal (même longueur)
+ */
+export function vocode(voice, sr, notes, { bands = 24 } = {}) {
+  const n = voice.length, car = new Float32Array(n);
+  const fade = Math.round(sr * 0.004);
+  for (const nt of notes) {
+    const a = Math.max(0, Math.round(nt.t0 * sr)), b = Math.min(n, Math.round(nt.t1 * sr));
+    for (const m of nt.notes) for (const dt of [-0.06, 0.06]) {
+      const f = 440 * Math.pow(2, (m + dt - 69) / 12) / sr;
+      let ph = (m * 0.37 + dt) % 1;
+      for (let i = a; i < b; i++) {
+        // Dent de scie à bande limitée (polyBLEP).
+        ph += f; if (ph >= 1) ph -= 1;
+        let v = 2 * ph - 1;
+        if (ph < f) { const u = ph / f; v -= u + u - u * u - 1; } else if (ph > 1 - f) { const u = (ph - 1) / f; v -= u * u + u + u + 1; }
+        car[i] += v * Math.min(1, (i - a + 1) / fade, (b - i) / fade) / nt.notes.length;
+      }
+    }
+  }
+  const out = new Float32Array(n);
+  const lo = 100, hi = Math.min(8000, sr * 0.45), q = 0.9 * bands / Math.log2(hi / lo) * 1.2;
+  const att = 1 - Math.exp(-1 / (sr * 0.003)), rel = 1 - Math.exp(-1 / (sr * 0.02));
+  for (let k = 0; k < bands; k++) {
+    const fc = lo * Math.pow(hi / lo, (k + 0.5) / bands);
+    const m1 = bandpass(sr, fc, q), m2 = bandpass(sr, fc, q), c1 = bandpass(sr, fc, q), c2 = bandpass(sr, fc, q);
+    let env = 0;
+    for (let i = 0; i < n; i++) {
+      const v = Math.abs(m2(m1(voice[i])));
+      env += (v > env ? att : rel) * (v - env);
+      out[i] += c2(c1(car[i])) * env;
+    }
+  }
+  // Même niveau que la voix ; consonnes sourdes : la voix au-dessus de 4 kHz (deux pôles).
+  let ev = 0, eo = 0;
+  for (let i = 0; i < n; i++) { ev += voice[i] * voice[i]; eo += out[i] * out[i]; }
+  const g = eo > 0 ? Math.sqrt(ev / eo) : 0;
+  const hp = 1 - Math.exp(-2 * Math.PI * 4000 / sr);
+  let l1 = 0, l2 = 0;
+  for (let i = 0; i < n; i++) { l1 += hp * (voice[i] - l1); l2 += hp * (l1 - l2); out[i] = out[i] * g + (voice[i] - l2) * 0.5; }
+  return out;
+}
+
 /**
  * Rend la voix complète : texte, notes (évènements du bloc, temps en temps), tempo, réglages.
  * opts : { model, speaker, mode, octave ('auto' ou décalage), formant, choir, harmony, fill, seed }
@@ -427,13 +712,14 @@ export async function renderVoice(text, events, span, bpm, opts, onProgress) {
         pick: notes => notes[Math.max(0, notes.length - 1 - h)],
         pan: parts.length ? ((j % 2 ? 1 : -1) * Math.min(0.8, 0.25 * Math.ceil(j / 2))) : 0,
         octave: 0,
+        plans: [],   // phrases rendues (début, attaques, voyelles, fins) : affichage, vérifications
       });
     }
   }
   // Octave : auto = au plus près de la voix (sa hauteur naturelle), sinon le décalage choisi.
   const steps = placed.length * parts.length;
   let done = 0;
-  const step = () => onProgress?.(++done / steps);
+  const step = (n = 1) => onProgress?.((done += n) / steps);
   const probe = await synthSyllable(opts.model, placed[0].ph, { speaker: parts[0].speaker, length: 1, noise: 1 });
   const natural = 69 + 12 * Math.log2((medianF0(pitchTrack(probe.data, probe.sr)) || 160) / 440);
   const sung = placed.flatMap(s => s.notes.map(n => n.notes[n.notes.length - 1]));
@@ -441,10 +727,27 @@ export async function renderVoice(text, events, span, bpm, opts, onProgress) {
   const auto = opts.octave === 'auto' || opts.octave === undefined;
   // (on chante un peu plus haut qu'on ne parle : +4 demi-tons)
   const oct = auto ? Math.round((natural + 4 - mid) / 12) : opts.octave;
-  for (const p of parts) p.octave = opts.mode === 'rap' ? (auto ? 0 : opts.octave) : oct;
+  // Scandé et vocodeur : la voix garde sa hauteur parlée (le vocodeur joue les notes avec sa porteuse).
+  const speech = opts.mode === 'rap' || opts.mode === 'vocoder';
+  for (const p of parts) p.octave = speech ? (auto || opts.mode === 'vocoder' ? 0 : opts.octave) : oct;
+  const vMode = opts.mode === 'vocoder' ? 'rap' : opts.mode;
   const pre = 0.25;
   const rendered = [];
-  for (const p of parts) rendered.push(await renderPart(placed, opts.model, p, opts.mode, pre, step));
+  // Phrases d'un seul tenant si le modèle accepte des durées imposées ; sinon syllabe par syllabe.
+  const eng = opts.phrase === false ? null : await engineOf().timed?.(opts.model);
+  for (const p of parts) rendered.push(eng ? await renderTimedPart(placed, eng, p, vMode, pre, step) : await renderPart(placed, opts.model, p, vMode, pre, step));
+  if (opts.mode === 'vocoder') {
+    // Porteuse : les notes de chaque syllabe (toutes celles de l'accord avec l'harmonie), de sa note à la suivante.
+    const cOct = auto ? 0 : opts.octave;
+    rendered.forEach((r, k) => {
+      const notes = placed.flatMap((s, i) => s.notes.map((n, j) => {
+        const next = s.notes[j + 1]?.t ?? placed[i + 1]?.notes[0].t ?? n.t + n.len;
+        const t1 = next - (n.t + n.len) > PHRASE_REST ? n.t + n.len : next;
+        return { t0: n.t + pre, t1: t1 + pre, notes: (opts.harmony ? n.notes : [parts[k].pick(n.notes)]).map(x => x + 12 * cOct + parts[k].detune) };
+      }));
+      r.data = vocode(r.data, r.sr, notes);
+    });
+  }
   const sr = rendered[0].sr, len = Math.max(...rendered.map(r => r.data.length));
   const left = new Float32Array(len), right = new Float32Array(len);
   const gain = 1 / Math.sqrt(parts.length);
@@ -455,5 +758,5 @@ export async function renderVoice(text, events, span, bpm, opts, onProgress) {
   let peak = 0;
   for (let i = 0; i < len; i++) peak = Math.max(peak, Math.abs(left[i]), Math.abs(right[i]));
   if (peak > 0.89) for (let i = 0; i < len; i++) { left[i] *= 0.89 / peak; right[i] *= 0.89 / peak; }
-  return { left, right, sr, pre, syllables: placed, parts: parts.length, octave: oct };
+  return { left, right, sr, pre, syllables: placed, parts: parts.length, octave: oct, phrase: !!eng, plans: parts[0].plans };
 }

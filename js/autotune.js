@@ -44,7 +44,8 @@ export function nearestInScale(m, root, steps) {
 /**
  * Courbe de correction d'une analyse (js/psola.js analyzePitch). Hauteurs « entendues » = mesurées + shift.
  * opts : { mode: 'scale' | 'notes', root, scale, notes: [{ t0, t1, note }] (secondes du son), shift, speed (ms),
- * humanize (0..1) }
+ * humanize (0..1), exact (notes : garder leur octave au lieu de prendre la plus proche de la voix), vibrato (demi-tons :
+ * vibrato ajouté à 5,5 Hz sur les notes de plus de 0,45 s, après 0,25 s) }
  * -> { input, target, output (demi-tons entendus par mesure, NaN = sourd), corr (demi-tons à appliquer) }
  */
 export function tuneCurve(track, opts) {
@@ -58,6 +59,8 @@ export function tuneCurve(track, opts) {
   const alpha = opts.speed > 0 ? 1 - Math.exp(-(hop / sr) / (opts.speed / 1000)) : 1;
   const secOf = k => (start + k * hop) / sr;
   const minSeg = Math.round(30 * ms);
+  const vibrato = opts.mode === 'notes' ? opts.vibrato ?? 0 : 0;
+  const vib = new Float32Array(N);   // vibrato ajouté à la note visée
   for (const [k0, k1] of voicedRuns(track)) {
     // Hauteur moyenne sur 80 ms : décide de la note (le vibrato est en partie lissé, une note courte reste visible).
     const mid = boxAvg(input, k0, k1, Math.round(40 * ms));
@@ -70,7 +73,7 @@ export function tuneCurve(track, opts) {
         const w = [];
         for (let k = k0; k < k1; k++) if (secOf(k) >= nt.t0 && secOf(k) < nt.t1) w.push(mid[k - k0]);
         const ref = w.length ? w.sort((a, b) => a - b)[w.length >> 1] : mid[0];
-        return nt.note + 12 * Math.round((ref - nt.note) / 12);
+        return opts.exact ? nt.note : nt.note + 12 * Math.round((ref - nt.note) / 12);
       });
       for (let k = k0; k < k1; k++) {
         const s = secOf(k);
@@ -80,6 +83,8 @@ export function tuneCurve(track, opts) {
           notes.forEach((nt, i) => { const dd = Math.min(Math.abs(s - nt.t0), Math.abs(s - nt.t1)); if (dd < bd) { bd = dd; j = i; } });
         }
         target[k] = octs[j];
+        const nt = notes[j], u = s - nt.t0 - 0.25;
+        if (vibrato && nt.t1 - nt.t0 > 0.45 && u > 0) vib[k] = vibrato * Math.min(1, u / 0.2) * Math.sin(2 * Math.PI * 5.5 * u);
       }
     } else {
       // Note de la gamme la plus proche, avec hystérésis : quittée seulement franchement au-delà de la frontière.
@@ -112,7 +117,7 @@ export function tuneCurve(track, opts) {
     let c = null;
     for (let k = k0; k < k1; k++) {
       const ref = slow[k] + (1 - h) * (input[k] - slow[k]);
-      const e = target[k] - ref;
+      const e = target[k] + vib[k] - ref;
       c = c === null ? e : c + alpha * (e - c);
       corr[k] = c;
       output[k] = input[k] + c;
