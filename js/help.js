@@ -85,6 +85,7 @@ export const HELP = {
       <ul>
         <li><b>Open a block</b>: double-click a note block on the timeline (while this window is open, a click is enough), or <b>+ New block</b> (1 bar at the playhead, on the armed track). A synth recording becomes a single note block.</li>
         <li><b>Notes</b>: click an empty spot to add a note (drag to set its length), drag a note to move it (<b>Alt</b> = copy), drag its right edge to change its length, <b>right-click</b> (or right-drag) to erase. <b>Shift + drag</b> selects a group, Shift + click adds a note to the selection.</li>
+        <li><b>Transpose</b> (−12, −1, +1, +12): the selected notes, or all the notes of the block if none is selected.</li>
         <li><b>Keys</b>: Delete, Ctrl+A / C / X / V (paste at the green cursor, set by clicking the ruler), Ctrl+D (duplicate after itself), ↑ / ↓ transpose (Shift = octave), ← / → move by one grid step (Shift = one bar), Q quantize, Space = listen, Ctrl+Z = undo.</li>
         <li><b>Velocity</b>: drag in the bottom lane (only the selected notes if there is a selection).</li>
         <li><b>Grid</b> from 1/4 to 1/32 (and triplets); <b>Quantize</b> snaps the start and end of the notes. Rows of the F minor scale (the key of the banks) are tinted.</li>
@@ -349,6 +350,7 @@ export const HELP = {
       <ul>
         <li><b>Ouvrir un bloc</b> : double-clic sur un bloc de notes de la timeline (quand cette fenêtre est ouverte, un clic suffit), ou <b>+ Nouveau bloc</b> (1 mesure à la tête de lecture, sur la piste armée). Un enregistrement du synthé devient un seul bloc de notes.</li>
         <li><b>Notes</b> : clic dans le vide pour poser une note (glisser pour sa durée), glisser une note pour la déplacer (<b>Alt</b> = copie), glisser son bord droit pour sa durée, <b>clic droit</b> (ou glisser en clic droit) pour effacer. <b>Maj + glisser</b> sélectionne un groupe, Maj + clic ajoute une note à la sélection.</li>
+        <li><b>Transposer</b> (−12, −1, +1, +12) : les notes sélectionnées, ou toutes les notes du bloc si rien n'est sélectionné.</li>
         <li><b>Touches</b> : Suppr, Ctrl+A / C / X / V (collage au curseur vert, placé d'un clic sur la règle), Ctrl+D (duplique à la suite), ↑ / ↓ transposent (Maj = octave), ← / → déplacent d'une case (Maj = une mesure), Q quantifie, Espace = écouter, Ctrl+Z = annuler.</li>
         <li><b>Vélocité</b> : glisser dans la bande du bas (seulement les notes sélectionnées s'il y a une sélection).</li>
         <li><b>Grille</b> de 1/4 à 1/32 (et triolets) ; <b>Quantifier</b> cale le début et la fin des notes. Les lignes de la gamme de fa mineur (la tonalité des banques) sont teintées.</li>

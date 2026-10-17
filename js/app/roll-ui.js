@@ -66,7 +66,13 @@ export function openRoll(clip, show) {
 export function buildRoll() {
   pianoRoll = new PianoRoll($('#roll-canvas'), {
     clip: () => rollFind()?.clip ?? null,
-    changed: () => { const f = rollFind(); if (f) growSong(f.clip); renderTl(); save(); },
+    changed: () => {
+      const f = rollFind();
+      if (f) growSong(f.clip);
+      if (f?.clip.kick) prepareKickClips(state.tl.tracks, engine.ctx.sampleRate);   // mélodie de kick : les kicks des nouvelles notes
+      renderTl();
+      save();
+    },
     noteOn: (n, v) => { const s = rollSound(); rollHeld.set(n, s.syn); s.syn.noteOn(n, v, undefined, `roll:${n}`, s.V); },
     noteOff: n => { (rollHeld.get(n) ?? engine).noteOff(n, false, undefined, `roll:${n}`); rollHeld.delete(n); },
     playhead: rollPlayhead,
@@ -78,6 +84,8 @@ export function buildRoll() {
   $('#roll-new').addEventListener('click', rollNew);
   $('#roll-merge').addEventListener('click', rollMerge);
   $('#roll-quant').addEventListener('click', () => pianoRoll.quantize());
+  // Transposer : les notes sélectionnées, ou toutes les notes du bloc (comme les flèches ↑ ↓, Maj = octave).
+  for (const b of document.querySelectorAll('.roll-transpose button')) b.addEventListener('click', () => pianoRoll.transpose(+b.dataset.tr));
   $('#roll-step').addEventListener('click', () => { state.roll.step = !state.roll.step; renderRollBar(); save(); });
   $('#roll-shorter').addEventListener('click', () => rollLength(-1));
   $('#roll-longer').addEventListener('click', () => rollLength(1));
@@ -92,7 +100,7 @@ export function buildRoll() {
     delete f.clip.preset;
     delete f.clip.osc;
     delete f.clip.kick;
-    if (preset.value === 'kick') { f.clip.kick = { ...state.kick.params }; prepareKickClips(state.tl.tracks, engine.ctx.sampleRate); }   // mélodie de kick : le kick du designer, tel qu'il est maintenant
+    if (preset.value === ROLL_KICK) { f.clip.kick = { ...state.kick.params }; prepareKickClips(state.tl.tracks, engine.ctx.sampleRate); }   // mélodie de kick : le kick du designer, tel qu'il est maintenant
     else if (preset.value.startsWith('osc:')) f.clip.osc = preset.value.slice(4);
     else if (preset.value) f.clip.preset = preset.value;
     rollHeld.clear();
@@ -123,6 +131,7 @@ export function renderRollBar() {
   const clip = f?.clip;
   $('#roll-empty').hidden = !!clip;
   for (const id of ['#roll-play', '#roll-preset', '#roll-shorter', '#roll-longer', '#roll-quant', '#roll-merge', '#roll-name']) $(id).disabled = !clip;
+  for (const b of document.querySelectorAll('.roll-transpose button')) b.disabled = !clip;
   $('#roll-play').textContent = rollPlay ? t('tr.stop') : t('roll.listen');
   $('#roll-play').dataset.icon = rollPlay ? 'stop' : 'play';
   $('#roll-play').classList.toggle('active', !!rollPlay);
@@ -130,7 +139,7 @@ export function renderRollBar() {
   $('#roll-grid').value = ROLL_GRIDS.findIndex(g => Math.abs(g - state.roll.grid) < 1e-6);
   const name = $('#roll-name');
   if (document.activeElement !== name) name.value = clip?.name ?? '';
-  $('#roll-preset').value = clip?.kick ? 'kick' : clip?.osc ? `osc:${[...$('#roll-preset').options].some(o => o.value === `osc:${clip.osc}`) ? clip.osc : 'live'}` : clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
+  $('#roll-preset').value = clip?.kick ? ROLL_KICK : clip?.osc ? `osc:${[...$('#roll-preset').options].some(o => o.value === `osc:${clip.osc}`) ? clip.osc : 'live'}` : clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
   const pat = clip ? patLen(clip) : 0;
   $('#roll-len').textContent = clip ? rollLenLabel(pat) : '—';
   $('#roll-where').textContent = clip ? t('roll.where', {
@@ -139,6 +148,10 @@ export function renderRollBar() {
   }) : '';
   pianoRoll.draw();
 }
+
+// Valeur de « Kick du designer » dans la liste des sons : distincte de l'id d'un preset du synthé (« kick » = le
+// preset « Kick accordé », qui reprenait la place du kick du designer à chaque réaffichage).
+export const ROLL_KICK = 'designer:kick';
 
 export function rollPresetOptions() {
   const sel = $('#roll-preset');
@@ -160,7 +173,7 @@ export function rollPresetOptions() {
   sel.appendChild(grp);
   const kick = document.createElement('optgroup');
   kick.label = t('win.kick');
-  kick.appendChild(new Option(t('roll.kick'), 'kick'));
+  kick.appendChild(new Option(t('roll.kick'), ROLL_KICK));
   sel.appendChild(kick);
   sel.value = value;
 }
