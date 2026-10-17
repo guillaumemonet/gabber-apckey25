@@ -46,6 +46,7 @@ La fenêtre **Breizh generator** (groupe Outils) pose un air à la manière des 
 - **Instrument** : bombarde (anche double, son puissant et nasillard), biniou kozh (petite cornemuse bretonne, très aiguë), cornemuse, **couple de sonneurs** ou **bagad**.
   - Couple : la bombarde et le biniou jouent ensemble, le biniou à l'octave au-dessus ; la bombarde respire à la fin de chaque phrase de deux mesures pendant que le biniou continue.
   - Bagad : un pupitre de cornemuses (neuf sonneurs, chacun un peu désaccordé), le pupitre de bombardes à l'octave au-dessous.
+  - La cornemuse et le bagad jouent dans la gamme propre du chalumeau, accordée sur les bourdons, mesurée sur des enregistrements de sonneurs : seconde, tierce, quarte, quinte et sixte presque pures, le sol sous la tonique très bas (la septième « bémol » de la cornemuse), le sol aigu un peu haut. Les bombardes du bagad restent dans la gamme tempérée.
 - **Danse** : le rythme de l'air.
   - **An dro** : croches régulières.
   - **Gavotte** : syncopée.
@@ -54,12 +55,12 @@ La fenêtre **Breizh generator** (groupe Outils) pose un air à la manière des 
 - **Tonique** et **mode** : mineur (éolien), dorien, mixolydien (le mode de la cornemuse) ou majeur. Pour un hymne en fa mineur, prenez fa et mineur (ou dorien).
 - **Forme** : **A A B B** comme un air traditionnel (chaque partie jouée deux fois, la partie B plus haute) ou une seule partie **A**. Chaque partie est une question qui s'arrête sur la quinte, puis une réponse qui revient à la tonique ; la troisième mesure reprend le motif de la première pour que l'air se retienne.
 - **Mesures par partie** (2 ou 4) et **répétitions**.
-- **Notes d'agrément** : des notes très courtes juste avant les notes posées sur le temps, la signature des sonneurs. Pour la cornemuse et le bagad, la note la plus haute du chalumeau (comme les « gracenotes ») ; pour la bombarde et le biniou, la note au-dessus. **Beaucoup** en met plus souvent, parfois deux de suite.
-- **Bourdon** : la tonique tenue sur toute la durée, sur deux octaves (et la quinte avec **Tonique + quinte**), sur sa propre piste.
+- **Notes d'agrément** : des notes très courtes juste avant les notes posées sur le temps, la signature des sonneurs. Pour la cornemuse et le bagad, le sol aigu du chalumeau (le la aigu sur le sol aigu), l'agrément le plus courant des sonneurs de cornemuse ; pour la bombarde et le biniou, la note au-dessus. **Beaucoup** en met plus souvent, parfois deux de suite.
+- **Bourdon** : la tonique tenue sur toute la durée (et la quinte avec **Tonique + quinte**), sur sa propre piste. Chaque note du bourdon est un jeu complet : deux bourdons ténors presque à l'unisson, qui battent lentement, et un bourdon basse à l'octave au-dessous.
 
 **Générer** pose un bloc par voix (mélodie, deuxième voix, bourdon) à partir de la mesure de la tête de lecture, sur des pistes libres depuis la piste armée. Le brouillon affiché est l'air de la mélodie : retouchez-le, la deuxième voix et le bourdon suivent.
 
-Les sons existent aussi dans le synthé, famille **Breizh** : bombarde, pupitre de bombardes, biniou kozh, cornemuse, bagad (pupitre de cornemuses) et bourdon. Ils sont synthétisés, sans échantillon : formes d'onde d'anche, résonances du pavillon, souffle, et une hauteur qui bouge un peu comme celle d'un vrai sonneur. Dans les pupitres (bagad, bombardes, bourdons), chaque sonneur est un peu désaccordé et attaque un peu à part des autres.
+Les sons existent aussi dans le synthé, famille **Breizh** : bombarde, pupitre de bombardes, biniou kozh, cornemuse, bagad (pupitre de cornemuses) et bourdon. Ils sont synthétisés, sans échantillon : formes d'onde d'anche, résonances du pavillon, souffle, et une hauteur qui bouge un peu comme celle d'un vrai sonneur. Leur timbre (onde et résonances) a été ajusté sur des enregistrements libres de droits de bombardes, de biniou, de chalumeau et de bourdons de cornemuse. Le niveau et le timbre bougent un peu, comme la pression d'un sac ou d'un souffle ; les cornemuses lient leurs notes sans interruption, la bombarde les détache d'un coup de langue. Dans les pupitres (bagad, bombardes), chaque sonneur est un peu désaccordé et attaque un peu à part des autres.
 
 ## Générateur de voix
 

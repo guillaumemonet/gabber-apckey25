@@ -9,7 +9,7 @@
 // avec `seq` et `pat`, c'est un motif du piano roll (voir js/notes.js).
 
 import { TrackChain, cleanFx } from './trackfx.js';
-import { clipEvents, monoLine } from './notes.js';
+import { clipEvents, monoLine, tunedNote } from './notes.js';
 import { buildInsert, cleanInsert } from './mixer.js';
 
 export const TL_TRACKS = 16;        // pistes au départ
@@ -269,10 +269,11 @@ export class Timeline {
             if (kick && live && at0 >= beat - 1e-6) this.onKick(when, ti);   // chaque kick de la mélodie pompe le sidechain
             const key = `${this.keyPrefix}${clip.id}:${n.i}`;
             const out = this.trackIn(ti, dest);
+            const note = clip.tune ? tunedNote(n.note, clip.tune) : n.note;   // justesse propre de l'instrument (cornemuse)
             jobs.push({ time: when, run: () => {
               this.synths.add(syn);
-              syn.noteOn(n.note, Math.min(1, n.vel * (clip.gain ?? 1)), when, key, patch, out, n.from);
-              this.offs.push({ note: n.note, key, time: when + left * bd - 0.005, syn });
+              syn.noteOn(note, Math.min(1, n.vel * (clip.gain ?? 1)), when, key, patch, out, n.from);
+              this.offs.push({ note, key, time: when + left * bd - 0.005, syn });
               this.offsDirty = true;
             } });
           }

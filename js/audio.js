@@ -34,6 +34,8 @@ export const DEFAULT_VOICE = {
   jitter: 0,          // instabilité rapide de la hauteur (centièmes), le grain d'une anche
   drift: 0,           // dérive lente et propre à chaque oscillateur (centièmes) : des sonneurs jamais tout à fait justes
   stagger: 0,         // départ décalé de chaque oscillateur (secondes) : plusieurs sonneurs qui n'attaquent pas ensemble
+  shimmer: 0,         // fluctuation lente du niveau (fraction) et du timbre : la pression du sac ou du souffle n'est jamais constante
+  tongue: 0,          // coup de langue (secondes) : une note programmée s'arrête ce temps avant sa fin (notes détachées de la bombarde)
 };
 
 function makeImpulse(ctx, seconds) {
@@ -223,19 +225,23 @@ export class Engine {
     const real = new Float32Array(harmonics);
     for (let n = 1; n < harmonics; n++) real[n] = (2 / (n * Math.PI)) * Math.sin(n * Math.PI * 0.25);
     this.pulseWave = ctx.createPeriodicWave(real, new Float32Array(harmonics));
-    // Anches (sons bretons) : bombarde = anche double, fondamentale faible et harmoniques riches ;
-    // chalumeau du biniou et de la cornemuse = très brillant, presque toutes les harmoniques fortes.
+    // Anches (sons bretons) : ondes données par l'amplitude de chaque harmonique.
     const spectrum = amp => { const im = new Float32Array(harmonics); for (let n = 1; n < harmonics; n++) im[n] = amp(n); return ctx.createPeriodicWave(new Float32Array(harmonics), im); };
+    // Onde relevée sur des enregistrements : niveaux (dB) des premières harmoniques, puis une pente (dB par octave).
+    // Le corps de l'instrument (formant, voir formant()) fait le reste : les deux ont été ajustés ensemble sur toutes
+    // les notes mesurées de l'instrument (une anche donne un spectre presque plat que le corps colore).
+    const measured = (db, slope) => spectrum(n => Math.pow(10, (n <= db.length ? db[n - 1] : db[db.length - 1] + slope * Math.log2(n / db.length)) / 20));
     this.waves = {
       pulse: this.pulseWave,
       reed: spectrum(n => (n === 1 ? 0.45 : Math.pow(n, -0.75)) * (n % 2 ? 1 : 0.85)),
-      chanter: spectrum(n => (n === 1 ? 0.7 : Math.pow(n, -0.55)) * (n <= 6 ? 1.2 : 1)),
-      // Bombarde (perce conique, anche double) : fondamentale discrète, harmoniques 2 à 5 très fortes, nasillard.
-      bombarde: spectrum(n => (n === 1 ? 0.4 : n <= 5 ? 0.95 * Math.pow(n, -0.25) : Math.pow(n, -0.75))),
-      // Biniou kozh : perçant, harmoniques impaires dominantes, presque pas de fondamentale.
-      biniou: spectrum(n => (n === 1 ? 0.35 : (n % 2 ? 1 : 0.35) * Math.pow(n, -0.45))),
-      // Bourdon (perce cylindrique) : harmoniques impaires, comme une clarinette qui bourdonne.
-      drone: spectrum(n => (n % 2 ? 1 : 0.12) * Math.pow(n, -0.85)),
+      // Chalumeau de cornemuse écossaise (9 notes du chalumeau seul, du sol grave au la aigu).
+      chanter: measured([-14.5, -16.1, -13.8, -12.6, -15.2, -16.7, -18.8, -22.8], -3.8),
+      // Bombarde (pupitre de bombardes en si bémol) : spectre plat, même un peu montant ; le corps fait le nasillard.
+      bombarde: measured([-9.9, -10.6, -9.5, -8.8, -9.2, -8.9, -10.6, -11.9], 2.1),
+      // Biniou kozh (couple de sonneurs, notes du biniou seul) : spectre plat, très brillant.
+      biniou: measured([-11.2, -10.2, -11.4, -13, -12.2, -12], -0.8),
+      // Bourdon (bourdons de cornemuse) : fondamentale nette, harmoniques qui tombent vite.
+      drone: measured([-13.1, -22.7, -28.2, -24.9, -41.7, -35.3], -10.5),
     };
     // Bruits des sons acoustiques : souffle (bruit blanc) et bruit lissé (±1, 25 valeurs par seconde, en boucle)
     // qui fait bouger la hauteur, lu vite pour le grain de l'anche, lentement pour la dérive d'un sonneur.
@@ -375,17 +381,23 @@ export class Engine {
   // --- Synthé ---
   // Formants posés après une couche : caisse de résonance des cordes, pavillon d'une anche (bombarde, chalumeau,
   // bourdon), ou voyelles d'un chœur.
-  formant(input, kind) {
+  // `move` : { depth, t, srcs } fait glisser lentement les résonances fortes (fraction de leur fréquence) : le timbre d'un
+  // vrai sonneur bouge sans cesse un peu, chaque harmonique à sa façon.
+  formant(input, kind, move) {
     const { ctx } = this;
     const bodies = {
       strings: [[[350, 4, 1], [1100, 5, 1.2], [2700, 3, 1.5]], 6000, -4],
-      bombarde: [[[300, -5, 0.8], [1150, 9, 1.4], [2400, 5, 2], [4200, -4, 1]], 6500, -8],
-      biniou: [[[600, -9, 0.7], [2800, 9, 1.5], [5200, 4, 2]], 9500, -3],
-      pipe: [[[450, -5, 0.8], [1700, 6, 1.2], [3500, 6, 1.6]], 8000, -4],
-      drone: [[[300, 4, 1], [900, 3, 1.2]], 3000, -8],
+      // Corps des sons bretons, ajustés avec leur onde sur des enregistrements (voir this.waves) :
+      // bombarde = formant vers 2 kHz, creux vers 3,5 kHz, éclat vers 5,3 kHz ; biniou = formant vers 4 kHz ;
+      // chalumeau = résonances vers 1,1 et 2,7 kHz, creux vers 3,5 kHz ; bourdon = résonance vers 500 Hz.
+      // Dernier nombre : gain (dB) qui rend au preset le volume qu'il avait avant ces mesures.
+      bombarde: [[[207, -11.2, 0.3], [2028, 15, 1.8], [3478, -10, 4], [5289, 10.6, 1.6]], 4350, -26.8, 15],
+      biniou: [[[1116, 3.3, 2.5], [4053, 15, 4], [6801, 8.2, 2.5]], 6640, -26.6, 6.5],
+      pipe: [[[1128, 14.2, 4], [2698, 9.8, 4], [3489, -15, 4], [4527, 4.9, 2.7]], 8490, -10.5, 0],
+      drone: [[[515, 15, 4], [1174, 15, 0.3]], 3000, 0, -11],
     };
     if (bodies[kind]) {
-      const [peaks, shelfF, shelfG] = bodies[kind];
+      const [peaks, shelfF, shelfG, makeup = 0] = bodies[kind];
       let node = input;
       for (const [f, g, q] of peaks) {
         const b = ctx.createBiquadFilter();
@@ -393,13 +405,17 @@ export class Engine {
         b.frequency.value = f;
         b.gain.value = g;
         b.Q.value = q;
+        if (move && g >= 6) this.wobble(b.frequency, 0.2 + Math.random() * 0.15, f * move.depth, move.t, move.srcs);
         node = node.connect(b);
       }
       const shelf = ctx.createBiquadFilter();
       shelf.type = 'highshelf';
       shelf.frequency.value = shelfF;
       shelf.gain.value = shelfG;
-      return node.connect(shelf);
+      if (!makeup) return node.connect(shelf);
+      const g = ctx.createGain();
+      g.gain.value = Math.pow(10, makeup / 20);
+      return node.connect(shelf).connect(g);
     }
     const vowels = { a: [[800, 1, 8], [1150, 0.6, 9], [2900, 0.25, 10]], o: [[450, 1, 8], [800, 0.5, 9], [2830, 0.15, 10]] };
     const sum = ctx.createGain();
@@ -463,7 +479,7 @@ export class Engine {
       const n = Math.max(1, layer.voices ?? 1);
       const lg = ctx.createGain();
       lg.gain.value = (layer.level ?? 1) / Math.sqrt(n) / Math.max(1, total * 0.8);
-      (layer.formant ? this.formant(lg, layer.formant) : lg).connect(filter);
+      (layer.formant ? this.formant(lg, layer.formant, c.shimmer ? { depth: c.shimmer * 0.15, t, srcs } : null) : lg).connect(filter);
       for (let k = 0; k < n; k++) {
         const osc = ctx.createOscillator();
         if (this.waves[layer.osc]) osc.setPeriodicWave(this.waves[layer.osc]); else osc.type = layer.osc ?? 'sawtooth';
@@ -547,11 +563,17 @@ export class Engine {
       srcs.push(noise);
     }
 
-    filter.connect(amp).connect(out ?? this.synthIn);   // out : chaîne d'effets d'une piste de la timeline
+    let tail = filter;
+    if (c.shimmer) {   // niveau qui bouge un peu, lentement (la pression du sac, le souffle)
+      tail = ctx.createGain();
+      filter.connect(tail);
+      this.wobble(tail.gain, 0.15 + Math.random() * 0.1, c.shimmer * 0.1, t, srcs);
+    }
+    tail.connect(amp).connect(out ?? this.synthIn);   // out : chaîne d'effets d'une piste de la timeline
     for (const o of oscs) o.osc.start(t);
     for (const l of lfos) l.start(t);
     lfos.push(...srcs);   // déjà lancées ; s'arrêtent avec les LFO
-    return { oscs, lfos, filter, amp, vibGain, freq: f, patched: !!patch, release: p.release };
+    return { oscs, lfos, filter, amp, vibGain, freq: f, patched: !!patch, release: p.release, start: t, tongue: c.tongue };
   }
 
   glideVoice(voice, f, when) {
@@ -566,7 +588,9 @@ export class Engine {
   }
 
   releaseVoice(voice, rel, when) {
-    const t = Math.max(this.ctx.currentTime, when ?? 0);
+    let t = Math.max(this.ctx.currentTime, when ?? 0);
+    // Coup de langue : une fin programmée arrive un peu plus tôt (sans couper l'attaque d'une note très courte).
+    if (voice.tongue && when !== undefined) t = Math.max(this.ctx.currentTime, Math.min(t, Math.max(voice.start + 0.02, t - voice.tongue)));
     voice.amp.gain.cancelScheduledValues(t);
     voice.amp.gain.setTargetAtTime(0, t, rel / 4);
     const end = t + rel * 1.5 + 0.05;
