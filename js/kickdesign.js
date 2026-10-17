@@ -216,16 +216,19 @@ async function renderKickRaw(positions, sampleRate, note, only = null) {
 
   // Clic : blip qui tombe très vite (« Blip ») et clic de bruit filtré.
   if (on('click')) {
+    // Blip : saturé AVANT son enveloppe, pour qu'il s'éteigne vraiment en quelques millisecondes (saturé après, il
+    // restait à plein niveau pendant ~50 ms : un bourdonnement carré une octave au-dessus de la queue).
     const top = ctx.createOscillator();
     top.frequency.setValueAtTime(Math.min(4000, f0 * 2 * v('pitch') * 1.8 * v('topPitch')), 0);
-    top.frequency.exponentialRampToValueAtTime(f0 * 2, 0.012);
-    const topEnv = ctx.createGain();
-    topEnv.gain.setValueAtTime(0, 0);
-    topEnv.gain.linearRampToValueAtTime(v('top') * 0.9, 0.001);
-    topEnv.gain.setTargetAtTime(0, 0.006, 0.012);
+    top.frequency.exponentialRampToValueAtTime(f0 * 2, 0.008);
     const topShape = ctx.createWaveShaper();
     topShape.curve = distCurve(0.6, 'hard');
-    top.connect(topEnv).connect(topShape).connect(hp);
+    const topEnv = ctx.createGain();
+    topEnv.gain.setValueAtTime(0, 0);
+    topEnv.gain.linearRampToValueAtTime(v('top') * 0.9, 0.0005);
+    topEnv.gain.setValueAtTime(v('top') * 0.9, 0.0015);
+    topEnv.gain.setTargetAtTime(0, 0.0015, Math.max(0.0015, v('clickDecay') * 0.9));
+    top.connect(topShape).connect(topEnv).connect(hp);
     oscs.push(top);
     const noiseLen = Math.ceil(Math.max(0.02, v('clickDecay') * 8) * sampleRate);
     const nb = ctx.createBuffer(1, noiseLen, sampleRate);

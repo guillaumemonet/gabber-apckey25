@@ -38,6 +38,12 @@ export default async function (t, A) {
   const peak = d => d.reduce((m, v) => Math.max(m, Math.abs(v)), 0);
   t.ok(peak(await A.synthKick(base, sr, { only: 'body' })) < 1e-4, 'kick d’usine : pas de corps');
   t.ok(peak(await A.synthKick(base, sr, { only: 'tail' })) > 0.3 && peak(await A.synthKick(base, sr, { only: 'click' })) > 0.01, 'la queue et le clic sonnent seuls');
+  // Le clic est un transitoire : éteint après 15 ms (avant, le blip saturé traînait ~50 ms, un bourdonnement sur l'attaque).
+  for (const name of ['mainstream', 'frenchcore', 'terror']) {
+    const p = { ...A.kickDefaults(), ...A.KICK_PRESETS[name] };
+    const clk = await A.synthKick(p, sr, { only: 'click' }), full = await A.synthKick(p, sr);
+    t.ok(rms(clk, 0.015, 0.06, sr) < rms(full, 0.015, 0.06, sr) * 0.03, `${name} : le clic s’éteint en quelques millisecondes`, [rms(clk, 0.015, 0.06, sr), rms(full, 0.015, 0.06, sr)]);
+  }
 
   // Corps : plonge jusqu'à une octave sous la queue (fa2 = 87 Hz).
   const body = await A.synthKick({ ...base, body: 1, bodyDecay: 1 }, sr, { only: 'body' });
