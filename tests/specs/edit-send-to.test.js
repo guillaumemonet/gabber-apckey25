@@ -25,7 +25,7 @@ export default async function (t, A) {
   t.eq(t.$('.send-menu .send-cell').dataset.cell, '32', 'disposition de l’APC : en haut à gauche, le pad 33');
 
   // Banque 12, pad 1 (en bas à gauche) : le son entier, tel quel, en boucle.
-  const before = [S.banks[11][0]?.name ?? null, S.banks[11][7]?.name ?? null];
+  const before = [S.banks[11][0]?.name ?? null, S.banks[11][7]?.name ?? null, S.banks[11][2]?.name ?? null];
   const bank = t.$('.send-menu .send-bank');
   bank.value = '11'; bank.dispatchEvent(new Event('change'));
   t.$('.send-menu .send-cell[data-cell="0"]').click();
@@ -34,6 +34,12 @@ export default async function (t, A) {
   t.ok(pad && pad.sampleId === audio.sampleId && pad.name === 'Beat', 'son entier : posé tel quel sur le pad 1 de la banque 12', pad && [pad.sampleId, pad.name]);
   t.eq(Math.round(pad.p.mode * 2), 2, 'une boucle reste une boucle');
 
+  // Effets de la piste : décoché par défaut ; coché, le son est rendu avec eux (même un son entier).
+  A.openSendTo(0, clipA, 200, 200);
+  t.ok(t.$('.send-menu .send-fx') && !t.$('.send-menu .send-fx').checked, 'Inclure les effets de la piste : décoché par défaut');
+  A.closeSendTo();
+  const wet = await A.sendToPad(0, clipA, 11, 2, { fx: true });
+  t.ok(wet && wet.sampleId.startsWith('rec:'), 'effets inclus : le son est rendu avec la piste', wet?.sampleId);
   // Un bloc de notes : rendu en audio.
   const sent = await A.sendToPad(0, clipN, 11, 7);
   t.ok(sent && sent.sampleId.startsWith('rec:') && sent.buffer.duration > 1, 'bloc de notes : rendu en audio sur le pad 8', sent && [sent.sampleId, sent.buffer.duration]);
@@ -45,8 +51,8 @@ export default async function (t, A) {
   t.eq(S.launcher.slots[2][5]?.name, 'Lead', 'lanceur : ligne 3, colonne 6');
 
   // Annuler : pads et lanceur reviennent comme avant.
-  A.tlUndo(); A.tlUndo(); A.tlUndo();
+  A.tlUndo(); A.tlUndo(); A.tlUndo(); A.tlUndo();
   await t.wait(50);
-  t.eq([S.banks[11][0]?.name ?? null, S.banks[11][7]?.name ?? null, S.launcher.slots[2][5]], [...before, null], 'Ctrl+Z : pads et lanceur reviennent comme avant');
+  t.eq([S.banks[11][0]?.name ?? null, S.banks[11][7]?.name ?? null, S.banks[11][2]?.name ?? null, S.launcher.slots[2][5]], [...before, null], 'Ctrl+Z : pads et lanceur reviennent comme avant');
   for (const tr of S.tl.tracks) tr.clips = [];
 }

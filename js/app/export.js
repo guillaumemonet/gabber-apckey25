@@ -9,7 +9,7 @@ import { Patch, defaultPatch } from '../patch.js';
 import { presetById } from '../presets.js';
 import { download, encodeWav, stamp } from '../recorder.js';
 import { Sidechain } from '../sidechain.js';
-import { BEATS_PER_BAR, Timeline, trackAudible } from '../timeline.js';
+import { BEATS_PER_BAR, TRACK_DEFAULTS, Timeline, trackAudible } from '../timeline.js';
 import { makeZip } from '../zip.js';
 import { renderLeds } from './controller.js';
 import { $, engine, oscSynth, padKey, recorder, state, timeline } from './core.js';
@@ -54,6 +54,8 @@ export const BAKED_AUTO = ['lp', 'hp', 'drive'];
 // de la piste neutres (ils restent en direct). Les autres pistes ne sonnent pas, mais leurs kicks pompent le sidechain.
 // opts.bounce : pareil, avec une table de mixage neutre et le câblage par défaut (le son devient un bloc audio, qui passera
 // par la voie Timeline) ; opts.clips : ids des seuls blocs à rendre ; opts.kicks : reçoit les kicks de la piste (en temps).
+// opts.dry : sans les effets de la piste (effets, inserts, filtres, saturation) : le son des blocs seuls ;
+// opts.sends : avec ses envois reverb et delay (« Envoyer vers… » › pad, effets inclus).
 export async function renderSong(onlyTrack = null, opts = {}) {
   const bd = 60 / state.bpm;
   const solo = !!(opts.freeze || opts.bounce) && onlyTrack !== null;
@@ -103,7 +105,9 @@ export async function renderSong(onlyTrack = null, opts = {}) {
     // Piste gelée / rendue : réglages en direct neutres, sans bus ; seuls ses blocs `opts.clips` s'il y en a.
     const tr = state.tl.tracks[onlyTrack];
     tracks[onlyTrack] = { ...tr, ...Object.fromEntries(LIVE_KNOBS.map(k => [k, 0])), vol: 1, bus: null, mute: false, solo: false,
-      auto: Object.fromEntries(Object.entries(tr.auto ?? {}).filter(([id]) => BAKED_AUTO.includes(id))),
+      ...(opts.sends ? { dly: tr.dly, rev: tr.rev } : {}),
+      ...(opts.dry ? { fx: [], inserts: [], lp: TRACK_DEFAULTS.lp, hp: TRACK_DEFAULTS.hp, drive: TRACK_DEFAULTS.drive } : {}),
+      auto: Object.fromEntries(Object.entries(tr.auto ?? {}).filter(([id]) => (opts.dry ? false : BAKED_AUTO.includes(id) || (opts.sends && ['dly', 'rev'].includes(id))))),
       clips: opts.clips ? tr.clips.filter(c => opts.clips.has(c.id)) : tr.clips };
   }
   const buses = state.tl.buses.map(b => ({ ...b, solo: false, mute: false }));   // muet / solo des bus déjà dans `mute` ci-dessus

@@ -20,6 +20,7 @@ import { loadTlBuffers } from './tl.js';
 let menu = null;
 let target = 'pads';      // dernier onglet choisi
 let bankSel = null;       // banque montrée (null = celle en cours)
+let withFx = false;       // pad : inclure les effets de la piste (décoché à chaque ouverture)
 
 export function closeSendTo() {
   menu?.remove();
@@ -37,6 +38,7 @@ export const padAt = (row, col) => (LN_ROWS - 1 - row) * LN_COLS + col;
 /** Ouvre le choix de la destination du bloc `clip` (piste `track`), au point (x, y). */
 export function openSendTo(track, clip, x, y) {
   closeSendTo();
+  withFx = false;
   menu = document.createElement('div');
   menu.className = 'clip-menu send-menu';
   document.body.appendChild(menu);
@@ -70,6 +72,17 @@ export function openSendTo(track, clip, x, y) {
       row.className = 'cm-row';
       row.append(Object.assign(document.createElement('span'), { textContent: t('send.bank') }), sel);
       menu.appendChild(row);
+      // Les effets de la piste (effets, inserts, filtres, saturation, reverb et delay) dans le son du pad, ou non.
+      const fx = document.createElement('input');
+      fx.type = 'checkbox';
+      fx.className = 'send-fx';
+      fx.checked = withFx;
+      fx.addEventListener('change', () => { withFx = fx.checked; });
+      const fl = document.createElement('label');
+      fl.className = 'send-fx-row';
+      fl.title = t('send.fxTitle');
+      fl.append(fx, Object.assign(document.createElement('span'), { textContent: t('send.fx') }));
+      menu.appendChild(fl);
     }
     const grid = document.createElement('div');
     grid.className = 'send-grid';
@@ -86,7 +99,7 @@ export function openSendTo(track, clip, x, y) {
       if (col) cell.style.setProperty('--c', col);
       cell.addEventListener('click', async () => {
         closeSendTo();
-        if (target === 'pads') await sendToPad(track, clip, bank, padAt(r, c));
+        if (target === 'pads') await sendToPad(track, clip, bank, padAt(r, c), { fx: withFx });
         else { setSlot(r, c, clip); toast(t('send.launcherDone', { row: r + 1, col: c + 1 }), 2500); }
       });
       grid.appendChild(cell);
@@ -117,14 +130,17 @@ function plainSample(clip) {
   return clip.loop || !(clip.len < natural - 0.05);
 }
 
-/** Pose le son du bloc sur le pad `i` de la banque `b` (ses réglages gardés s'il était occupé). */
-export async function sendToPad(track, clip, b, i) {
+/**
+ * Pose le son du bloc sur le pad `i` de la banque `b` (ses réglages gardés s'il était occupé).
+ * opts.fx : avec les effets de la piste (effets, inserts, filtres, saturation, reverb et delay) ; sinon le son du bloc seul.
+ */
+export async function sendToPad(track, clip, b, i, opts = {}) {
   let sampleId = clip.sampleId, buffer = bufferCache.get(clip.sampleId), bpm = clip.bpm || 0;
-  if (!plainSample(clip) || !buffer) {
+  if (opts.fx || !plainSample(clip) || !buffer) {
     // Rendu du bloc seul (avec les effets de sa piste), comme « Rendre en audio ».
     toast(t('send.rendering'), 60000);
     await loadTlBuffers();
-    const chans = await renderSong(track, { bounce: true, clips: new Set([clip.id]) });
+    const chans = await renderSong(track, { bounce: true, clips: new Set([clip.id]), ...(opts.fx ? { sends: true } : { dry: true }) });
     buffer = toBuffer(chans, Math.round(clip.start * 60 / state.bpm * engine.ctx.sampleRate));
     if (buffer.length < engine.ctx.sampleRate * 0.01) { toast(t('frz.silent'), 3000); return null; }
     sampleId = `rec:${crypto.randomUUID()}`;

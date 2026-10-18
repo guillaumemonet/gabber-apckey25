@@ -959,6 +959,7 @@ header button, header .status { white-space: nowrap; }
 .send-cell.used { color: var(--text); border-style: solid; border-color: var(--c); background: color-mix(in srgb, var(--c) 30%, var(--bg)); }
 .send-cell:hover { outline: 2px solid var(--accent-2); outline-offset: -2px; }
 .send-hint { padding: 4px 8px; font-size: 11px; }
+.send-fx-row { display: flex; align-items: center; gap: 6px; padding: 2px 8px 4px; font-size: 12px; cursor: pointer; }
 .bar-counts button { flex: 1; min-width: 0; padding: 3px 0; font: inherit; }
 .bar-menu .bar-hint { padding: 2px 8px 4px; font-size: 11px; }
 /* Marqueurs de la timeline (sous les numéros de mesure) */
