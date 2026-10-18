@@ -92,7 +92,8 @@ When the timeline records the synth, the chords and the arpeggio notes are recor
 
 An analogue-style synth to build your own sounds, next to the layered synth.
 
-- **Which synth the keyboard plays**: the APC keyboard (and the computer keyboard) plays the synth of the **active window**. Click the Oscillator synth window to play it, click the Synth window to go back (the **Keyboard here** button shows which one is played). Chord mode and arpeggiator work with both.
+- **Which synth the keyboard plays**: the APC keyboard (and the computer keyboard) plays the synth of the **active window**. Click the Oscillator synth window to play it, click the Synth window to go back ("Active window (here)" shows which one is played). Chord mode and arpeggiator work with both.
+- **MIDI keyboard** (at the top of the Synth and Oscillator synth windows): **Active window**, or a connected device, which then plays this synth wherever you are (the same association as in the [device list](controller.md#connected-devices)). The synth's **on-screen keyboard** gets that device's number of keys (25, 32, 37, 49, 61, 76 or 88: guessed from its name, set in the device list); without a device, 25 keys.
 - **3 oscillators**: saw, pulse (with its **width**), triangle or sine; octave, semitone, fine tune, level, **unison** (up to 7 detuned copies spread in stereo) and their detune.
 - **Noise, ring modulation** (osc 1 × osc 2), **FM** (osc 3 modulates osc 1, for screeches and bells) and a **pitch envelope** (each note starts higher or lower and slides to its pitch: lasers, hoovers).
 - **Filter**: low-pass, high-pass or band-pass, **12 or 24 dB**, cutoff, resonance, envelope amount (negative closes it), key tracking, drive before the filter.

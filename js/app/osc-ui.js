@@ -4,6 +4,7 @@ import {
   FILTER_TYPES, OSC_KNOBS, OSC_PARAMS, OSC_PRESETS, OSC_WAVES, oscDefaults, oscFmt, oscToPos, oscValues, presetPositions
 } from '../osc.js';
 import { $, oscSynth, performer, state } from './core.js';
+import { deviceInst, deviceList, setDeviceInst, synthDevice } from './devices.js';
 import { arcPath, renderKnobRow } from './knobs.js';
 import { buildOscPresets, oscPresets } from './presets-bar.js';
 import { save } from './save.js';
@@ -18,13 +19,24 @@ export function setKeys(target) {
   renderKeysTarget();
   save();
 }
+// Choix du clavier MIDI d'un synthé (à la place de « Clavier ici ») : Fenêtre active (les claviers qui suivent la
+// fenêtre active le jouent quand sa fenêtre est active), ou un appareil branché, alors associé à ce synthé.
 export function renderKeysTarget() {
+  const list = deviceList();
   for (const [sel, id] of [['#osc-kb', 'osc'], ['#synth-kb', 'synth']]) {
-    const b = $(sel);
-    if (!b) continue;
-    b.classList.toggle('active', state.keys === id);
-    b.textContent = t(state.keys === id ? 'kb.here' : 'kb.play');
+    const s = $(sel);
+    if (!s) continue;
+    s.replaceChildren(new Option(t(state.keys === id ? 'kb.activeHere' : 'kb.active'), ''), ...list.map(d => new Option(d.name, d.id)));
+    s.value = synthDevice(id) ?? '';
+    s.classList.toggle('active', !!s.value || state.keys === id);
   }
+}
+function pickKeyboard(target, value) {
+  if (!value) {
+    for (const d of deviceList()) if (deviceInst(d.id) === target) setDeviceInst(d.id, 'auto');
+    setKeys(target);
+  } else setDeviceInst(value, target);
+  renderKeysTarget();
 }
 
 // Réglages d'un bloc du synthé à oscillateurs : 'live' = réglage en cours, sinon un preset (intégré ou perso).
@@ -64,8 +76,8 @@ export const oscSelEls = {};    // id -> boutons
 export const oscEnvEls = {};    // module -> svg
 
 export function buildOsc() {
-  $('#osc-kb').addEventListener('click', () => setKeys('osc'));
-  $('#synth-kb').addEventListener('click', () => setKeys('synth'));
+  $('#osc-kb').addEventListener('change', e => pickKeyboard('osc', e.target.value));
+  $('#synth-kb').addEventListener('change', e => pickKeyboard('synth', e.target.value));
   $('#osc-test').addEventListener('click', () => {
     for (const [k, n] of [[0, 60], [1, 63], [2, 67]]) {
       const key = `test:${k}`;

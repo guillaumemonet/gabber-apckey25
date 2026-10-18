@@ -85,6 +85,9 @@ header {
 .dev-top { display: flex; align-items: center; gap: 8px; padding: 0 8px; }
 .dev-top b { font-weight: 600; }
 .dev-top .hint { margin-left: auto; font-size: 11px; }
+.kb-target { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.kb-target select { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; max-width: 200px; }
+.kb-target select.active { border-color: var(--accent-2); }
 .dev-led { width: 8px; height: 8px; border-radius: 50%; background: #444; flex: none; transition: background .08s; }
 .dev-led.on { background: var(--accent-2); box-shadow: 0 0 6px var(--accent-2); }
 .dev-foot { display: flex; gap: 6px; padding: 6px 8px 2px; border-top: 1px solid var(--line); }

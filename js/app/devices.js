@@ -7,6 +7,8 @@ import { Performer } from '../performer.js';
 import { triggerPad, releasePad, setPage } from './actions.js';
 import { $, UI_PAGES, apc, drum, engine, kickSynth, oscSynth, state, wm } from './core.js';
 import { pageLabel } from './knobs.js';
+import { renderKeysTarget } from './osc-ui.js';
+import { buildPiano, pianoCount } from './piano.js';
 import { midiHub } from './midi-ui.js';
 import { save } from './save.js';
 import { tlRecordArpNote, tlRecordNote } from './tl-record.js';
@@ -19,14 +21,41 @@ const INST_PAGE = { synth: 'synth', osc: 'osc', pads: 'pad', tr: 'tr', acid: 'ac
 const GM_909 = { 35: 'bd', 36: 'bd', 37: 'rs', 38: 'sd', 40: 'sd', 39: 'hc', 41: 'lt', 43: 'lt', 45: 'mt', 47: 'mt', 48: 'ht', 50: 'ht', 42: 'ch', 44: 'ch', 46: 'oh', 49: 'cr', 57: 'cr', 51: 'rd', 59: 'rd' };
 const PAD_NOTE0 = 36;   // do2 = pad 1 (contrôleurs à pads)
 
-/** Associations valides d'une sauvegarde : { nom de l'appareil: { inst } }. */
+// Nombre de touches d'un clavier (clavier à l'écran du synthé).
+export const KEY_COUNTS = [25, 32, 37, 49, 61, 76, 88];
+
+/** Réglages valides d'une sauvegarde : { nom de l'appareil: { inst?, keys? } }. */
 export function cleanDevices(saved) {
   const out = {};
   if (saved && typeof saved === 'object') {
-    for (const [name, d] of Object.entries(saved)) if (typeof name === 'string' && name.length < 120 && DEVICE_INSTS.includes(d?.inst)) out[name] = { inst: d.inst };
+    for (const [name, d] of Object.entries(saved)) {
+      if (typeof name !== 'string' || name.length >= 120 || !d || typeof d !== 'object') continue;
+      const e = {};
+      if (DEVICE_INSTS.includes(d.inst) && d.inst !== 'auto') e.inst = d.inst;
+      if (KEY_COUNTS.includes(d.keys)) e.keys = d.keys;
+      if (Object.keys(e).length) out[name] = e;
+    }
   }
   return out;
 }
+
+// Touches d'un appareil : réglées dans la liste, sinon devinées d'après son nom (« Keystation 49 »), sinon 25.
+export function deviceKeys(id) {
+  const k = state.devices?.[id]?.keys;
+  if (KEY_COUNTS.includes(k)) return k;
+  const m = id === APC_DEVICE ? null : String(id).match(/(?:^|\D)(25|32|37|49|61|76|88)(?!\d)/);
+  return m ? +m[1] : 25;
+}
+export function setDeviceKeys(id, n) {
+  if (!KEY_COUNTS.includes(n)) return;
+  state.devices[id] = { ...state.devices[id], keys: n };
+  save();
+  renderDevices();
+}
+// L'appareil associé à un synthé ('synth' ou 'osc'), s'il y en a un de branché.
+export const synthDevice = target => deviceList().find(d => deviceInst(d.id) === target)?.id ?? null;
+// Touches du clavier à l'écran du synthé : celles de son appareil, 25 sans appareil.
+export const pianoKeys = () => { const d = synthDevice('synth'); return d ? deviceKeys(d) : 25; };
 
 export const deviceInst = id => state.devices?.[id]?.inst ?? 'auto';
 // Page des potentiomètres d'un appareil : celle de son instrument, la page en cours s'il suit la fenêtre active,
@@ -44,7 +73,9 @@ export function deviceList() {
 export function setDeviceInst(id, inst) {
   if (!DEVICE_INSTS.includes(inst)) return;
   releaseDevice(id);
-  if (inst === 'auto') delete state.devices[id]; else state.devices[id] = { inst };
+  const e = { ...state.devices[id] };
+  if (inst === 'auto') delete e.inst; else e.inst = inst;
+  if (Object.keys(e).length) state.devices[id] = e; else delete state.devices[id];
   // L'APC sur un instrument fixe : ses potentiomètres passent sur sa page (et ne suivent plus la fenêtre active).
   if (id === APC_DEVICE && INST_PAGE[inst]) setPage(INST_PAGE[inst]);
   save();
@@ -128,6 +159,8 @@ export function renderDevices() {
   box.classList.toggle('warn', !!problem && !problem.on);
   box.title = [t('dev.title'), problem && !problem.on ? problem.text : ''].filter(Boolean).join('\n');
   if (panel) fillPanel();
+  renderKeysTarget();   // choix du clavier MIDI dans les fenêtres des synthés
+  if (pianoKeys() !== pianoCount) buildPiano();
 }
 
 // ---------- Liste des appareils ----------
@@ -196,6 +229,18 @@ function fillPanel() {
     line.className = 'cm-row';
     line.append(Object.assign(document.createElement('span'), { textContent: t('dev.inst') }), inst);
     row.append(top, line);
+    // Clavier MIDI : son nombre de touches (le clavier à l'écran du synthé en a autant).
+    if (d.kind === 'midi') {
+      const keys = document.createElement('select');
+      keys.className = 'dev-keys';
+      for (const n of KEY_COUNTS) keys.add(new Option(t('dev.keysN', { n }), n));
+      keys.value = deviceKeys(d.id);
+      keys.addEventListener('change', () => setDeviceKeys(d.id, +keys.value));
+      const kl = document.createElement('label');
+      kl.className = 'cm-row';
+      kl.append(Object.assign(document.createElement('span'), { textContent: t('dev.keys') }), keys);
+      row.appendChild(kl);
+    }
     // APC qui suit la fenêtre active : la page de ses potentiomètres (l'ancien sélecteur de l'en-tête).
     if (d.kind === 'apc' && deviceInst(d.id) === 'auto') {
       const sel = document.createElement('select');

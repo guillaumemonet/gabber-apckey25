@@ -81,10 +81,28 @@ export default async function (t, A) {
   A.wm.onActive('tr');
   t.eq(S.page, 'tr', 'Fenêtre active : la page suit de nouveau');
 
-  // Sauvegarde.
-  t.eq(JSON.parse(JSON.stringify(A.stateSnapshot().devices)), { [dev]: { inst: 'synth' } }, 'enregistré avec le projet');
+  // Clavier MIDI du synthé : choisi dans sa fenêtre ; le clavier à l'écran prend son nombre de touches.
+  t.eq([A.deviceKeys('Keystation 49 MK3'), A.deviceKeys('Oxygen 61'), A.deviceKeys(dev), A.deviceKeys('apc')], [49, 61, 61, 25], 'touches devinées d’après le nom (25 sinon)');
+  A.wm.toggle('piano', true);
+  await t.wait(30);
   A.setDeviceInst(dev, 'auto');
-  t.eq(S.devices, {}, 'Fenêtre active : rien à enregistrer');
+  t.eq(t.$$('#piano > div').length, 25, 'sans appareil : 25 touches');
+  const kb = t.$('#synth-kb');
+  t.ok([...kb.options].some(o => o.value === dev), 'fenêtre du synthé : l’appareil est proposé');
+  kb.value = dev; kb.dispatchEvent(new Event('change'));
+  t.eq(A.deviceInst(dev), 'synth', 'choisi dans le synthé : l’appareil joue le synthé');
+  t.eq(t.$$('#piano > div').length, 61, 'clavier à l’écran : 61 touches comme l’appareil');
+  A.setDeviceKeys(dev, 37);
+  t.eq(t.$$('#piano > div').length, 37, 'touches réglées dans la liste des appareils');
+  kb.value = ''; kb.dispatchEvent(new Event('change'));
+  t.eq([A.deviceInst(dev), t.$$('#piano > div').length], ['auto', 25], 'Fenêtre active : l’appareil suit la fenêtre, 25 touches');
+  A.setDeviceInst(dev, 'synth');
+
+  // Sauvegarde.
+  t.eq(JSON.parse(JSON.stringify(A.stateSnapshot().devices)), { [dev]: { keys: 37, inst: 'synth' } }, 'enregistré avec le projet');
+  A.setDeviceInst(dev, 'auto');
+  t.eq(S.devices, { [dev]: { keys: 37 } }, 'Fenêtre active : seules ses touches restent enregistrées');
+  S.devices = {};
   A.closeDevices();
   hub.inputs = [];
   hub.emit('connection', { inputs: [] });

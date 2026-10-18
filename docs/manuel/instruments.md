@@ -92,7 +92,8 @@ Quand la timeline enregistre le synthé, les accords et les notes de l'arpège s
 
 Un synthé façon analogique pour fabriquer vos propres sons, à côté du synthé en couches.
 
-- **Quel synthé joue le clavier** : le clavier de l'APC (et celui de l'ordinateur) joue le synthé de la **fenêtre active**. Cliquez sur la fenêtre Synthé à oscillateurs pour le jouer, sur la fenêtre Synthé pour revenir (le bouton **Clavier ici** montre lequel est joué). Le mode accords et l'arpégiateur marchent avec les deux.
+- **Quel synthé joue le clavier** : le clavier de l'APC (et celui de l'ordinateur) joue le synthé de la **fenêtre active**. Cliquez sur la fenêtre Synthé à oscillateurs pour le jouer, sur la fenêtre Synthé pour revenir (« Fenêtre active (ici) » montre lequel est joué). Le mode accords et l'arpégiateur marchent avec les deux.
+- **Clavier MIDI** (en haut des fenêtres Synthé et Synthé à oscillateurs) : **Fenêtre active**, ou un appareil branché, qui joue alors ce synthé où que vous soyez (c'est la même association que dans la [liste des appareils](apc.md#appareils-branchés)). Le **clavier à l'écran** du synthé prend le nombre de touches de cet appareil (25, 32, 37, 49, 61, 76 ou 88 : deviné d'après son nom, réglable dans la liste des appareils) ; sans appareil, 25 touches.
 - **3 oscillateurs** : scie, impulsion (avec sa **largeur**), triangle ou sinus ; octave, demi-ton, désaccord fin, niveau, **unisson** (jusqu'à 7 copies désaccordées, étalées en stéréo) et leur désaccord.
 - **Bruit, modulation en anneau** (osc 1 × osc 2), **FM** (l'osc 3 module l'osc 1, pour les screechs et les cloches) et une **enveloppe de hauteur** (chaque note part plus haut ou plus bas et glisse jusqu'à sa hauteur : lasers, hoovers).
 - **Filtre** : passe-bas, passe-haut ou passe-bande, **12 ou 24 dB**, coupure, résonance, quantité d'enveloppe (négative, elle le ferme), suivi du clavier, saturation avant le filtre.

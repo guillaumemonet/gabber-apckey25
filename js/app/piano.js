@@ -2,23 +2,32 @@
 import { acidKey } from './acid-ui.js';
 import { setPage } from './actions.js';
 import { $, performer, setShiftHeld, state } from './core.js';
+import { pianoKeys } from './devices.js';
 import { rollKey } from './roll-ui.js';
 
 // ---------- Interface : piano ----------
 
 export let pianoBase = 48;   // do3, comme l'APC Key 25 au démarrage
+export let pianoCount = 25;  // touches affichées : celles du clavier MIDI du synthé (25 sans appareil)
+// Première touche selon la taille du clavier (comme les claviers du commerce).
+const FIRST_KEY = { 25: 48, 32: 41, 37: 48, 49: 36, 61: 36, 76: 28, 88: 21 };
 export const heldNotes = new Set();
 export const BLACK = new Set([1, 3, 6, 8, 10]);
 export const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 export function buildPiano() {
   const piano = $('#piano');
+  if (!piano) return;
+  const count = pianoKeys();
+  if (count !== pianoCount) { pianoCount = count; pianoBase = FIRST_KEY[count] ?? 48; }
   piano.innerHTML = '';
+  piano.dataset.keys = count;
+  const last = pianoBase + count - 1;
   const whites = [];
-  for (let n = pianoBase; n <= pianoBase + 24; n++) if (!BLACK.has(n % 12)) whites.push(n);
+  for (let n = pianoBase; n <= last; n++) if (!BLACK.has(n % 12)) whites.push(n);
   const w = 100 / whites.length;
   let wi = 0;
-  for (let n = pianoBase; n <= pianoBase + 24; n++) {
+  for (let n = pianoBase; n <= last; n++) {
     const el = document.createElement('div');
     el.dataset.note = n;
     if (BLACK.has(n % 12)) {
@@ -50,9 +59,9 @@ export function playNote(note, velocity, on) {
 export function setPianoKey(note, on) {
   if (on) heldNotes.add(note); else heldNotes.delete(note);
   // Suit les changements d'octave du clavier (OCT-/OCT+ ne sont pas transmis en MIDI).
-  if (on && (note < pianoBase || note > pianoBase + 24)) {
-    pianoBase = note - (((note % 12) + 12) % 12) - (note > pianoBase ? 12 : 0);
-    pianoBase = Math.max(0, Math.min(103, pianoBase));
+  if (on && (note < pianoBase || note > pianoBase + pianoCount - 1)) {
+    pianoBase = note - (((note % 12) + 12) % 12) - (note > pianoBase ? 12 * Math.max(1, Math.floor((pianoCount - 1) / 12) - 1) : 0);
+    pianoBase = Math.max(0, Math.min(128 - pianoCount, pianoBase));
     buildPiano();
     return;
   }

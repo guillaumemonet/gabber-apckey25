@@ -49,7 +49,7 @@ export const HELP = {
     osc: `
       <p>An analogue-style synth to build your own sounds, played on the APC keyboard.</p>
       <ul>
-        <li><b>Keyboard</b>: the APC keyboard (and the computer keyboard) plays the synth of the active window: click this window (or <b>Play on keyboard</b>) to play it, click the Synth window to go back. Chords and arpeggiator work too.</li>
+        <li><b>Keyboard</b>: the APC keyboard (and the computer keyboard) plays the synth of the active window: click this window to play it, click the Synth window to go back; or choose a <b>MIDI keyboard</b> that plays it wherever you are. Chords and arpeggiator work too.</li>
         <li><b>Osc 1-3</b>: wave (saw, pulse, triangle, sine), octave, semitone, fine tune, level, pulse <b>width</b>, <b>unison</b> (up to 7 detuned copies) and their detune. An oscillator at level 0 is off.</li>
         <li><b>Noise, ring, FM, pitch</b>: white noise, ring modulation (osc 1 × osc 2), FM of osc 1 by osc 3 (osc 3 can stay silent), and a pitch envelope (each note starts higher or lower and slides to its pitch: lasers, hoovers).</li>
         <li><b>Filter</b>: low-pass, high-pass or band-pass, 12 or 24 dB, cutoff, resonance, envelope amount (negative = closes), key tracking, drive before the filter.</li>
@@ -316,7 +316,7 @@ export const HELP = {
     osc: `
       <p>Un synthé façon analogique pour fabriquer vos propres sons, joué au clavier de l'APC.</p>
       <ul>
-        <li><b>Clavier</b> : le clavier de l'APC (et celui de l'ordinateur) joue le synthé de la fenêtre active : cliquez sur cette fenêtre (ou <b>Jouer au clavier</b>) pour le jouer, cliquez sur la fenêtre Synthé pour revenir. Les accords et l'arpégiateur marchent aussi.</li>
+        <li><b>Clavier</b> : le clavier de l'APC (et celui de l'ordinateur) joue le synthé de la fenêtre active : cliquez sur cette fenêtre pour le jouer, cliquez sur la fenêtre Synthé pour revenir ; ou choisissez un <b>Clavier MIDI</b> qui le joue où que vous soyez. Les accords et l'arpégiateur marchent aussi.</li>
         <li><b>Osc 1 à 3</b> : onde (scie, impulsion, triangle, sinus), octave, demi-ton, désaccord fin, niveau, <b>largeur</b> de l'impulsion, <b>unisson</b> (jusqu'à 7 copies désaccordées) et leur désaccord. Un oscillateur au niveau 0 est éteint.</li>
         <li><b>Bruit, anneau, FM, hauteur</b> : bruit blanc, modulation en anneau (osc 1 × osc 2), FM de l'osc 1 par l'osc 3 (l'osc 3 peut rester muet), et une enveloppe de hauteur (chaque note part plus haut ou plus bas et glisse jusqu'à sa hauteur : lasers, hoovers).</li>
         <li><b>Filtre</b> : passe-bas, passe-haut ou passe-bande, 12 ou 24 dB, coupure, résonance, quantité d'enveloppe (négative = ferme), suivi du clavier, saturation avant le filtre.</li>
