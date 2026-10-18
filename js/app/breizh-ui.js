@@ -109,15 +109,16 @@ export function previewBreizh() {
   previewT0 = engine.ctx.currentTime + 0.05;
   previewEnd = previewT0 + end * bd + 0.3;
   // Notes programmées au fil de l'écoute (un peu d'avance), chacune avec le son de sa voix.
-  const queue = breizhParts().flatMap((p, pi) => (p.notes ? p.notes.map(note => ({ t: 0, len: end, note, vel: 0.6 })) : p.seq)
-    .map((n, k) => ({ ...n, note: p.tune ? tunedNote(n.note, p.tune) : n.note, key: `bz:${pi}:${k}`, patch: presetPatch(p.preset) })))
+  // Chaque voix par sa propre sortie (le son du preset et sa reverb, pas la saturation ni les échos du synthé en cours).
+  const queue = breizhParts().flatMap((p, pi) => { const patch = presetPatch(p.preset), out = engine.previewOut(patch.values); return (p.notes ? p.notes.map(note => ({ t: 0, len: end, note, vel: 0.6 })) : p.seq)
+    .map((n, k) => ({ ...n, note: p.tune ? tunedNote(n.note, p.tune) : n.note, key: `bz:${pi}:${k}`, patch, out })); })
     .sort((a, b) => a.t - b.t);
   let next = 0;
   const pump = () => {
     const horizon = engine.ctx.currentTime + 0.4;
     while (next < queue.length && previewT0 + queue[next].t * bd < horizon) {
       const n = queue[next++];
-      engine.noteOn(n.note, n.vel, previewT0 + n.t * bd, n.key, n.patch);
+      engine.noteOn(n.note, n.vel, previewT0 + n.t * bd, n.key, n.patch, n.out);
       const v = engine.voices.get(n.key);
       engine.noteOff(n.note, false, previewT0 + (n.t + n.len) * bd, n.key);
       if (v) preview.push(v);

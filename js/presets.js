@@ -158,7 +158,7 @@ export const PRESETS = [
     voice: { layers: [chanter(9, { spread: 5, formant: 'pipe' })], fenv: 0, decay: 0.3, sustain: 1, velSens: 0, jitter: 3, drift: 4, stagger: 0.04 } },
   // Jeu de bourdons : deux ténors presque à l'unisson (battements lents) et une basse à l'octave au-dessous.
   { id: 'bourdon', family: 'breizh',
-    values: { cutoff: 3000, reso: 0.7, attack: 0.25, release: 0.4, drive: 0.1, glide: 0.02, detune: 12, width: 0.7, rSend: 0.35 },
+    values: { cutoff: 3000, reso: 0.7, attack: 0.25, release: 0.15, drive: 0.1, glide: 0.02, detune: 12, width: 0.7, rSend: 0.35 },
     voice: { layers: [L('drone', 2, { spread: 0.7, formant: 'drone' }), L('drone', 1, { octave: -12, formant: 'drone', level: 2.7 })],
       fenv: 0, decay: 1, sustain: 1, velSens: 0, jitter: 1, drift: 1.5, stagger: 0.15 } },
 

@@ -600,6 +600,17 @@ export class Engine {
     if (voice.oscs[0]) voice.oscs[0].osc.onended = () => { try { voice.amp.disconnect(); voice.filter.disconnect(); } catch { /* déjà fait */ } };
   }
 
+  // Sortie propre pour écouter un preset (Générateur, Breizh generator) : vers le master, avec la reverb du preset,
+  // sans la saturation, le chorus ni les envois du synthé en cours (ceux d'un autre preset). -> nœud d'entrée
+  previewOut(values = {}) {
+    const out = this.ctx.createGain();
+    out.connect(this.master);
+    const rev = this.ctx.createGain();
+    rev.gain.value = values.rSend ?? 0;
+    out.connect(rev).connect(this.reverbIn);
+    return out;
+  }
+
   // `when` : instant de départ (séquenceur) ; `key` : identifiant de la voix (le séquenceur
   // utilise ses propres clés pour ne pas couper les notes jouées à la main).
   noteOn(note, velocity, when, key = note, patch, out) {

@@ -238,6 +238,7 @@ export function stopGenPreview() {
 // Notes programmées au fil de l'écoute (un peu d'avance) : un long arpège ne crée pas des centaines de voix d'un coup.
 function playNotes(notes, preset) {
   const patch = presetPatch(preset);
+  const out = engine.previewOut(patch.values);   // le son du preset seul (pas la saturation du synthé en cours)
   const t0 = previewT0, bd = 60 / state.bpm;
   const queue = notes.map((n, k) => ({ ...n, k })).sort((a, b) => a.t - b.t);
   let next = 0;
@@ -245,7 +246,7 @@ function playNotes(notes, preset) {
     const horizon = engine.ctx.currentTime + 0.4;
     while (next < queue.length && t0 + queue[next].t * bd < horizon) {
       const n = queue[next++], key = `gen:${n.k}`;
-      engine.noteOn(n.note, n.vel, t0 + n.t * bd, key, patch);
+      engine.noteOn(n.note, n.vel, t0 + n.t * bd, key, patch, out);
       const v = engine.voices.get(key);
       engine.noteOff(n.note, false, t0 + (n.t + n.len) * bd, key);
       if (v) preview.push(v);

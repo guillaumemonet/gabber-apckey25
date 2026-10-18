@@ -40,11 +40,19 @@ export default async function (t, A) {
   // Écoute (un deuxième clic arrête).
   const level = t.meter(E.output);
   const peak = async ms => { let p = 0; const t0 = performance.now(); while (performance.now() - t0 < ms) { p = Math.max(p, level()); await t.wait(20); } return p; };
+  // L'écoute ne passe pas par le synthé en cours (sa saturation, son chorus, ses échos) : sa propre sortie.
+  const synthIn = t.meter(E.synthIn);
+  let viaSynth = 0;
   t.$('#breizh-listen').click();
   const playing = await peak(700);
+  for (let k = 0; k < 10; k++) { viaSynth = Math.max(viaSynth, synthIn()); await t.wait(20); }
   t.ok(A.breizhPreviewing() && playing > 0.02, 'Écouter joue l’air', playing);
+  t.ok(viaSynth < 1e-4, 'Écouter : rien ne passe par la saturation du synthé en cours', viaSynth);
   t.$('#breizh-listen').click();
   t.ok(!A.breizhPreviewing(), 'un deuxième clic l’arrête');
+  await t.wait(400);
+  const after = await peak(300);
+  t.ok(after < playing * 0.1, 'arrêtée, plus rien ne traîne (ni notes ni échos)', [playing, after]);
 
   // Générer : un bloc par voix, 32 mesures (A A B B de 4 mesures, ×2), sur trois pistes.
   t.$('#breizh-go').click();
