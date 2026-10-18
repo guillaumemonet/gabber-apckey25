@@ -36,6 +36,20 @@ The **library** starts with these five **Anthem** banks: every loop is at 190 BP
 
 To put a **library sound** on a pad, drag it from the library onto the pad: it replaces the pad's sound (the pad keeps its knobs; a loop plays as a loop, in time with the tempo). To load your own sound, drop an audio file (WAV, MP3, FLAC, OGG…) on a pad or on the editor, or use **Load a sound…**. **Start** (above the pads) sets when a pad played by hand starts and stops: **Free** (right away; a loop waits for the next bar when something is already playing), or locked to the grid: **1, 2 or 3 beats**, **1, 2 or 4 bars**. A pad then starts on the next division, a loop pressed again stops at the end of the division, a held pad stops on the division after you let go; while it waits, the pad **blinks fast** on screen and on the APC. With nothing playing, the first pad starts at once and sets the grid; with the timeline or the 909 playing, the grid is theirs. While recording, the hit is placed where it really sounds. **Clear bank** (above the pads) empties the displayed bank, to fill it with your own choice of sounds; a library bank you emptied does not come back by itself. Under the pad grid, **8 knobs** set the selected pad (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs when the Pads window is active. They all act **live** on a pad that is playing, the start point too: on a loop locked to the tempo, it shifts where the loop starts without changing its length (it stays in time with the bars); on a free loop, the sound jumps to the new start. The **✎ pencil** that appears when the mouse is over a pad opens the **pad editor** on it: name, LED colour, playback mode (**One-shot**, **Hold** or **Loop**) and the pad's **8 knobs** (volume, pitch, pan, filter, start, delay, reverb, mode), also on the APC knobs.
 
+## Bank manager
+
+[![Banks window: the list of the 25 banks on the left, the 40 pads of the chosen bank on the right](../screenshots/banks-en.png)](../screenshots/banks-en.png)
+
+The **Banks** window (Studio group) is for organising sounds; the Pads window stays the one you play.
+
+- **On the left**, the 25 banks: number, name, number of filled pads. The number of the played bank is lit. A bank takes the name of its library bank until you give it your own (field at the top right).
+- **On the right**, the 40 pads of the chosen bank, laid out like the APC (pads 1-8 at the bottom):
+  - **drag a pad onto another** to swap them; with **Alt**, it is copied;
+  - **drag a pad onto a bank of the list** to move it there, to the first free pad (Alt = copy);
+  - **click**: listen; **right-click**: listen, rename, change colour, open in the pad editor, empty.
+- For the bank: **Play** (make it the played bank), **Duplicate** (copy into the first empty bank), **Clear**, **Export** and **Import** a bank file (.apckit).
+- Everything is undone with Ctrl+Z and saved with the project. To put a timeline block on a given pad: right-click the block › **Send to…** (see [Timeline](timeline.md)).
+
 ## Tempo and loops
 
 The global tempo (header) drives every loop. Each loop starts on the next bar and stays in sync when you change the tempo. For your own loops, enter their original tempo in the editor, or click **Auto**: this assumes the file lasts a whole number of bars. Set the tempo to 190 for the Gabber, Hardcore, Oldschool, Mainstream and New wave banks: their loops share the same key (F minor) and lengths, so they stay in sync with each other. The **Hardstyle** and **Hardstyle melodies** banks are made at **150 BPM**, the tempo of the style (their loops follow the global tempo too, but sound most natural at 150).

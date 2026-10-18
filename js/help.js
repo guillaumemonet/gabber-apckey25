@@ -195,6 +195,15 @@ export const HELP = {
         <li><b>Apply</b>: the block plays the corrected voice (Ctrl+Z goes back). The original sound is kept: opening the pitch correction again on that block starts from it, <b>Remove</b> puts it back.</li>
         <li>Only the clearly pitched parts of the voice are processed: unvoiced consonants (s, f, t…), breaths, noise and silences stay exactly as recorded. Works best on a dry, solo voice (no reverb, no other instrument).</li>
       </ul>`,
+    banks: `
+      <p>The bank manager: the 25 pad banks, each with a name, and the 40 pads of the chosen bank, laid out like the APC (pads 1-8 at the bottom).</p>
+      <ul>
+        <li><b>List</b>: click a bank to show it (its number is lit when it is the played bank). A bank takes the name of its library bank until you give it your own.</li>
+        <li><b>Drag a pad</b> onto another pad to swap them (<b>Alt</b> = copy), or onto a bank of the list to move it there (first free pad).</li>
+        <li><b>Click</b> a pad to listen to it; <b>right-click</b>: listen, name, colour, open in the pad editor, empty.</li>
+        <li><b>Play</b> makes it the played bank; <b>Duplicate</b> copies it into the first empty bank; <b>Clear</b>, <b>Export</b>, <b>Import</b> (bank files .apckit).</li>
+        <li>Everything is undone with Ctrl+Z. To put a timeline block on a pad: right-click the block › <b>Send to…</b>.</li>
+      </ul>`,
     buses: `
       <p>Four buses (A to D) group tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…</p>
       <ul>
@@ -461,6 +470,15 @@ export const HELP = {
         <li>La courbe montre la hauteur chantée (gris), la hauteur corrigée (couleur) et les notes visées (trait large). <b>Écouter</b> joue le bloc corrigé seul, <b>Original</b> le bloc tel qu'il était.</li>
         <li><b>Appliquer</b> : le bloc joue la voix corrigée (Ctrl+Z revient en arrière). Le son d'origine est conservé : rouvrir la correction de justesse sur ce bloc repart de lui, <b>Retirer</b> le remet.</li>
         <li>Seules les parties nettement chantées de la voix sont traitées : les consonnes sourdes (s, f, t…), les souffles, le bruit et les silences restent exactement tels qu'enregistrés. Meilleur résultat sur une voix seule et sèche (sans reverb ni autre instrument).</li>
+      </ul>`,
+    banks: `
+      <p>Le gestionnaire de banques : les 25 banques de pads, chacune avec un nom, et les 40 pads de la banque choisie, disposés comme l'APC (pads 1-8 en bas).</p>
+      <ul>
+        <li><b>Liste</b> : clic sur une banque pour l'afficher (son numéro est allumé quand c'est la banque jouée). Une banque prend le nom de sa banque de la bibliothèque tant que vous ne lui en donnez pas un.</li>
+        <li><b>Glisser un pad</b> sur un autre pad pour les échanger (<b>Alt</b> = copier), ou sur une banque de la liste pour l'y déplacer (premier pad libre).</li>
+        <li><b>Clic</b> sur un pad pour l'écouter ; <b>clic droit</b> : écouter, nom, couleur, ouvrir dans l'éditeur de pad, vider.</li>
+        <li><b>Jouer</b> en fait la banque jouée ; <b>Dupliquer</b> la copie dans la première banque vide ; <b>Vider</b>, <b>Exporter</b>, <b>Importer</b> (fichiers de banque .apckit).</li>
+        <li>Tout s'annule avec Ctrl+Z. Pour mettre un bloc de la timeline sur un pad : clic droit sur le bloc › <b>Envoyer vers…</b>.</li>
       </ul>`,
     buses: `
       <p>Quatre bus (A à D) regroupent des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…</p>

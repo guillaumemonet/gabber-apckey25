@@ -1,5 +1,6 @@
 // Fenêtre des pads et éditeur de pad.
 import { PALETTE } from '../apc.js';
+import { renderBankMgr } from './banks-ui.js';
 import { t } from '../i18n.js';
 import { MODES, PAGES, toPos, toValue } from '../params.js';
 import { clearPad, loadFileIntoPad, padPending, releasePad, selectPad, setBank, setPage, triggerPad } from './actions.js';
@@ -81,6 +82,7 @@ export function buildBanks() {
 
 export function renderBanks() {
   [...$('#banks').children].forEach((btn, b) => btn.classList.toggle('active', b === state.bank));
+  renderBankMgr();   // fenêtre Banques : la banque jouée
 }
 
 // ---------- Interface : éditeur de pad ----------

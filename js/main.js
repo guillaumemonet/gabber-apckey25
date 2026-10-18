@@ -29,6 +29,7 @@ import { buildDecks } from './app/decks-ui.js';
 import { FILE_TOOLS, bindFiles, bindKits, openFile, saveFile } from './app/files.js';
 import { buildFreeze } from './app/freeze.js';
 import { buildBreizh } from './app/breizh-ui.js';
+import { buildBankMgr } from './app/banks-ui.js';
 import { buildVoiceWin } from './app/voice-ui.js';
 import { buildTuneWin } from './app/tune-ui.js';
 import { buildGen, presetPatch } from './app/gen.js';
@@ -178,6 +179,7 @@ async function start() {
   initHistory();
   buildGen();
   buildBreizh();
+  buildBankMgr();
   buildVoiceWin();
   buildTuneWin();
   buildScenes();

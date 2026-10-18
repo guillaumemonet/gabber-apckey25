@@ -21,6 +21,7 @@ import { $, BANKS, kit, newPad, setLibAdded, state, tlHistory } from './core.js'
 import { PAD_QUANTS } from './files.js';
 import { defaultBreizh, mergeBreizh } from './breizh-ui.js';
 import { cleanDevices } from './devices.js';
+import { cleanBankNames } from './banks-ui.js';
 import { mergeVoiceState } from './voice-ui.js';
 import { mergeTuneState } from './tune-ui.js';
 import { defaultGen, mergeGen } from './gen.js';
@@ -41,6 +42,7 @@ export async function restore() {
   const firstRun = !saved;
   state.gen = defaultGen();
   state.breizh = defaultBreizh();
+  state.bankNames = cleanBankNames(saved?.bankNames);
   state.voice = mergeVoiceState(saved?.voice);
   state.tune = mergeTuneState(saved?.tune);
   state.viz = mergeViz(saved?.viz);
@@ -197,6 +199,7 @@ export function stateSnapshot() {
     master: state.master,
     midiMap: state.midiMap,
     devices: state.devices,
+    bankNames: state.bankNames,
     launcher: state.launcher,
     input: state.input,
     midiClock: state.midiClock,

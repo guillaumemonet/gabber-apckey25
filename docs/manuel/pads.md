@@ -36,6 +36,20 @@ La **bibliothèque** commence par ces cinq banques **Anthem** : toutes les boucl
 
 Pour mettre un **son de la bibliothèque** sur un pad, glissez-le de la bibliothèque sur le pad : il remplace le son du pad (le pad garde ses potentiomètres ; une boucle joue en boucle, calée sur le tempo). Pour charger votre propre son, glissez un fichier audio (WAV, MP3, FLAC, OGG…) sur un pad ou sur l'éditeur, ou utilisez **Charger un son…**. **Départ** (au-dessus des pads) règle quand un pad joué à la main démarre et s'arrête : **Libre** (tout de suite ; une boucle attend la mesure suivante si quelque chose joue déjà), ou calé sur la grille : **1, 2 ou 3 temps**, **1, 2 ou 4 mesures**. Le pad part alors à la division suivante, une boucle rappuyée s'arrête à la fin de la division, un pad tenu s'arrête à la division qui suit le relâchement ; pendant l'attente, le pad **clignote vite**, à l'écran et sur l'APC. Si rien ne joue, le premier pad part tout de suite et fixe la grille ; si la timeline ou la 909 jouent, la grille est la leur. En enregistrement, le coup est posé là où il sonne vraiment. **Vider la banque** (au-dessus des pads) vide la banque affichée, pour la remplir avec vos propres choix de sons ; une banque de la bibliothèque que vous avez vidée ne revient pas d'elle-même. Sous la grille des pads, **8 potentiomètres** règlent le pad sélectionné (volume, hauteur, panoramique, filtre, début, delay, reverb, mode), aussi sur les potentiomètres de l'APC quand la fenêtre Pads est active. Ils agissent tous **en direct** sur un pad qui joue, le début aussi : sur une boucle calée au tempo, il déplace le point de départ dans la boucle sans changer sa longueur (elle reste calée sur les mesures) ; sur une boucle libre, le son saute au nouveau début. Le **crayon ✎**, qui apparaît au survol d'un pad, ouvre l'**éditeur de pad** sur ce pad : nom, couleur de la LED, mode de lecture (**One-shot**, **Maintien** ou **Boucle**) et les **8 potentiomètres** du pad (volume, hauteur, panoramique, filtre, début, delay, reverb, mode), aussi sur les potentiomètres de l'APC.
 
+## Gestionnaire de banques
+
+[![Fenêtre Banques : la liste des 25 banques à gauche, les 40 pads de la banque choisie à droite](../screenshots/banks-fr.png)](../screenshots/banks-fr.png)
+
+La fenêtre **Banques** (groupe Studio) sert à ranger les sons ; la fenêtre Pads reste celle qu'on joue.
+
+- **À gauche**, les 25 banques : numéro, nom, nombre de pads remplis. Le numéro de la banque jouée est allumé. Une banque prend le nom de sa banque de la bibliothèque tant que vous ne lui donnez pas le vôtre (champ en haut à droite).
+- **À droite**, les 40 pads de la banque choisie, disposés comme l'APC (pads 1-8 en bas) :
+  - **glisser un pad sur un autre** les échange ; avec **Alt**, il est copié ;
+  - **glisser un pad sur une banque de la liste** l'y déplace, au premier pad libre (Alt = copie) ;
+  - **clic** : écouter ; **clic droit** : écouter, renommer, changer de couleur, ouvrir dans l'éditeur de pad, vider.
+- Pour la banque : **Jouer** (en faire la banque jouée), **Dupliquer** (copie dans la première banque vide), **Vider**, **Exporter** et **Importer** un fichier de banque (.apckit).
+- Tout s'annule avec Ctrl+Z et est enregistré avec le projet. Pour mettre un bloc de la timeline sur un pad précis : clic droit sur le bloc › **Envoyer vers…** (voir [Timeline](timeline.md)).
+
 ## Tempo et boucles
 
 Le tempo global (en-tête) pilote toutes les boucles. Chacune démarre sur la mesure suivante et reste calée quand vous changez le tempo. Pour vos propres boucles, indiquez leur tempo d'origine dans l'éditeur, ou cliquez sur **Auto** : le calcul suppose que le fichier dure un nombre entier de mesures. Réglez le tempo à 190 pour les banques Gabber, Hardcore, Oldschool, Mainstream et New wave : leurs boucles partagent la même tonalité (fa mineur) et les mêmes longueurs, elles restent donc calées entre elles. Les banques **Hardstyle** et **Mélodies hardstyle** sont faites à **150 BPM**, le tempo du style (leurs boucles suivent aussi le tempo global, mais sonnent le plus naturellement à 150).
