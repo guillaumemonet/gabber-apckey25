@@ -106,8 +106,9 @@ export default async function (t, A) {
   const ref = await A.renderSong();
   S.master.ott = { ...S.master.ott, on: true, depth: 0 };
   const zero = await A.renderSong();
-  // (deux rendus identiques diffèrent déjà d'environ 3e-5 : on tolère 1e-4, soit −80 dB)
-  t.ok(diff(ref[0], zero[0]) < 1e-4 && diff(ref[1], zero[1]) < 1e-4, 'export : multibande à Depth 0 = même fichier', diff(ref[0], zero[0]));
+  // (deux rendus identiques diffèrent déjà d'environ 3e-5, jusqu'à 1,3e-4 sur une machine lente : on tolère 3e-4,
+  // soit −70 dB)
+  t.ok(diff(ref[0], zero[0]) < 3e-4 && diff(ref[1], zero[1]) < 3e-4, 'export : multibande à Depth 0 = même fichier', diff(ref[0], zero[0]));
   S.master.ott.depth = 70;
   S.master.clip = { ...S.master.clip, on: true, drive: 9, ceiling: -1 };
   const ottOn = await A.renderSong();

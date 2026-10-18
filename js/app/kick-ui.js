@@ -142,10 +142,10 @@ export async function kickRender() {
   return buf;
 }
 
-// Les blocs de mélodie de kick suivent le kick du designer : chaque réglage changé leur est reporté (sauf un bloc figé,
-// kickFrozen), et leurs kicks sont recalculés à l'avance.
+// Les blocs de mélodie de kick suivent le kick du designer : chaque réglage changé leur est reporté (sauf ceux joués
+// par un preset ou un kick enregistré, kickSrc), et leurs kicks sont recalculés à l'avance.
 export function followKick() {
-  const linked = state.tl.tracks.flatMap(tr => tr.clips).filter(c => c.type === 'note' && c.kick && !c.kickFrozen);
+  const linked = state.tl.tracks.flatMap(tr => tr.clips).filter(c => c.type === 'note' && c.kick && !c.kickSrc);
   if (!linked.length) return;
   const p = JSON.stringify(state.kick.params);
   let changed = false;

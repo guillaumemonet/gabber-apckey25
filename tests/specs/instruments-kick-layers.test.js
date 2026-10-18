@@ -133,6 +133,23 @@ export default async function (t, A) {
   sel.value = 'kick'; sel.dispatchEvent(new Event('change'));
   t.ok(!clip.kick && clip.preset === 'kick' && sel.value === 'kick', 'le preset « Kick accordé » reste un son du synthé');
 
+  // Presets et kicks enregistrés du designer dans la liste : le bloc garde leurs réglages (il ne suit pas le designer).
+  S.kick.user.push({ id: 'u:test', name: 'Mon kick', cat: 'gabber', params: { ...A.kickDefaults(), drive: 0.2 } });
+  A.rollPresetOptions();
+  const opts = [...sel.querySelectorAll('optgroup[data-kick] option')].map(o => o.textContent);
+  t.ok(opts.includes('909') && opts.includes('★ Mon kick') && opts.length === 1 + Object.keys(A.KICK_PRESETS).length + 1, 'liste : kick actuel, presets du designer, kicks enregistrés', opts);
+  sel.value = 'designer:u:test'; sel.dispatchEvent(new Event('change'));
+  t.ok(clip.kick?.drive === 0.2 && clip.kickSrc === 'u:test', 'kick enregistré : le bloc prend ses réglages');
+  S.kick.params.drive = 0.77;
+  A.kickChanged(false);
+  await t.wait(150);
+  t.eq(clip.kick.drive, 0.2, 'un kick enregistré ne suit pas les réglages du designer');
+  A.renderRollBar();
+  t.eq(sel.value, 'designer:u:test', 'la liste affiche le kick enregistré du bloc');
+  sel.value = 'designer:p:tr909'; sel.dispatchEvent(new Event('change'));
+  t.eq([clip.kickSrc, clip.kick.tune], ['p:tr909', A.KICK_PRESETS.tr909.tune], 'preset 909 du designer');
+  S.kick.user = S.kick.user.filter(u => u.id !== 'u:test');
+
   t.$('#kick-mode [data-mode="simple"]').click();
   t.ok(!t.$('#kick-knobs').hidden, 'retour au mode simple');
   for (const tr of S.tl.tracks) tr.clips = [];

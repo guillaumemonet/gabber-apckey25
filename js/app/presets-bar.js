@@ -2,6 +2,7 @@
 import { ACID_CATS, ACID_SOUNDS, soundParams } from '../acid.js';
 import { t } from '../i18n.js';
 import { KICK_CATS, KICK_PRESETS, KICK_PRESET_CAT, kickDefaults } from '../kickdesign.js';
+import { prepareKickClips } from '../kicksynth.js';
 import { OSC_CATS, OSC_PRESETS, OSC_PRESET_CAT } from '../osc.js';
 import { PAGES, toValue } from '../params.js';
 import { FAMILIES, PRESETS } from '../presets.js';
@@ -119,11 +120,15 @@ export function buildKickPresets() {
       if (!u) { u = { id: `u:${crypto.randomUUID()}`, name }; state.kick.user.push(u); }
       Object.assign(u, { cat, params: { ...state.kick.params } });
       state.kick.preset = u.id;
+      // Les mélodies de kick jouées par ce kick enregistré prennent ses nouveaux réglages.
+      for (const c of state.tl.tracks.flatMap(tr => tr.clips)) if (c.kickSrc === u.id) c.kick = { ...kickDefaults(), ...u.params };
+      prepareKickClips(state.tl.tracks, engine.ctx.sampleRate);
+      rollPresetOptions();
       renderKick();
       save();
       return u.id;
     },
-    remove: id => { state.kick.user = state.kick.user.filter(x => x.id !== id); state.kick.preset = null; renderKick(); save(); },
+    remove: id => { state.kick.user = state.kick.user.filter(x => x.id !== id); state.kick.preset = null; rollPresetOptions(); renderKick(); save(); },
   });
 }
 

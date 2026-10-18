@@ -6,6 +6,7 @@ import { clipEvents, mergeNotes, patLen, toSeq } from '../notes.js';
 import { OSC_PRESETS } from '../osc.js';
 import { PAT_LENGTHS, PianoRoll, ROLL_GRIDS } from '../pianoroll.js';
 import { prepareKickClips } from '../kicksynth.js';
+import { KICK_PRESETS, kickDefaults } from '../kickdesign.js';
 import { FAMILIES, PRESETS } from '../presets.js';
 import { BEATS_PER_BAR } from '../timeline.js';
 import { $, defaultRoll, engine, kickSynth, oscSynth, state, timeline, uiColor, wm } from './core.js';
@@ -100,7 +101,14 @@ export function buildRoll() {
     delete f.clip.preset;
     delete f.clip.osc;
     delete f.clip.kick;
-    if (preset.value === ROLL_KICK) { f.clip.kick = { ...state.kick.params }; prepareKickClips(state.tl.tracks, engine.ctx.sampleRate); }   // mélodie de kick : le kick du designer, tel qu'il est maintenant
+    delete f.clip.kickSrc;
+    // Mélodie de kick : le kick du designer (suit le designer), un preset ou un kick enregistré (figé sur ses réglages).
+    const kick = rollKickParams(preset.value);
+    if (kick) {
+      f.clip.kick = kick;
+      if (preset.value !== ROLL_KICK) f.clip.kickSrc = preset.value.slice(ROLL_KICK_PREFIX.length);
+      prepareKickClips(state.tl.tracks, engine.ctx.sampleRate);
+    }
     else if (preset.value.startsWith('osc:')) f.clip.osc = preset.value.slice(4);
     else if (preset.value) f.clip.preset = preset.value;
     rollHeld.clear();
@@ -139,7 +147,8 @@ export function renderRollBar() {
   $('#roll-grid').value = ROLL_GRIDS.findIndex(g => Math.abs(g - state.roll.grid) < 1e-6);
   const name = $('#roll-name');
   if (document.activeElement !== name) name.value = clip?.name ?? '';
-  $('#roll-preset').value = clip?.kick ? ROLL_KICK : clip?.osc ? `osc:${[...$('#roll-preset').options].some(o => o.value === `osc:${clip.osc}`) ? clip.osc : 'live'}` : clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
+  if (clip?.kickSrc) rollKickOption(clip.kickSrc);
+  $('#roll-preset').value = clip?.kick ? (clip.kickSrc ? ROLL_KICK_PREFIX + clip.kickSrc : ROLL_KICK) : clip?.osc ? `osc:${[...$('#roll-preset').options].some(o => o.value === `osc:${clip.osc}`) ? clip.osc : 'live'}` : clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
   const pat = clip ? patLen(clip) : 0;
   $('#roll-len').textContent = clip ? rollLenLabel(pat) : '—';
   $('#roll-where').textContent = clip ? t('roll.where', {
@@ -152,6 +161,22 @@ export function renderRollBar() {
 // Valeur de « Kick du designer » dans la liste des sons : distincte de l'id d'un preset du synthé (« kick » = le
 // preset « Kick accordé », qui reprenait la place du kick du designer à chaque réaffichage).
 export const ROLL_KICK = 'designer:kick';
+// Presets du designer (« designer:p:rotterdam ») et kicks enregistrés (« designer:u:… ») : figés sur leurs réglages.
+export const ROLL_KICK_PREFIX = 'designer:';
+export function rollKickParams(value) {
+  if (value === ROLL_KICK) return { ...state.kick.params };
+  if (!value?.startsWith(ROLL_KICK_PREFIX)) return null;
+  const src = value.slice(ROLL_KICK_PREFIX.length);
+  if (src.startsWith('p:') && KICK_PRESETS[src.slice(2)]) return { ...kickDefaults(), ...KICK_PRESETS[src.slice(2)] };
+  const u = state.kick.user.find(x => x.id === src);
+  return u ? { ...kickDefaults(), ...u.params } : null;
+}
+// Un bloc dont le kick enregistré a été supprimé : son option reste affichée (le bloc garde ses réglages).
+function rollKickOption(src) {
+  const sel = $('#roll-preset');
+  if ([...sel.options].some(o => o.value === ROLL_KICK_PREFIX + src)) return;
+  sel.querySelector('optgroup[data-kick]')?.appendChild(new Option(t('roll.kickGone'), ROLL_KICK_PREFIX + src));
+}
 
 export function rollPresetOptions() {
   const sel = $('#roll-preset');
@@ -173,7 +198,10 @@ export function rollPresetOptions() {
   sel.appendChild(grp);
   const kick = document.createElement('optgroup');
   kick.label = t('win.kick');
+  kick.dataset.kick = '';
   kick.appendChild(new Option(t('roll.kick'), ROLL_KICK));
+  for (const id of Object.keys(KICK_PRESETS)) kick.appendChild(new Option(t(`kick.preset.${id}`), `${ROLL_KICK_PREFIX}p:${id}`));
+  for (const u of state.kick.user) kick.appendChild(new Option(`★ ${u.name}`, ROLL_KICK_PREFIX + u.id));
   sel.appendChild(kick);
   sel.value = value;
 }
