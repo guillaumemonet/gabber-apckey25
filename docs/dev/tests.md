@@ -23,7 +23,7 @@ Quelques secondes, sans navigateur (`tests/check.js`) :
 `tests/run.js` lance un petit serveur, puis, pour chaque fichier `tests/specs/*.test.js`, ouvre **Firefox sans fenêtre** avec un profil neuf sur une page de test générée en mémoire : l'application, un accès à toutes ses variables internes, et le test. Chaque test vérifie lui-même ce qui doit être vrai ; le lanceur affiche ✓ ou ✗ avec le détail des vérifications qui échouent.
 
 - Lancer une partie des tests : `node tests/run.js pads timeline` (filtre sur le nom des fichiers).
-- Variables : `FIREFOX` (chemin de Firefox s'il n'est pas trouvé), `TEST_JOBS` (tests en parallèle, 2 par défaut), `TEST_TIMEOUT` (secondes par test, 180 par défaut).
+- Variables : `FIREFOX` (chemin de Firefox s'il n'est pas trouvé), `TEST_JOBS` (tests en parallèle, 2 par défaut), `TEST_TIMEOUT` (secondes par test, 180 par défaut), `TEST_SOUND=1` (entendre les tests : par défaut ils sont muets, le son ne sort pas sur la carte son mais les mesures le voient).
 - Les tests tournent aussi sur GitHub à chaque envoi (`.github/workflows/tests.yml`, Firefox sous Linux avec une carte son virtuelle).
 
 ## Écrire un test

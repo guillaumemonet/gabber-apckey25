@@ -38,8 +38,23 @@ const mainSource = () => {
     + "window.__app = new Proxy({}, { get: (_, k) => { if (typeof k !== 'string' || !/^[A-Za-z_$][\\w$]*$/.test(k)) return undefined;"
     + ' if (k in __alias) return __alias[k]; for (const m of __mods) if (k in m) return m[k]; try { return eval(k); } catch { return undefined; } } });\n';
 };
+// Tests muets (TEST_SOUND=1 pour entendre) : tout ce qui part vers la carte son d'un contexte en temps réel passe par
+// un gain à zéro, branché avant le code de l'application. Le graphe tourne comme d'habitude (les mesures et les
+// analyseurs, placés avant la sortie, voient le vrai son) ; les rendus hors ligne ne sont pas touchés.
+const MUTE = `<script>(() => {
+  const connect = AudioNode.prototype.connect, mutes = new WeakMap();
+  AudioNode.prototype.connect = function (dest, ...rest) {
+    if (dest instanceof AudioDestinationNode && dest.context instanceof AudioContext) {
+      let g = mutes.get(dest.context);
+      if (!g) { g = dest.context.createGain(); g.gain.value = 0; connect.call(g, dest); mutes.set(dest.context, g); }
+      dest = g;
+    }
+    return connect.call(this, dest, ...rest);
+  };
+})();</script>`;
 const testPage = spec => {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  if (!process.env.TEST_SOUND) html = html.replace('<head>', `<head>${MUTE}`);
   const out = html.replace(/<script type="module" src="js\/main\.js\?v=\d+"><\/script>/,
     `<script type="module" src="js/__test_main.js"></script><script type="module">import run from '/tests/harness.js'; run(${JSON.stringify(spec)});</script>`);
   if (out === html) throw new Error('index.html : balise de main.js introuvable');
