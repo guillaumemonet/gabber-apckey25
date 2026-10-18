@@ -29,7 +29,7 @@ Or download the ZIP from GitHub and unzip it.
    - **Anywhere**: run `python tools/serve.py`, then open http://localhost:8025.
 3. In the browser, click **Start**, then **allow MIDI devices** when the browser asks.
 
-The header shows **APC Key 25 (mk1)** or **APC Key 25 mk2** with a green dot once the controller is detected.
+The header shows **1 device connected** with a green dot once the controller is detected; click it to see the device list (APC Key 25 mk1 or mk2, other MIDI devices).
 
 ## Language
 

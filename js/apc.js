@@ -148,6 +148,13 @@ export class APC extends EventTarget {
     this.emit('roles', {});
   }
 
+  // Reconnecter : ferme les ports de l'APC puis les rouvre (sous Windows, un mk1 peut ne plus rien envoyer).
+  async reconnect() {
+    if (!this.access) return;
+    for (const p of [...this.inputs, ...this.outputs]) { p.onmidimessage = null; try { await p.close(); } catch { /* déjà fermé */ } }
+    this.scan(true);
+  }
+
   portsInfo() {
     return this.inputs.map(p => ({ name: p.name, role: this.roles.get(p.id) || 'tout' }));
   }

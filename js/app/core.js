@@ -95,6 +95,7 @@ export const state = {
   metro: defaultMetroState(),         // métronome : allumé, quand, décompte, volume
   master: defaultMasterState(),       // chaîne master : compresseur, limiteur (js/audio.js)
   midiMap: [],                        // MIDI learn : [{ port, ch, kind, n, target }] (js/app/midi-ui.js)
+  devices: {},                        // instrument associé à chaque appareil : { nom: { inst } } (js/app/devices.js)
   midiClock: { out: '', in: '' },     // horloge MIDI : sortie qui la reçoit, entrée suivie (noms des ports)
   launcher: { slots: Array.from({ length: 5 }, () => new Array(8).fill(null)) },   // lanceur de clips (js/app/launcher.js)
   input: { device: '', level: 1, monitor: false, latency: null },                   // entrée audio (js/app/audio-input.js)

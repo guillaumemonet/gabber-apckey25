@@ -2,11 +2,12 @@
 import { t } from '../i18n.js';
 import { PAGES, toPos, toValue } from '../params.js';
 import { renderAcidKnobs } from './acid-ui.js';
-import { knobDefs, knobTarget, setPage, turnKnob } from './actions.js';
-import { $, UI_PAGES, engine, setShiftHeld, state } from './core.js';
+import { knobDefs, knobTarget, turnKnob } from './actions.js';
+import { $, engine, setShiftHeld, state } from './core.js';
 import { renderDecks } from './decks-ui.js';
 import { mixField, renderMixer } from './mixer-ui.js';
 import { renderOsc } from './osc-ui.js';
+import { renderDevices } from './devices.js';
 import { renderEditorKnobs } from './pads.js';
 import { renderSynthKnobs } from './synth-ui.js';
 
@@ -29,20 +30,14 @@ export function applyGlobals() {
 
 export const pageLabel = page => PAGES[page]?.label ?? t(`page.${page}`);
 
-// Sélecteur de la page des potentiomètres de l'APC, dans l'en-tête.
-export function buildApcPage() {
-  const sel = $('#apc-page');
-  for (const page of UI_PAGES) sel.add(new Option(pageLabel(page), page));
-  sel.addEventListener('change', () => setPage(sel.value));
-}
-
 // Groupe de potentiomètres d'une fenêtre qui correspond à une page (entouré quand l'APC le pilote).
 export const PAGE_GROUP = { viz: '#viz-knobs', osc: '#osc-modules', synth: '#synth-knobs', pad: '#pad-knobs, #ed-knobs', acid: '#acid-knobs', decks: '.decks', tr: '#tr-knobs', eq: '#master-eq', fx: '#master-fx' };
 export const pageGroup = page => (mixField(page) ? '#mixer' : PAGE_GROUP[page]);
 
 export function renderPages() {
-  const sel = $('#apc-page');
+  const sel = $('#apc-page');   // dans la liste des appareils (js/app/devices.js), quand elle est ouverte
   if (sel) sel.value = state.page;
+  renderDevices();
   for (const el of document.querySelectorAll('.apc-live')) el.classList.remove('apc-live');
   const g = pageGroup(state.page);
   if (g) for (const el of document.querySelectorAll(g)) el.classList.add('apc-live');

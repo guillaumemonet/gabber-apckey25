@@ -11,6 +11,7 @@ import { BUS_COUNT } from '../timeline.js';
 import { turnKnob } from './actions.js';
 import { busName, renderBus } from './buses-ui.js';
 import { monitorLog, setStatus } from './controller.js';
+import { deviceKey, devicePage } from './devices.js';
 import { $, apc, engine, mixer, oscSynth, state, timeline } from './core.js';
 import { masterDef, renderMixer, renderStrip } from './mixer-ui.js';
 import { save } from './save.js';
@@ -41,9 +42,10 @@ const same = (m, s) => m.port === s.port && m.ch === s.ch && m.kind === s.kind &
 const srcLabel = m => `${m.port} · ${m.kind === 'cc' ? `CC ${m.n}` : `${t('learn.note')} ${m.n}`}${m.ch ? ` · ${t('learn.ch')} ${m.ch + 1}` : ''}`;
 
 // Une commande de l'appareil a bougé (valeur 0..127).
-function apply(target, v) {
+// `port` : l'appareil ; ses potentiomètres K1-K8 pilotent la page de son instrument (js/app/devices.js).
+function apply(target, v, port) {
   const x = v / 127;
-  if (target.startsWith('knob:')) { turnKnob(+target.slice(5), { value: x }); return; }
+  if (target.startsWith('knob:')) { const page = devicePage(port); if (page) turnKnob(+target.slice(5), { value: x }, page); return; }
   if (target.startsWith('mix:')) {
     const ch = target.slice(4);
     state.mix.channels[ch].vol = x;
@@ -91,7 +93,7 @@ function onControl(src, value, on) {
       const key = `${m.port}|${m.ch}|${m.kind}|${m.n}`;
       if (on && !down.has(key)) { down.add(key); press(m.target); }
       if (!on) down.delete(key);
-    } else apply(m.target, src.kind === 'note' ? (on ? 127 : 0) : value);
+    } else apply(m.target, src.kind === 'note' ? (on ? 127 : 0) : value, m.port);
   }
 }
 
@@ -125,7 +127,8 @@ export async function initMidi() {
   midiHub.addEventListener('realtime', ({ detail: d }) => { if (d.port === state.midiClock.in) clockFollower.message(d.byte, d.ms); });
   buildMidi();
   midiHub.isCommand = (port, ch, n) => state.midiMap.some(m => m.kind === 'note' && same(m, { port, ch, kind: 'note', n }));
-  midiHub.addEventListener('key', e => apc.dispatchEvent(new CustomEvent('key', { detail: e.detail })));   // même chemin que le clavier de l'APC
+  // Un appareil associé à un instrument le joue ; sinon même chemin que le clavier de l'APC (fenêtre active).
+  midiHub.addEventListener('key', e => { if (!deviceKey(e.detail.port, e.detail)) apc.dispatchEvent(new CustomEvent('key', { detail: e.detail })); });
   midiHub.addEventListener('pedal', e => { engine.setSustain(e.detail.on); oscSynth?.setSustain?.(e.detail.on); });
   midiHub.addEventListener('cc', ({ detail: d }) => onControl({ port: d.port, ch: d.ch, kind: 'cc', n: d.cc }, d.value, d.value >= 64));
   midiHub.addEventListener('button', ({ detail: d }) => onControl({ port: d.port, ch: d.ch, kind: 'note', n: d.note }, d.on ? 127 : 0, d.on));

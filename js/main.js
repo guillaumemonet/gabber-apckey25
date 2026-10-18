@@ -33,7 +33,8 @@ import { buildVoiceWin } from './app/voice-ui.js';
 import { buildTuneWin } from './app/tune-ui.js';
 import { buildGen, presetPatch } from './app/gen.js';
 import { buildKick } from './app/kick-ui.js';
-import { applyGlobals, buildApcPage, buildKnobRow, pageForWindow, renderPages } from './app/knobs.js';
+import { applyGlobals, buildKnobRow, pageForWindow, renderPages } from './app/knobs.js';
+import { APC_DEVICE, buildDevices, deviceInst } from './app/devices.js';
 import { buildLibrary } from './app/library-ui.js';
 import { buildCpu, buildMetro } from './app/metro-ui.js';
 import { drawMeter, renderAll, toast } from './app/misc.js';
@@ -144,7 +145,6 @@ async function start() {
   buildPads();
   buildBanks();
   buildEditor();
-  buildApcPage();
   buildKnobRow($('#pad-knobs'), 'pad');
   buildKnobRow($('#tr-knobs'), 'tr');
   buildKnobRow($('#master-eq'), 'eq');
@@ -190,7 +190,7 @@ async function start() {
   provide({ wm: new WindowManager(() => state.windows, save, onWindowToggle, { ids: new Set(FILE_TOOLS), save: saveFile, open: openFile }) });
   wm.onActive = id => {
     const page = pageForWindow(id);
-    if (page && page !== state.page) setPage(page);
+    if (page && page !== state.page && deviceInst(APC_DEVICE) === 'auto') setPage(page);   // un APC associé à un instrument garde sa page
     if (id === 'piano' || id === 'osc') setKeys(id === 'osc' ? 'osc' : 'synth');   // le clavier joue le synthé de la fenêtre active
   };
   renderPages();
@@ -203,6 +203,7 @@ async function start() {
 
   provide({ apc: new APC() });
   bindController();
+  buildDevices();
   initMidi();   // autres claviers et contrôleurs MIDI, MIDI learn (sans attendre l'APC)
   try {
     await apc.init();

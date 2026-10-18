@@ -3,6 +3,7 @@ import { BTN } from '../apc.js';
 import { t } from '../i18n.js';
 import { acidKey } from './acid-ui.js';
 import { padPending, panic, releasePad, selectPad, setBank, setPage, triggerPad, turnKnob } from './actions.js';
+import { APC_DEVICE, deviceActivity, deviceKey, devicePage, renderDevices, setDeviceProblem } from './devices.js';
 import { $, PAGE_ORDER, apc, padKey, performer, playing, setShiftHeld, shiftHeld, state, timeline, wm } from './core.js';
 import { toast } from './misc.js';
 import { MIX_PAGES } from './mixer-ui.js';
@@ -36,6 +37,7 @@ export function bindController() {
       setStatus(false, t('status.notFound', { seen }));
     }
     renderPorts();
+    renderDevices();
   });
   apc.addEventListener('portError', ({ detail }) => {
     setStatus(false, t('status.portBusy', { port: detail.port, msg: detail.message }));
@@ -89,19 +91,21 @@ export function bindController() {
     else if (name === 'record') { if (shiftHeld) setPage(state.page === 'acid' ? 'decks' : state.page === 'decks' ? 'synth' : 'acid'); else tlRecToggle(); }
   });
 
-  apc.addEventListener('knob', ({ detail }) => turnKnob(detail.index, detail));
+  // Potentiomètres : la page de l'instrument associé à l'APC (ou la page en cours s'il suit la fenêtre active).
+  apc.addEventListener('knob', ({ detail }) => { const page = devicePage(APC_DEVICE); if (page) turnKnob(detail.index, detail, page); });
 
   apc.addEventListener('key', ({ detail: { note, velocity, on } }) => {
     // Maj + touche : choisir un preset au lieu de jouer.
     if (on && shiftHeld && presetKey(note)) return;
     if (acidKey(note, velocity, on)) return;
+    if (deviceKey(APC_DEVICE, { note, velocity, on })) return;   // APC associé à un instrument
     if (on) performer.noteOn(note, velocity); else performer.noteOff(note);
     setPianoKey(note, on);
   });
 
   apc.addEventListener('sustain', ({ detail }) => onSustainButton(detail.on));
 
-  apc.addEventListener('raw', ({ detail }) => monitorLog(detail));
+  apc.addEventListener('raw', ({ detail }) => { monitorLog(detail); deviceActivity(APC_DEVICE); });
 }
 
 // Journal du moniteur MIDI (APC et autres appareils) : les 80 derniers messages.
@@ -124,11 +128,8 @@ export function describe([st, d1, d2]) {
   return '';
 }
 
-export function setStatus(on, text) {
-  $('#status').classList.toggle('on', on);
-  $('#status').classList.toggle('off', !on);
-  $('#status-text').textContent = text;
-}
+// État du contrôleur (connecté, introuvable, port occupé…) : affiché par l'indicateur des appareils (js/app/devices.js).
+export function setStatus(on, text) { setDeviceProblem(on, text); }
 
 export function renderPorts() {
   const info = apc.portsInfo();

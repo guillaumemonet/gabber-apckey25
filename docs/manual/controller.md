@@ -35,7 +35,7 @@ There is no global knob window: **each instrument has its knobs in its own windo
 
 The 8 knobs of the APC (K1-K8) control one **page** at a time:
 - the page **follows the active window**: click the TB-303 and K1-K8 control the TB-303, click the TR-909 and they control the selected 909 instrument, and so on (synth, oscillator synth, turntables, pad editor, mixer, visualizer);
-- the **APC knobs** menu in the header shows the current page and lets you choose it;
+- the devices indicator, top left, shows the current page ("1 device connected · Synth"); click it to open the device list, where the APC's **Knobs** menu lets you choose it;
 - the APC track buttons also change it (1-4 = Synth / Effects / Pad / EQ, Shift + 1-4 = mixer pages, Shift + REC = TB-303 then turntables, Shift + PLAY = TR-909, SUSTAIN = EQ).
 
 The group of knobs driven by the APC is outlined on screen and tagged "APC K1-K8". The pages:
@@ -46,6 +46,28 @@ The group of knobs driven by the APC is outlined on screen and tagged "APC K1-K8
 - **TR-909**, **TB-303**, **Decks**, **Oscillators** (see Oscillator synth), **Visualizer** (speed, hue, flashes, sensitivity, filters) and the four **mixer** pages.
 
 Double-click a knob on screen to reset it.
+
+## Connected devices
+
+[![Connected devices list opened from the header: a MIDI keyboard on the oscillator synth, a pad controller on the TR-909](../screenshots/devices-en.png)](../screenshots/devices-en.png)
+
+The indicator at the top left, next to the title, counts the connected devices: the APC Key 25 and the other MIDI devices (keyboards, controllers). Green dot: at least one device; orange dot: a problem (APC not found, port used by another app, MIDI access denied), with the details in the tooltip and in the list.
+
+**Click it to open the device list**:
+- a **LED** per device, which lights up when it sends something: touch a key or a knob to check that it responds;
+- the **instrument** of each device: its notes play that instrument and its knobs control its page. On stage, each device has its own role:
+  - **Active window** (default): as before, the device follows the window you are working in;
+  - **Synth**, **Oscillator synth**: the notes play that synth (with chord mode and the arpeggiator), the knobs its page;
+  - **Pads**: the notes trigger the pads of the current bank (C2 = pad 1), for a pad controller;
+  - **TR-909**: the notes play the 909 instruments on the usual drum map (36 bass drum, 38 snare, 42 closed hat, 46 open hat…);
+  - **TB-303**, **Decks**, **Mixer (volumes)**: the knobs control their page;
+  - **Kick of the designer**: the notes play the designer kick, its tail tuned to the note;
+  - **Nothing**: the device plays nothing (its learned controls stay active).
+- for the APC following the active window, the **Knobs** menu chooses the page of K1-K8. Set to an instrument, the APC keeps its page when you change windows (its track buttons still change it);
+- **Reconnect** closes and reopens the MIDI ports, without unplugging the cable: try it when a device stops responding;
+- **Settings** opens the MIDI window (learned controls, MIDI clock, monitor).
+
+The instruments are saved with the project, under each device's name: they come back the next time it is plugged in.
 
 ## Performance effects
 

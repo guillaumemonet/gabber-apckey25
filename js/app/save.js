@@ -20,6 +20,7 @@ import { mergeWindows } from '../windows.js';
 import { $, BANKS, kit, newPad, setLibAdded, state, tlHistory } from './core.js';
 import { PAD_QUANTS } from './files.js';
 import { defaultBreizh, mergeBreizh } from './breizh-ui.js';
+import { cleanDevices } from './devices.js';
 import { mergeVoiceState } from './voice-ui.js';
 import { mergeTuneState } from './tune-ui.js';
 import { defaultGen, mergeGen } from './gen.js';
@@ -78,6 +79,7 @@ export async function restore() {
     state.metro = mergeMetroState(saved.metro);
     state.master = mergeMasterState(saved.master);
     state.midiMap = cleanMidiMap(saved.midiMap);
+    state.devices = cleanDevices(saved.devices);
     state.launcher = cleanLauncher(saved.launcher);
     state.input = cleanInputState(saved.input);
     state.midiClock = { out: typeof saved.midiClock?.out === 'string' ? saved.midiClock.out : '', in: typeof saved.midiClock?.in === 'string' ? saved.midiClock.in : '' };
@@ -194,6 +196,7 @@ export function stateSnapshot() {
     metro: state.metro,
     master: state.master,
     midiMap: state.midiMap,
+    devices: state.devices,
     launcher: state.launcher,
     input: state.input,
     midiClock: state.midiClock,

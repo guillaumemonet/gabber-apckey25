@@ -261,6 +261,7 @@ export const HELP = {
     monitor: `
       <p>Other MIDI keyboards and controllers, MIDI learn, and every MIDI message received (to check a connection).</p>
       <ul>
+        <li><b>Connected devices</b> (indicator at the top left of the header): click it for the list of devices, the <b>instrument</b> of each one (its notes play it, its knobs control its page; <b>Active window</b> by default), the APC knob page, and <b>Reconnect</b>.</li>
         <li><b>Any MIDI keyboard</b> (plugged in by USB, no driver needed for most of them) plays the synth of the active window, like the APC keyboard, and is recorded on the timeline; its sustain pedal holds the notes.</li>
         <li><b>MIDI learn</b>: click <b>Learn</b> next to a target, then move a knob or fader, or press a button on the device. Targets: knobs K1-K8 of the active page (like the APC knobs), mixer faders, master volume, bus volumes, play / stop, record, loop. The bin removes an assignment. A key assigned to a button no longer plays a note. Assignments are saved with the project.</li>
         <li><b>MIDI clock</b>: <b>Send to</b> a device (24 pulses per beat, Start / Stop, position: it follows the timeline), or <b>Follow</b> a device (its tempo, Start and Stop).</li>
@@ -527,6 +528,7 @@ export const HELP = {
     monitor: `
       <p>Les autres claviers et contrôleurs MIDI, le MIDI learn, et tous les messages MIDI reçus (pour vérifier une connexion).</p>
       <ul>
+        <li><b>Appareils branchés</b> (indicateur en haut à gauche de l'en-tête) : un clic donne la liste des appareils, l'<b>instrument</b> de chacun (ses notes le jouent, ses potentiomètres pilotent sa page ; <b>Fenêtre active</b> par défaut), la page des potentiomètres de l'APC et <b>Reconnecter</b>.</li>
         <li><b>N'importe quel clavier MIDI</b> (branché en USB, sans pilote pour la plupart) joue le synthé de la fenêtre active, comme le clavier de l'APC, et s'enregistre dans la timeline ; sa pédale de sustain tient les notes.</li>
         <li><b>MIDI learn</b> : cliquez sur <b>Apprendre</b> à côté d'une cible, puis tournez un potentiomètre, bougez un fader ou appuyez sur un bouton de l'appareil. Cibles : potentiomètres K1-K8 de la page active (comme ceux de l'APC), faders du mixeur, volume général, volumes des bus, lecture / arrêt, enregistrement, boucle. La corbeille retire une assignation. Une touche assignée à un bouton ne joue plus de note. Les assignations sont enregistrées avec le projet.</li>
         <li><b>Horloge MIDI</b> : <b>Envoyer vers</b> un appareil (24 impulsions par temps, Start / Stop, position : il suit la timeline), ou <b>Suivre</b> un appareil (son tempo, son Start et son Stop).</li>

@@ -51,11 +51,9 @@ export default async function (t, A) {
   await t.wait(30);
   t.ok(S.acid.params.cutoff !== c0, 'K1 sur la page TB-303 règle la coupure de la 303', [c0, S.acid.params.cutoff]);
 
-  // --- Page choisie dans l'en-tête : EQ, K8 = gain ---
-  const sel = t.$('#apc-page');
-  t.ok(sel.options.length > 5, 'menu des pages de potentiomètres', sel.options.length);
-  sel.value = 'eq';
-  sel.dispatchEvent(new Event('change'));
+  // --- Page choisie (liste des appareils, ou boutons de piste) : EQ, K8 = gain ---
+  t.ok(A.UI_PAGES.length > 5, 'pages de potentiomètres', A.UI_PAGES.length);
+  A.setPage('eq');
   knob(A, 7, 0.8);
   await t.wait(30);
   t.eq(S.page, 'eq', 'page EQ choisie');

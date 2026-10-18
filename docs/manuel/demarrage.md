@@ -29,7 +29,7 @@ Ou téléchargez le ZIP depuis GitHub et décompressez-le.
    - **Partout** : `python tools/serve.py`, puis ouvrez http://localhost:8025.
 3. Dans le navigateur, cliquez sur **Démarrer**, puis **autorisez les appareils MIDI** quand le navigateur le demande.
 
-L'en-tête affiche **APC Key 25 (mk1)** ou **APC Key 25 mk2** avec un point vert quand le contrôleur est détecté.
+L'en-tête affiche **1 appareil branché** avec un point vert quand le contrôleur est détecté ; un clic dessus montre la liste des appareils (APC Key 25 mk1 ou mk2, autres appareils MIDI).
 
 ## Langue
 

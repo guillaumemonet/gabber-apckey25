@@ -77,6 +77,19 @@ header {
 .status .dot { width: 9px; height: 9px; border-radius: 50%; background: #555; }
 .status.on .dot { background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2); }
 .status.on { color: var(--text); }
+.status { cursor: pointer; padding: 4px 8px; border-radius: 8px; border: 1px solid transparent; }
+.status:hover, .status:focus-visible { border-color: var(--line); outline: none; }
+.status.warn .dot { background: #f5a524; box-shadow: 0 0 8px #f5a524; }
+.dev-panel { width: 330px; }
+.dev-row { display: flex; flex-direction: column; gap: 2px; padding: 6px 0; border-top: 1px solid var(--line); }
+.dev-top { display: flex; align-items: center; gap: 8px; padding: 0 8px; }
+.dev-top b { font-weight: 600; }
+.dev-top .hint { margin-left: auto; font-size: 11px; }
+.dev-led { width: 8px; height: 8px; border-radius: 50%; background: #444; flex: none; transition: background .08s; }
+.dev-led.on { background: var(--accent-2); box-shadow: 0 0 6px var(--accent-2); }
+.dev-foot { display: flex; gap: 6px; padding: 6px 8px 2px; border-top: 1px solid var(--line); }
+.dev-foot button { flex: 1; }
+.dev-hint, .dev-empty { padding: 4px 8px; font-size: 11px; }
 #meter { background: var(--bg); border-radius: 3px; }
 /* Designer d'effet */
 .curve-shapes { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }

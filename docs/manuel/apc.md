@@ -35,7 +35,7 @@ Il n'y a pas de fenêtre de potentiomètres globale : **chaque instrument a ses 
 
 Les 8 potentiomètres de l'APC (K1-K8) pilotent une **page** à la fois :
 - la page **suit la fenêtre active** : clic sur la TB-303 et K1-K8 pilotent la TB-303, clic sur la TR-909 et ils pilotent l'instrument choisi de la 909, et ainsi de suite (synthé, synthé à oscillateurs, platines, éditeur de pad, mixeur, visualiseur) ;
-- le menu **Potentiomètres APC** de l'en-tête affiche la page en cours et permet de la choisir ;
+- l'indicateur des appareils, en haut à gauche, affiche la page en cours (« 1 appareil branché · Synthé ») ; un clic dessus ouvre la liste des appareils, où le menu **Potentiomètres** de l'APC permet de la choisir ;
 - les boutons de piste de l'APC la changent aussi (1-4 = Synthé / Effets / Pad / EQ, Maj + 1-4 = pages du mixeur, Maj + REC = TB-303 puis platines, Maj + PLAY = TR-909, SUSTAIN = EQ).
 
 Le groupe de potentiomètres piloté par l'APC est entouré à l'écran, avec l'étiquette « APC K1-K8 ». Les pages :
@@ -46,6 +46,28 @@ Le groupe de potentiomètres piloté par l'APC est entouré à l'écran, avec l'
 - **TR-909**, **TB-303**, **Platines**, **Oscillateurs** (voir Synthé à oscillateurs), **Visualiseur** (vitesse, teinte, flashs, sensibilité, filtres) et les quatre pages du **mixeur**.
 
 Double-clic sur un potentiomètre à l'écran pour le remettre à zéro.
+
+## Appareils branchés
+
+[![Liste des appareils branchés ouverte depuis l'en-tête : un clavier MIDI sur le synthé à oscillateurs, un contrôleur à pads sur la TR-909](../screenshots/devices-fr.png)](../screenshots/devices-fr.png)
+
+L'indicateur en haut à gauche, à côté du titre, compte les appareils branchés : l'APC Key 25 et les autres appareils MIDI (claviers, contrôleurs). Point vert : au moins un appareil ; point orange : un problème (APC introuvable, port occupé par un autre logiciel, accès MIDI refusé), le détail est dans l'infobulle et dans la liste.
+
+**Un clic dessus ouvre la liste des appareils** :
+- une **LED** par appareil, qui s'allume quand il envoie quelque chose : touchez une touche ou un potentiomètre pour vérifier qu'il répond ;
+- l'**instrument** associé à chaque appareil : ses notes jouent cet instrument et ses potentiomètres pilotent sa page. Ainsi, sur scène, chaque appareil a son rôle :
+  - **Fenêtre active** (par défaut) : comme avant, l'appareil suit la fenêtre où vous travaillez ;
+  - **Synthé**, **Synthé à oscillateurs** : les notes jouent ce synthé (avec le mode accords et l'arpégiateur), les potentiomètres sa page ;
+  - **Pads** : les notes déclenchent les pads de la banque en cours (do2 = pad 1), pour un contrôleur à pads ;
+  - **TR-909** : les notes jouent les instruments de la 909 selon le plan de batterie habituel (36 grosse caisse, 38 caisse claire, 42 charleston fermé, 46 ouvert…) ;
+  - **TB-303**, **Platines**, **Mixeur (volumes)** : les potentiomètres pilotent leur page ;
+  - **Kick du designer** : les notes jouent le kick du designer, la queue accordée sur la note ;
+  - **Rien** : l'appareil ne joue rien (ses commandes apprises restent actives).
+- pour l'APC qui suit la fenêtre active, le menu **Potentiomètres** choisit la page de K1-K8. Associé à un instrument, l'APC garde sa page quand vous changez de fenêtre (ses boutons de piste la changent toujours) ;
+- **Reconnecter** ferme puis rouvre les ports MIDI, sans débrancher le câble : à essayer quand un appareil ne répond plus ;
+- **Paramètres** ouvre la fenêtre MIDI (commandes apprises, horloge MIDI, moniteur).
+
+Les associations sont enregistrées avec le projet, sous le nom de chaque appareil : on les retrouve au prochain branchement.
 
 ## Effets de performance
 
