@@ -912,6 +912,9 @@ header button, header .status { white-space: nowrap; }
 .cm-transpose { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
 .cm-transpose button { min-width: 0; padding: 3px 0; font-size: 11px; }
 .clip-menu hr { border: none; border-top: 1px solid var(--line); margin: 4px 0; }
+.bar-counts { display: flex; gap: 3px; }
+.bar-counts button { flex: 1; min-width: 0; padding: 3px 0; font: inherit; }
+.bar-menu .bar-hint { padding: 2px 8px 4px; font-size: 11px; }
 /* Marqueurs de la timeline (sous les numéros de mesure) */
 .tl-corner { display: flex; align-items: flex-end; padding: 0 6px 4px 8px; }
 #tl-marker-add { padding: 1px 8px; font-size: 11px; }

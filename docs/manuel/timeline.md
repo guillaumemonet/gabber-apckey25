@@ -43,6 +43,14 @@ Faites évoluer un réglage d'une piste au fil du morceau : un filtre qui s'ouvr
 - **Pendant la lecture**, la courbe remplace le potentiomètre de la piste ; à l'arrêt, le potentiomètre reprend la main. Une courbe modifiée pendant la lecture s'entend tout de suite.
 - Le bouton A s'allume quand la piste a des courbes. L'automation s'annule avec Ctrl+Z, est enregistrée avec le projet et dans les fichiers morceau, et s'entend dans l'export WAV et les stems.
 
+### Insérer ou supprimer des mesures
+
+**Clic droit sur un numéro de mesure** (la règle en haut de la timeline) : un menu pour **insérer** 1, 2, 4, 8 ou 16 mesures vides à cet endroit, ou en **supprimer** autant à partir de là. Pratique pour allonger un break ou ajouter une montée au milieu d'un morceau déjà construit.
+
+- **Insérer** : tout ce qui suit glisse vers la droite, sur toutes les pistes : blocs, blocs d'effets, automation, marqueurs, tête de lecture. Un bloc à cheval sur l'endroit est coupé en deux ; un bloc d'effet à cheval est allongé ; l'automation garde sa valeur pendant les mesures ajoutées.
+- **Supprimer** : ce que contiennent ces mesures disparaît (les blocs à cheval sont coupés aux bords), et tout ce qui suit glisse vers la gauche.
+- Le morceau s'allonge ou se raccourcit d'autant. Ctrl+Z annule.
+
 ### Marqueurs
 
 [![Timeline de la démo 3 avec des marqueurs Intro, Montée et Drop 1 sous les numéros de mesure](../screenshots/markers-fr.png)](../screenshots/markers-fr.png)

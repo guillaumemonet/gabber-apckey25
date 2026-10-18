@@ -31,6 +31,7 @@ import { bufferCache, loadPads, loadSound, padsInUse } from './sounds.js';
 import { stopTlPreview, tlPrev, tlPreviewClip } from './tl-listen.js';
 import { growHeldNote, lastRecRender, setLastRecRender } from './tl-record.js';
 import { setTlFocus, tlGroupDown, tlKey, tlLaneDown, tlPicked, tlSelect } from './tl-select.js';
+import { openBarMenu } from './bars.js';
 import { renderTr } from './tr909-ui.js';
 import { renderTuneTarget } from './tune-ui.js';
 import { FX_ROW, closeFxEditor, fxEditing, fxEl, fxOutside, fxRows, setFxEditing } from './trackfx-ui.js';
@@ -243,6 +244,13 @@ export function buildTl() {
     state.tl.playhead = Math.max(0, Math.min(timeline.length - 1, snapBeat((e.clientX - r.left) / beatPx() - (e.shiftKey ? 0.5 : 2), e.shiftKey)));
     if (timeline.playing && !tlRec) timeline.play(state.tl.playhead);
     save();
+  });
+  // Clic droit sur une mesure : insérer ou supprimer des mesures à cet endroit (js/app/bars.js).
+  $('#tl-ruler').addEventListener('contextmenu', e => {
+    e.preventDefault();
+    const r = e.currentTarget.getBoundingClientRect();
+    const bar = Math.max(0, Math.min(state.tl.bars - 1, Math.round((e.clientX - r.left) / beatPx() / BEATS_PER_BAR)));
+    openBarMenu(bar, e.clientX, e.clientY);
   });
   const line = document.createElement('div');
   line.className = 'tl-playhead';

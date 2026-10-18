@@ -43,6 +43,14 @@ Make a track setting move along the song: a filter opening during the build-up, 
 - **While playing**, the curve replaces the track knob; when stopped, the knob takes over again. A curve changed while playing is heard at once.
 - The A button lights up when the track has curves. Automation can be undone with Ctrl+Z, is saved with the project and in song files, and is heard in the WAV export and the stems.
 
+### Insert or delete bars
+
+**Right-click a bar number** (the ruler at the top of the timeline): a menu to **insert** 1, 2, 4, 8 or 16 empty bars there, or **delete** as many from there. Handy to lengthen a break or add a build-up in the middle of a song already built.
+
+- **Insert**: everything after moves right, on every track: blocks, effect blocks, automation, markers, playhead. A block across that point is cut in two; an effect block across it is lengthened; automation holds its value during the added bars.
+- **Delete**: what those bars contain goes away (blocks across the edges are cut there), and everything after moves left.
+- The song gets longer or shorter by as much. Ctrl+Z undoes it.
+
 ### Markers
 
 [![Timeline of demo 3 with Intro, Build-up and Drop 1 markers under the bar numbers](../screenshots/markers-en.png)](../screenshots/markers-en.png)
