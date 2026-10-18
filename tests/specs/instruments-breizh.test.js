@@ -61,8 +61,11 @@ export default async function (t, A) {
   // (2e des ténors, résonance vers 500 Hz) ; harmoniques impaires de la basse bien plus faibles ; battements lents.
   const fb = 440 * 2 ** ((57 - 12 - 69) / 12);   // la2 : ténors sur la3
   const drone = await render('bourdon', [{ t: 0, len: 11, note: 57 }], 11);
-  sp = power(drone, 2 * SR, 15);
-  const h = k => band(sp, k * fb * 0.985, k * fb * 1.015);
+  // Spectre moyen sur quatre fenêtres : les deux ténors battent lentement (~0,2 Hz), une seule fenêtre pouvait tomber
+  // dans un creux du battement (ténors presque annulés) ; bandes de ±3 % (la hauteur dérive un peu, comme en vrai).
+  const sps = [1.5, 3.5, 5.5, 7.5].map(s0 => power(drone, Math.round(s0 * SR), 15));
+  sp = { df: sps[0].df, p: sps[0].p.map((v, i) => sps.reduce((a, q) => a + q.p[i], 0) / sps.length) };
+  const h = k => band(sp, k * fb * 0.97, k * fb * 1.03);
   const hs = Array.from({ length: 12 }, (_, i) => h(i + 1));
   t.eq(hs.indexOf(Math.max(...hs)) + 1, 4, 'bourdon : 4e harmonique de la basse la plus forte', hs.map(v => v.toFixed(0)).join(' '));
   const avg = ks => 10 * Math.log10(ks.reduce((a, k) => a + 10 ** (hs[k - 1] / 10), 0) / ks.length);
