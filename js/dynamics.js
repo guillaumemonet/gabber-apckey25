@@ -95,6 +95,7 @@ export function buildOtt(ctx) {
   const set = bypass(ctx, input, output, fxIn, fxOut);
   let node = null, last = null, first = true;
   const make = () => {
+    node?.disconnect();
     node = new AudioWorkletNode(ctx, 'gk-ott', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [2], processorOptions: last ?? {} });
     fxIn.disconnect();
     fxIn.connect(node).connect(fxOut);
@@ -103,7 +104,9 @@ export function buildOtt(ctx) {
   else loadOttWorklet(ctx).then(make, err => console.warn('Compression multibande indisponible', err));
   return { input, output, update(p, on = true) {
     last = { depth: p.depth, time: p.time, up: p.up, down: p.down, output: p.output };
-    node?.port.postMessage(last);
+    // Hors ligne (export), le message peut arriver après le début du rendu (machine lente) : le nœud est refait avec
+    // les réglages dès sa création. En direct, le message suffit (quelques ms).
+    if (node && isOffline(ctx)) make(); else node?.port.postMessage(last);
     set(!!on, first || isOffline(ctx));
     first = false;
   } };
