@@ -25,7 +25,7 @@ Two decks to mix and scratch any sound: library loops, your recordings, your own
 
 Play the song live, clip by clip, like on stage. The **Launcher** window (plugin bar, Studio group) has **8 columns**, the first 8 timeline tracks, and **5 rows** of slots.
 
-- **Fill a slot**: drop a library sound on it, or right-click a timeline block › **Send to the launcher** (it goes to its track's column, first free slot). Right-click a slot to empty it.
+- **Fill a slot**: drop a library sound on it, or right-click a timeline block › **Send to…** › **Launcher**, then click the slot you want in the grid (occupied slots show their sound). Right-click a slot to empty it.
 - **Launch**: clicking a slot makes it **loop from the next bar**, in place of the clip playing in its column (a slot waiting for its bar blinks). It goes through its track knobs and insert effects.
 - **Row N** launches a whole row; a column's ■ stops it; **Stop all** stops every clip at the next bar. **Panic** cuts everything at once.
 - Clips follow the timeline bars when it plays (and the TR-909 grid); otherwise the first launched clip starts at once and sets the bars.

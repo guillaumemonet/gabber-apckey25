@@ -1,4 +1,4 @@
-// Lanceur de clips : cases remplies (bibliothèque, « Envoyer au lanceur »), lancement, changement à la mesure suivante,
+// Lanceur de clips : cases remplies (bibliothèque, « Envoyer vers… » › Lanceur), lancement, changement à la mesure suivante,
 // ligne entière, tout arrêter, grille de l'APC (pads, SCENE LAUNCH, STOP ALL), Panique, annuler, sauvegarde.
 export default async function (t, A) {
   const S = A.state, E = A.engine;
@@ -42,7 +42,11 @@ export default async function (t, A) {
   A.renderTl();
   t.$$('#tl-grid .tl-clip').find(e => e._obj?.id === 'c-ln').dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 600, clientY: 400 }));
   [...t.$$('.clip-menu .cm-item')].find(b => b.dataset.icon === 'grid').click();
-  t.eq(S.launcher.slots[0][2]?.name, p.name, 'Envoyer au lanceur : colonne de sa piste, première case libre');
+  await t.wait(30);
+  // « Envoyer vers… » › Lanceur : la case choisie dans la grille (ligne 1, colonne 3).
+  t.$$('.send-menu .send-tabs button').find(b => b.dataset.target === 'launcher').click();
+  t.$('.send-menu .send-cell[data-cell="0:2"]').click();
+  t.eq(S.launcher.slots[0][2]?.name, p.name, 'Envoyer vers… › Lanceur : la case choisie');
 
   // Grille de l'APC.
   t.$('#ln-mode').click();

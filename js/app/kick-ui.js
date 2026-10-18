@@ -105,6 +105,12 @@ export function buildKick() {
     col.append(head, knobs);
     layers.appendChild(col);
   }
+  // Sens : normal, inversé, queue inversée (réglage du kick, enregistré avec lui).
+  for (const b of $('#kick-rev').querySelectorAll('button')) b.addEventListener('click', () => {
+    state.kick.params.rev = +b.dataset.rev / 2;
+    state.kick.preset = null;
+    kickChanged(true);
+  });
   for (const b of $('#kick-mode').querySelectorAll('button')) b.addEventListener('click', () => {
     state.kick.expert = b.dataset.mode === 'expert';
     if (!state.kick.expert) state.kick.solo = null;
@@ -301,6 +307,8 @@ export function renderKick() {
   kickPresets?.render();
   const expert = !!state.kick.expert;
   for (const b of $('#kick-mode').querySelectorAll('button')) b.classList.toggle('active', (b.dataset.mode === 'expert') === expert);
+  const rev = Math.round((state.kick.params.rev ?? 0) * 2);
+  for (const b of $('#kick-rev').querySelectorAll('button')) b.classList.toggle('active', +b.dataset.rev === rev);
   $('#kick-knobs').hidden = expert;
   $('#kick-layers').hidden = !expert;
   for (const col of $('#kick-layers').children) {

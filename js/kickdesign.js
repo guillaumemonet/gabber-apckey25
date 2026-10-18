@@ -42,6 +42,9 @@ const PARAMS = {
   tail: { def: 1, val: p => p, fmt: pct },
   deboom: { def: 0, val: p => (p < 0.01 ? 0 : 30 * Math.pow(12, p)), fmt: v => (v ? `${Math.round(v)} Hz` : '—') },
   tailDelay: { def: 0, val: p => p * 0.06, fmt: v => (v ? `${Math.round(v * 1000)} ms` : '—') },
+  // Sens : 0 = normal, 1 = inversé (tout le kick à l'envers), 2 = queue inversée (reverse kick : la queue à l'envers
+  // qui monte, puis l'impact). Un bouton à trois positions, pas un potentiomètre.
+  rev: { def: 0, steps: 3, val: p => Math.round(p * 2), fmt: v => t(`kick.rev.${v}`) },
 };
 export const KICK_PARAMS = Object.keys(PARAMS);
 // Potentiomètres du mode simple, et ceux de chaque couche en mode expert.
@@ -108,9 +111,26 @@ export function cleanKickParams(p) {
 // opts.note : note MIDI de la queue (mélodie de kick ; sinon celle du potentiomètre « Note ») ;
 // opts.only : 'click' | 'body' | 'tail' : une seule couche, au niveau qu'elle a dans le kick entier (écoute en solo, dessin).
 export async function renderKick(positions, sampleRate = 44100, opts = {}) {
-  const all = await renderKickRaw(positions, sampleRate, opts.note);
+  const rev = kickValue('rev', positions.rev ?? PARAMS.rev.def);
+  const all = reverseKick(await renderKickRaw(positions, sampleRate, opts.note), sampleRate, rev);
   const peak = peakOf(all);
-  return finishKick(opts.only ? await renderKickRaw(positions, sampleRate, opts.note, opts.only) : all, sampleRate, peak);
+  return finishKick(opts.only ? reverseKick(await renderKickRaw(positions, sampleRate, opts.note, opts.only), sampleRate, rev) : all, sampleRate, peak);
+}
+
+// Sens du kick. 1 : tout à l'envers (il monte et finit sur l'attaque). 2 : queue inversée (comme le kick « Reverse »
+// des banques) : la queue sans les 30 premières ms, à l'envers et en montée (0,2 -> 1), puis l'impact (120 ms).
+const REV_SKIP = 0.03, REV_PUNCH = 0.12;
+export function reverseKick(data, sampleRate, rev) {
+  if (!rev) return data;
+  if (rev === 1) return Float32Array.from(data).reverse();
+  const skip = Math.min(data.length, Math.round(REV_SKIP * sampleRate));
+  const punchLen = Math.min(data.length, Math.round(REV_PUNCH * sampleRate));
+  const tail = data.slice(skip).reverse();
+  const out = new Float32Array(tail.length + punchLen);
+  for (let i = 0; i < tail.length; i++) out[i] = tail[i] * (0.2 + 0.8 * i / Math.max(1, tail.length - 1));
+  const fade = Math.round(0.02 * sampleRate);
+  for (let i = 0; i < punchLen; i++) out[tail.length + i] = data[i] * Math.min(1, (punchLen - i) / fade);
+  return out;
 }
 const peakOf = d => { let p = 0; for (let i = 0; i < d.length; i++) p = Math.max(p, Math.abs(d[i])); return p; };
 function finishKick(out, sampleRate, peak) {

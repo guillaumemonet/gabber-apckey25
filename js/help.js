@@ -208,7 +208,7 @@ export const HELP = {
     launcher: `
       <p>Play the song live, clip by clip, like on stage: 8 columns (the first 8 timeline tracks) and 5 rows of slots.</p>
       <ul>
-        <li><b>Fill a slot</b>: drop a library sound on it, or right-click a timeline block › <b>Send to the launcher</b> (column of its track). Right-click a slot to empty it.</li>
+        <li><b>Fill a slot</b>: drop a library sound on it, or right-click a timeline block › <b>Send to…</b> › <b>Launcher</b>, then click the slot. Right-click a slot to empty it.</li>
         <li><b>Click a slot</b>: it loops from the next bar, in place of the clip playing in its column. It goes through its track knobs and insert effects. <b>Row</b> launches a whole row; ■ stops a column; <b>Stop all</b> stops every clip at the next bar.</li>
         <li>Clips follow the timeline bars when it plays (and the 909 grid); otherwise the first launched clip starts at once and sets the bars.</li>
         <li><b>APC grid = launcher</b>: the 40 pads are the slots (top row = row 1), SCENE LAUNCH 1-5 launch the rows, STOP ALL stops all clips, Shift + pad stops its column. A slot waiting for its bar blinks fast.</li>
@@ -475,7 +475,7 @@ export const HELP = {
     launcher: `
       <p>Jouez le morceau en direct, clip par clip, comme sur scène : 8 colonnes (les 8 premières pistes de la timeline) et 5 lignes de cases.</p>
       <ul>
-        <li><b>Remplir une case</b> : glissez-y un son de la bibliothèque, ou clic droit sur un bloc de la timeline › <b>Envoyer au lanceur</b> (colonne de sa piste). Clic droit sur une case pour la vider.</li>
+        <li><b>Remplir une case</b> : glissez-y un son de la bibliothèque, ou clic droit sur un bloc de la timeline › <b>Envoyer vers…</b> › <b>Lanceur</b>, puis cliquez sur la case. Clic droit sur une case pour la vider.</li>
         <li><b>Clic sur une case</b> : elle tourne en boucle à partir de la mesure suivante, à la place du clip de sa colonne. Elle passe par les potentiomètres et les effets d'insert de sa piste. <b>Ligne</b> lance toute une ligne ; ■ arrête une colonne ; <b>Tout arrêter</b> arrête tous les clips à la mesure suivante.</li>
         <li>Les clips suivent les mesures de la timeline quand elle joue (et la grille de la 909) ; sinon, le premier clip lancé part tout de suite et donne les mesures.</li>
         <li><b>Grille APC = lanceur</b> : les 40 pads sont les cases (rangée du haut = ligne 1), SCENE LAUNCH 1-5 lancent les lignes, STOP ALL arrête tous les clips, Maj + pad arrête sa colonne. Une case qui attend sa mesure clignote vite.</li>

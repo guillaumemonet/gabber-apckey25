@@ -110,6 +110,7 @@ An analogue-style synth to build your own sounds, next to the layered synth.
 Build your own gabber / hardcore kick, computed by the browser in a few milliseconds. In **Simple** mode, 12 knobs:
 
 - **Presets**: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909 (buttons), also in a menu by category (Gabber, Hardcore, Mainstream / uptempo) with your own kicks. Turning a knob makes the sound custom; type a name, choose a category and **Save** to keep your own (★ in the menu), the bin deletes it.
+- **Direction** (next to Simple / Expert): **Normal**, **Reversed** (the whole kick backwards: it swells and ends on the attack) or **Reverse tail** (the hardstyle reverse kick: the tail backwards rising into the punch of the kick, to put on the offbeat). The direction is saved with the kick (your ★ kicks, kick melodies).
 - **Tail**: **Tune** (note of the tail, in tune with the banks), **Punch** and **Sweep** (how high the pitch starts and how fast it drops), **Tail drop** (how far it keeps falling), **Length**, **Zaag** (sawtooth for the raw, buzzing tail of uptempo kicks).
 - **Distortion**: **Drive** and **Shape** (the 909's 5 shapes), then **Formant** and **Bite**, which make the tail "talk".
 - **Attack**: **Click** (noise) and **Attack** (short punchy layer).

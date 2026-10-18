@@ -25,7 +25,7 @@ Deux decks pour mixer et scratcher n'importe quel son : boucles de la bibliothè
 
 Jouez le morceau en direct, clip par clip, comme sur scène. La fenêtre **Lanceur** (barre des plugins, groupe Studio) a **8 colonnes**, les 8 premières pistes de la timeline, et **5 lignes** de cases.
 
-- **Remplir une case** : glissez-y un son de la bibliothèque, ou clic droit sur un bloc de la timeline › **Envoyer au lanceur** (il va dans la colonne de sa piste, première case libre). Clic droit sur une case pour la vider.
+- **Remplir une case** : glissez-y un son de la bibliothèque, ou clic droit sur un bloc de la timeline › **Envoyer vers…** › **Lanceur**, puis cliquez sur la case voulue dans la grille (les cases occupées montrent leur son). Clic droit sur une case pour la vider.
 - **Lancer** : un clic sur une case la fait tourner **en boucle à partir de la mesure suivante**, à la place du clip qui tournait dans sa colonne (une case qui attend sa mesure clignote). Elle passe par les potentiomètres et les effets d'insert de sa piste.
 - **Ligne N** lance toute une ligne ; le carré ■ d'une colonne l'arrête ; **Tout arrêter** arrête tous les clips à la mesure suivante. **Panique** coupe tout immédiatement.
 - Les clips suivent les mesures de la timeline quand elle joue (et la grille de la TR-909) ; sinon, le premier clip lancé part tout de suite et donne les mesures.

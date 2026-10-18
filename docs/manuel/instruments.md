@@ -110,6 +110,7 @@ Un synthé façon analogique pour fabriquer vos propres sons, à côté du synth
 Fabriquez votre propre kick gabber / hardcore, calculé par le navigateur en quelques millisecondes. En mode **Simple**, 12 potentiomètres :
 
 - **Presets** : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909 (boutons), aussi dans un menu par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et **Enregistrer** pour garder le vôtre (★ dans le menu), la corbeille le supprime.
+- **Sens** (à côté de Simple / Expert) : **Normal**, **Inversé** (tout le kick à l'envers : il monte et finit sur l'attaque) ou **Queue inversée** (le reverse kick du hardstyle : la queue à l'envers qui monte jusqu'à l'impact du kick, à poser sur le contretemps). Le sens est enregistré avec le kick (vos kicks ★, les mélodies de kick).
 - **Queue** : **Note** (accordée avec les banques), **Punch** et **Chute** (de combien la hauteur part haut et à quelle vitesse elle tombe), **Plongée** (de combien elle continue de descendre), **Longueur**, **Zaag** (scie pour la queue brute et bourdonnante des kicks uptempo).
 - **Distorsion** : **Drive** et **Forme** (les 5 formes de la 909), puis **Formant** et **Mordant**, qui font « parler » la queue.
 - **Attaque** : **Clic** (bruit) et **Attaque** (couche courte et percutante).

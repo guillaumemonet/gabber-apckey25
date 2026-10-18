@@ -5,8 +5,8 @@ import { clipEvents } from '../notes.js';
 import { BEATS_PER_BAR } from '../timeline.js';
 import { state, timeline } from './core.js';
 import { bounceTrack } from './freeze.js';
-import { sendToLauncher } from './launcher.js';
 import { openRoll } from './roll-ui.js';
+import { openSendTo } from './send-to.js';
 import { save } from './save.js';
 import { tlDelete, renderTl } from './tl.js';
 import { tlPreviewClip } from './tl-listen.js';
@@ -197,7 +197,8 @@ export function openClipMenu(track, clip, x, y, at = null) {
     item(t('cm.splitHead'), () => { closeClipMenu(); for (const l of list) splitClip(l.track, l.clip, playAt); renderTl(); save(); });
   }
   item(t('cm.duplicate'), () => { closeClipMenu(); duplicateClips(list); }, '', 'plus');
-  if (clips.length === 1 && clip.type !== 'pad') item(t('cm.launcher'), () => { closeClipMenu(); sendToLauncher(track, clip); }, '', 'grid');
+  // Envoyer vers une case choisie du lanceur, ou vers un pad choisi d'une banque.
+  if (clips.length === 1 && clip.type !== 'pad') item(t('cm.sendTo'), () => { const r = menu.getBoundingClientRect(); closeClipMenu(); openSendTo(track, clip, r.left, r.top); }, '', 'grid');
   if (notes && clips.length === 1) item(t('cm.roll'), () => { closeClipMenu(); openRoll(clip, true); }, '', 'roll');
   // Autotune : la voix du bloc recalée sur une gamme ou sur une mélodie (fenêtre Autotune).
   if (audio && clips.length === 1 && clip.sampleId && !state.tl.tracks[track].frozen) item(clip.tune ? t('cm.tuneOn') : t('cm.tune'), () => { closeClipMenu(); openTune(track, clip); }, '', 'tune').title = t('cm.tuneTitle');

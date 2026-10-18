@@ -62,6 +62,18 @@ export default async function (t, A) {
   const late = await A.synthKick({ ...base, tailDelay: 1 }, sr, { only: 'tail' });
   t.ok(rms(late, 0, 0.01, sr) < rms(plain, 0, 0.01, sr) * 0.3, 'départ retardé : la queue est discrète au début');
 
+  // Sens : inversé (le kick à l'envers, l'attaque à la fin) ; queue inversée (la queue monte, puis l'impact).
+  const fwd = await A.synthKick(base, sr);
+  const back = await A.synthKick({ ...base, rev: 0.5 }, sr);
+  const argmax = d => d.reduce((m, v, i) => (Math.abs(v) > Math.abs(d[m]) ? i : m), 0);
+  t.ok(back.length === fwd.length && rms(back, 0, 0.02, sr) < rms(fwd, 0, 0.02, sr) * 0.5 && argmax(back) > back.length * 0.7, 'inversé : il commence doucement et finit sur l’attaque');
+  const rtail = await A.synthKick({ ...base, rev: 1 }, sr);
+  t.near(rtail.length / sr, fwd.length / sr - 0.03 + 0.12, 0.002, 'queue inversée : la queue à l’envers puis 120 ms d’impact');
+  t.ok(rms(rtail, 0, 0.05, sr) < rms(rtail, rtail.length / sr - 0.25, rtail.length / sr - 0.15, sr), 'queue inversée : elle monte vers l’impact');
+  t.$('#kick-rev [data-rev="2"]').click();
+  t.eq([S.kick.params.rev, t.$('#kick-rev [data-rev="2"]').classList.contains('active')], [1, true], 'bouton Sens');
+  t.$('#kick-rev [data-rev="0"]').click();
+
   // Solo d'une couche : la couche est mise en avant, les autres pâlissent.
   t.$('#kick-layers [data-layer="body"] .kick-solo').click();
   await t.wait(50);

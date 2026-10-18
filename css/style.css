@@ -926,6 +926,15 @@ header button, header .status { white-space: nowrap; }
 .cm-transpose button { min-width: 0; padding: 3px 0; font-size: 11px; }
 .clip-menu hr { border: none; border-top: 1px solid var(--line); margin: 4px 0; }
 .bar-counts { display: flex; gap: 3px; }
+.send-menu { width: 420px; }
+.send-tabs { display: flex; gap: 4px; padding: 2px 8px 6px; }
+.send-tabs button { flex: 1; }
+.send-tabs button.active { background: var(--accent-2); color: #000; border-color: var(--accent-2); }
+.send-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; padding: 4px 8px; }
+.send-cell { --c: transparent; height: 34px; padding: 0 2px; font-size: 10px; overflow: hidden; white-space: nowrap; color: var(--muted); border: 1px dashed var(--line); background: var(--bg); }
+.send-cell.used { color: var(--text); border-style: solid; border-color: var(--c); background: color-mix(in srgb, var(--c) 30%, var(--bg)); }
+.send-cell:hover { outline: 2px solid var(--accent-2); outline-offset: -2px; }
+.send-hint { padding: 4px 8px; font-size: 11px; }
 .bar-counts button { flex: 1; min-width: 0; padding: 3px 0; font: inherit; }
 .bar-menu .bar-hint { padding: 2px 8px 4px; font-size: 11px; }
 /* Marqueurs de la timeline (sous les numéros de mesure) */
