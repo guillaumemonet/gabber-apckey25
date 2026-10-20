@@ -22,6 +22,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Générateur** : accords et mélodie d'hymne à partir d'une suite d'accords, avec des suggestions qui apprennent votre goût ;
   - **Breizh generator** : des airs à la manière des sonneurs bretons (an dro, gavotte, marche, gwerz) joués par la bombarde, le biniou, la cornemuse, un couple de sonneurs ou un bagad, avec notes d'agrément et bourdons ;
   - **Correction de justesse** : la voix d'une prise recalée sur une tonalité (celle du Générateur) ou sur la mélodie d'un lead, de l'effet robotique à la correction naturelle (vitesse, humanisation, formants, mélange), consonnes et souffles intacts ;
+  - **Designer de montée** : la montée avant un drop en un clic : riser de bruit, uplifter, roulement de caisse claire qui se resserre, roulement de kick, sub drop et impact, filtre qui monte et silence avant le drop ;
   - **Générateur de voix** : tapez un texte, une voix neuronale le chante, le scande ou le dit en robot sur les notes d'un lead ou d'une nappe, avec plusieurs voix (françaises et anglaises), chœur et harmonie ;
   - **Platines** : deux decks avec disques à scratcher (en avant et en arrière), sync, cue, égaliseur, filtre DJ et crossfader ;
   - **Basse acid façon TB-303** : séquenceur 16 pas avec accent et slide, filtre résonant à enveloppe, distorsion, saisie au clavier de l'APC, calée sur la 909 ;
@@ -86,7 +87,7 @@ Objectif : faire de GabberKey un outil professionnel, au studio comme en live, �
 6. **Tonalité et étirement** : étirement temporel qui garde la hauteur et transposition des sons de la timeline et du lanceur. *(fait ; les boucles des pads suivront)*
 7. **Entrées** : enregistrement audio (micro, carte son) et fichiers MIDI. *(fait)*
 
-Idées gardées pour plus tard : un **séquenceur de pas** pour n'importe quel son, un **sampler de voix et vocoder**, un **designer de montées** (riser, roulement de caisse claire, chute de sub), **plusieurs exemplaires** de la TB-303 et de la TR-909, un **découpeur de breaks**, une **TR-808**, une **version en ligne** jouable sans rien installer, et un **générateur de boucles par IA** (un modèle de musique open source qui tourne sur votre machine).
+Idées gardées pour plus tard : un **séquenceur de pas** pour n'importe quel son, un **sampler de voix et vocoder**, **plusieurs exemplaires** de la TB-303 et de la TR-909, un **découpeur de breaks**, une **TR-808**, une **version en ligne** jouable sans rien installer, et un **générateur de boucles par IA** (un modèle de musique open source qui tourne sur votre machine).
 
 Les idées et suggestions sont les bienvenues dans les [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 

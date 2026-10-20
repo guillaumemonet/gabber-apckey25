@@ -22,6 +22,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Generator**: anthem chords and melody from a chord progression, with suggestions that learn your taste;
   - **Breizh generator**: tunes in the style of Breton pipers (an dro, gavotte, march, gwerz) played by the bombarde, the biniou, the bagpipe, a pair of pipers or a bagad, with grace notes and drones;
   - **Pitch correction**: a vocal take put in tune on a key (the Generator one) or on the melody of a lead, from the robotic effect to natural correction (retune speed, humanize, formant, mix), consonants and breaths untouched;
+  - **Build-up designer**: the build-up before a drop in one click: noise riser, uplifter, snare roll getting tighter, kick roll, sub drop and impact, rising filter and silence before the drop;
   - **Voice generator**: type a text, a neural voice sings it, raps it or says it like a robot on the notes of a lead or a pad, with several voices (French and English), choir and harmony;
   - **Turntables**: two decks with scratchable records (forwards and backwards), sync, cue, EQ, DJ filter and crossfader;
   - **TB-303-style acid bass line**: 16-step sequencer with accent and slide, resonant filter with envelope, distortion, step entry from the APC keyboard, in sync with the 909;
@@ -86,7 +87,7 @@ Goal: make GabberKey a professional tool, in the studio and on stage, step by st
 6. **Key and stretching**: time-stretching that keeps the pitch and transposition of timeline and launcher sounds. *(done; pad loops will follow)*
 7. **Inputs**: audio recording (microphone, sound card) and MIDI files. *(done)*
 
-Ideas kept for later: a **step sequencer** for any sound, a **vocal sampler and vocoder**, a **build-up designer** (riser, snare roll, sub drop), **several instances** of the TB-303 and TR-909, a **break slicer**, a **TR-808**, an **online version** playable without installing anything, and an **AI loop generator** (an open-source music model running on your own computer).
+Ideas kept for later: a **step sequencer** for any sound, a **vocal sampler and vocoder**, **several instances** of the TB-303 and TR-909, a **break slicer**, a **TR-808**, an **online version** playable without installing anything, and an **AI loop generator** (an open-source music model running on your own computer).
 
 Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 

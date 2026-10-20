@@ -97,6 +97,24 @@ Comment ça marche : le texte est converti en phonèmes (espeak-ng) et découpé
 
 Le bloc posé est un enregistrement comme une prise audio : enregistré avec le projet, avec le nom « Voix · » et le début du texte, et rangé dans la catégorie Voix de la bibliothèque.
 
+## Designer de montée
+
+[![Fenêtre Designer de montée : longueur, silence avant le drop, éléments de la montée et du drop](../screenshots/buildup-fr.png)](../screenshots/buildup-fr.png)
+
+La fenêtre **Designer de montée** (groupe Outils) fabrique la montée avant un drop. Placez la **tête de lecture sur la mesure du drop**, choisissez les éléments, **Écouter**, puis **Générer**.
+
+- **Longueur** : 2, 4, 8 ou 16 mesures avant le drop.
+- **Silence avant le drop** : aucun, un demi-temps, un temps ou deux temps. Les pistes qui jouent pendant la montée sont coupées juste avant le drop (un bloc d'effet « Muet » sur chacune) : le drop frappe plus fort.
+- **Montée** :
+  - **Riser de bruit** : un bruit filtré qui monte, son **niveau** réglable ;
+  - **Uplifter** : trois scies désaccordées qui montent de 12, 24 ou 36 demi-tons, le filtre qui s'ouvre ;
+  - **Roulement de caisse claire** : il commence en noires, croches ou doubles croches et se resserre à chaque quart de la montée jusqu'aux triples croches, avec un crescendo et une **montée de hauteur** (0 à 12 demi-tons) ;
+  - **Roulement de kick** : le même roulement avec le kick du designer de kick ;
+  - **Filtre qui monte sur les autres pistes** : un bloc d'effet « Passe-haut qui monte » sur chaque piste qui joue pendant la montée.
+- **Sur le drop** : **Sub drop** (un sinus qui tombe de 90 à 30 Hz sur 2, 4 ou 8 temps, avec sa **saturation**) et **Impact** (coup sourd et souffle qui retombe).
+
+Chaque élément devient un **bloc audio** sur une piste libre, depuis la piste armée : on peut le mixer, le déplacer ou le supprimer à part. Les sons sont enregistrés avec le projet comme des prises. Tout s'annule avec Ctrl+Z.
+
 ---
 
 ← [Instruments](instruments.md) · [Sommaire](README.md) · [Mixage et effets](mixage.md) →

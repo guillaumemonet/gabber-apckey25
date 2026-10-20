@@ -30,6 +30,7 @@ import { FILE_TOOLS, bindFiles, bindKits, openFile, saveFile } from './app/files
 import { buildFreeze } from './app/freeze.js';
 import { buildBreizh } from './app/breizh-ui.js';
 import { buildBankMgr } from './app/banks-ui.js';
+import { buildBuildup } from './app/buildup-ui.js';
 import { buildVoiceWin } from './app/voice-ui.js';
 import { buildTuneWin } from './app/tune-ui.js';
 import { buildGen, presetPatch } from './app/gen.js';
@@ -180,6 +181,7 @@ async function start() {
   buildGen();
   buildBreizh();
   buildBankMgr();
+  buildBuildup();
   buildVoiceWin();
   buildTuneWin();
   buildScenes();

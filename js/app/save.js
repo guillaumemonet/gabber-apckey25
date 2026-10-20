@@ -22,6 +22,7 @@ import { PAD_QUANTS } from './files.js';
 import { defaultBreizh, mergeBreizh } from './breizh-ui.js';
 import { cleanDevices } from './devices.js';
 import { cleanBankNames } from './banks-ui.js';
+import { mergeBuildup } from '../buildup.js';
 import { mergeVoiceState } from './voice-ui.js';
 import { mergeTuneState } from './tune-ui.js';
 import { defaultGen, mergeGen } from './gen.js';
@@ -43,6 +44,7 @@ export async function restore() {
   state.gen = defaultGen();
   state.breizh = defaultBreizh();
   state.bankNames = cleanBankNames(saved?.bankNames);
+  state.buildup = mergeBuildup(saved?.buildup);
   state.voice = mergeVoiceState(saved?.voice);
   state.tune = mergeTuneState(saved?.tune);
   state.viz = mergeViz(saved?.viz);
@@ -200,6 +202,7 @@ export function stateSnapshot() {
     midiMap: state.midiMap,
     devices: state.devices,
     bankNames: state.bankNames,
+    buildup: state.buildup,
     launcher: state.launcher,
     input: state.input,
     midiClock: state.midiClock,

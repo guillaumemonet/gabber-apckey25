@@ -98,6 +98,24 @@ How it works: the text is turned into phonemes (espeak-ng) and split into syllab
 
 The block is a recording like an audio take: saved with the project, named "Voice ·" with the start of the text, and filed in the Voice category of the library.
 
+## Build-up designer
+
+[![Build-up designer window: length, silence before the drop, build-up and drop elements](../screenshots/buildup-en.png)](../screenshots/buildup-en.png)
+
+The **Build-up designer** window (Tools group) makes the build-up before a drop. Put the **playhead on the drop bar**, choose the elements, **Listen**, then **Generate**.
+
+- **Length**: 2, 4, 8 or 16 bars before the drop.
+- **Silence before the drop**: none, half a beat, one beat or two beats. The tracks playing during the build-up are cut just before the drop (a "Mute" effect block on each): the drop hits harder.
+- **Build-up**:
+  - **Noise riser**: filtered noise rising, with its **level**;
+  - **Uplifter**: three detuned saws rising by 12, 24 or 36 semitones, the filter opening;
+  - **Snare roll**: it starts in quarter, eighth or sixteenth notes and gets tighter every quarter of the build-up up to 32nd notes, with a crescendo and a **pitch rise** (0 to 12 semitones);
+  - **Kick roll**: the same roll with the kick of the kick designer;
+  - **Rising filter on the other tracks**: a "High-pass rise" effect block on each track playing during the build-up.
+- **On the drop**: **Sub drop** (a sine falling from 90 to 30 Hz over 2, 4 or 8 beats, with its **drive**) and **Impact** (a thud and a falling noise).
+
+Each element becomes an **audio block** on a free track, from the armed track: you can mix, move or delete it on its own. The sounds are saved with the project like takes. Everything is undone with Ctrl+Z.
+
 ---
 
 ← [Instruments](instruments.md) · [Contents](README.md) · [Mixing and effects](mixing.md) →

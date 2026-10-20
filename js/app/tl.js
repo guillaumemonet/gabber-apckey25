@@ -276,8 +276,9 @@ export function buildTl() {
     renderTlTime(pos);
     const x = TL_HEAD + pos * beatPx();
     line.style.left = `${x}px`;
-    // Pendant la lecture, la vue suit la tête de lecture.
-    if (timeline.playing && (x > scroll.scrollLeft + scroll.clientWidth - 60 || x < scroll.scrollLeft + TL_HEAD)) scroll.scrollLeft = x - 200;
+    // Pendant la lecture, la vue suit la tête de lecture : elle est replacée juste après les en-têtes de piste (fixes au
+    // défilement, TL_HEAD de large), jamais dessous.
+    if (timeline.playing && (x > scroll.scrollLeft + scroll.clientWidth - 60 || x < scroll.scrollLeft + TL_HEAD + 2)) scroll.scrollLeft = Math.max(0, x - TL_HEAD - 60);
     requestAnimationFrame(frame);
   })();
   renderTl();

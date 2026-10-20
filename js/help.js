@@ -204,6 +204,14 @@ export const HELP = {
         <li><b>Play</b> makes it the played bank; <b>Duplicate</b> copies it into the first empty bank; <b>Clear</b>, <b>Export</b>, <b>Import</b> (bank files .apckit).</li>
         <li>Everything is undone with Ctrl+Z. To put a timeline block on a pad: right-click the block › <b>Send to…</b>.</li>
       </ul>`,
+    buildup: `
+      <p>Makes the build-up before a drop. Put the playhead on the drop bar, choose the elements, <b>Listen</b>, then <b>Generate</b>.</p>
+      <ul>
+        <li><b>Length</b> (2 to 16 bars) and <b>Silence before the drop</b> (half a beat to 2 beats: the tracks playing are cut just before the drop).</li>
+        <li><b>Build-up</b>: noise riser, uplifter (saws rising by 12 to 36 semitones), snare roll getting tighter up to 32nd notes (with crescendo and pitch rise), kick roll with the kick of the designer, rising filter on the tracks that play.</li>
+        <li><b>On the drop</b>: sub drop (sine falling from 90 to 30 Hz) and impact.</li>
+        <li>Each element becomes an audio block on a free track (saved with the project), easy to mix or delete. Ctrl+Z undoes it.</li>
+      </ul>`,
     buses: `
       <p>Four buses (A to D) group tracks of the timeline so you can process them together: all the drums through one compressor, all the leads through one reverb…</p>
       <ul>
@@ -479,6 +487,14 @@ export const HELP = {
         <li><b>Clic</b> sur un pad pour l'écouter ; <b>clic droit</b> : écouter, nom, couleur, ouvrir dans l'éditeur de pad, vider.</li>
         <li><b>Jouer</b> en fait la banque jouée ; <b>Dupliquer</b> la copie dans la première banque vide ; <b>Vider</b>, <b>Exporter</b>, <b>Importer</b> (fichiers de banque .apckit).</li>
         <li>Tout s'annule avec Ctrl+Z. Pour mettre un bloc de la timeline sur un pad : clic droit sur le bloc › <b>Envoyer vers…</b>.</li>
+      </ul>`,
+    buildup: `
+      <p>Fabrique la montée avant un drop. Placez la tête de lecture sur la mesure du drop, choisissez les éléments, <b>Écouter</b>, puis <b>Générer</b>.</p>
+      <ul>
+        <li><b>Longueur</b> (2 à 16 mesures) et <b>Silence avant le drop</b> (un demi-temps à 2 temps : les pistes qui jouent sont coupées juste avant le drop).</li>
+        <li><b>Montée</b> : riser de bruit, uplifter (scies qui montent de 12 à 36 demi-tons), roulement de caisse claire qui se resserre jusqu'aux triples croches (crescendo, montée de hauteur), roulement de kick avec le kick du designer, filtre qui monte sur les pistes qui jouent.</li>
+        <li><b>Sur le drop</b> : sub drop (sinus qui tombe de 90 à 30 Hz) et impact.</li>
+        <li>Chaque élément devient un bloc audio sur une piste libre (enregistré avec le projet), facile à mixer ou à supprimer. Ctrl+Z annule.</li>
       </ul>`,
     buses: `
       <p>Quatre bus (A à D) regroupent des pistes de la timeline pour les traiter ensemble : toutes les percussions dans un même compresseur, tous les leads dans une même reverb…</p>
