@@ -24,6 +24,20 @@ function firefoxPath() {
   return candidates.find(p => fs.existsSync(p)) ?? 'firefox';
 }
 
+// TEST_BROWSER=chrome ou edge : les tests dans Chrome / Edge (sans tête) au lieu de Firefox. CHROME : chemin du navigateur.
+const BROWSER = (process.env.TEST_BROWSER || 'firefox').toLowerCase();
+function chromePath() {
+  if (process.env.CHROME) return process.env.CHROME;
+  const win = BROWSER === 'edge'
+    ? ['C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe', 'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe']
+    : ['C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'];
+  const candidates = process.platform === 'win32' ? win
+    : process.platform === 'darwin' ? ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge']
+    : ['/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser', '/usr/bin/microsoft-edge'];
+  return candidates.find(p => fs.existsSync(p)) ?? 'chrome';
+}
+const browserPath = () => (BROWSER === 'firefox' ? firefoxPath() : chromePath());
+
 // Application de test : main.js + window.__app, qui lit n'importe quelle variable de main.js (eval direct, à la demande),
 // de l'un des modules de js/app/ (leurs déclarations sont toutes exportées), ou un export des moteurs (js/*.js).
 // `A.store` = js/storage.js ; `A.synthKick` = renderKick de js/kickdesign.js (A.renderKick = celui de la fenêtre).
@@ -100,8 +114,11 @@ async function runSpec(spec, port, waiters) {
     waiters.set(spec, resolve);
     setTimeout(() => resolve({ spec, ok: false, checks: [], error: `délai dépassé (${TIMEOUT / 1000} s)` }), TIMEOUT);
   });
-  const child = spawn(firefoxPath(), ['-headless', '-no-remote', '-profile', profile, '--width', '1600', '--height', '1000',
-    `http://127.0.0.1:${port}/__test.html?spec=${encodeURIComponent(spec)}`], { stdio: 'ignore', detached: process.platform !== 'win32' });
+  const url = `http://127.0.0.1:${port}/__test.html?spec=${encodeURIComponent(spec)}`;
+  const args = BROWSER === 'firefox' ? ['-headless', '-no-remote', '-profile', profile, '--width', '1600', '--height', '1000', url]
+    : ['--headless=new', `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--autoplay-policy=no-user-gesture-required',
+      '--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', '--lang=fr-FR', '--window-size=1600,1000', url];
+  const child = spawn(browserPath(), args, { stdio: 'ignore', detached: process.platform !== 'win32' });
   const r = await result;
   waiters.delete(spec);
   killTree(child);
@@ -118,7 +135,7 @@ async function main() {
   const waiters = new Map();
   const server = await serve(r => waiters.get(r.spec)?.(r));
   const port = server.address().port;
-  console.log(`${specs.length} test(s), Firefox : ${firefoxPath()}\n`);
+  console.log(`${specs.length} test(s), ${BROWSER === 'firefox' ? 'Firefox' : BROWSER} : ${browserPath()}\n`);
   const queue = [...specs];
   const results = [];
   await Promise.all(Array.from({ length: Math.min(JOBS, specs.length) }, async () => {

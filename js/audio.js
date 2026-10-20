@@ -48,6 +48,13 @@ function makeImpulse(ctx, seconds) {
   return buf;
 }
 
+// Hauteur des oscillateurs calculée une fois par bloc de 128 échantillons (2,9 ms) au lieu de chaque échantillon,
+// quand le navigateur le permet (Chrome, Edge) : vibrato, dérive et glissés modulent la hauteur ; à chaque échantillon,
+// chaque oscillateur recalculait sa fréquence (le plus gros coût des chœurs). Inaudible à ces vitesses de modulation.
+function kRate(osc) {
+  try { osc.frequency.automationRate = 'k-rate'; osc.detune.automationRate = 'k-rate'; } catch { /* non pris en charge */ }
+}
+
 function driveCurve(amount) {
   const k = amount * 60;
   const curve = new Float32Array(1024);
@@ -204,6 +211,8 @@ export class Engine {
     // Ensemble stéréo façon Solina : trois lignes à retard modulées lentement, à gauche, au centre, à droite.
     this.chorusDry = gain(1);
     this.chorusWet = gain(0);
+    this.chorusLines = [];   // lignes du chorus : branchées seulement quand il sert (voir 'chorus')
+    this.chorusOn = false;
     this.shaper.connect(this.chorusDry).connect(this.synthBus);
     for (const [rate, fast, side] of [[0.43, 5.9, -0.9], [0.61, 6.7, 0], [0.79, 6.2, 0.9]]) {
       const d = ctx.createDelay(0.05);
@@ -216,7 +225,8 @@ export class Engine {
       }
       const pan = ctx.createStereoPanner();
       pan.pan.value = side;
-      this.shaper.connect(d).connect(pan).connect(this.chorusWet);
+      d.connect(pan).connect(this.chorusWet);
+      this.chorusLines.push(d);
     }
     this.chorusWet.connect(this.synthBus);
     this.synthBus.connect(this.pumpGain).connect(this.master);
@@ -331,7 +341,9 @@ export class Engine {
       case 'dSend': smooth(this.synthDSend.gain, v); break;
       case 'rSend': smooth(this.synthRSend.gain, v); break;
       case 'drive':
-        this.shaper.curve = driveCurve(v);
+        // À zéro, la saturation n'est plus calculée (ni courbe, ni suréchantillonnage).
+        this.shaper.curve = v > 0.001 ? driveCurve(v) : null;
+        this.shaper.oversample = v > 0.001 ? '2x' : 'none';
         smooth(this.synthIn.gain, 1 / (1 + v * 2));
         break;
       case 'rSize':
@@ -358,6 +370,7 @@ export class Engine {
         break;
       case 'chorus':
         smooth(this.chorusWet.gain, v * 0.9);
+        this.wireChorus(v > 0.001);
         smooth(this.chorusDry.gain, 1 - v * 0.35);
         break;
       case 'eqLow': case 'eqLowMid': case 'eqMid': case 'eqHiMid': case 'eqHigh':
@@ -480,14 +493,27 @@ export class Engine {
       const lg = ctx.createGain();
       lg.gain.value = (layer.level ?? 1) / Math.sqrt(n) / Math.max(1, total * 0.8);
       (layer.formant ? this.formant(lg, layer.formant, c.shimmer ? { depth: c.shimmer * 0.15, t, srcs } : null) : lg).connect(filter);
+      // Panoramiques : un par oscillateur jusqu'à 3, au-delà regroupés en trois positions (gauche, centre, droite).
+      // Un unisson de 9 oscillateurs coûtait 9 panoramiques par note ; l'image stéréo reste large.
+      const groups = new Map();
+      const panFor = spread => {
+        const g = n > 3 ? Math.round(spread) : spread;
+        if (!groups.has(g)) {
+          const pan = ctx.createStereoPanner();
+          pan.pan.value = g * width;
+          pan.connect(lg);
+          groups.set(g, pan);
+        }
+        return { pan: groups.get(g), panSpread: g };
+      };
       for (let k = 0; k < n; k++) {
         const osc = ctx.createOscillator();
         if (this.waves[layer.osc]) osc.setPeriodicWave(this.waves[layer.osc]); else osc.type = layer.osc ?? 'sawtooth';
+        kRate(osc);
         const spread = n > 1 ? (2 * k) / (n - 1) - 1 : 0;
         const cents = spread * (layer.spread ?? 12);
         osc.detune.value = cents * detune;
-        const pan = ctx.createStereoPanner();
-        pan.pan.value = spread * width;
+        const { pan, panSpread } = panFor(spread);
         if (c.stagger) {   // un sonneur de plus : il attaque un peu après les autres, un peu plus ou moins fort
           const player = ctx.createGain();
           const at = t + Math.random() * c.stagger;
@@ -496,14 +522,14 @@ export class Engine {
           player.gain.linearRampToValueAtTime(0.75 + Math.random() * 0.25, at + 0.02);
           osc.connect(player).connect(pan);
         } else osc.connect(pan);
-        pan.connect(lg);
         if (c.drift) this.wobble(osc.detune, 0.02 + Math.random() * 0.03, c.drift, t, srcs);
-        oscs.push({ osc, spread, cents, pan, ratio: Math.pow(2, (layer.octave ?? 0) / 12) });
+        oscs.push({ osc, spread: panSpread, cents, pan, ratio: Math.pow(2, (layer.octave ?? 0) / 12) });
       }
     }
     if (c.sub) {
       const osc = ctx.createOscillator();
       osc.type = 'square';
+      kRate(osc);
       const g = ctx.createGain();
       g.gain.value = c.sub * 0.6;
       osc.connect(g).connect(filter);
@@ -598,6 +624,15 @@ export class Engine {
     for (const l of voice.lfos) l.stop(end);
     // Voix éteinte : on la débranche (le moteur n'a plus à la parcourir).
     if (voice.oscs[0]) voice.oscs[0].osc.onended = () => { try { voice.amp.disconnect(); voice.filter.disconnect(); } catch { /* déjà fait */ } };
+  }
+
+  // Chorus : ses trois lignes à retard modulées ne sont branchées (et calculées) que quand il est monté.
+  wireChorus(on) {
+    if (on === this.chorusOn) return;
+    this.chorusOn = on;
+    clearTimeout(this._chorusTimer);
+    if (on) for (const d of this.chorusLines) this.shaper.connect(d);
+    else this._chorusTimer = setTimeout(() => { if (!this.chorusOn) for (const d of this.chorusLines) { try { this.shaper.disconnect(d); } catch { /* déjà */ } } }, 200);
   }
 
   // Sortie propre pour écouter un preset (Générateur, Breizh generator) : vers le master, avec la reverb du preset,

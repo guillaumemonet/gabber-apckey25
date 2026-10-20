@@ -19,7 +19,11 @@ export const BEATS_PER_BAR = 4;
 const FROZEN_CLIP = { loop: false };   // son rendu d'une piste gelée : lu comme un bloc audio, sans fondu ni boucle
 // Les notes et les sons ne sont créés qu'un peu avant de jouer (secondes) : tout créer d'avance
 // (des milliers de nœuds audio pour un morceau entier) écroulerait le moteur audio.
-const LOOKAHEAD = 1.5;
+// Page visible : 0,4 s suffit (le minuteur passe toutes les 30 ms) ; chaque voix créée d'avance coûte déjà du calcul
+// (Chrome calcule les nœuds d'une note qui n'a pas encore commencé). Onglet en arrière-plan : le navigateur ne réveille
+// plus le minuteur qu'une fois par seconde, il faut 1,5 s d'avance.
+const LOOKAHEAD = 1.5, LOOKAHEAD_VISIBLE = 0.4;
+const lookahead = () => (typeof document !== 'undefined' && !document.hidden ? LOOKAHEAD_VISIBLE : LOOKAHEAD);
 // Réglages d'une piste (ses potentiomètres) : volume, panoramique, filtres passe-bas / passe-haut, envois delay et reverb.
 export const TRACK_DEFAULTS = { vol: 1, pan: 0, lp: 20000, hp: 20, dly: 0, rev: 0, drive: 0 };
 const num = (v, lo, hi, d) => (Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d);
@@ -213,6 +217,11 @@ export class Timeline {
     this.cycles = [];
     this.scheduleCycle(start, beat);
     this.ticker = setInterval(() => this.flush(this.ctx.currentTime + 0.1), 30);
+    // L'onglet passe en arrière-plan : l'avance longue est créée tout de suite (le minuteur va ralentir).
+    if (!this.onHidden && typeof document !== 'undefined') {
+      this.onHidden = () => { if (document.hidden && this.playing) this.flush(this.ctx.currentTime + 0.1); };
+      document.addEventListener('visibilitychange', this.onHidden);
+    }
     try { this.onTransport(true, beat, start); } catch (err) { console.warn('Timeline', err); }
     return start;
   }
@@ -677,7 +686,7 @@ export class Timeline {
   // Crée les départs jusqu'à `horizon` + LOOKAHEAD et envoie les fins de notes jusqu'à `horizon`, dans l'ordre du temps
   // (une note finie libère sa voix avant qu'une suivante n'en demande une).
   flush(horizon) {
-    const until = horizon + LOOKAHEAD;
+    const until = horizon + lookahead();
     for (;;) {
       if (this.offsDirty) { this.offs.sort((a, b) => a.time - b.time); this.offsDirty = false; }
       const on = this.ons[0]?.time < until ? this.ons[0] : null;
