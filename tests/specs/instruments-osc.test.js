@@ -9,12 +9,13 @@ export default async function (t, A) {
   t.eq(S.page, 'osc', 'page de potentiomètres du synthé');
   t.ok(t.$$('.osc-mod').length >= 7, 'modules (3 oscillateurs, mod, filtre, enveloppes, LFO…)', t.$$('.osc-mod').length);
   t.ok(t.$$('#osc-modules .knob').length >= 30, 'potentiomètres', t.$$('#osc-modules .knob').length);
-  t.eq(t.$$('#osc-presets button').length >= 12, true, '12 presets ou plus');
+  t.eq(t.$$('#osc-presets button').length, A.OSC_PRESETS.length, 'un bouton par preset (15 sons et Init)');
+  t.eq(A.OSC_PRESETS.length, 16, '16 presets');
   const meter = t.meter(A.oscSynth.out);
   const buf = new Float32Array(2048);
   const an = A.engine.ctx.createAnalyser(); an.fftSize = 2048; A.oscSynth.out.connect(an);
   const quiet = [];
-  for (const p of ['hoover', 'fm_screech', 'reese', 'gabber_lead', 'acid_bass', 'sub', 'supersaw', 'pluck', 'brass_stab', 'pad', 'wobble', 'laser']) {
+  for (const p of A.OSC_PRESETS.map(x => x.id).filter(id => id !== 'init')) {
     A.loadOscPreset(p);
     A.playNote(60, 0.9, true); A.playNote(64, 0.9, true);
     await t.wait(250);

@@ -74,6 +74,10 @@ export const TR_KITS = [
   { id: 'gabber', cat: 'hard', v: { bd: { drive: 0.45, shape: 0.5 } } },
   { id: 'rotterdam', cat: 'hard', v: { bd: { tune: 0.35, attack: 0.7, decay: 0.75, drive: 0.8, shape: 0.5 }, sd: { drive: 0.3, shape: 0.25 }, oh: { decay: 0.4 } } },
   { id: 'terror', cat: 'hard', v: { bd: { tune: 0.6, attack: 0.9, decay: 0.4, drive: 1, shape: 0.25 }, sd: { tone: 0.7, snappy: 0.8, drive: 0.5, shape: 0.25 }, ch: { decay: 0.3 }, oh: { decay: 0.3 } } },
+  // Early hardcore : grosse caisse longue écrêtée, clap et caisse claire saturés (style des grandes salles du milieu des années 90).
+  { id: 'early', cat: 'hard', v: { bd: { tune: 0.3, attack: 0.6, decay: 0.85, drive: 0.75, shape: 0.25 }, sd: { tone: 0.45, snappy: 0.7, drive: 0.35, shape: 0.5 }, hc: { drive: 0.4, shape: 0.25, level: 0.85 }, oh: { decay: 0.45 }, cr: { level: 0.7 } } },
+  { id: 'doef', cat: 'hard', v: { bd: { tune: 0.4, attack: 0.5, decay: 0.7, drive: 0.9, shape: 0.5 }, sd: { drive: 0.5, shape: 0.25 }, hc: { drive: 0.5, shape: 0.5 }, ch: { decay: 0.35 } } },
+  { id: 'clipped', cat: 'hard', v: { bd: { tune: 0.45, attack: 0.8, decay: 0.6, drive: 1, shape: 0.25 }, sd: { drive: 0.7, shape: 0.25 }, hc: { drive: 0.7, shape: 0.25 }, rs: { drive: 0.6, shape: 0.25 }, oh: { drive: 0.3, shape: 0.25 } } },
   { id: 'industrial', cat: 'hard', v: { bd: { drive: 0.9, shape: 1 }, sd: { drive: 0.7, shape: 0.75 }, lt: { drive: 0.6, shape: 1 }, mt: { drive: 0.6, shape: 1 }, ht: { drive: 0.6, shape: 1 }, cr: { drive: 0.5, shape: 0.75 } } },
   { id: 'clean', cat: 'classic', v: {} },
   { id: 'house', cat: 'classic', v: { bd: { tune: 0.45, attack: 0.4, decay: 0.6 }, sd: { tone: 0.4, snappy: 0.5 }, oh: { decay: 0.6 } } },

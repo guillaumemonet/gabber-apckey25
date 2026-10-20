@@ -7,7 +7,7 @@ export default async function (t, A) {
   const sel = t.$('#acid-presets .pb-sel');
   const groups = [...sel.querySelectorAll('optgroup')];
   t.eq(groups.length, 4, '4 catégories (Acid, Basse, Lead, FX)');
-  t.eq(groups.reduce((n, g) => n + g.children.length, 0), 15, '15 sons fournis');
+  t.eq(groups.reduce((n, g) => n + g.children.length, 0), 18, '18 sons fournis');
   sel.value = 'screamer'; sel.dispatchEvent(new Event('change'));
   t.eq(S.acid.sound, 'screamer', 'preset Screamer chargé');
   t.ok(A.acid.f1.Q.value > 5, 'le filtre de la 303 suit (résonance forte)', A.acid.f1.Q.value);

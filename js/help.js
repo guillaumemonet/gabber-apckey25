@@ -29,7 +29,7 @@ export const HELP = {
       <ul>
         <li><b>Click a step</b>: note → accent → off. <b>Click an instrument name</b> to play and select it.</li>
         <li><b>Patterns 1-8</b> (4 presets: gabber, rave, breakbeat, kick roll). A change waits for the next bar.</li>
-        <li><b>Sound kits</b> (menu above the grid): the settings of the 11 instruments at once: Hardcore (Gabber, Rotterdam, Terror, Industrial), Classic (Clean 909, House, Techno), FX (Lo-fi crush, Folded). Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
+        <li><b>Sound kits</b> (menu above the grid): the settings of the 11 instruments at once: Hardcore (Gabber, Rotterdam, Early hardcore, Doef, Clipped, Terror, Industrial), Classic (Clean 909, House, Techno), FX (Lo-fi crush, Folded). Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
         <li><b>Accent</b>: how much louder the accented steps are.</li>
         <li><b>Knobs</b> (under the grid, also on the APC knobs K1-K8 when this window is active): K1-K4 = parameters of the selected instrument, K5 = <b>drive</b>, K6 = distortion <b>shape</b> (soft, hard, tube, fold, crush), K7 = shuffle, K8 = 909 volume.</li>
         <li><b>APC grid</b> (Shift + PLAY): rows 1-2 = the 16 steps, row 3-4 = instruments, Accent, Clear, Mute, row 5 = patterns. A SCENE LAUNCH button brings the pads back.</li>
@@ -39,7 +39,7 @@ export const HELP = {
       <p>An acid bass line in the style of the TB-303: oscillator, resonant 24 dB low-pass filter driven by an envelope, accent, slide, and distortion.</p>
       <ul>
         <li><b>Grid</b>: one column per 16th note, one row per note from F to high F. Click a cell to place a note, click it again for a rest. The <b>Oct + / Oct −</b> rows shift a step by an octave; <b>Accent</b> makes it louder and snappier; <b>Slide</b> glides into the next note without retriggering the envelope.</li>
-        <li><b>Sound presets</b> (menu above the knobs): 15 ready-made sounds in 4 categories (Acid: classic, squelch, screamer, Rotterdam, hoover; Bass: rubber, sub, dark roller; Lead: saw lead, squeal, gabber lead; FX: laser, siren, crushed, zap). Turn a knob and the sound becomes custom; type a name, choose a category and <b>Save</b> to keep it (★ in the menu), the bin deletes it.</li>
+        <li><b>Sound presets</b> (menu above the knobs): 18 ready-made sounds in 4 categories (Acid: classic, squelch, screamer, Rotterdam, early acid, hoover; Bass: rubber, sub, dark roller, doef bass; Lead: saw lead, squeal, gabber lead, alarm; FX: laser, siren, crushed, zap). Turn a knob and the sound becomes custom; type a name, choose a category and <b>Save</b> to keep it (★ in the menu), the bin deletes it.</li>
         <li><b>Knobs</b>: tune, cutoff, resonance, envelope amount, decay, accent, <b>slide</b> (glide time between linked notes), drive, distortion shape (the 909's 5 shapes), volume. On the APC: <b>Shift + REC</b> opens the TB-303 knob page (K1-K8). Double-click = default value.</li>
         <li><b>Patterns 1-8</b> (4 ready-made lines in F minor). A change waits for the next bar. <b>Random</b> writes a new line in F minor, <b>Clear</b> empties the pattern.</li>
         <li><b>Follow 909</b>: the 303 plays on the TR-909's clock (shuffle included); ▶ starts both. Turn it off to play the 303 alone.</li>
@@ -56,7 +56,7 @@ export const HELP = {
         <li><b>Envelopes</b>: ADSR of the filter and of the volume, drawn above their knobs.</li>
         <li><b>LFO</b>: sine, triangle, saw or square, in sync with the tempo (1/1 to 1/32, triplets), on the pitch, the filter, the pulse width or the volume.</li>
         <li><b>Voice</b>: poly (8 notes), mono or legato (no new attack between linked notes), glide, stereo width of the unison, volume.</li>
-        <li><b>Presets</b>: 12 ready-made sounds (hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, wobble, laser), as buttons and in a menu by category (Lead, Bass, Pad, FX). Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
+        <li><b>Presets</b>: 15 ready-made sounds (hoover, FM screech, reese, gabber lead, acid bass, sub, supersaw, pluck, brass stab, pad, wobble, laser, early hoover, mentasm stab, alarm), as buttons and in a menu by category (Lead, Bass, Pad, FX). Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
         <li><b>APC knobs</b>: the knobs marked K1-K8 (cutoff, resonance, filter envelope, filter decay, drive, LFO depth, release, volume) follow the APC knobs while this window is active.</li>
         <li>It has its own <b>mixer channel</b> (K7 on the mixer pages), can be wired in the <b>Patch</b> window, and is ducked by the <b>sidechain</b> like the synth. Recordings of it become note blocks with its sound; in the <b>piano roll</b>, any note block can use one of its presets.</li>
       </ul>`,
@@ -107,7 +107,7 @@ export const HELP = {
     kick: `
       <p>Build your own gabber / hardcore kick, computed in a few milliseconds, then use it anywhere.</p>
       <ul>
-        <li><b>Presets</b>: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909. Start from one, then shape it. The menu under the buttons sorts them by category (Gabber, Hardcore, Mainstream / uptempo) with your own kicks. Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
+        <li><b>Presets</b>: Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909, Hall, Doef, Clipped 909. Start from one, then shape it. The menu under the buttons sorts them by category (Gabber, Hardcore, Mainstream / uptempo) with your own kicks. Turning a knob makes the sound custom; type a name, choose a category and <b>Save</b> to keep yours (★), the bin deletes it.</li>
         <li><b>Tail</b>: <b>Tune</b> (note of the tail, F = the key of the banks), <b>Punch</b> and <b>Sweep</b> (how high the pitch starts and how fast it drops), <b>Tail drop</b> (how far it keeps falling), <b>Length</b>, <b>Zaag</b> (sawtooth for a raw, buzzing tail).</li>
         <li><b>Distortion</b>: <b>Drive</b> and <b>Shape</b> (the 909's 5 shapes), then <b>Formant</b> and <b>Bite</b>, which make the tail "talk".</li>
         <li><b>Attack</b>: <b>Click</b> (noise) and <b>Attack</b> (short punchy layer).</li>
@@ -139,7 +139,7 @@ export const HELP = {
         <li><b>All to master</b> wires every tool straight to the master again.</li>
       </ul>`,
     piano: `
-      <p>The keyboard synth: 41 presets in 11 families, 8 expression knobs, chord mode and arpeggiator.</p>
+      <p>The keyboard synth: 46 presets in 11 families, 8 expression knobs, chord mode and arpeggiator.</p>
       <ul>
         <li><b>Families and presets</b>: click, or on the APC <b>Shift + white key</b> = preset of the family, <b>Shift + C# / D#</b> = previous / next family.</li>
         <li><b>8 knobs</b> adapted to the family (brightness, resonance, attack, release, width, vibrato, ensemble or drive, glide, detune, reverb). Double-click = back to the preset's value.</li>
@@ -313,7 +313,7 @@ export const HELP = {
       <ul>
         <li><b>Clic sur un pas</b> : note → accent → silence. <b>Clic sur le nom d'un instrument</b> pour le jouer et le choisir.</li>
         <li><b>Patterns 1 à 8</b> (4 préréglés : gabber, rave, breakbeat, roulement de kick). Un changement attend la mesure suivante.</li>
-        <li><b>Kits de son</b> (menu au-dessus de la grille) : les réglages des 11 instruments d'un coup : Hardcore (Gabber, Rotterdam, Terror, Industriel), Classique (909 propre, House, Techno), FX (Lo-fi écrasé, Replié). Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
+        <li><b>Kits de son</b> (menu au-dessus de la grille) : les réglages des 11 instruments d'un coup : Hardcore (Gabber, Rotterdam, Early hardcore, Doef, Écrêté, Terror, Industriel), Classique (909 propre, House, Techno), FX (Lo-fi écrasé, Replié). Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
         <li><b>Accent</b> : de combien les pas accentués sont plus forts.</li>
         <li><b>Potentiomètres</b> (sous la grille, aussi sur les potentiomètres K1-K8 de l'APC quand cette fenêtre est active) : K1-K4 = paramètres de l'instrument choisi, K5 = <b>drive</b>, K6 = <b>forme</b> de distorsion (douce, dure, lampe, repli, crush), K7 = shuffle, K8 = volume 909.</li>
         <li><b>Grille de l'APC</b> (Maj + PLAY) : rangées 1-2 = les 16 pas, rangées 3-4 = instruments, Accent, Effacer, Muet, rangée 5 = patterns. Un bouton SCENE LAUNCH ramène les pads.</li>
@@ -323,7 +323,7 @@ export const HELP = {
       <p>Une ligne de basse acid façon TB-303 : oscillateur, filtre passe-bas 24 dB résonant piloté par une enveloppe, accent, slide et distorsion.</p>
       <ul>
         <li><b>Grille</b> : une colonne par double-croche, une ligne par note de fa à fa aigu. Clic sur une case pour poser une note, un second clic pour un silence. Les lignes <b>Oct + / Oct −</b> décalent un pas d'une octave ; <b>Accent</b> le rend plus fort et plus claquant ; <b>Slide</b> glisse vers la note suivante sans relancer l'enveloppe.</li>
-        <li><b>Presets de son</b> (menu au-dessus des potentiomètres) : 15 sons tout prêts en 4 catégories (Acid : classique, squelch, screamer, Rotterdam, hoover ; Basse : caoutchouc, sub, roulante sombre ; Lead : lead scie, couinement, lead gabber ; FX : laser, sirène, écrasée, zap). Tournez un potentiomètre et le son devient personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour le garder (★ dans le menu), la corbeille le supprime.</li>
+        <li><b>Presets de son</b> (menu au-dessus des potentiomètres) : 18 sons tout prêts en 4 catégories (Acid : classique, squelch, screamer, Rotterdam, acid années 90, hoover ; Basse : caoutchouc, sub, roulante sombre, basse doef ; Lead : lead scie, couinement, lead gabber, alarme ; FX : laser, sirène, écrasée, zap). Tournez un potentiomètre et le son devient personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour le garder (★ dans le menu), la corbeille le supprime.</li>
         <li><b>Potentiomètres</b> : accord, coupure, résonance, quantité d'enveloppe, déclin, accent, <b>slide</b> (durée du glissé entre notes liées), drive, forme de distorsion (les 5 formes de la 909), volume. Sur l'APC : <b>Maj + REC</b> ouvre la page de potentiomètres TB-303 (K1-K8). Double-clic = valeur par défaut.</li>
         <li><b>Patterns 1 à 8</b> (4 lignes toutes prêtes en fa mineur). Un changement attend la mesure suivante. <b>Aléatoire</b> écrit une nouvelle ligne en fa mineur, <b>Effacer</b> vide le pattern.</li>
         <li><b>Suivre la 909</b> : la 303 joue sur l'horloge de la TR-909 (shuffle compris) ; ▶ lance les deux. Désactivez-le pour jouer la 303 seule.</li>
@@ -340,7 +340,7 @@ export const HELP = {
         <li><b>Enveloppes</b> : ADSR du filtre et du volume, dessinées au-dessus de leurs potentiomètres.</li>
         <li><b>LFO</b> : sinus, triangle, scie ou carré, calé sur le tempo (1/1 à 1/32, triolets), sur la hauteur, le filtre, la largeur d'impulsion ou le volume.</li>
         <li><b>Voix</b> : poly (8 notes), mono ou legato (pas de nouvelle attaque entre notes liées), glissé, largeur stéréo de l'unisson, volume.</li>
-        <li><b>Presets</b> : 12 sons tout prêts (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser), en boutons et dans un menu par catégorie (Lead, Basse, Nappe, FX). Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
+        <li><b>Presets</b> : 15 sons tout prêts (hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser, hoover années 90, stab mentasm, alarme), en boutons et dans un menu par catégorie (Lead, Basse, Nappe, FX). Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
         <li><b>Potentiomètres de l'APC</b> : les potentiomètres marqués K1-K8 (coupure, résonance, enveloppe du filtre, déclin du filtre, saturation, quantité du LFO, relâche, volume) suivent les potentiomètres de l'APC quand cette fenêtre est active.</li>
         <li>Il a sa propre <b>voie de mixage</b> (K7 sur les pages mixeur), se câble dans la fenêtre <b>Câblage</b> et est baissé par le <b>sidechain</b> comme le synthé. Ses enregistrements deviennent des blocs de notes avec son son ; dans le <b>piano roll</b>, tout bloc de notes peut prendre un de ses presets.</li>
       </ul>`,
@@ -391,7 +391,7 @@ export const HELP = {
     kick: `
       <p>Fabriquez votre propre kick gabber / hardcore, calculé en quelques millisecondes, puis utilisez-le partout.</p>
       <ul>
-        <li><b>Presets</b> : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909. Partez de l'un d'eux, puis sculptez-le. Le menu sous les boutons les range par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
+        <li><b>Presets</b> : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909, Grande salle, Doef, 909 écrêtée. Partez de l'un d'eux, puis sculptez-le. Le menu sous les boutons les range par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et <b>Enregistrer</b> pour garder le vôtre (★), la corbeille le supprime.</li>
         <li><b>Queue</b> : <b>Note</b> (fa = la tonalité des banques), <b>Punch</b> et <b>Chute</b> (de combien la hauteur part haut et à quelle vitesse elle tombe), <b>Plongée</b> (de combien elle continue de descendre), <b>Longueur</b>, <b>Zaag</b> (scie pour une queue brute qui bourdonne).</li>
         <li><b>Distorsion</b> : <b>Drive</b> et <b>Forme</b> (les 5 formes de la 909), puis <b>Formant</b> et <b>Mordant</b>, qui font « parler » la queue.</li>
         <li><b>Attaque</b> : <b>Clic</b> (bruit) et <b>Attaque</b> (couche courte et percutante).</li>
@@ -423,7 +423,7 @@ export const HELP = {
         <li><b>Tout sur le master</b> recâble chaque outil directement sur le master.</li>
       </ul>`,
     piano: `
-      <p>Le synthé du clavier : 41 presets en 11 familles, 8 potentiomètres d'expression, mode accords et arpégiateur.</p>
+      <p>Le synthé du clavier : 46 presets en 11 familles, 8 potentiomètres d'expression, mode accords et arpégiateur.</p>
       <ul>
         <li><b>Familles et presets</b> : clic, ou sur l'APC <b>Maj + touche blanche</b> = preset de la famille, <b>Maj + do# / ré#</b> = famille précédente / suivante.</li>
         <li><b>8 potentiomètres</b> adaptés à la famille (brillance, résonance, attaque, relâche, largeur, vibrato, ensemble ou saturation, glissé, désaccord, réverb). Double-clic = retour à la valeur du preset.</li>
