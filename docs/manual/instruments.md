@@ -58,7 +58,7 @@ The keyboard plays a layered synth built for hardcore: every preset stacks up to
 | Family | Presets |
 |---|---|
 | Strings | Epic, Dark, Staccato, Vintage, High |
-| Pads | Thunderdome, Dark, Warm, Glass, Sweep |
+| Pads | Arena, Dark, Warm, Glass, Sweep |
 | Choirs | Rave, Ooh, Dark |
 | Supersaw | Uplifting, Hardstyle lead, Pad, Stab |
 | Hoovers | Hoover, Mentasm, Early hoover |

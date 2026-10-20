@@ -96,6 +96,7 @@ export async function restore() {
         const s = saved.banks?.[b]?.[i];
         if (!s) continue;
         const pad = { bpm: 0, ...s, p: { ...defaultPositions('pad'), ...s.p }, buffer: null };
+        if (pad.name === 'Thunderdome') pad.name = soundName('Arena kick');   // ancien nom (une marque) du kick de la banque Oldschool
         state.banks[b][i] = pad;
         if (s.sampleId?.startsWith('builtin:')) pad.buffer = kit[+s.sampleId.slice(8)]?.buffer ?? null;
       }

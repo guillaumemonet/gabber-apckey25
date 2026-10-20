@@ -865,7 +865,7 @@ def build_oldschool(bpm=190):
         ('909 boom', RED, ONESHOT, k909, None),
         ("Kick '91", RED, ONESHOT, gabber_kick(F + 4, drive=10, decay=0.09, tail=0.3, dur=0.55, lp=3000, mid_db=2), None),
         ('808 long', ORANGE, ONESHOT, kick808(), None),
-        ('Thunderdome', RED, ONESHOT, gabber_kick(F + 2, drive=20, tail=1.1, dur=1.3, lp=3800), None),
+        ('Arena kick', RED, ONESHOT, gabber_kick(F + 2, drive=20, tail=1.1, dur=1.3, lp=3800), None),
         ("Kick '93", RED, ONESHOT, gabber_kick(F + 5, drive=8, decay=0.12, tail=0.2, dur=0.4), None),
         ('Break kick', ORANGE, ONESHOT, kb, None),
         ('Soft doef', ORANGE, ONESHOT, gabber_kick(F, drive=6, lp=2500, tail=0.9, dur=1.1), None),

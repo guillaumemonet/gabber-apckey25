@@ -68,7 +68,10 @@ export function buildKick() {
   for (const id of Object.keys(KICK_PRESETS)) {
     const b = document.createElement('button');
     b.dataset.preset = id;
-    b.textContent = t(`kick.preset.${id}`);
+    // Nom court sur le bouton (les 12 presets tiennent sur une ligne), le nom complet en infobulle.
+    const full = t(`kick.preset.${id}`), short = t(`kick.short.${id}`);
+    b.textContent = short === `kick.short.${id}` ? full : short;
+    b.title = full;
     b.addEventListener('click', () => {
       state.kick.params = { ...kickDefaults(), ...KICK_PRESETS[id] };
       state.kick.preset = id;

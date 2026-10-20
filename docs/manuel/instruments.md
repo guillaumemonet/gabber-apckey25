@@ -58,7 +58,7 @@ Le clavier joue un synthé en couches pensé pour le hardcore : chaque preset em
 | Famille | Presets |
 |---|---|
 | Cordes | Épiques, Sombres, Staccato, Vintage, Aiguës |
-| Nappes | Thunderdome, Sombre, Chaude, De verre, Balayée |
+| Nappes | Arène, Sombre, Chaude, De verre, Balayée |
 | Chœurs | Rave, « Ooh », Sombre |
 | Supersaw | Uplifting, Lead hardstyle, Nappe, Stab |
 | Hoovers | Hoover, Mentasm, Hoover années 90 |
