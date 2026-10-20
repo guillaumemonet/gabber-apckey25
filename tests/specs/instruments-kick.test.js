@@ -32,7 +32,7 @@ export default async function (t, A) {
   await t.wait(50);
   t.eq(t.$$('#kick-knobs .knob').length, 12, '12 potentiomètres');
   const presets = t.$$('#kick-presets button');
-  t.eq(presets.length, 9, '9 presets');
+  t.eq(presets.length, 12, '12 presets');
   // Hauteur de la queue : fa (87 Hz), puis une octave au-dessus.
   const base = { ...S.kick.params, length: 0.6, bend: 0, drive: 0.3, zaag: 0 };
   const k1 = await A.synthKick(base, sr);
@@ -43,6 +43,10 @@ export default async function (t, A) {
   const expect = tune => 440 * 2 ** ((41 + Math.round(tune * 24) - 12 - 69) / 12);
   t.near(pitch(k1, sr), expect(base.tune), expect(base.tune) * 0.05, 'queue accordée sur Tune (fa2 au centre)');
   t.near(pitch(k2, sr), expect(1), expect(1) * 0.05, 'Tune au maximum : une octave au-dessus de fa2');
+  // Presets early hardcore : queues accordées dans la gamme de fa mineur, entre 50 et 130 Hz (la#1, ré#2, fa2).
+  t.eq(['hall', 'doef', 'clipped'].map(id => A.kickTailNote(A.KICK_PRESETS[id])), [34, 39, 41], 'presets early : notes des queues');
+  const hall = await A.synthKick({ ...A.kickDefaults(), ...A.KICK_PRESETS.hall }, sr);
+  t.near(pitch(hall, sr), 58.3, 58.3 * 0.08, 'preset Grande salle : queue vers 58 Hz', pitch(hall, sr));
   // Chaque preset change le son.
   const lens = new Set();
   for (const b of presets) {

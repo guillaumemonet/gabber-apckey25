@@ -7,3 +7,5 @@ They were processed (normalisation, trimming, tempo matching) by tools/build_ban
 The Gabber, Hardcore, Oldschool, Mainstream, New wave, Hardstyle and melody banks are fully synthesised by tools/gabber.py (no external samples).
 
 The Anthem banks (sounds/anthem-*) were made with the free and open-source synthesizer Surge XT (https://surge-synthesizer.github.io), using its factory presets and community presets by Luna, Argitoth and others, and processed (mixing, mastering) outside this repository.
+
+The Early hardcore bank (sounds/early-hardcore) is fully synthesised (no external samples) and was processed (distortion, reverb, levels) outside this repository.

@@ -96,10 +96,14 @@ export const OSC_PRESETS = [
   { id: 'pad', v: { o1w: W.saw, o1uni: 5, o1det: 20, o1lvl: 0.6, o2w: W.pulse, o2pw: 0.4, o2uni: 3, o2lvl: 0.4, cutoff: 2000, reso: 1.2, fenv: 0.2, fa: 1.2, fd: 1.5, fs: 0.6, aa: 1, ad: 1, as: 0.9, ar: 2.5, lshape: 1, lrate: 0, ldest: 2, ldepth: 0.5, width: 1 } },
   { id: 'wobble', v: { o1w: W.saw, o1oct: -1, o1uni: 3, o1det: 15, o2w: W.pulse, o2oct: -1, o2lvl: 0.6, cutoff: 300, reso: 6, fenv: 0, lshape: 0, lrate: 3, ldest: 1, ldepth: 0.8, mode: 1, glide: 0.05, drive: 0.5, as: 1, ar: 0.1 } },
   { id: 'laser', v: { o1w: W.saw, o1lvl: 0.8, o2lvl: 0, o3w: W.sine, o3oct: 1, fm: 0.4, pbend: 24, ptime: 0.3, cutoff: 8000, reso: 5, fenv: -0.5, fd: 0.3, fs: 0, aa: 0.001, ad: 0.3, as: 0, ar: 0.1, mode: 1, glide: 0, drive: 0.4 } },
+  // Style early hardcore (milieu des années 90) : hoover large dont l'impulsion tourne lentement, stab « mentasm » en accords, alarme.
+  { id: 'early_hoover', v: { o1w: W.saw, o1uni: 7, o1det: 45, o1lvl: 0.7, o2w: W.pulse, o2pw: 0.35, o2uni: 3, o2det: 30, o2lvl: 0.6, o3w: W.saw, o3oct: -1, o3lvl: 0.4, cutoff: 5500, reso: 1.3, fenv: 0.15, fa: 0.005, fd: 0.6, fs: 0.6, aa: 0.004, ad: 0.4, as: 0.9, ar: 0.45, pbend: -9, ptime: 0.1, lshape: 1, lrate: 1, ldest: 2, ldepth: 0.35, mode: 2, glide: 0.1, width: 0.9, drive: 0.35 } },
+  { id: 'mentasm_stab', v: { o1w: W.saw, o1uni: 5, o1det: 30, o1lvl: 0.7, o2w: W.pulse, o2pw: 0.25, o2uni: 3, o2det: 20, o2lvl: 0.7, o3w: W.saw, o3oct: -1, o3lvl: 0.4, pbend: -5, ptime: 0.05, cutoff: 3200, reso: 2, fenv: 0.45, fa: 0.002, fd: 0.25, fs: 0.3, aa: 0.002, ad: 0.5, as: 0.4, ar: 0.3, drive: 0.5, width: 0.8 } },
+  { id: 'alarm', v: { o1w: W.pulse, o1pw: 0.5, o1lvl: 0.8, o2w: W.saw, o2lvl: 0.3, cutoff: 6000, reso: 1, fenv: 0, lshape: 1, lrate: 4, ldest: 0, ldepth: 0.6, mode: 1, glide: 0.02, aa: 0.003, as: 1, ar: 0.15, drive: 0.7 } },
 ];
 export const OSC_CATS = ['lead', 'bass', 'pad', 'fx'];
 export const OSC_PRESET_CAT = { init: 'lead', hoover: 'lead', fm_screech: 'lead', reese: 'bass', gabber_lead: 'lead', acid_bass: 'bass', sub: 'bass',
-  supersaw: 'pad', pluck: 'lead', brass_stab: 'lead', pad: 'pad', wobble: 'bass', laser: 'fx' };
+  supersaw: 'pad', pluck: 'lead', brass_stab: 'lead', pad: 'pad', wobble: 'bass', laser: 'fx', early_hoover: 'lead', mentasm_stab: 'lead', alarm: 'fx' };
 export const presetPositions = v => {
   const pos = oscDefaults();
   for (const [id, val] of Object.entries(v ?? {})) if (OSC_PARAMS[id] && Number.isFinite(val)) pos[id] = oscToPos(OSC_PARAMS[id], val);

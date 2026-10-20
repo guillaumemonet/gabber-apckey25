@@ -18,7 +18,7 @@ Une émulation de la Roland TR-909 avec ses 11 instruments : grosse caisse, cais
 
 Chaque instrument a sa propre distorsion. La grosse caisse démarre avec une saturation « Lampe », pour le son gabber. La quantité d'accent se règle avec le curseur à l'écran.
 
-**Kits de son** (menu au-dessus de la grille) : les réglages des 11 instruments d'un coup, distorsion comprise : **Hardcore** (Gabber, Rotterdam, Terror, Industriel), **Classique** (909 propre, House, Techno) et **FX** (Lo-fi écrasé, Replié). Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et **Enregistrer** pour garder le vôtre (★ dans le menu), la corbeille le supprime. Les patterns ne font pas partie d'un kit.
+**Kits de son** (menu au-dessus de la grille) : les réglages des 11 instruments d'un coup, distorsion comprise : **Hardcore** (Gabber, Rotterdam, Early hardcore, Doef, Écrêté, Terror, Industriel), **Classique** (909 propre, House, Techno) et **FX** (Lo-fi écrasé, Replié). Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et **Enregistrer** pour garder le vôtre (★ dans le menu), la corbeille le supprime. Les patterns ne font pas partie d'un kit.
 
 **Séquenceur** : 16 pas et 8 patterns, dont 4 préréglés (gabber, rave, breakbeat, roulement de grosse caisse). Il suit le même tempo et la même grille de mesures que les boucles, donc il reste calé avec elles. Un changement de pattern attend la mesure suivante. À l'écran, un clic sur un pas fait défiler note → accent → silence, et un clic sur le nom d'un instrument le joue et le sélectionne.
 
@@ -40,7 +40,7 @@ Un appui sur un bouton SCENE LAUNCH ramène la grille aux pads du sampler.
 Une ligne de basse acid façon Roland TB-303, synthétisée en direct : oscillateur (scie ou carré), filtre passe-bas 24 dB résonant piloté par une enveloppe, accent, slide, puis distorsion avec les 5 formes de la 909.
 
 - **Grille** : 16 pas (doubles-croches) × une octave de fa à fa aigu. Clic sur une case pour poser une note, un second clic pour un silence. Les lignes **Oct + / Oct −** décalent un pas d'une octave, **Accent** le rend plus fort avec un filtre plus claquant, **Slide** glisse vers la note suivante sans relancer l'enveloppe (le fameux « squelch »).
-- **Presets de son** : 15 sons tout prêts en 4 catégories : **Acid** (classique, squelch, screamer, Rotterdam, hoover), **Basse** (caoutchouc, sub, roulante sombre), **Lead** (lead scie, couinement, lead gabber) et **FX** (laser, sirène, écrasée, zap). Tourner un potentiomètre rend le son personnalisé ; donnez-lui un nom et une catégorie puis **Enregistrer** pour garder vos propres presets (★), enregistrés avec la session et dans les fichiers de réglages de la TB-303.
+- **Presets de son** : 18 sons tout prêts en 4 catégories : **Acid** (classique, squelch, screamer, Rotterdam, acid années 90, hoover), **Basse** (caoutchouc, sub, roulante sombre, basse doef), **Lead** (lead scie, couinement, lead gabber, alarme) et **FX** (laser, sirène, écrasée, zap). Tourner un potentiomètre rend le son personnalisé ; donnez-lui un nom et une catégorie puis **Enregistrer** pour garder vos propres presets (★), enregistrés avec la session et dans les fichiers de réglages de la TB-303.
 - **Potentiomètres** : accord, coupure, résonance, quantité d'enveloppe, déclin, accent, **slide** (durée du glissé entre notes liées), drive, forme, volume. Sur l'APC, **Maj + REC** ouvre la page de potentiomètres TB-303 (K1 coupure … K8 volume).
 - **8 patterns**, dont 4 tout prêts en fa mineur (acid gabber, roulement de doubles-croches, glissés « squelch », minimal à contretemps). Un changement de pattern attend la mesure suivante. **Aléatoire** écrit une nouvelle ligne acid en fa mineur ; **Effacer** vide le pattern.
 - **Suivre la 909** (activé par défaut) : la 303 joue sur l'horloge de la TR-909, shuffle compris, et ▶ lance les deux. Désactivez-le pour jouer la 303 seule, sur la grille des mesures des boucles.
@@ -53,7 +53,7 @@ Une ligne de basse acid façon Roland TB-303, synthétisée en direct : oscillat
 
 Le clavier joue un synthé en couches pensé pour le hardcore : chaque preset empile jusqu'à 3 **couches** d'oscillateurs (scie, carré, triangle, sinus ou impulsion, chacune avec son unisson, son octave et son niveau), avec des **formants** (résonance de caisse des cordes, voyelles « a » / « o » des chœurs), un **ensemble** stéréo, l'unisson étalé dans la stéréo, et un vibrato qui arrive après un instant.
 
-**41 presets en 11 familles** (fenêtre Synthé, ou **Maj + touche blanche** sur l'APC = preset de la famille, **Maj + do# / ré#** = famille précédente / suivante) :
+**46 presets en 11 familles** (fenêtre Synthé, ou **Maj + touche blanche** sur l'APC = preset de la famille, **Maj + do# / ré#** = famille précédente / suivante) :
 
 | Famille | Presets |
 |---|---|
@@ -61,13 +61,13 @@ Le clavier joue un synthé en couches pensé pour le hardcore : chaque preset em
 | Nappes | Thunderdome, Sombre, Chaude, De verre, Balayée |
 | Chœurs | Rave, « Ooh », Sombre |
 | Supersaw | Uplifting, Lead hardstyle, Nappe, Stab |
-| Hoovers | Hoover, Mentasm |
-| Leads | Init, Acid 303, Screech, Horn, Lead gabber |
+| Hoovers | Hoover, Mentasm, Hoover années 90 |
+| Leads | Init, Acid 303, Screech, Horn, Lead gabber, Lead désaccordé, Lead alarme |
 | Basses | Distordue, Reese, Sub |
-| Stabs | Rave, Belge, Coup d'orchestre |
+| Stabs | Rave, Belge, Coup d'orchestre, Stab hardcore |
 | Claviers | Piano rave, Orgue |
 | Breizh | Bombarde, Pupitre de bombardes, Biniou kozh, Cornemuse, Bagad (pupitre), Bourdon |
-| Effets | Kick accordé, Sirène, Laser |
+| Effets | Kick accordé, Sirène, Laser, Sirène rave |
 
 **8 potentiomètres d'expression**, adaptés à la famille (dans la fenêtre Synthé et sur la page Synthé de l'APC) :
 - cordes, nappes, chœurs, supersaw, stabs, claviers : Brillance, Résonance, Attaque, Relâche, **Largeur**, **Vibrato**, **Ensemble**, Réverb ;
@@ -100,7 +100,7 @@ Un synthé façon analogique pour fabriquer vos propres sons, à côté du synth
 - **Deux enveloppes ADSR** (filtre et volume), dessinées au-dessus de leurs potentiomètres.
 - **LFO calé sur le tempo** : sinus, triangle, scie ou carré, de 1/1 à 1/32 avec les triolets, sur la hauteur, le filtre, la largeur d'impulsion ou le volume.
 - **Voix** : polyphonique (8 notes), mono ou legato (pas de nouvelle attaque entre notes liées), glissé, largeur stéréo, volume.
-- **12 presets** : hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser, en boutons et dans un menu par catégorie (**Lead**, **Basse**, **Nappe**, **FX**). Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et **Enregistrer** pour garder le vôtre (★ dans le menu), la corbeille le supprime.
+- **15 presets** : hoover, screech FM, reese, lead gabber, basse acid, sub, supersaw, pluck, stab cuivré, nappe, wobble, laser, hoover années 90, stab mentasm, alarme, en boutons et dans un menu par catégorie (**Lead**, **Basse**, **Nappe**, **FX**). Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et **Enregistrer** pour garder le vôtre (★ dans le menu), la corbeille le supprime.
 - **Potentiomètres de l'APC** : K1-K8 = coupure, résonance, enveloppe du filtre, déclin du filtre, saturation, quantité du LFO, relâche, volume (marqués à l'écran) quand la fenêtre est active.
 - Il a sa propre **voie de mixage** (K7 sur les pages mixeur), se câble dans la fenêtre **Câblage** et est baissé par le **sidechain** comme le synthé. Ce que vous enregistrez dessus devient un bloc de notes avec son son, et dans le **piano roll** tout bloc de notes peut prendre un de ses presets.
 
@@ -110,7 +110,7 @@ Un synthé façon analogique pour fabriquer vos propres sons, à côté du synth
 
 Fabriquez votre propre kick gabber / hardcore, calculé par le navigateur en quelques millisecondes. En mode **Simple**, 12 potentiomètres :
 
-- **Presets** : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909 (boutons), aussi dans un menu par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et **Enregistrer** pour garder le vôtre (★ dans le menu), la corbeille le supprime.
+- **Presets** : Rotterdam, Mainstream, Uptempo, Raw, Terror, Industrial, Early, Frenchcore, 909, Grande salle, Doef, 909 écrêtée (boutons ; les trois derniers dans le style des soirées de Rotterdam du milieu des années 90 : une 909 poussée dans la distorsion, à longue queue qui gronde, accordée sur la#1, ré#2 et fa2), aussi dans un menu par catégorie (Gabber, Hardcore, Mainstream / uptempo) avec vos propres kicks. Tourner un potentiomètre rend le son personnalisé ; tapez un nom, choisissez une catégorie et **Enregistrer** pour garder le vôtre (★ dans le menu), la corbeille le supprime.
 - **Sens** (à côté de Simple / Expert) : **Normal**, **Inversé** (tout le kick à l'envers : il monte et finit sur l'attaque) ou **Queue inversée** (le reverse kick du hardstyle : la queue à l'envers qui monte jusqu'à l'impact du kick, à poser sur le contretemps). Le sens est enregistré avec le kick (vos kicks ★, les mélodies de kick).
 - **Queue** : **Note** (accordée avec les banques), **Punch** et **Chute** (de combien la hauteur part haut et à quelle vitesse elle tombe), **Plongée** (de combien elle continue de descendre), **Longueur**, **Zaag** (scie pour la queue brute et bourdonnante des kicks uptempo).
 - **Distorsion** : **Drive** et **Forme** (les 5 formes de la 909), puis **Formant** et **Mordant**, qui font « parler » la queue.

@@ -48,4 +48,23 @@ export default async function (t, A) {
   t.eq(S.synthUser[0].base, 'thunder_pad', 'le preset perso garde son son de départ');
   t.eq(S.preset, 'thunder_pad', 'le recharger remet ce son');
   t.near(S.globals.cutoff, turned, 1e-6, 'et ses potentiomètres');
+  // Presets early hardcore : chacun sonne (synthé à couches), les kits 909 et les sons de la TB-303 s'appliquent.
+  const level = t.meter(A.engine.master);
+  const quiet = [];
+  for (const id of ['early_hoover', 'detuned_lead', 'alarm_lead', 'hardcore_stab', 'rave_siren']) {
+    A.applyPreset(id);
+    A.playNote(53, 0.9, true);
+    await t.wait(250);
+    if (!(level() > 0.01)) quiet.push(id);
+    A.playNote(53, 0, false);
+    await t.wait(80);
+  }
+  t.eq(quiet, [], 'chaque nouveau preset du synthé sonne');
+  const trSel = bar('tr-pbar').querySelector('.pb-sel');
+  trSel.value = 'early'; trSel.dispatchEvent(new Event('change'));
+  t.eq([S.tr.kit, S.tr.params.bd.decay, S.tr.params.bd.drive], ['early', 0.85, 0.75], 'kit 909 Early hardcore : grosse caisse longue et saturée');
+  A.wm.toggle('acid', true);
+  const acSel = t.$('#acid-presets .pb-sel');
+  acSel.value = 'doef'; acSel.dispatchEvent(new Event('change'));
+  t.eq([S.acid.sound, S.acid.wave, S.acid.params.drive], ['doef', 'square', 0.9], 'son TB-303 Basse doef');
 }

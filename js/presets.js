@@ -88,6 +88,11 @@ export const PRESETS = [
   { id: 'mentasm', family: 'hoovers',
     values: { cutoff: 3500, reso: 1.5, attack: 0.005, release: 0.4, drive: 0.5, glide: 0.05, detune: 12, rSend: 0.3, vibrato: 0.3, chorus: 0.7, width: 0.8 },
     voice: { layers: [pulse(5, { spread: 20 }), saw(2, { spread: 10, octave: -12, level: 0.6 })], bend: 2, bendTime: 0.08, fenv: 0.2, decay: 0.4, sustain: 0.7 } },
+  // Hoover des grandes soirées du milieu des années 90 : attaque qui monte de loin, impulsions et scie grave, ensemble large.
+  { id: 'early_hoover', family: 'hoovers',
+    values: { cutoff: 4800, reso: 1.3, attack: 0.004, release: 0.45, drive: 0.45, glide: 0.06, detune: 16, rSend: 0.35, vibrato: 0.35, chorus: 0.85, width: 0.9 },
+    voice: { layers: [saw(5, { spread: 30 }), pulse(2, { spread: 10, level: 0.8 }), saw(1, { octave: -12, level: 0.6 })], bend: -9, bendTime: 0.09,
+      vibRate: 5.2, vibDelay: 0.35, fenv: 0.15, decay: 0.5, sustain: 0.85 } },
 
   // --- Leads ---
   { id: 'init', family: 'leads',
@@ -105,6 +110,14 @@ export const PRESETS = [
   { id: 'gabber_lead', family: 'leads',
     values: { cutoff: 4500, reso: 2, attack: 0.002, release: 0.15, drive: 0.9, glide: 0.03, detune: 10, rSend: 0.2 },
     voice: { layers: [sq(2, { spread: 12 }), saw(1, { octave: 12, level: 0.5 })], fenv: 0.4, decay: 0.2, sustain: 0.7 } },
+  // Lead early hardcore : deux scies très désaccordées et un carré à l'octave grave, saturés à fond.
+  { id: 'detuned_lead', family: 'leads',
+    values: { cutoff: 4200, reso: 1.8, attack: 0.003, release: 0.2, drive: 0.95, glide: 0.04, detune: 30, rSend: 0.2 },
+    voice: { layers: [saw(2, { spread: 30 }), sq(1, { octave: -12, level: 0.6 })], fenv: 0.25, decay: 0.3, sustain: 0.85 } },
+  // Alarme : carré dont la hauteur oscille vite (vibrato large dès l'attaque).
+  { id: 'alarm_lead', family: 'leads',
+    values: { cutoff: 5000, reso: 1.2, attack: 0.003, release: 0.15, drive: 0.8, glide: 0.03, detune: 8, rSend: 0.25, vibrato: 1 },
+    voice: { layers: [sq(1), pulse(1, { level: 0.5 })], vibRate: 7.5, vibDelay: 0, vibRange: 2, fenv: 0.1, sustain: 1 } },
 
   // --- Basses ---
   { id: 'bass', family: 'basses',
@@ -127,6 +140,9 @@ export const PRESETS = [
   { id: 'orch_hit', family: 'stabs',
     values: { cutoff: 3500, reso: 1.2, attack: 0.002, release: 0.4, width: 0.9, chorus: 0.3, rSend: 0.6 },
     voice: { layers: [saw(5, { spread: 16, formant: 'strings' }), sq(3, { spread: 10, octave: -12, level: 0.6 })], fenv: 0.6, decay: 0.35, sustain: 0 } },
+  { id: 'hardcore_stab', family: 'stabs',
+    values: { cutoff: 1100, reso: 4, attack: 0.002, release: 0.3, width: 0.8, chorus: 0.3, rSend: 0.45, drive: 0.7, detune: 14 },
+    voice: { layers: [saw(3, { spread: 14 }), pulse(2, { octave: -12, level: 0.6 })], fenv: 1, decay: 0.12, sustain: 0.05 } },
 
   // --- Claviers ---
   { id: 'rave_piano', family: 'keys',
@@ -169,6 +185,10 @@ export const PRESETS = [
   { id: 'siren_fx', family: 'fx',
     values: { cutoff: 5000, reso: 1, attack: 0.1, release: 0.4, drive: 0.4, glide: 0.05, detune: 6, rSend: 0.35, vibrato: 1 },
     voice: { layers: [sq(1), saw(1, { level: 0.5 })], vibRange: 7, vibRate: 0.7, vibDelay: 0, fenv: 0, sustain: 1 } },
+  // Sirène rave : « oui-oui » rapide, plus aigu et plus serré que la sirène lente.
+  { id: 'rave_siren', family: 'fx',
+    values: { cutoff: 6000, reso: 1, attack: 0.05, release: 0.5, drive: 0.5, glide: 0.05, detune: 4, rSend: 0.45, vibrato: 1 },
+    voice: { layers: [sine(1), sq(1, { level: 0.35 })], vibRange: 5, vibRate: 2.4, vibDelay: 0, fenv: 0, sustain: 1 } },
   { id: 'laser', family: 'fx',
     values: { cutoff: 6000, reso: 2, attack: 0.001, release: 0.1, drive: 0.5, glide: 0.05, detune: 0, rSend: 0.4 },
     voice: { layers: [saw(1)], bend: 36, bendTime: 0.12, decay: 0.15, sustain: 0, fenv: 0 } },

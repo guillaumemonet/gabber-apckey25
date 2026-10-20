@@ -7596,6 +7596,368 @@
      "cat": "voice"
     }
    ]
+  },
+  {
+   "name": "Early hardcore",
+   "external": true,
+   "pads": [
+    {
+     "file": "early-hardcore/01.flac",
+     "name": "Hall kick",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "early-hardcore/02.flac",
+     "name": "Doef kick",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "early-hardcore/03.flac",
+     "name": "Clipped 909",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "early-hardcore/04.flac",
+     "name": "Rotterdam 95",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "early-hardcore/05.flac",
+     "name": "Boom tail",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "early-hardcore/06.flac",
+     "name": "Overdriven 909",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "early-hardcore/07.flac",
+     "name": "Dive kick",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "early-hardcore/08.flac",
+     "name": "Tight punch",
+     "color": 5,
+     "mode": 0,
+     "cat": "kick"
+    },
+    {
+     "file": "early-hardcore/09.flac",
+     "name": "Hall clap",
+     "color": 9,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/10.flac",
+     "name": "Distorted clap",
+     "color": 9,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/11.flac",
+     "name": "Clap + snare",
+     "color": 9,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/12.flac",
+     "name": "Rave snare",
+     "color": 9,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/13.flac",
+     "name": "Tight snare",
+     "color": 9,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/14.flac",
+     "name": "Noise snare",
+     "color": 9,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/15.flac",
+     "name": "Gated clap",
+     "color": 9,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/16.flac",
+     "name": "Dirty rim",
+     "color": 9,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/17.flac",
+     "name": "Tight hat",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/18.flac",
+     "name": "Offbeat hat",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/19.flac",
+     "name": "Dirty hat",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/20.flac",
+     "name": "Hall ride",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/21.flac",
+     "name": "Hall crash",
+     "color": 13,
+     "mode": 0,
+     "cat": "drums"
+    },
+    {
+     "file": "early-hardcore/22.flac",
+     "name": "Crowd shout",
+     "color": 57,
+     "mode": 0,
+     "cat": "voice"
+    },
+    {
+     "file": "early-hardcore/23.flac",
+     "name": "Shout chop",
+     "color": 57,
+     "mode": 0,
+     "cat": "voice"
+    },
+    {
+     "file": "early-hardcore/24.flac",
+     "name": "Noise blast",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "early-hardcore/25.flac",
+     "name": "Early hoover",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "early-hardcore/26.flac",
+     "name": "Hoover dive",
+     "color": 53,
+     "mode": 0,
+     "cat": "lead"
+    },
+    {
+     "file": "early-hardcore/27.flac",
+     "name": "Mentasm stab",
+     "color": 37,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "early-hardcore/28.flac",
+     "name": "Detuned lead",
+     "color": 53,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "early-hardcore/29.flac",
+     "name": "Screech 95",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "early-hardcore/30.flac",
+     "name": "Hardcore stab",
+     "color": 37,
+     "mode": 0,
+     "cat": "keys"
+    },
+    {
+     "file": "early-hardcore/31.flac",
+     "name": "Orchestra blast",
+     "color": 37,
+     "mode": 0,
+     "cat": "pad"
+    },
+    {
+     "file": "early-hardcore/32.flac",
+     "name": "Alarm lead",
+     "color": 49,
+     "mode": 1,
+     "cat": "lead"
+    },
+    {
+     "file": "early-hardcore/33.flac",
+     "name": "Rave siren",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "early-hardcore/34.flac",
+     "name": "Siren rise",
+     "color": 3,
+     "mode": 0,
+     "cat": "fx"
+    },
+    {
+     "file": "early-hardcore/35.flac",
+     "name": "Hall beat 170",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 170,
+     "bars": 2,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28
+     ]
+    },
+    {
+     "file": "early-hardcore/36.flac",
+     "name": "Doef beat 180",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 180,
+     "bars": 2,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28
+     ]
+    },
+    {
+     "file": "early-hardcore/37.flac",
+     "name": "Rotterdam beat 190",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 2,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28
+     ]
+    },
+    {
+     "file": "early-hardcore/38.flac",
+     "name": "Clipped beat 200",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 200,
+     "bars": 2,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28
+     ]
+    },
+    {
+     "file": "early-hardcore/39.flac",
+     "name": "Ride beat 180",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 180,
+     "bars": 2,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28
+     ]
+    },
+    {
+     "file": "early-hardcore/40.flac",
+     "name": "Roll beat 190",
+     "color": 21,
+     "mode": 2,
+     "cat": "drums",
+     "bpm": 190,
+     "bars": 2,
+     "kicks": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      26,
+      28,
+      29,
+      30,
+      31
+     ]
+    }
+   ]
   }
  ]
 }

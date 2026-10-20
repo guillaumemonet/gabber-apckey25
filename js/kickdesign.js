@@ -74,10 +74,16 @@ export const KICK_PRESETS = {
   frenchcore: { pitch: 0.6, sweep: 0.15, bend: 0.2, length: 0.36, zaag: 0.25, drive: 0.7, shape: 0.25, tone: 0.65, bite: 0.6, click: 0.9, top: 1 },
   // 909 : queue vers 55 Hz (la), balayage court depuis ~250 Hz, presque pas de distorsion, attaque douce.
   tr909: { tune: 0.17, pitch: 0.47, sweep: 0.52, bend: 0.05, length: 0.5, zaag: 0, drive: 0.1, shape: 0, tone: 0.3, bite: 0.1, click: 0.3, top: 0.2 },
+  // Early hardcore (milieu des années 90) : une 909 poussée dans la distorsion, queue longue qui gronde.
+  // Hall : la#1 (58 Hz, Tune −7), très longue, saturation douce ; Doef : ré#2 (78 Hz, −2), écrêtage dur, le « doef » dans les bas-médiums ;
+  // Clipped 909 : fa2 (87 Hz), écrêtée à fond, plus courte.
+  hall: { tune: 0.21, pitch: 0.4, sweep: 0.35, bend: 0.12, length: 0.75, zaag: 0, drive: 0.7, shape: 0, tone: 0.35, bite: 0.4, click: 0.3, top: 0.3 },
+  doef: { tune: 0.42, pitch: 0.38, sweep: 0.32, bend: 0.2, length: 0.55, zaag: 0, drive: 0.8, shape: 0.25, tone: 0.3, bite: 0.55, click: 0.3, top: 0.35 },
+  clipped: { tune: 0.5, pitch: 0.45, sweep: 0.5, bend: 0.08, length: 0.42, zaag: 0, drive: 1, shape: 0.25, tone: 0.5, bite: 0.5, click: 0.5, top: 0.4 },
 };
 
 export const KICK_CATS = ['gabber', 'hardcore', 'modern'];
-export const KICK_PRESET_CAT = { rotterdam: 'gabber', early: 'gabber', tr909: 'gabber', terror: 'hardcore', industrial: 'hardcore', frenchcore: 'hardcore', mainstream: 'modern', uptempo: 'modern', raw: 'modern' };
+export const KICK_PRESET_CAT = { rotterdam: 'gabber', early: 'gabber', tr909: 'gabber', hall: 'gabber', doef: 'gabber', clipped: 'gabber', terror: 'hardcore', industrial: 'hardcore', frenchcore: 'hardcore', mainstream: 'modern', uptempo: 'modern', raw: 'modern' };
 
 export function defaultKickState() {
   return { params: { ...kickDefaults(), ...KICK_PRESETS.mainstream }, preset: 'mainstream', auto: true, user: [], expert: false, solo: null };

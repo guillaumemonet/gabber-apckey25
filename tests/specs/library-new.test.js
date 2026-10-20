@@ -1,4 +1,4 @@
-// Bibliothèque (profil neuf) : les banques Anthem remplissent les pads 17 à 21, la bibliothèque les met en tête,
+// Bibliothèque (profil neuf) : les banques Anthem remplissent les pads 17 à 21, la banque Early hardcore le 22, la bibliothèque les met en tête,
 // les anciennes banques sont archivées (case pour les afficher), les voix restent visibles, Maj + SCENE LAUNCH fait le tour des groupes.
 export default async function (t, A) {
   const S = A.state;
@@ -6,6 +6,11 @@ export default async function (t, A) {
   const where = folders.map(f => S.banks.findIndex(b => b.some(p => p?.sampleId?.startsWith(`lib:${f}/`))) + 1);
   t.eq(where, [17, 18, 19, 20, 21], 'les cinq banques Anthem sur les pads 17 à 21');
   t.ok(S.banks[16].filter(Boolean).length === 40, 'banque 17 complète');
+  const early = A.libManifest.banks.find(b => b.name === 'Early hardcore');
+  t.eq(S.banks.findIndex(b => b.some(p => p?.sampleId?.startsWith('lib:early-hardcore/'))) + 1, 22, 'banque Early hardcore sur les pads 22');
+  t.eq(S.banks[21].filter(Boolean).length, 40, 'banque 22 complète');
+  t.ok(early.pads.slice(0, 8).every(p => p.cat === 'kick') && early.pads.filter(p => p.mode === 2).every(p => p.bpm >= 160 && p.bpm <= 200 && p.kicks?.length),
+    'kicks sur la première rangée, boucles de 160 à 200 BPM avec la position de leurs kicks (sidechain)');
   const onPads = S.banks.flat().filter(p => p?.sampleId?.startsWith('lib:')).length;
   t.ok(onPads >= 700, 'les sons de la bibliothèque sont sur les pads', onPads);
   t.ok(!S.banks[16].some(p => p?.buffer), 'ils ne sont décodés qu’à l’affichage de leur banque (banque 17 pas encore affichée)');
@@ -17,7 +22,7 @@ export default async function (t, A) {
   await t.wait(100);
   t.eq(rows()[0], 'Mainstream', 'la catégorie Kicks commence par les nouveaux kicks');
   const kicksNew = count(/Kicks/);
-  t.eq(kicksNew, 20, 'sans les archives : les 20 kicks Anthem');
+  t.eq(kicksNew, 28, 'sans les archives : les 20 kicks Anthem et les 8 kicks Early hardcore');
   t.ok(count(/Guit/) === 24, 'les 24 nouvelles guitares (les anciennes archivées)', count(/Guit/));
   const voices = count(/Voix|Voices/);
   t.ok(voices >= 30, 'les voix restent visibles (cris compris)', voices);
