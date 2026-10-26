@@ -37,7 +37,7 @@ export function exportMidi() {
 export const isMidiFile = file => /\.(mid|midi|smf)$/i.test(file.name) || file.type === 'audio/midi';
 
 // Pistes libres sur [start, end[, à partir de la piste armée ; ajoute des pistes s'il en manque (jusqu'au maximum).
-function freeTracks(start, end, n) {
+export function freeTracks(start, end, n) {
   const tracks = state.tl.tracks, out = [];
   const free = tr => !tr.clips.some(c => c.start < end - 1e-6 && start < c.start + timeline.clipBeats(c) - 1e-6);
   for (let k = 0; k < tracks.length && out.length < n; k++) { const i = (armedTrack() + k) % tracks.length; if (free(tracks[i])) out.push(i); }

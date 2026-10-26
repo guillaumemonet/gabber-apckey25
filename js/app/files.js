@@ -63,6 +63,8 @@ import { mergeVoiceState, renderVoiceWin, stopVoicePreview } from './voice-ui.js
 import { renderTr } from './drum-ui.js';
 import { loadSeqPads, renderSeq } from './seq-ui.js';
 import { restoreSlicer, stopSlicerPreview } from './slicer-ui.js';
+import { cleanSmp } from '../sampler.js';
+import { importTrackerFile, isTrackerFile } from './tracker-files.js';
 
 // ---------- Kits (export / import) ----------
 
@@ -81,7 +83,7 @@ export async function unpackPad(s) {
   const id = `user:${crypto.randomUUID()}`;
   await store.saveSample(id, { name: s.name, data: s.bytes });
   const buffer = await engine.ctx.decodeAudioData(s.bytes.slice(0)).catch(() => null);
-  return { name: s.name, color: s.color, sampleId: id, bpm: s.bpm || 0, p: { ...defaultPositions('pad'), ...s.p }, buffer };
+  return { name: s.name, color: s.color, sampleId: id, bpm: s.bpm || 0, p: { ...defaultPositions('pad'), ...s.p }, ...(cleanSmp(s.smp) ? { smp: cleanSmp(s.smp) } : {}), buffer };
 }
 
 export function replaceBank(b, pads) {
@@ -363,6 +365,9 @@ export function bindFiles() {
   $('#file-input').addEventListener('change', e => {
     const file = e.target.files[0];
     e.target.value = '';
-    if (file) (isMidiFile(file) ? importMidiFile(file) : loadFile(file));   // un .mid devient des blocs de notes
+    if (!file) return;
+    if (isMidiFile(file)) importMidiFile(file);           // un .mid devient des blocs de notes
+    else if (isTrackerFile(file)) importTrackerFile(file);   // un module : sons sur les pads, voies en blocs de notes
+    else loadFile(file);
   });
 }

@@ -2,7 +2,7 @@
 
 ← [Live : platines, scènes, visualiseur](live.md) · [Sommaire](README.md) · [Dépannage](depannage.md) →
 
-Enregistrer et ouvrir projets, morceaux et réglages ; export WAV et stems ; kits.
+Enregistrer et ouvrir projets, morceaux et réglages ; export WAV et stems ; kits ; fichiers MIDI et modules de tracker.
 
 ## Enregistrer et ouvrir
 
@@ -26,6 +26,15 @@ Vos banques, vos sons et vos réglages sont sauvegardés automatiquement dans le
 
 - **MIDI** (barre de la timeline, à côté de WAV et Stems) exporte les **blocs de notes** dans un fichier `.mid`, au tempo du morceau, à ouvrir dans n'importe quel autre logiciel : une piste MIDI par piste de la timeline (motifs dépliés sur toute la longueur des blocs, transpositions comprises). Les coups de pads posés sur la timeline vont sur le **canal 10** (notes 36 et suivantes). Un fichier MIDI contient des notes, pas des sons : les blocs audio n'y sont pas.
 - **Ouvrir…** (en-tête ou timeline) importe aussi un fichier `.mid` : chaque piste du fichier devient un **bloc de notes**, posé à la mesure de la tête de lecture, sur une piste libre pendant sa durée (des pistes sont ajoutées s'il en manque). Les blocs jouent avec le synthé du clavier ; retouchez-les dans le piano roll ou choisissez leur son dans son menu. Le tempo du morceau ne change pas (celui du fichier est indiqué).
+
+## Modules de tracker (.mod, .xm)
+
+**Ouvrir…** importe aussi les modules des trackers d'Amiga et de PC : `.mod` (ProTracker et compatibles, de 4 à 32 voies) et `.xm` (FastTracker 2).
+- Les **samples** du module vont sur les pads de la **première banque vide** (à partir de la banque affichée), avec leur nom ; ils rejoignent aussi « Mes sons » dans la bibliothèque. Un module de plus de 40 samples prend plusieurs banques à la suite.
+- Chaque **voie** du module devient un **bloc de notes** joué par l'**instrument échantillon** : il joue le son d'un pad à la hauteur de chaque note, avec sa boucle (les boucles aller-retour comprises). Les blocs sont posés à la mesure de la tête de lecture, sur des pistes libres.
+- Le **tempo** du module est repris si la timeline est vide (4 lignes par temps à la vitesse de départ) ; sinon le morceau garde le sien et les notes sont recalées pour garder la même durée.
+- Le morceau est rejoué tick par tick comme dans le tracker : vitesse et tempo, ordre des patterns, sauts, fins et répétitions de pattern, volumes, glissements de volume et de hauteur, glissement vers la note, vibrato, trémolo, arpèges, départ dans le sample, notes coupées, retardées et rejouées, panoramique, volume global, et les **enveloppes de volume** des instruments XM. Ces mouvements sont gardés dans chaque note. Les effets rares qui ne sont pas joués sont comptés dans le message de fin d'import.
+- Dans le **piano roll**, le menu des sons d'un de ces blocs montre **Samples du module (pads)** : choisissez un autre son pour le jouer avec un synthé, revenez-y quand vous voulez. Remplacer le son d'un pad change aussi l'instrument dans les blocs qui le jouent.
 
 ## Entrée audio (micro, carte son)
 

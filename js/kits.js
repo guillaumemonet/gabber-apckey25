@@ -22,7 +22,7 @@ async function packPad(pad, getBytes) {
     const b = pad.buffer;
     bytes = encodeWav([...Array(b.numberOfChannels).keys()].map(c => b.getChannelData(c)), b.sampleRate);
   }
-  return { name: pad.name, color: pad.color, bpm: pad.bpm || 0, p: pad.p, audio: await toDataUrl(bytes) };
+  return { name: pad.name, color: pad.color, bpm: pad.bpm || 0, p: pad.p, ...(pad.smp ? { smp: pad.smp } : {}), audio: await toDataUrl(bytes) };
 }
 
 export async function packBanks(banks, getBytes, extra = {}) {

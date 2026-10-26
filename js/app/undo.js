@@ -27,7 +27,7 @@ import { renderSeq } from './seq-ui.js';
 // couleur : pas la position de leurs potentiomètres), les patterns de la TR-909, de la TR-808, du séquenceur pas à pas
 // et de la TB-303, les scènes.
 // Les réglages tournés en continu (potentiomètres, faders) n'en font pas partie : chaque cran serait une étape.
-const padSnap = p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm ?? 0 };
+const padSnap = p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm ?? 0, ...(p.smp ? { smp: p.smp } : {}) };
 export const tlSnapshot = () => JSON.stringify({
   bars: state.tl.bars, tracks: state.tl.tracks, markers: state.tl.markers, buses: state.tl.buses,
   pads: state.banks.map(b => b.map(padSnap)), tr: state.tr.patterns, tr8: state.tr8.patterns, seq: state.seq.patterns, acid: state.acid.patterns, scenes: state.scenes,
@@ -43,6 +43,7 @@ function restorePads(snap) {
       if (cur) { engine.stopPad(padKey(b, i)); state.banks[b][i] = null; }
     } else if (cur && cur.sampleId === sp.sampleId) {
       Object.assign(cur, { name: sp.name, color: sp.color, bpm: sp.bpm });
+      if (sp.smp) cur.smp = sp.smp; else delete cur.smp;
     } else {
       if (cur) engine.stopPad(padKey(b, i));
       state.banks[b][i] = { ...sp, p: cur?.p ? { ...cur.p } : defaultPositions('pad'), buffer: null };

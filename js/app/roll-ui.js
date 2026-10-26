@@ -14,6 +14,7 @@ import { presetPatch } from './gen.js';
 import { toast } from './misc.js';
 import { oscFor, oscSound } from './osc-ui.js';
 import { save } from './save.js';
+import { sampleVoice } from '../sampler.js';
 import { armedTrack, beatPx, growSong, renderTl, tlRec, trackSource } from './tl.js';
 import { freeTrack, noteLabel } from './tl-record.js';
 import { tlFocus, tlSelect } from './tl-select.js';
@@ -42,10 +43,15 @@ export function rollFind() {
   }
   return null;
 }
-// Son du bloc édité : { syn, V } (kick du designer, synthé à oscillateurs, ou synthé avec le preset du bloc).
+// Son du bloc édité : { syn, V } (kick du designer, synthé à oscillateurs, instrument échantillon ou synthé avec le
+// preset du bloc) ; vOf(note) : réglages propres à une note (instrument échantillon : le pad qu'elle joue).
 export function rollSound() {
   const c = rollFind()?.clip;
   if (c?.kick) return { syn: kickSynth, V: c.kick };
+  if (c?.smps) {
+    const vOf = n => { const r = c.smps[n?.s ?? 0]; return sampleVoice(r && state.banks[r.bank]?.[r.pad]); };
+    return { syn: timeline.sampleSynth(), V: vOf(null), vOf };
+  }
   if (c?.osc) { const o = oscFor(c, oscSynth); return { syn: oscSynth, V: o.values === oscSynth.values ? { ...o.values } : o.values }; }
   return { syn: engine, V: c?.preset ? presetPatch(c.preset) : undefined };
 }
@@ -102,6 +108,9 @@ export function buildRoll() {
     delete f.clip.osc;
     delete f.clip.kick;
     delete f.clip.kickSrc;
+    // Instrument échantillon (module importé) : mis de côté quand on choisit un autre son, pour pouvoir y revenir.
+    if (f.clip.smps) { f.clip.smpsOff = f.clip.smps; delete f.clip.smps; }
+    if (preset.value === ROLL_SMP && f.clip.smpsOff) { f.clip.smps = f.clip.smpsOff; delete f.clip.smpsOff; }
     // Mélodie de kick : le kick du designer (suit le designer), un preset ou un kick enregistré (figé sur ses réglages).
     const kick = rollKickParams(preset.value);
     if (kick) {
@@ -110,7 +119,7 @@ export function buildRoll() {
       prepareKickClips(state.tl.tracks, engine.ctx.sampleRate);
     }
     else if (preset.value.startsWith('osc:')) f.clip.osc = preset.value.slice(4);
-    else if (preset.value) f.clip.preset = preset.value;
+    else if (preset.value && preset.value !== ROLL_SMP) f.clip.preset = preset.value;
     rollHeld.clear();
     renderTl();
     save();
@@ -148,7 +157,9 @@ export function renderRollBar() {
   const name = $('#roll-name');
   if (document.activeElement !== name) name.value = clip?.name ?? '';
   if (clip?.kickSrc) rollKickOption(clip.kickSrc);
-  $('#roll-preset').value = clip?.kick ? (clip.kickSrc ? ROLL_KICK_PREFIX + clip.kickSrc : ROLL_KICK) : clip?.osc ? `osc:${[...$('#roll-preset').options].some(o => o.value === `osc:${clip.osc}`) ? clip.osc : 'live'}` : clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
+  const smpOpt = [...$('#roll-preset').options].find(o => o.value === ROLL_SMP);
+  if (smpOpt) smpOpt.hidden = smpOpt.disabled = !(clip?.smps || clip?.smpsOff);
+  $('#roll-preset').value = clip?.smps ? ROLL_SMP : clip?.kick ? (clip.kickSrc ? ROLL_KICK_PREFIX + clip.kickSrc : ROLL_KICK) : clip?.osc ? `osc:${[...$('#roll-preset').options].some(o => o.value === `osc:${clip.osc}`) ? clip.osc : 'live'}` : clip?.preset && PRESETS.some(p => p.id === clip.preset) ? clip.preset : '';
   const pat = clip ? patLen(clip) : 0;
   $('#roll-len').textContent = clip ? rollLenLabel(pat) : '—';
   $('#roll-where').textContent = clip ? t('roll.where', {
@@ -178,12 +189,14 @@ function rollKickOption(src) {
   sel.querySelector('optgroup[data-kick]')?.appendChild(new Option(t('roll.kickGone'), ROLL_KICK_PREFIX + src));
 }
 
+export const ROLL_SMP = 'smp';   // menu des sons : l'instrument échantillon du bloc (pads d'un module importé)
 export function rollPresetOptions() {
   const sel = $('#roll-preset');
   if (!sel) return;
   const value = sel.value;
   sel.innerHTML = '';
   sel.add(new Option(t('roll.currentSound'), ''));
+  sel.add(new Option(t('roll.samples'), ROLL_SMP));
   for (const f of FAMILIES) {
     const grp = document.createElement('optgroup');
     grp.label = t(`family.${f}`);
@@ -336,7 +349,7 @@ export function rollTick() {
   }
   const bd = 60 / state.bpm;
   const until = (now + 0.12 - rollPlay.t0) / bd;
-  const { syn, V } = rollSound();
+  const { syn, V, vOf } = rollSound();
   while (pat > 0 && rollPlay.next < until) {
     const from = rollPlay.next;
     const base = Math.floor(from / pat + 1e-9) * pat;
@@ -346,7 +359,7 @@ export function rollTick() {
       if (n.t >= pat - 1e-6 || at < from - 1e-9 || at >= to - 1e-9) continue;
       const key = `rollp:${rollPlay.n++}`;
       const when = rollPlay.t0 + at * bd;
-      syn.noteOn(n.note, n.vel ?? 0.85, when, key, V);
+      syn.noteOn(n.note, n.vel ?? 0.85, when, key, vOf ? vOf(n) : V, undefined, undefined, vOf && { pv: n.pv, pp: n.pp, ofs: n.ofs, pan: n.pan, bd });
       rollPlay.offs.push({ note: n.note, key, time: when + n.len * bd - 0.005, syn });
     }
     rollPlay.next = to;

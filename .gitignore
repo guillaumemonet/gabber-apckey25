@@ -17,3 +17,9 @@ Thumbs.db
 __test.html
 js/__main_test.js
 __shot.html
+
+# Tracker modules used as examples (never committed)
+*.mod
+*.xm
+*.s3m
+*.it

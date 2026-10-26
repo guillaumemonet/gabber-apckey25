@@ -10,6 +10,7 @@
 
 import { TrackChain, cleanFx } from './trackfx.js';
 import { clipEvents, monoLine, tunedNote } from './notes.js';
+import { SampleSynth, sampleVoice } from './sampler.js';
 import { buildInsert, cleanInsert } from './mixer.js';
 
 export const TL_TRACKS = 16;        // pistes au départ
@@ -195,6 +196,7 @@ export class Timeline {
   }
 
   get st() { return this.getState(); }
+  sampleSynth() { return (this.sampler ??= new SampleSynth(this.ctx, this.engine.padBus)); }   // instrument échantillon
   get beatDur() { return 60 / this.engine.bpm; }
   get length() { return this.st.bars * BEATS_PER_BAR; }
   // Durée naturelle du son, en temps (au tempo d'origine du son s'il en a un).
@@ -262,13 +264,14 @@ export class Timeline {
         if (clip.type === 'note') {
           // Chaque note du bloc (motif répété) ; une note déjà commencée (lecture partie du milieu d'un bourdon,
           // d'une note tenue) part tout de suite pour le temps qui lui reste.
-          // Kick du designer (clip.kick : mélodie de kick), synthé à oscillateurs (clip.osc) ou synthé du clavier
-          // (preset du bloc, sinon celui en cours).
+          // Kick du designer (clip.kick : mélodie de kick), synthé à oscillateurs (clip.osc), instrument échantillon
+          // (clip.smps : pads joués en notes, n.s = lequel) ou synthé du clavier (preset du bloc, sinon celui en cours).
           const kick = clip.kick ? this.getKick(clip) : null;
           const osc = !kick && clip.osc ? this.getOsc(clip) : null;
-          const syn = kick?.synth ?? osc?.synth ?? this.engine;
-          const patch = kick ? kick.values : osc ? osc.values : clip.preset ? this.getPatch(clip.preset) : undefined;
-          const dest = kick ? kick.synth.out : osc ? osc.synth.out : this.engine.synthIn;
+          const smp = !kick && !osc && clip.smps ? this.sampleSynth() : null;
+          const syn = kick?.synth ?? osc?.synth ?? smp ?? this.engine;
+          const patch = kick ? kick.values : osc ? osc.values : clip.preset && !smp ? this.getPatch(clip.preset) : undefined;
+          const dest = kick ? kick.synth.out : osc ? osc.synth.out : smp ? this.engine.padBus : this.engine.synthIn;
           const events = osc && osc.synth.isMono(osc.values) ? monoLine(clipEvents(clip)) : clipEvents(clip);
           for (const n of events) {
             const at0 = clip.start + n.t;
@@ -276,12 +279,19 @@ export class Timeline {
             const at = Math.max(at0, beat), left = n.len - (at - at0);
             const when = time + (at - beat) * bd;
             if (kick && live && at0 >= beat - 1e-6) this.onKick(when, ti);   // chaque kick de la mélodie pompe le sidechain
+            let V = patch, ev;
+            if (smp) {
+              const ref = clip.smps[n.s ?? 0], pad = ref && this.getPad(ref.bank, ref.pad);
+              V = sampleVoice(pad);
+              if (!V) { if (pad) this.loadPad(pad); continue; }   // pas encore décodé : prêt pour le prochain passage
+              ev = { pv: n.pv, pp: n.pp, ofs: n.ofs, pan: n.pan, bd, skip: (at - at0) * bd };
+            }
             const key = `${this.keyPrefix}${clip.id}:${n.i}`;
             const out = this.trackIn(ti, dest);
             const note = clip.tune ? tunedNote(n.note, clip.tune) : n.note;   // justesse propre de l'instrument (cornemuse)
             jobs.push({ time: when, run: () => {
               this.synths.add(syn);
-              syn.noteOn(note, Math.min(1, n.vel * (clip.gain ?? 1)), when, key, patch, out, n.from);
+              syn.noteOn(note, Math.min(1, n.vel * (clip.gain ?? 1)), when, key, V, out, n.from, ev);
               this.offs.push({ note, key, time: when + left * bd - 0.005, syn });
               this.offsDirty = true;
             } });

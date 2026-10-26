@@ -119,7 +119,7 @@ export const HELP = {
         <li><b>Velocity</b>: drag in the bottom lane (only the selected notes if there is a selection).</li>
         <li><b>Grid</b> from 1/4 to 1/32 (and triplets); <b>Quantize</b> snaps the start and end of the notes. Rows of the F minor scale (the key of the banks) are tinted.</li>
         <li><b>Length</b> −/+: length of the pattern. The block repeats it over its whole length on the timeline (drag its right edge there). Notes drawn after the end lengthen the pattern.</li>
-        <li><b>Sound</b>: a synth preset of its own, or the sound currently played on the keyboard. <b>Merge</b> gathers the neighbouring note blocks of the track (same sound) into this one.</li>
+        <li><b>Sound</b>: a synth preset of its own, or the sound currently played on the keyboard (a block imported from a tracker module plays <b>Module samples (pads)</b>). <b>Merge</b> gathers the neighbouring note blocks of the track (same sound) into this one.</li>
         <li><b>Step input</b>: the notes you play on the APC keyboard (or the computer keyboard) go in at the cursor (chords too), which moves on by one grid step.</li>
       </ul>`,
     curve: `
@@ -432,7 +432,7 @@ export const HELP = {
         <li><b>Vélocité</b> : glisser dans la bande du bas (seulement les notes sélectionnées s'il y a une sélection).</li>
         <li><b>Grille</b> de 1/4 à 1/32 (et triolets) ; <b>Quantifier</b> cale le début et la fin des notes. Les lignes de la gamme de fa mineur (la tonalité des banques) sont teintées.</li>
         <li><b>Longueur</b> −/+ : longueur du motif. Le bloc le répète sur toute sa longueur dans la timeline (tirer son bord droit). Des notes posées après la fin allongent le motif.</li>
-        <li><b>Son</b> : un preset du synthé rien qu'à lui, ou le son joué en ce moment au clavier. <b>Regrouper</b> rassemble dans ce bloc les blocs de notes voisins de la piste (même son).</li>
+        <li><b>Son</b> : un preset du synthé rien qu'à lui, ou le son joué en ce moment au clavier (un bloc importé d'un module de tracker joue les <b>Samples du module (pads)</b>). <b>Regrouper</b> rassemble dans ce bloc les blocs de notes voisins de la piste (même son).</li>
         <li><b>Pas à pas</b> : les notes jouées au clavier de l'APC (ou de l'ordinateur) sont posées au curseur (accords compris), qui avance d'une case.</li>
       </ul>`,
     curve: `

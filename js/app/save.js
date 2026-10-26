@@ -39,6 +39,7 @@ import { cleanInputState } from './audio-input.js';
 import { cleanLauncher } from './launcher.js';
 import { cleanMidiMap } from './midi-ui.js';
 import { mergeViz } from './viz-ui.js';
+import { cleanSmp } from '../sampler.js';
 
 // ---------- Sauvegarde ----------
 
@@ -104,6 +105,7 @@ export async function restore() {
         const s = saved.banks?.[b]?.[i];
         if (!s) continue;
         const pad = { bpm: 0, ...s, p: { ...defaultPositions('pad'), ...s.p }, buffer: null };
+        if (pad.smp) pad.smp = cleanSmp(pad.smp) ?? undefined;   // instrument échantillon (js/sampler.js)
         if (pad.name === 'Thunderdome') pad.name = soundName('Arena kick');   // ancien nom (une marque) du kick de la banque Oldschool
         state.banks[b][i] = pad;
         if (s.sampleId?.startsWith('builtin:')) pad.buffer = kit[+s.sampleId.slice(8)]?.buffer ?? null;
@@ -219,7 +221,7 @@ export function stateSnapshot() {
     launcher: state.launcher,
     input: state.input,
     midiClock: state.midiClock,
-    banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p })),
+    banks: state.banks.map(bank => bank.map(p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm, p: p.p, ...(p.smp ? { smp: p.smp } : {}) })),
   };
 }
 

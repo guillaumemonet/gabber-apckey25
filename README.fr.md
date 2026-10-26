@@ -35,7 +35,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Câblage** : reliez librement les outils et des **boîtes à effets** (distorsion, PCF, filtre, delay, reverb, compresseur, bitcrusher), tout calé sur le tempo ;
   - **Visualiseur** dans l'esprit Winamp : 21 modes (spectre à LED, oscilloscope, tourbillons Milk, vumètres hi-fi, texte qui cogne, particules, barres Amiga, spectrogramme, et modes 3D / GPU : tunnel, paysage synthwave, blob, hyperespace, fractale, lasers, ville de spectre, mur de LED, metaballs, plasma, rotozoomer, fluide, réaction-diffusion), filtres empilables (CRT, kaléidoscope, glitch, stroboscope), et une fenêtre projecteur pour un deuxième écran ;
   - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **lanceur de clips** (aussi sur les 40 pads de l'APC), **horloge MIDI**, **MIDI learn** pour tout autre clavier ou contrôleur MIDI, avec un moniteur MIDI.
-- **Enregistrer et ouvrir** tout le projet, le morceau ou les réglages de chaque outil (fichiers `.gabber`), **export WAV rapide et stems**, **enregistrement WAV** de votre session et **export / import de kits**.
+- **Enregistrer et ouvrir** tout le projet, le morceau ou les réglages de chaque outil (fichiers `.gabber`), **export WAV rapide et stems**, **enregistrement WAV** de votre session et **export / import de kits** ; import des **fichiers MIDI** et des **modules de tracker** (.mod, .xm : samples sur les pads, voies en blocs de notes).
 - Interface en **français ou en anglais**, selon la langue du navigateur.
 
 > 🚧 **GabberKey est en constante évolution.** De nouvelles fonctions arrivent régulièrement, et plein d'autres sont en route : le MIDI learn pour d'autres contrôleurs, une version en ligne… et bien plus encore. Mettez une étoile ou suivez le dépôt pour voir ce qui arrive (voir la [feuille de route](#feuille-de-route)) !
@@ -76,7 +76,7 @@ Le mode d'emploi complet est dans [docs/manuel](docs/manuel/README.md) ; chaque 
 6. **[Générateur : accords et mélodie](docs/manuel/generateur.md)**
 7. **[Mixage et effets](docs/manuel/mixage.md)** : Designer d'effet, Table de mixage, Bus, Chaîne master et sonie, Câblage
 8. **[Live : platines, scènes, visualiseur](docs/manuel/live.md)** : Platines, Lanceur de clips, Scènes, Visualiseur, Fenêtres des plugins
-9. **[Fichiers et enregistrement](docs/manuel/fichiers.md)** : Enregistrer et ouvrir, Enregistrement et kits, Fichiers MIDI, Entrée audio (micro, carte son)
+9. **[Fichiers et enregistrement](docs/manuel/fichiers.md)** : Enregistrer et ouvrir, Enregistrement et kits, Fichiers MIDI, Modules de tracker, Entrée audio (micro, carte son)
 10. **[Dépannage](docs/manuel/depannage.md)** : Dépannage, Régénérer les banques de sons (facultatif)
 
 ## Feuille de route
@@ -89,7 +89,7 @@ Objectif : faire de GabberKey un outil professionnel, au studio comme en live, �
 4. **Automation** : des courbes de réglages dessinées sur la timeline. *(fait)*
 5. **Live** : lanceur de clips, MIDI learn pour d'autres contrôleurs, horloge MIDI. *(fait)*
 6. **Tonalité et étirement** : étirement temporel qui garde la hauteur et transposition des sons de la timeline et du lanceur. *(fait ; les boucles des pads suivront)*
-7. **Entrées** : enregistrement audio (micro, carte son) et fichiers MIDI. *(fait)*
+7. **Entrées** : enregistrement audio (micro, carte son), fichiers MIDI et modules de tracker (.mod, .xm). *(fait)*
 
 Idées gardées pour plus tard : un **sampler de voix et vocoder**, **plusieurs exemplaires** de la TB-303 et de la TR-909, une **version en ligne** jouable sans rien installer, et un **générateur de boucles par IA** (un modèle de musique open source qui tourne sur votre machine).
 

@@ -27,6 +27,15 @@ Your banks, sounds and settings are saved automatically in the browser.
 - **MIDI** (timeline bar, next to WAV and Stems) exports the **note blocks** to a `.mid` file at the song tempo, to open in any other program: one MIDI track per timeline track (patterns unrolled over the whole block length, transpositions included). Pad hits placed on the timeline go to **channel 10** (notes 36 and up). A MIDI file holds notes, not sounds: audio blocks are not in it.
 - **Open…** (header or timeline) also imports a `.mid` file: each track of the file becomes a **note block**, placed at the playhead bar on a track that is free for its length (tracks are added if needed). The blocks play with the keyboard synth; edit them in the piano roll or pick their sound in its menu. The song tempo does not change (the file's tempo is shown).
 
+## Tracker modules (.mod, .xm)
+
+**Open…** also imports modules from Amiga and PC trackers: `.mod` (ProTracker and compatibles, 4 to 32 channels) and `.xm` (FastTracker 2).
+- The **samples** of the module go on the pads of the **first empty bank** (from the shown bank), with their names; they also join "My sounds" in the library. A module with more than 40 samples takes several banks in a row.
+- Each **channel** of the module becomes a **note block** played by the **sample instrument**: it plays the sound of a pad at the pitch of each note, with its loop (ping-pong loops included). The blocks are placed at the playhead bar, on free tracks.
+- The module **tempo** is used if the timeline is empty (4 rows per beat at the starting speed); otherwise the song keeps its own and the notes are moved to keep the same length.
+- The song is replayed tick by tick like in the tracker: speed and tempo, pattern order, jumps, pattern breaks and loops, volumes, volume and pitch slides, tone portamento, vibrato, tremolo, arpeggios, sample offset, cut, delayed and retriggered notes, panning, global volume, and the **volume envelopes** of XM instruments. These movements are kept in each note. Rare effects that are not played are counted in the message at the end of the import.
+- In the **piano roll**, the sound menu of one of these blocks shows **Module samples (pads)**: pick another sound to play it with a synth, come back to it whenever you like. Replacing the sound of a pad also changes the instrument in the blocks that play it.
+
 ## Audio input (microphone, sound card)
 
 - The **Audio input** window (plugin bar, System group): **Turn the input on** (the browser asks for permission the first time), choose the **device** (microphone, sound card input), **level** and meter.

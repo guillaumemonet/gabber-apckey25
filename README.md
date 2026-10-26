@@ -35,7 +35,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Patch**: wire the tools and **effect boxes** (distortion, PCF, filter, delay, reverb, compressor, bitcrusher) freely, everything in sync with the tempo;
   - **Visualizer** in the Winamp spirit: 21 modes (LED spectrum, oscilloscope, Milk swirls, hi-fi VU meters, text slam, particles, Amiga bars, spectrogram, and 3D / GPU modes: tunnel, synthwave landscape, blob, hyperspace, fractal, lasers, spectrum city, LED wall, metaballs, plasma, rotozoomer, fluid, reaction-diffusion), stackable filters (CRT, kaleidoscope, glitch, strobe), and a projector window for a second screen;
   - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **clip launcher** (also on the APC's 40 pads), **MIDI clock**, **MIDI learn** for any other MIDI keyboard or controller, with a MIDI monitor.
-- **Save and open** the whole project, the song or the settings of each tool (`.gabber` files), **fast WAV export and stems**, **WAV recording** of your session and **kit export / import**.
+- **Save and open** the whole project, the song or the settings of each tool (`.gabber` files), **fast WAV export and stems**, **WAV recording** of your session and **kit export / import**; **MIDI files** and **tracker modules** (.mod, .xm: samples on the pads, channels as note blocks) are imported too.
 - Interface in **English or French**, following the browser language.
 
 > 🚧 **GabberKey is constantly evolving.** New features land regularly, and plenty more is on the way: MIDI learn for other controllers, an online version… and much more. Star or watch the repository to follow what's coming (see the [roadmap](#roadmap))!
@@ -76,7 +76,7 @@ The complete guide is in [docs/manual](docs/manual/README.md); every window in t
 6. **[Generator: chords and melody](docs/manual/generator.md)**
 7. **[Mixing and effects](docs/manual/mixing.md)**: Effect designer, Mixer, Buses, Master chain and loudness, Patch
 8. **[Live: turntables, scenes, visualizer](docs/manual/live.md)**: Turntables, Clip launcher, Scenes, Visualizer, Plugin windows
-9. **[Files and recording](docs/manual/files.md)**: Saving and opening, Recording and kits, MIDI files, Audio input (microphone, sound card)
+9. **[Files and recording](docs/manual/files.md)**: Saving and opening, Recording and kits, MIDI files, Tracker modules, Audio input (microphone, sound card)
 10. **[Troubleshooting](docs/manual/troubleshooting.md)**: Troubleshooting, Rebuilding the sound banks (optional)
 
 ## Roadmap
@@ -89,7 +89,7 @@ Goal: make GabberKey a professional tool, in the studio and on stage, step by st
 4. **Automation**: setting curves drawn on the timeline. *(done)*
 5. **Live**: clip launcher, MIDI learn for other controllers, MIDI clock. *(done)*
 6. **Key and stretching**: time-stretching that keeps the pitch and transposition of timeline and launcher sounds. *(done; pad loops will follow)*
-7. **Inputs**: audio recording (microphone, sound card) and MIDI files. *(done)*
+7. **Inputs**: audio recording (microphone, sound card), MIDI files and tracker modules (.mod, .xm). *(done)*
 
 Ideas kept for later: a **vocal sampler and vocoder**, **several instances** of the TB-303 and TR-909, an **online version** playable without installing anything, and an **AI loop generator** (an open-source music model running on your own computer).
 

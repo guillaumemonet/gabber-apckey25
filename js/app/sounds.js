@@ -58,7 +58,10 @@ export const bankLoaded = b => (state.banks[b] ?? []).every(p => !p || p.buffer)
 export function padsInUse() {
   const pads = new Set();
   const add = (b, i) => { const p = state.banks[b]?.[i]; if (p) pads.add(p); };
-  for (const clip of state.tl.tracks.flatMap(tr => tr.clips)) if (clip.type === 'pad') add(clip.bank, clip.pad);
+  for (const clip of state.tl.tracks.flatMap(tr => tr.clips)) {
+    if (clip.type === 'pad') add(clip.bank, clip.pad);
+    for (const r of clip.smps ?? []) add(r.bank, r.pad);   // instrument échantillon
+  }
   for (const sc of state.scenes) for (const key of sc?.loops ?? []) add(Math.floor(key / 40), key % 40);
   for (const p of state.seq.patterns) for (const row of p.rows) add(row.bank, row.pad);
   return [...pads];

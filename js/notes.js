@@ -21,6 +21,9 @@ export function toSeq(clip) {
   return clip;
 }
 
+// Champs des notes d'un instrument échantillon (js/sampler.js) : son joué, départ, panoramique, volumes et hauteurs.
+export const SAMPLE_FIELDS = ['s', 'ofs', 'pan', 'pv', 'pp'];
+
 // Notes jouées par le bloc sur toute sa longueur (motif répété, notes coupées à la fin du bloc).
 // `i` : numéro unique de la note dans le bloc (clé de la voix).
 export function clipEvents(clip) {
@@ -34,7 +37,9 @@ export function clipEvents(clip) {
       const t = r + n.t;
       i++;
       if (n.t >= pat - 1e-6 || t >= clip.len - 1e-6) continue;
-      out.push({ t, len: Math.min(n.len, clip.len - t), note: n.note, vel: n.vel ?? 0.85, i });
+      const e = { t, len: Math.min(n.len, clip.len - t), note: n.note, vel: n.vel ?? 0.85, i };
+      for (const k of SAMPLE_FIELDS) if (n[k] !== undefined) e[k] = n[k];
+      out.push(e);
     }
   }
   return out;
