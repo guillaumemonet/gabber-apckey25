@@ -1071,3 +1071,4 @@ header button, header .status { white-space: nowrap; }
 #sl-wave { display: block; width: 100%; height: 150px; cursor: pointer; }
 @media (max-width: 980px) { .seq-grid { grid-template-columns: 64px repeat(16, 1fr) 22px 22px 22px; } }
 .seq-bar [hidden], .slicer-mode [hidden] { display: none; }
+.gen-row [hidden], .gen-row[hidden] { display: none; }

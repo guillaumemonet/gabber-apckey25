@@ -71,7 +71,7 @@ Les sons existent aussi dans le synthé, famille **Breizh** : bombarde, pupitre 
 La fenêtre **Générateur de voix** (groupe Outils) fait chanter un texte par une voix neuronale, sur les notes d'un bloc de la timeline : le lead, la nappe, une mélodie du Générateur.
 
 1. Tapez le **texte**.
-2. Choisissez le bloc de **notes** qui donne la mélodie et le rythme. Par défaut, c'est le bloc sélectionné, sinon le premier lead.
+2. Choisissez le bloc de **notes** qui donne la mélodie et le rythme. Par défaut, c'est le bloc sélectionné, sinon le premier lead. **Aucun** (ou une timeline sans bloc de notes) : la voix est dite en rythme à partir de la mesure de la tête de lecture, une syllabe par croche ou par double croche (**Débit**), chaque temps plus appuyé.
 3. Choisissez la **voix** et le **style**.
 4. **Écouter**, puis **Générer** : la voix devient un bloc audio sur une piste libre, calé sur le bloc de notes. Les consonnes du début tombent juste avant la note, comme chez un vrai chanteur.
 
@@ -79,7 +79,7 @@ Le texte est découpé en syllabes, **une syllabe par note**. S'il y a plus de s
 
 - **Style** :
   - **Chanté** : chaque syllabe prend la hauteur de sa note, la voyelle tient la note, avec un léger vibrato sur les notes longues et un peu de l'intonation naturelle de la voix.
-  - **Scandé (MC)** : la voix garde son intonation parlée, seuls le rythme et le placement suivent les notes ; pour les annonces et les cris de MC.
+  - **Scandé (MC)** : la voix garde son intonation parlée, seuls le rythme et le placement suivent les notes ; pour les annonces et les cris de MC. Elle passe dans une **chaîne de voix d'MC**, réglée d'après des voix d'MC hardcore : voix criée (elle monte vers 230 Hz), présence et brillance, attaques plus nettes, saturation, compression, puis un **écho** calé sur le tempo (croche, croche pointée ou noire, gauche / droite) qui s'efface sous la voix et remplit les silences. **Punch** règle la quantité de cri, de saturation et de compression (double-clic : valeur par défaut).
   - **Robot** : la note exacte, sans vibrato ni intonation.
   - **Vocodeur** : la voix, dite au rythme des notes, module un synthé (dents de scie) qui joue les notes ; avec **Harmonie**, tout l'accord. Le son vocodeur classique du hardcore ; les consonnes sifflantes restent audibles.
 - **Voix** :

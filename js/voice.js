@@ -30,6 +30,8 @@ export const VOICE_MODELS = {
 export const VOICE_MODES = ['sing', 'rap', 'robot', 'vocoder'];
 export const VOICE_CHOIR = [1, 2, 4, 8];
 export const MAX_VOICE_PARTS = 8;
+export const MC_ECHOES = ['off', '8', '8d', '4'];   // écho de l'MC : aucun, croche, croche pointée, noire
+export const MC_FLOWS = ['8', '16'];               // sans bloc de notes : une syllabe par croche ou par double croche
 
 // ---------- Phonèmes et syllabes ----------
 
@@ -447,7 +449,7 @@ async function renderPart(placed, model, part, mode, pre, onStep) {
     const targets = s.notes.map(n => midiHz(part.pick(n.notes) + 12 * part.octave + part.detune));
     const keep = mode === 'robot' ? 0 : 0.25;
     const pitch = (ts, ta, f) => {
-      if (mode === 'rap') return f * Math.pow(2, (12 * part.octave + part.detune) / 12);
+      if (mode === 'rap') return f * Math.pow(2, (12 * part.octave + part.detune + (part.shout ?? 0)) / 12);
       const tn = ts - a;
       let k = 0;
       while (k + 1 < onsets.length && tn >= onsets[k + 1]) k++;
@@ -585,7 +587,7 @@ async function renderTimedPart(placed, eng, part, mode, pre, onStep) {
     part.plans?.push({ start: plan.start, at: plan.at, labels: syls.map(x => x.label), frames, toks: toks.map(x => `${x.role}:${x.syl}`), nat: [...nat] });
     onStep?.(idx.length);
     // Hauteur : chaque syllabe sur sa note (ses notes, avec « _ »), de son attaque à l'attaque suivante.
-    const t0 = plan.start, shift = 12 * part.octave + part.detune;
+    const t0 = plan.start, shift = 12 * part.octave + part.detune + (mode === 'rap' ? part.shout ?? 0 : 0);
     let ratio;
     const track = analyzePitch(y, sr);
     if (mode === 'rap') ratio = () => Math.pow(2, shift / 12);
@@ -616,6 +618,112 @@ async function renderTimedPart(placed, eng, part, mode, pre, onStep) {
     }
   }
   return { data: out, sr };
+}
+
+// ---------- Voix d'MC ----------
+// Mesurée sur des voix d'MC hardcore (voix isolées de morceaux et de lives) : bien plus brillante qu'une voix parlée
+// (centre du spectre vers 1,5-2,3 kHz, beaucoup d'énergie de 2 à 10 kHz, peu sous 250 Hz), rugueuse (cri, saturation),
+// criée plus haut (F0 vers 240-310 Hz), compressée, et prolongée par un écho ou une réverbération après chaque phrase.
+
+export const MC_PUNCH = 0.75;
+export const MC_SHOUT_MIDI = 58;   // la♯2, 233 Hz : hauteur visée par le cri
+
+// Filtre biquad (formules RBJ) : -> fonction qui filtre un échantillon.
+export function biquad(type, sr, f, q = 0.707, gainDb = 0) {
+  const w = 2 * Math.PI * Math.min(f, sr * 0.45) / sr, cw = Math.cos(w), sw = Math.sin(w), al = sw / (2 * q), A = Math.pow(10, gainDb / 40);
+  let b0, b1, b2, a0, a1, a2;
+  if (type === 'hp') { b0 = (1 + cw) / 2; b1 = -(1 + cw); b2 = b0; a0 = 1 + al; a1 = -2 * cw; a2 = 1 - al; }
+  else if (type === 'lp') { b0 = (1 - cw) / 2; b1 = 1 - cw; b2 = b0; a0 = 1 + al; a1 = -2 * cw; a2 = 1 - al; }
+  else if (type === 'peak') { b0 = 1 + al * A; b1 = -2 * cw; b2 = 1 - al * A; a0 = 1 + al / A; a1 = -2 * cw; a2 = 1 - al / A; }
+  else {   // 'high' / 'low' : étagères
+    const sq = 2 * Math.sqrt(A) * al, sgn = type === 'high' ? 1 : -1;
+    b0 = A * ((A + 1) + sgn * (A - 1) * cw + sq); b1 = -2 * sgn * A * ((A - 1) + sgn * (A + 1) * cw); b2 = A * ((A + 1) + sgn * (A - 1) * cw - sq);
+    a0 = (A + 1) - sgn * (A - 1) * cw + sq; a1 = 2 * sgn * ((A - 1) - sgn * (A + 1) * cw); a2 = (A + 1) - sgn * (A - 1) * cw - sq;
+  }
+  b0 /= a0; b1 /= a0; b2 /= a0; a1 /= a0; a2 /= a0;
+  let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+  return x => { const y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = x; y2 = y1; y1 = y; return y; };
+}
+const chainOf = fs => x => fs.reduce((v, f) => f(v), x);
+const follower = (sr, att, rel) => { const a = 1 - Math.exp(-1 / (sr * att)), r = 1 - Math.exp(-1 / (sr * rel)); let e = 0; return v => (e += (v > e ? a : r) * (v - e)); };
+
+/**
+ * La chaîne d'une voix d'MC sur la voix rendue (stéréo, à la fréquence du moteur) : coupe-bas, présence et brillance,
+ * attaques accentuées, saturation en parallèle, compression, écho calé au tempo (ping-pong, filtré, qui s'efface
+ * pendant que l'MC parle), limiteur. punch 0..1 : quantité de cri, de saturation et de compression.
+ * -> [gauche, droite] (plus longs : la queue de l'écho)
+ */
+export function mcVoice([left, right], sr, bpm, { punch = MC_PUNCH, echo = '8d' } = {}) {
+  const n = left.length;
+  const delay = echo === 'off' ? 0 : 60 / bpm * { 8: 0.5, '8d': 0.75, 4: 1 }[echo];
+  const tail = delay ? Math.round(sr * Math.min(4, delay * 6)) : Math.round(sr * 0.05);
+  const L = new Float32Array(n + tail), R = new Float32Array(n + tail);
+  // 1. Égalisation : moins de grave, la présence (2,5-3,5 kHz) et la brillance d'une voix criée dans un micro.
+  const eq = () => chainOf([biquad('hp', sr, 110), biquad('hp', sr, 110), biquad('peak', sr, 1100, 0.9, 2 + 2 * punch),
+    biquad('peak', sr, 3000, 0.8, 4 + 3 * punch), biquad('high', sr, 6500, 0.707, 6 + 3 * punch)]);
+  const eqL = eq(), eqR = eq();
+  for (let i = 0; i < n; i++) { L[i] = eqL(left[i]); R[i] = eqR(right[i]); }
+  // Excitateur : les aigus d'une voix criée (le modèle de voix s'arrête vers 11 kHz) recréés en saturant le haut du
+  // spectre ; seules les harmoniques au-dessus de 4,5 kHz sont ajoutées.
+  for (const ch of [L, R]) {
+    const hi = chainOf([biquad('hp', sr, 2500), biquad('hp', sr, 2500)]), top = chainOf([biquad('hp', sr, 4500), biquad('hp', sr, 4500)]);
+    const hi2 = chainOf([biquad('hp', sr, 5000), biquad('hp', sr, 5000)]), air = chainOf([biquad('hp', sr, 9500), biquad('hp', sr, 9500)]);
+    let pk = 1e-6;
+    for (let i = 0; i < n; i++) pk = Math.max(pk, Math.abs(ch[i]));
+    const dr = 8 / pk, amt = (0.25 + 0.5 * punch) * pk;
+    for (let i = 0; i < n; i++) { const v = ch[i]; ch[i] += top(Math.tanh(dr * hi(v))) * amt + air(Math.tanh(dr * 2 * hi2(v))) * amt * 0.8; }
+  }
+  // 2. Attaques : enveloppe rapide / enveloppe lente, chaque syllabe attaque plus fort.
+  const fast = follower(sr, 0.002, 0.03), slow = follower(sr, 0.015, 0.15), k = 0.3 * punch;
+  for (let i = 0; i < n; i++) {
+    const m = Math.abs(L[i] + R[i]) * 0.5, ef = fast(m), es = slow(m);
+    const g = es > 1e-5 ? Math.min(2.5, Math.max(0.6, Math.pow(ef / es, k))) : 1;
+    L[i] *= g; R[i] *= g;
+  }
+  // 3. Saturation en parallèle : le grain du cri, sans perdre l'articulation (le signal saturé est filtré en bande).
+  let peak = 1e-6;
+  for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(L[i]), Math.abs(R[i]));
+  const drive = (2 + 10 * punch) / peak, wet = 0.25 + 0.45 * punch, tn = Math.tanh(drive * peak);
+  for (const ch of [L, R]) {
+    const band = chainOf([biquad('hp', sr, 400), biquad('lp', sr, 9000)]), smooth = biquad('lp', sr, 12000);
+    for (let i = 0; i < n; i++) { const d = Math.tanh(drive * ch[i]) / tn * peak; ch[i] = smooth(ch[i] * (1 - wet * 0.5) + band(d) * wet); }
+  }
+  // 4. Compression liée (attaque 3 ms, retour 80 ms, 6:1 au-dessus de -18 dB sous la crête), puis niveau.
+  peak = 1e-6;
+  for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(L[i]), Math.abs(R[i]));
+  const thr = peak * Math.pow(10, -(12 + 8 * punch) / 20), ratio = 3 + 5 * punch, env = follower(sr, 0.003, 0.08);
+  const voiced = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const e = env(Math.max(Math.abs(L[i]), Math.abs(R[i])));
+    const g = e > thr ? Math.pow(thr / e, 1 - 1 / ratio) : 1;
+    L[i] *= g; R[i] *= g;
+    voiced[i] = e;
+  }
+  // 5. Écho : répétitions au tempo, gauche / droite, de plus en plus sombres ; il baisse quand la voix parle.
+  if (delay) {
+    const d = Math.round(delay * sr), fb = 0.38, len = n + tail;
+    const inL = Float32Array.from(L), inR = Float32Array.from(R);
+    const fl = chainOf([biquad('hp', sr, 500), biquad('lp', sr, 4500)]), fr = chainOf([biquad('hp', sr, 500), biquad('lp', sr, 4500)]);
+    const bufL = new Float32Array(len), bufR = new Float32Array(len);
+    let vmax = 1e-6;
+    for (let i = 0; i < n; i++) vmax = Math.max(vmax, voiced[i]);
+    const duck = follower(sr, 0.01, 0.12);
+    for (let i = 0; i < len; i++) {
+      const xl = i < n ? inL[i] : 0, xr = i < n ? inR[i] : 0;
+      const pl = i >= d ? bufR[i - d] : 0, pr = i >= d ? bufL[i - d] : 0;   // ping-pong
+      bufL[i] = fl((xl + xr) * 0.5 + pl * fb);
+      bufR[i] = fr(pr * fb);
+      const dk = 1 - 0.75 * Math.min(1, duck(i < n ? voiced[i] : 0) / vmax * 2.5);
+      L[i] += bufL[i] * 0.55 * dk;
+      R[i] += bufR[i] * 0.55 * dk + bufL[i] * 0.15 * dk;
+    }
+  }
+  // 6. Limiteur : crêtes ramenées sous -1 dB (courbe douce au-dessus de -6 dB).
+  peak = 1e-6;
+  for (let i = 0; i < L.length; i++) peak = Math.max(peak, Math.abs(L[i]), Math.abs(R[i]));
+  const pre = 1.6 / peak;
+  for (const ch of [L, R]) for (let i = 0; i < ch.length; i++) ch[i] = 0.89 * Math.tanh(ch[i] * pre) / Math.tanh(1.6);
+  return [L, R];
 }
 
 // ---------- Vocodeur ----------
@@ -712,6 +820,7 @@ export async function renderVoice(text, events, span, bpm, opts, onProgress) {
         pick: notes => notes[Math.max(0, notes.length - 1 - h)],
         pan: parts.length ? ((j % 2 ? 1 : -1) * Math.min(0.8, 0.25 * Math.ceil(j / 2))) : 0,
         octave: 0,
+        shout: 0,
         plans: [],   // phrases rendues (début, attaques, voyelles, fins) : affichage, vérifications
       });
     }
@@ -727,6 +836,12 @@ export async function renderVoice(text, events, span, bpm, opts, onProgress) {
   const auto = opts.octave === 'auto' || opts.octave === undefined;
   // (on chante un peu plus haut qu'on ne parle : +4 demi-tons)
   const oct = auto ? Math.round((natural + 4 - mid) / 12) : opts.octave;
+  // Scandé : la voix criée monte vers 230 Hz (la hauteur des MC qui crient), d'autant plus que le punch est fort ; une
+  // voix déjà haute monte peu.
+  if (opts.mode === 'rap') {
+    const punch = opts.punch ?? MC_PUNCH, shout = Math.max(0, Math.min(10, MC_SHOUT_MIDI - natural)) * Math.min(1, punch / MC_PUNCH);
+    for (const p of parts) p.shout = Math.round(shout * 2) / 2;
+  }
   // Scandé et vocodeur : la voix garde sa hauteur parlée (le vocodeur joue les notes avec sa porteuse).
   const speech = opts.mode === 'rap' || opts.mode === 'vocoder';
   for (const p of parts) p.octave = speech ? (auto || opts.mode === 'vocoder' ? 0 : opts.octave) : oct;

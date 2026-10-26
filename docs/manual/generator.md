@@ -72,7 +72,7 @@ The sounds are also in the synth, family **Breizh**: bombarde, bombarde section,
 The **Voice generator** window (Tools group) makes a neural voice sing a text, on the notes of a timeline block: the lead, the pad, a Generator melody.
 
 1. Type the **text**.
-2. Choose the **notes** block that gives the melody and rhythm. By default it is the selected block, otherwise the first lead.
+2. Choose the **notes** block that gives the melody and rhythm. By default it is the selected block, otherwise the first lead. **None** (or a timeline without a note block): the voice is said in rhythm from the playhead bar, one syllable per 8th or 16th note (**Flow**), each beat stronger.
 3. Choose the **voice** and the **style**.
 4. **Listen**, then **Generate**: the voice becomes an audio block on a free track, lined up with the notes block. The leading consonants fall just before the note, as with a real singer.
 
@@ -80,7 +80,7 @@ The text is split into syllables, **one syllable per note**. If there are more s
 
 - **Style**:
   - **Sung**: each syllable takes the pitch of its note, the vowel holds the note, with a light vibrato on long notes and a bit of the voice's natural intonation.
-  - **Rapped (MC)**: the voice keeps its spoken intonation, only the rhythm and placement follow the notes; for MC announcements and shouts.
+  - **Rapped (MC)**: the voice keeps its spoken intonation, only the rhythm and placement follow the notes; for MC announcements and shouts. It goes through an **MC voice chain**, tuned on hardcore MC voices: shouted voice (it rises towards 230 Hz), presence and brightness, sharper attacks, saturation, compression, then an **echo** in time with the tempo (8th, dotted 8th or quarter, left / right) that fades under the voice and fills the gaps. **Punch** sets how much shout, saturation and compression (double-click: default).
   - **Robot**: the exact note, no vibrato or intonation.
   - **Vocoder**: the voice, said in the rhythm of the notes, modulates a synth (saw waves) playing the notes; with **Harmony**, the whole chord. The classic hardcore vocoder sound; hissing consonants stay audible.
 - **Voice**:

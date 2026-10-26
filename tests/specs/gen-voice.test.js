@@ -160,6 +160,33 @@ export default async function (t, A) {
   const calls = synthCalls;
   await A.voiceTake();
   t.eq(synthCalls, calls, 'rien ne change : le rendu est gardé');
+  // Scandé (MC) sans bloc de notes : en rythme à partir de la tête de lecture, chaîne de voix d'MC.
+  const srcSel = t.$('#voice-src');
+  t.eq(srcSel.options[0].value, 'none', 'choix « aucun bloc » en tête de liste');
+  srcSel.value = 'none'; srcSel.dispatchEvent(new Event('change'));
+  const mode = t.$('#voice select[data-key="mode"]');
+  mode.value = 'rap'; mode.dispatchEvent(new Event('change'));
+  t.ok(!t.$('.voice-flow').hidden && t.$$('.voice-mc').every(e => !e.hidden), 'sans bloc : Débit ; scandé : Punch et Écho');
+  S.voice.flow = '16'; S.voice.echo = '4';
+  S.tl.playhead = 17;
+  const rap = await A.voiceTake();
+  const gap = rap.syllables[1].notes[0].t - rap.syllables[0].notes[0].t;
+  t.near(gap, 60 / bpm / 4, 1e-6, 'une syllabe par double croche', gap);
+  const tailBeats = rap.buffer.duration / (60 / bpm);
+  t.ok(tailBeats > 4 * 0.25 + 4, 'l\'écho (noire) prolonge la voix', tailBeats);
+  const made2 = await A.generateVoiceClip();
+  t.ok(made2 && made2.clip.start < 16 && made2.clip.start > 15, 'posé à la mesure de la tête de lecture', made2?.clip.start);
+  // La chaîne seule : plus brillante, plus dense, crêtes sous -1 dB, queue d'écho.
+  const sr2 = 48000, n2 = sr2;
+  const dry = Float32Array.from({ length: n2 }, (_, i) => (i % 12000 < 6000 ? (((i * 140 / sr2) % 1) * 2 - 1) * 0.3 : 0));   // dents de scie : riche comme une voix
+  const [wl] = A.mcVoice([dry, dry], sr2, 190, { punch: 0.75, echo: '8d' });
+  const hf = x => { let h = 0, e = 0; for (let i = 1; i < n2; i++) { const d = x[i] - x[i - 1]; h += d * d; e += x[i] * x[i]; } return h / e; };
+  t.ok(hf(wl) > hf(dry) * 1.6, 'plus brillante (énergie des aigus)', [hf(dry), hf(wl)]);
+  t.ok(wl.length > n2 && wl.reduce((m, v) => Math.max(m, Math.abs(v)), 0) <= 0.9, 'queue d\'écho ajoutée, crêtes sous -1 dB');
+  const after = [0, 1, 2, 3].map(k => wl.slice(n2 + k * 6000, n2 + (k + 1) * 6000).reduce((m, v) => Math.max(m, Math.abs(v)), 0));
+  t.ok(Math.max(...after) > 0.03, 'l\'écho sonne après la voix', after);
+  mode.value = 'sing'; mode.dispatchEvent(new Event('change'));
+  srcSel.value = 'c-voice'; srcSel.dispatchEvent(new Event('change'));
   // Sauvegarde.
   const snap = JSON.parse(JSON.stringify(A.stateSnapshot().voice));
   t.eq([snap.model, snap.text], ['fr-upmc', 'la la la la'], 'réglages enregistrés avec le projet');

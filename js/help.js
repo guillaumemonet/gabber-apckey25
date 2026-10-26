@@ -206,8 +206,8 @@ export const HELP = {
       <p>Makes a neural voice sing a text on the notes of a timeline block (lead, pad).</p>
       <ul>
         <li><b>Text</b>: one syllable per note. A lone <b>_</b> holds the previous syllable over the next note. <b>Repeat the text</b> fills the whole block.</li>
-        <li><b>Notes</b>: the block that gives the melody and rhythm (by default the selected block, otherwise the first lead).</li>
-        <li><b>Style</b>: <b>Sung</b> (on the notes, vibrato on long notes), <b>Rapped (MC)</b> (spoken intonation, rhythm of the notes), <b>Robot</b> (exact notes, flat), <b>Vocoder</b> (the voice modulates a synth playing the notes; with Harmony, the whole chord).</li>
+        <li><b>Notes</b>: the block that gives the melody and rhythm (by default the selected block, otherwise the first lead). <b>None</b>: in rhythm from the playhead bar, one syllable per 8th or 16th note (<b>Flow</b>).</li>
+        <li><b>Style</b>: <b>Sung</b> (on the notes, vibrato on long notes), <b>Rapped (MC)</b> (spoken intonation, rhythm of the notes, through an MC voice chain: shout, presence, saturation, compression; <b>Punch</b> and an <b>Echo</b> in time), <b>Robot</b> (exact notes, flat), <b>Vocoder</b> (the voice modulates a synth playing the notes; with Harmony, the whole chord).</li>
         <li><b>Voice</b>: French and English voices, some models with many singers (pick a number, or the wand for a random one). <b>Octave</b> Auto keeps the voice in its range. <b>Timbre</b>: smaller / bigger voice.</li>
         <li><b>Choir</b>: several singers on the same line, spread in stereo. <b>Harmony</b>: one voice per chord note (on a pad block).</li>
         <li><b>Listen</b>, then <b>Generate</b>: an audio block on a free track, saved with the project. The syllables are shown with their note under the buttons.</li>
@@ -519,8 +519,8 @@ export const HELP = {
       <p>Fait chanter un texte par une voix neuronale sur les notes d'un bloc de la timeline (lead, nappe).</p>
       <ul>
         <li><b>Texte</b> : une syllabe par note. Un <b>_</b> seul fait tenir la syllabe d'avant sur la note suivante. <b>Répéter le texte</b> remplit tout le bloc.</li>
-        <li><b>Notes</b> : le bloc qui donne la mélodie et le rythme (par défaut le bloc sélectionné, sinon le premier lead).</li>
-        <li><b>Style</b> : <b>Chanté</b> (sur les notes, vibrato sur les notes longues), <b>Scandé (MC)</b> (intonation parlée, rythme des notes), <b>Robot</b> (notes exactes, sans relief), <b>Vocodeur</b> (la voix module un synthé qui joue les notes ; avec Harmonie, tout l'accord).</li>
+        <li><b>Notes</b> : le bloc qui donne la mélodie et le rythme (par défaut le bloc sélectionné, sinon le premier lead). <b>Aucun</b> : en rythme à partir de la mesure de la tête de lecture, une syllabe par croche ou par double croche (<b>Débit</b>).</li>
+        <li><b>Style</b> : <b>Chanté</b> (sur les notes, vibrato sur les notes longues), <b>Scandé (MC)</b> (intonation parlée, rythme des notes, avec une chaîne de voix d'MC : cri, présence, saturation, compression ; <b>Punch</b> et un <b>Écho</b> calé sur le tempo), <b>Robot</b> (notes exactes, sans relief), <b>Vocodeur</b> (la voix module un synthé qui joue les notes ; avec Harmonie, tout l'accord).</li>
         <li><b>Voix</b> : voix françaises et anglaises, certains modèles avec beaucoup d'interprètes (choisissez un numéro, ou la baguette pour le hasard). <b>Octave</b> Auto garde la voix dans sa tessiture. <b>Timbre</b> : voix plus petite / plus grande.</li>
         <li><b>Chœur</b> : plusieurs interprètes sur la même ligne, répartis en stéréo. <b>Harmonie</b> : une voix par note de l'accord (sur un bloc de nappe).</li>
         <li><b>Écouter</b>, puis <b>Générer</b> : un bloc audio sur une piste libre, enregistré avec le projet. Les syllabes s'affichent avec leur note sous les boutons.</li>
