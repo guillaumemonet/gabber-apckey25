@@ -23,6 +23,7 @@ import { defaultBreizh, mergeBreizh } from './breizh-ui.js';
 import { cleanDevices } from './devices.js';
 import { cleanBankNames } from './banks-ui.js';
 import { mergeBuildup } from '../buildup.js';
+import { cleanToolPresets } from './tool-presets.js';
 import { mergeVoiceState } from './voice-ui.js';
 import { mergeTuneState } from './tune-ui.js';
 import { defaultGen, mergeGen } from './gen.js';
@@ -45,6 +46,7 @@ export async function restore() {
   state.breizh = defaultBreizh();
   state.bankNames = cleanBankNames(saved?.bankNames);
   state.buildup = mergeBuildup(saved?.buildup);
+  state.toolPresets = cleanToolPresets(saved?.toolPresets);
   state.voice = mergeVoiceState(saved?.voice);
   state.tune = mergeTuneState(saved?.tune);
   state.viz = mergeViz(saved?.viz);
@@ -204,6 +206,7 @@ export function stateSnapshot() {
     devices: state.devices,
     bankNames: state.bankNames,
     buildup: state.buildup,
+    toolPresets: state.toolPresets,
     launcher: state.launcher,
     input: state.input,
     midiClock: state.midiClock,

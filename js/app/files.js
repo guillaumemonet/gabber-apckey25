@@ -44,6 +44,19 @@ import { setBpm } from './tempo.js';
 import { bufferCache, loadBank, loadPads } from './sounds.js';
 import { loadTlBuffers, renderTl, tlRec, tlStopRec } from './tl.js';
 import { tlSelect } from './tl-select.js';
+import { mergeBuildup } from '../buildup.js';
+import { mergeDecksState } from '../decks.js';
+import { cleanBuses } from '../timeline.js';
+import { breizhDraft, mergeBreizh, renderBreizh, renderBreizhRoll, stopBreizhPreview } from './breizh-ui.js';
+import { renderBuildup, stopBuildupPreview } from './buildup-ui.js';
+import { loadDeck, renderDecks } from './decks-ui.js';
+import { cleanDevices, renderDevices } from './devices.js';
+import { draft as genDraft, mergeGen, renderGen, renderGenRoll, stopGenPreview } from './gen.js';
+import { cleanLauncher, renderLauncher, stopAllClips } from './launcher.js';
+import { cleanMidiMap, renderMidi } from './midi-ui.js';
+import { mergeTuneState, renderTuneWin } from './tune-ui.js';
+import { applyVizKnobs, mergeViz, renderViz } from './viz-ui.js';
+import { mergeVoiceState, renderVoiceWin, stopVoicePreview } from './voice-ui.js';
 import { renderTr } from './tr909-ui.js';
 
 // ---------- Kits (export / import) ----------
@@ -72,6 +85,28 @@ export function replaceBank(b, pads) {
 }
 
 export const PAD_QUANTS = [0, 1, 2, 3, 4, 8, 16];
+// Fichiers de banque (.apckit) : une banque de pads, ou toute la session (25 banques et réglages des instruments).
+// Ouverts / enregistrés depuis la barre de titre des fenêtres Pads et Banques (📂 / 💾), « Tout exporter » dans Banques.
+let kitTarget = 0;   // banque qui reçoit le fichier ouvert
+export async function kitExportBank(b = state.bank) {
+  toast(t('kit.exportingBank'));
+  await loadBank(b);
+  const blob = await packBanks([state.banks[b]], padBytes, { kind: 'bank', bpm: state.bpm });
+  download(blob, `${t('kit.file.bank', { n: b + 1 })}-${stamp()}.apckit`);
+  toast(t('kit.exportedBank'));
+}
+export async function kitExportAll() {
+  toast(t('kit.exportingAll'));
+  await loadPads(state.banks.flat());
+  const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr, mix: state.mix, scenes: state.scenes });
+  download(blob, `gabberkey-session-${stamp()}.apckit`);
+  toast(t('kit.exportedAll'));
+}
+export function kitImport(b = state.bank) {
+  kitTarget = b;
+  $('#kit-file').click();
+}
+
 export function bindKits() {
   $('#bank-clear').addEventListener('click', clearBank);
   const pq = $('#pad-quant');
@@ -79,25 +114,11 @@ export function bindKits() {
   pq.value = state.padQuant;
   engine.padQuant = state.padQuant;
   pq.addEventListener('change', () => { state.padQuant = engine.padQuant = +pq.value; save(); });
-  $('#kit-export-bank').addEventListener('click', async () => {
-    toast(t('kit.exportingBank'));
-    await loadBank(state.bank);
-    const blob = await packBanks([state.banks[state.bank]], padBytes, { kind: 'bank', bpm: state.bpm });
-    download(blob, `${t('kit.file.bank', { n: state.bank + 1 })}-${stamp()}.apckit`);
-    toast(t('kit.exportedBank'));
-  });
-  $('#kit-export-all').addEventListener('click', async () => {
-    toast(t('kit.exportingAll'));
-    await loadPads(state.banks.flat());
-    const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr, mix: state.mix, scenes: state.scenes });
-    download(blob, `gabberkey-session-${stamp()}.apckit`);
-    toast(t('kit.exportedAll'));
-  });
-  $('#kit-import').addEventListener('click', () => $('#kit-file').click());
   $('#kit-file').addEventListener('change', async e => {
     const file = e.target.files[0];
     e.target.value = '';
     if (!file) return;
+    const target = kitTarget;
     try {
       toast(t('kit.importing'));
       const kitData = await unpack(file);
@@ -114,8 +135,8 @@ export function bindKits() {
         if (kitData.mix) { state.mix = mergeMixState(kitData.mix); mixer.reload(); CHANNELS.forEach(renderFx); renderMixer(); }
         if (kitData.tr) { drum.stop(); state.tr = mergeTrState(kitData.tr); drum.setVolume(state.tr.globals.volume); renderTr(); }
       } else {
-        if (state.banks[state.bank].some(Boolean) && !confirm(t('kit.confirmBank', { n: state.bank + 1 }))) return;
-        replaceBank(state.bank, await Promise.all(kitData.banks[0].map(unpackPad)));
+        if (state.banks[target].some(Boolean) && !confirm(t('kit.confirmBank', { n: target + 1 }))) return;
+        replaceBank(target, await Promise.all(kitData.banks[0].map(unpackPad)));
       }
       renderAll();
       renderPresets();
@@ -190,6 +211,47 @@ export const TOOL_IO = {
     get: () => ({ scenes: state.scenes }),
     set: d => { state.scenes = mergeScenes(d.scenes); setCurrentScene(null); setQueuedScene(null); renderScenes(); },
   },
+  // Générateurs : leurs réglages (et le brouillon du piano roll pour le Générateur et le Breizh generator).
+  // (brouillons calculés avant d'enregistrer : sinon ils ne le sont qu'à l'affichage)
+  gen: { get: () => { genDraft('chords'); genDraft('lead'); return { gen: state.gen }; }, set: d => { stopGenPreview(); state.gen = mergeGen(d.gen); renderGen(); renderGenRoll(true); } },
+  breizh: { get: () => { breizhDraft(); return { breizh: state.breizh }; }, set: d => { stopBreizhPreview(); state.breizh = mergeBreizh(d.breizh); renderBreizh(); renderBreizhRoll(true); } },
+  buildup: { get: () => ({ buildup: state.buildup }), set: d => { stopBuildupPreview(); state.buildup = mergeBuildup(d.buildup); renderBuildup(); } },
+  voice: { get: () => ({ voice: state.voice }), set: d => { stopVoicePreview(); state.voice = mergeVoiceState(d.voice); renderVoiceWin(); } },
+  tune: { get: () => ({ tune: state.tune }), set: d => { state.tune = mergeTuneState(d.tune); renderTuneWin(); } },
+  // Designer d'effet : vos courbes (celles qu'on n'a pas encore rejoignent les vôtres).
+  curve: {
+    get: () => ({ curves: state.curves }),
+    set: d => { for (const c of (Array.isArray(d.curves) ? d.curves : []).map(cleanCurve)) if (c?.id?.startsWith('u:') && !state.curves.some(x => x.id === c.id)) state.curves.push(c); renderCurveEditor(); renderLibrary(); },
+  },
+  // Platines : réglages et sons chargés (les sons voyagent avec le fichier).
+  decks: {
+    get: () => ({ decks: state.decks }),
+    samples: () => DECK_IDS.map(id => state.decks[id]?.sampleId).filter(Boolean),
+    set: async d => {
+      const next = mergeDecksState(d.decks);
+      for (const id of DECK_IDS) {
+        const { sampleId, name, loop } = next[id] ?? {};
+        Object.assign(state.decks[id], { ...next[id], sampleId: state.decks[id].sampleId });
+        if (sampleId) await loadDeck(id, { sampleId, name, loop });
+      }
+      renderDecks();
+    },
+  },
+  launcher: { get: () => ({ launcher: state.launcher }), samples: () => state.launcher.slots.flat().map(c => c?.sampleId).filter(Boolean),
+    set: d => { stopAllClips(); state.launcher = cleanLauncher(d.launcher); renderLauncher(); } },
+  buses: { get: () => ({ buses: state.tl.buses }), set: d => { state.tl.buses = cleanBuses(d.buses); state.tl.buses.forEach((_, b) => timeline.updateBus(b)); renderBuses(); renderTl(); } },
+  viz: { get: () => ({ viz: state.viz }), set: d => { state.viz = mergeViz(d.viz); applyVizKnobs(); renderViz(); } },
+  // MIDI : commandes apprises, instruments des appareils, horloge.
+  monitor: {
+    get: () => ({ midiMap: state.midiMap, devices: state.devices, midiClock: state.midiClock }),
+    set: d => {
+      state.midiMap = cleanMidiMap(d.midiMap);
+      state.devices = cleanDevices(d.devices);
+      if (d.midiClock && typeof d.midiClock === 'object') state.midiClock = { out: String(d.midiClock.out ?? ''), in: String(d.midiClock.in ?? '') };
+      renderMidi();
+      renderDevices();
+    },
+  },
 };
 export const FILE_TOOLS = Object.keys(TOOL_IO);
 
@@ -210,7 +272,7 @@ export async function saveFile(kind) {
     const used = new Set(state.tl.tracks.flatMap(tr => tr.fx.filter(b => b.fx === 'curve').map(b => b.p.curve)));
     data = { bpm: state.bpm, tl: { bars: state.tl.bars, loop: state.tl.loop, zoom: state.tl.zoom, tracks: state.tl.tracks, buses: state.tl.buses, markers: state.tl.markers }, userSounds: state.userSounds.filter(u => ids.includes(u.sampleId)),
       curves: state.curves.filter(c => used.has(c.id)) };
-  } else data = TOOL_IO[kind].get();
+  } else { data = TOOL_IO[kind].get(); ids = TOOL_IO[kind].samples?.() ?? []; }
   toast(t('file.saving'));
   const blob = await packFile(kind, JSON.parse(JSON.stringify(data)), ids, id => store.loadSample(id));
   download(blob, `gabberkey-${t(`file.slug.${kind}`)}-${stamp()}${FILE_EXT}`);
@@ -270,7 +332,8 @@ export async function loadFile(file, demo = false) {
     renderTl();
     renderLibrary();
   } else {
-    TOOL_IO[f.kind].set(f.data);
+    await TOOL_IO[f.kind].set(f.data);
+    if (Object.keys(f.samples).length) renderLibrary();
     if (!wm.isOpen(f.kind)) wm.toggle(f.kind, true);
     renderKnobs();
   }

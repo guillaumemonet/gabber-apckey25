@@ -116,7 +116,7 @@ Build your own gabber / hardcore kick, computed by the browser in a few millisec
 - **Distortion**: **Drive** and **Shape** (the 909's 5 shapes), then **Formant** and **Bite**, which make the tail "talk".
 - **Attack**: **Click** (noise) and **Attack** (short punchy layer).
 - **Auto-listen** plays the kick each time you release a knob; the waveform and the length are shown.
-- **→ Pad** puts it on the selected pad, **→ Library** adds it to the **Kicks** category of the library (drag it onto the timeline; right-click it there to remove it), **⤓ WAV** downloads it. Your kicks trigger the sidechain like any other kick.
+- **Send to…** puts it on the pad of your choice (the pad grid, any bank), **→ Library** adds it to the **Kicks** category of the library (drag it onto the timeline; right-click it there to remove it), **⤓ WAV** downloads it. Your kicks trigger the sidechain like any other kick.
 
 ### Expert mode: click, body and tail
 

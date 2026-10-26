@@ -37,6 +37,8 @@ A chord block works like any other block: move it, lengthen it, copy it (Alt), o
 - **Listen** to an idea, then **Choose** it: it becomes the melody draft. Each pick **learns your taste** (the average traits of the ideas you chose): later suggestions get closer and closer to it. The taste is saved with the project.
 - **Suggest progressions** (Chords tab): anthem chord progressions in the key of your progression, built from the most common moves of minor-key hardcore and hardstyle (i, VI, VII, III, iv, v, V); click one to use it.
 
+The **Generator**, **Breizh generator**, **Build-up designer**, **Voice generator** and **Pitch correction** have a preset bar like the instruments: set them up, type a name, **Save**; your settings (★) come back from the menu, the bin deletes them. They are saved with the project.
+
 ## Breizh generator
 
 [![Breizh generator window: a tune for a pair of pipers in F minor and its draft in the piano roll](../screenshots/breizh-en.png)](../screenshots/breizh-en.png)

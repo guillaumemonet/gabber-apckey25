@@ -16,6 +16,7 @@ import { renderLibrary, showLibrary } from './library-ui.js';
 import { toast } from './misc.js';
 import { kickPresets } from './presets-bar.js';
 import { openRoll } from './roll-ui.js';
+import { bufferToPad, openSendTo } from './send-to.js';
 import { save } from './save.js';
 import { bufferCache } from './sounds.js';
 import { growSong, renderTl } from './tl.js';
@@ -125,7 +126,7 @@ export function buildKick() {
   $('#kick-auto').addEventListener('click', () => { state.kick.auto = !state.kick.auto; renderKick(); save(); });
   $('#kick-key').addEventListener('click', kickToKey);
   $('#kick-melody').addEventListener('click', kickMelody);
-  $('#kick-to-pad').addEventListener('click', kickToPad);
+  $('#kick-to-pad').addEventListener('click', e => { const r = e.currentTarget.getBoundingClientRect(); sendKickTo(r.left, r.top); });
   $('#kick-to-lib').addEventListener('click', kickToLibrary);
   $('#kick-wav').addEventListener('click', async () => {
     const buf = await kickRender();
@@ -261,6 +262,11 @@ export function kickMelody() {
 }
 
 // Le kick devient le son du pad sélectionné (banque affichée).
+// « Envoyer vers… » : le kick sur un pad choisi, dans la banque choisie (la même grille que pour les blocs de la timeline).
+export function sendKickTo(x, y) {
+  openSendTo(null, null, x, y, { name: kickName(), toPad: async (b, i) => { const buf = await kickRender(); return bufferToPad(buf, kickName(), catColor('kick'), b, i); } });
+}
+
 export async function kickToPad() {
   const buf = await kickRender();
   const wav = encodeWav([buf.getChannelData(0), buf.getChannelData(0)], buf.sampleRate);
@@ -320,6 +326,6 @@ export function renderKick() {
     col.querySelector('.kick-solo').classList.toggle('active', state.kick.solo === col.dataset.layer);
   }
   $('#kick-auto').classList.toggle('active', state.kick.auto);
-  $('#kick-to-pad').title = t('kick.toPad.title', { n: state.selected + 1, bank: state.bank + 1 });
+  $('#kick-to-pad').title = t('kick.toPad.title');
   renderKickKnobs();
 }

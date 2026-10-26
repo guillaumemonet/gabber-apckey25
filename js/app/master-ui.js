@@ -34,7 +34,7 @@ export function buildMaster() {
   }).join('');
   box.innerHTML = `${groups}
     <div class="mc-group mc-meters">
-      <div class="mc-head"><b>${t('master.loudness')}</b><button class="mc-reset" title="${t('master.resetTitle')}">${t('master.reset')}</button></div>
+      <div class="mc-head"><b>${t('master.loudness')}</b><button class="mc-reset" data-icon="reset" title="${t('master.resetTitle')}">${t('master.reset')}</button></div>
       <div class="mc-lufs"><span>${t('master.momentary')}</span><b data-m="momentary"></b><span>${t('master.short')}</span><b data-m="shortTerm"></b><span>${t('master.integrated')}</span><b data-m="integrated"></b><span>${t('master.peak')}</span><b data-m="peak"></b><span>${t('master.gr')}</span><b data-m="gr"></b><span title="${t('master.phaseTitle')}">${t('master.phase')}</span><b data-m="phase" title="${t('master.phaseTitle')}"></b></div>
       <div class="mc-bar" title="${t('master.barTitle')}"><i class="mc-target"></i><i class="mc-level"></i></div>
       <div class="hint mc-hint">${t('master.target', { lo: TARGET[0], hi: TARGET[1] })}</div>

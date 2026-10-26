@@ -180,6 +180,7 @@ export function renderMidi() {
     const learn = document.createElement('button');
     learn.className = 'learn-btn' + (learnTarget === tg.id ? ' active' : '');
     learn.textContent = learnTarget === tg.id ? t('learn.cancel') : t('learn.learn');
+    learn.dataset.icon = learnTarget === tg.id ? 'stop' : 'dial';
     learn.addEventListener('click', () => startLearn(tg.id));
     const del = document.createElement('button');
     del.className = 'icon-only';

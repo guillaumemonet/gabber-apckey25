@@ -163,7 +163,7 @@ export class WindowManager {
         const b = document.createElement('button');
         b.className = 'win-file icon-only';
         b.dataset.icon = icon;
-        b.title = t(`file.${kind}Tool`);
+        b.title = this.files.title?.(id, kind) ?? t(`file.${kind}Tool`);
         b.setAttribute('aria-label', b.title);
         b.addEventListener('click', () => this.files[kind](id));
         actions.appendChild(b);

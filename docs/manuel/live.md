@@ -73,7 +73,7 @@ La barre sous l'en-tête ouvre et ferme les plugins, en quatre groupes : **Instr
 - **Déplacez**-la par sa barre de titre, **redimensionnez**-la par son coin en bas à droite ; elle **s'aimante** aux bords de l'écran et aux autres fenêtres.
 - **?** ouvre l'**aide** du contenu de la fenêtre, à côté d'elle (**?** à nouveau, ✕ ou Échap la ferme).
 - **✕** la ferme ; les fenêtres utilisées sont mémorisées avec leur position.
-- Les outils dont on peut enregistrer les réglages (TR-909, TB-303, Synthé, Synthé à oscillateurs, Designer de kick, Mixeur, Câblage, Scènes) ont aussi des boutons **📁 / 💾** dans leur barre de titre (voir Enregistrer et ouvrir).
+- Les outils dont on peut enregistrer les réglages (instruments, générateurs, designers, mixeur, câblage, scènes, platines, lanceur, bus, visualiseur, MIDI ; la banque pour Pads et Banques) ont aussi des boutons **📁 / 💾** dans leur barre de titre (voir Enregistrer et ouvrir).
 - Le bouton **Réorganiser les fenêtres** (quatre carrés, dans l'en-tête) les remet à leur place et à leur taille de départ.
 
 ---

@@ -35,9 +35,13 @@ const colorOf = c => (Number.isInteger(c) ? PALETTE[uiColor(c)] : null);
 // Pad de la grille (ligne 0 = en haut) : comme sur l'APC, les pads 1-8 sont en bas.
 export const padAt = (row, col) => (LN_ROWS - 1 - row) * LN_COLS + col;
 
-/** Ouvre le choix de la destination du bloc `clip` (piste `track`), au point (x, y). */
-export function openSendTo(track, clip, x, y) {
+/**
+ * Ouvre le choix de la destination du bloc `clip` (piste `track`), au point (x, y). `sound` : un son fabriqué par un
+ * outil (designer de kick…) au lieu d'un bloc : { name, toPad(banque, pad) } ; seulement les pads.
+ */
+export function openSendTo(track, clip, x, y, sound = null) {
   closeSendTo();
+  if (sound) { clip = { name: sound.name }; target = 'pads'; }
   withFx = false;
   menu = document.createElement('div');
   menu.className = 'clip-menu send-menu';
@@ -49,7 +53,7 @@ export function openSendTo(track, clip, x, y) {
     head.textContent = t('send.head', { name: clip.name ?? '' });
     const tabs = document.createElement('div');
     tabs.className = 'send-tabs';
-    for (const k of ['pads', 'launcher']) {
+    for (const k of sound ? ['pads'] : ['pads', 'launcher']) {
       const b = document.createElement('button');
       b.textContent = t(`send.${k}`);
       b.dataset.target = k;
@@ -72,6 +76,7 @@ export function openSendTo(track, clip, x, y) {
       row.className = 'cm-row';
       row.append(Object.assign(document.createElement('span'), { textContent: t('send.bank') }), sel);
       menu.appendChild(row);
+      if (!sound) {
       // Les effets de la piste (effets, inserts, filtres, saturation, reverb et delay) dans le son du pad, ou non.
       const fx = document.createElement('input');
       fx.type = 'checkbox';
@@ -83,6 +88,7 @@ export function openSendTo(track, clip, x, y) {
       fl.title = t('send.fxTitle');
       fl.append(fx, Object.assign(document.createElement('span'), { textContent: t('send.fx') }));
       menu.appendChild(fl);
+      }
     }
     const grid = document.createElement('div');
     grid.className = 'send-grid';
@@ -99,7 +105,8 @@ export function openSendTo(track, clip, x, y) {
       if (col) cell.style.setProperty('--c', col);
       cell.addEventListener('click', async () => {
         closeSendTo();
-        if (target === 'pads') await sendToPad(track, clip, bank, padAt(r, c), { fx: withFx });
+        if (sound) await sound.toPad(bank, padAt(r, c));
+        else if (target === 'pads') await sendToPad(track, clip, bank, padAt(r, c), { fx: withFx });
         else { setSlot(r, c, clip); toast(t('send.launcherDone', { row: r + 1, col: c + 1 }), 2500); }
       });
       grid.appendChild(cell);
@@ -130,6 +137,27 @@ function plainSample(clip) {
   return clip.loop || !(clip.len < natural - 0.05);
 }
 
+/** Pose un son (AudioBuffer) sur le pad `i` de la banque `b`, enregistré comme une prise (ses réglages gardés s'il était occupé). */
+export function bufferToPad(buffer, name, color, b, i, { loop = false, bpm = 0 } = {}) {
+  const sampleId = `rec:${crypto.randomUUID()}`;
+  bufferCache.set(sampleId, buffer);
+  store.saveSample(sampleId, { name, data: encodeWav([0, 1].map(c => buffer.getChannelData(Math.min(c, buffer.numberOfChannels - 1))), buffer.sampleRate) })
+    .then(renderLibrary).catch(err => console.warn('Pad', err));
+  return placePad({ name, color, sampleId, buffer, bpm, loop }, b, i);
+}
+function placePad({ name, color, sampleId, buffer, bpm, loop }, b, i) {
+  const old = state.banks[b][i];
+  engine.stopPad(padKey(b, i));
+  const pad = newPad((name ?? '').slice(0, 24), Number.isInteger(color) ? color : old?.color ?? 0, sampleId, buffer, bpm);
+  if (old) pad.p = { ...old.p };
+  pad.p.mode = (loop ? 2 : 0) / (PAGES.pad.params[7].steps - 1);
+  state.banks[b][i] = pad;
+  if (b === state.bank) { renderPad(i); renderEditor(); }
+  save();
+  toast(t('send.padDone', { n: i + 1, bank: b + 1 }), 3000);
+  return pad;
+}
+
 /**
  * Pose le son du bloc sur le pad `i` de la banque `b` (ses réglages gardés s'il était occupé).
  * opts.fx : avec les effets de la piste (effets, inserts, filtres, saturation, reverb et delay) ; sinon le son du bloc seul.
@@ -149,14 +177,5 @@ export async function sendToPad(track, clip, b, i, opts = {}) {
     store.saveSample(sampleId, { name: clip.name ?? '', data: encodeWav([0, 1].map(c => buffer.getChannelData(Math.min(c, buffer.numberOfChannels - 1))), buffer.sampleRate) })
       .then(renderLibrary).catch(err => console.warn('Pad', err));
   }
-  const old = state.banks[b][i];
-  engine.stopPad(padKey(b, i));
-  const pad = newPad((clip.name ?? '').slice(0, 24), Number.isInteger(clip.color) ? clip.color : old?.color ?? 0, sampleId, buffer, bpm);
-  if (old) pad.p = { ...old.p };
-  pad.p.mode = (clip.loop ? 2 : 0) / (PAGES.pad.params[7].steps - 1);
-  state.banks[b][i] = pad;
-  if (b === state.bank) { renderPad(i); renderEditor(); }
-  save();
-  toast(t('send.padDone', { n: i + 1, bank: b + 1 }), 3000);
-  return pad;
+  return placePad({ name: clip.name, color: clip.color, sampleId, buffer, bpm, loop: clip.loop }, b, i);
 }

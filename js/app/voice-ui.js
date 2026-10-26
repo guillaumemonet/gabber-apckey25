@@ -9,7 +9,7 @@ import * as store from '../storage.js';
 import { BEATS_PER_BAR } from '../timeline.js';
 import { MAX_VOICE_PARTS, VOICE_CHOIR, VOICE_MODELS, VOICE_MODES, loadVoice, renderVoice, voiceCached } from '../voice.js';
 import { $, engine, state, timeline } from './core.js';
-import { bounceTarget } from './freeze.js';
+import { freeLanes } from './gen.js';
 import { renderLibrary } from './library-ui.js';
 import { toast } from './misc.js';
 import { save } from './save.js';
@@ -136,13 +136,14 @@ export async function generateVoiceClip() {
   const n = take.buffer.length - cut;
   const buf = engine.ctx.createBuffer(2, n, sr);
   for (let c = 0; c < 2; c++) buf.copyToChannel(take.buffer.getChannelData(c).subarray(cut), c);
-  const j = bounceTarget(src.track);
-  if (j < 0) { toast(t('frz.noTrack'), 3500); return null; }
+  const start = src.clip.start - pre / bd, len = Math.max(1, Math.ceil(buf.duration / bd - 1e-3));
+  const lanes = freeLanes(start, len, 1);   // première piste libre depuis la piste armée, comme les autres générateurs
+  if (!lanes) return null;
+  const j = lanes[0];
   const id = `rec:${crypto.randomUUID()}`;
   const name = `${t('voice.clipName')} · ${state.voice.text.trim().replace(/\s+/g, ' ')}`.slice(0, 24);
   bufferCache.set(id, buf);
-  const start = src.clip.start - pre / bd;
-  const clip = { id: crypto.randomUUID(), start, len: Math.max(1, Math.ceil(buf.duration / bd - 1e-3)), sampleId: id, name, cat: 'voice', color: catColor('voice'), bpm, loop: false };
+  const clip = { id: crypto.randomUUID(), start, len, sampleId: id, name, cat: 'voice', color: catColor('voice'), bpm, loop: false };
   const dst = state.tl.tracks[j];
   if (!dst.clips.length) dst.name = t('voice.trackName');
   dst.clips.push(clip);
@@ -151,7 +152,7 @@ export async function generateVoiceClip() {
   timeline.updateTrack(j);
   renderTl();
   save();
-  toast(t('voice.done', { track: trackName(j), bar: Math.floor(src.clip.start / BEATS_PER_BAR) + 1 }), 4000);
+  toast(t('voice.done', { bars: Math.ceil(len / BEATS_PER_BAR), track: trackName(j), bar: Math.floor(src.clip.start / BEATS_PER_BAR) + 1 }), 4000);
   // Enregistré comme une prise (« rec: ») : sauvegardé avec le projet.
   store.saveSample(id, { name, data: encodeWav([0, 1].map(c => buf.getChannelData(c)), sr) }).then(renderLibrary).catch(err => console.warn('Voix', err));
   renderLibrary();
@@ -212,6 +213,7 @@ export function buildVoiceWin() {
   listen.dataset.icon = 'play';
   listen.addEventListener('click', previewVoice);
   const go = el('button', { id: 'voice-go', className: 'primary', textContent: t('gen.go') });
+  go.dataset.icon = 'plus';
   go.addEventListener('click', generateVoiceClip);
   const actions = row(listen, go);
   actions.classList.add('gen-actions');

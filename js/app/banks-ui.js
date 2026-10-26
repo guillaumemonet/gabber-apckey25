@@ -10,6 +10,7 @@ import { renderLeds } from './controller.js';
 import { libManifest } from './library-ui.js';
 import { toast } from './misc.js';
 import { renderEditor, renderPad, renderPads } from './pads.js';
+import { kitExportAll } from './files.js';
 import { save } from './save.js';
 import { loadPad } from './sounds.js';
 
@@ -156,7 +157,7 @@ export function buildBankMgr() {
     <div class="bm-main">
       <div class="bm-head"><input class="bm-name" maxlength="32"><button class="bm-play" data-icon="play"></button>
         <button class="bm-dup" data-icon="plus"></button><button class="bm-clear" data-icon="trash"></button>
-        <button class="bm-export" data-icon="download"></button><button class="bm-import" data-icon="upload"></button></div>
+        <button class="bm-export-all" data-icon="download"></button></div>
       <div class="bm-grid"></div>
       <div class="hint bm-hint"></div>
     </div>`;
@@ -169,8 +170,7 @@ export function buildBankMgr() {
   btn('.bm-dup', t('bm.dup'), t('bm.dupTitle'), () => duplicateBank(mgrBank()));
   btn('.bm-clear', t('bm.clearBank'), t('bm.clearBankTitle'), () => clearMgrBank(mgrBank()));
   // Exporter / importer : les fonctions de kit de la fenêtre Pads, sur cette banque (elle devient la banque jouée).
-  btn('.bm-export', t('bm.export'), t('kit.exportBank.title'), () => { setBank(mgrBank()); $('#kit-export-bank').click(); });
-  btn('.bm-import', t('bm.import'), t('bm.importTitle'), () => { setBank(mgrBank()); $('#kit-import').click(); });
+  btn('.bm-export-all', t('kit.exportAll'), t('kit.exportAll.title'), kitExportAll);
   box.querySelector('.bm-hint').textContent = t('bm.hint');
   renderBankMgr();
 }

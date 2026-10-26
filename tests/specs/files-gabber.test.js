@@ -75,7 +75,8 @@ export default async function (t, A) {
     ok(A.wm.isOpen(id), `réglages « ${id} » : la fenêtre s'ouvre`);
   }
   ok(t.$$('[data-win="tr"] .win-file').length === 2, 'boutons Enregistrer / Ouvrir dans la barre de titre des outils');
-  eq(t.$$('[data-win="pads"] .win-file').length, 0, 'pas de boutons de fichier sur la fenêtre des pads');
+  eq(t.$$('[data-win="pads"] .win-file').length, 2, 'fenêtre des pads : ouvrir / enregistrer la banque (.apckit)');
+  ok(/banque|bank/i.test(t.$('[data-win="pads"] .win-file').title), 'leur infobulle parle de la banque');
 
   // Projet : enregistré, puis rouvert (redémarrage).
   S.tr.pattern = 3;

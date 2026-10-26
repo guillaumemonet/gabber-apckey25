@@ -116,7 +116,7 @@ Fabriquez votre propre kick gabber / hardcore, calculé par le navigateur en que
 - **Distorsion** : **Drive** et **Forme** (les 5 formes de la 909), puis **Formant** et **Mordant**, qui font « parler » la queue.
 - **Attaque** : **Clic** (bruit) et **Attaque** (couche courte et percutante).
 - **Écoute auto** joue le kick à chaque potentiomètre relâché ; la forme d'onde et la longueur s'affichent.
-- **→ Pad** le met sur le pad sélectionné, **→ Bibliothèque** l'ajoute à la catégorie **Kicks** de la bibliothèque (à glisser sur la timeline ; clic droit dessus pour le retirer), **⤓ WAV** le télécharge. Vos kicks déclenchent le sidechain comme les autres.
+- **Envoyer vers…** le met sur le pad de votre choix (la grille des pads, banque au choix), **→ Bibliothèque** l'ajoute à la catégorie **Kicks** de la bibliothèque (à glisser sur la timeline ; clic droit dessus pour le retirer), **⤓ WAV** le télécharge. Vos kicks déclenchent le sidechain comme les autres.
 
 ### Mode expert : clic, corps et queue
 

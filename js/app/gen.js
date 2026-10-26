@@ -153,7 +153,7 @@ export function generatePads() {
   growSong(start + total);
   renderTl();
   save();
-  const msg = t('gen.done', { n: chords.length * g.repeat, track: lanes.map(i => i + 1).join(' + ') });
+  const msg = t('gen.done', { n: chords.length * g.repeat, bars: total / BEATS_PER_BAR, bar: start / BEATS_PER_BAR + 1, track: lanes.map(i => i + 1).join(' + ') });
   toast(bad.length ? `${msg} · ${t('gen.bad', { list: bad.join(' ') })}` : msg, 4000);
 }
 
@@ -181,7 +181,7 @@ export function generateLeadClip() {
   growSong(start + total);
   renderTl();
   save();
-  const msg = t('gen.leadDone', { notes: clip.seq.length, track: lanes[0] + 1 });
+  const msg = t('gen.leadDone', { notes: clip.seq.length, bars: total / BEATS_PER_BAR, bar: start / BEATS_PER_BAR + 1, track: lanes[0] + 1 });
   toast(bad.length ? `${msg} · ${t('gen.bad', { list: bad.join(' ') })}` : msg, 4000);
 }
 
@@ -384,8 +384,10 @@ export function buildGen() {
   actions.className = 'gen-row gen-actions';
   const go = button(t('gen.go'), () => (state.gen.tab === 'lead' ? generateLeadClip() : generatePads()), 'primary');
   go.id = 'gen-go';
+  go.dataset.icon = 'plus';
   const listen = button(t('gen.listen'), previewGen);
   listen.id = 'gen-listen';
+  listen.dataset.icon = 'play';
   actions.append(listen, go);
   const info = document.createElement('span');
   info.className = 'hint gen-info';
@@ -473,7 +475,8 @@ export function showLeadSuggestions() {
       playNotes(s.seq, leadPreset());
     });
     listen.dataset.icon = 'play';
-    const pick = button(t('gen.sugPick'), () => chooseLeadSuggestion(k), 'primary');
+    const pick = button(t('gen.sugPick'), () => chooseLeadSuggestion(k));
+    pick.dataset.icon = 'star';   // choisir remplit le brouillon : pas une action principale (orange)
     card.append(listen, pick);
     box.appendChild(card);
   });

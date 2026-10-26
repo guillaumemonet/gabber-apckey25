@@ -61,9 +61,9 @@ export function buildDecks() {
           <div class="deck-buttons">
             <button class="deck-play primary"></button>
             <button class="deck-cue" title="${t('deck.cueTitle')}">Cue</button>
-            <button class="deck-sync" title="${t('deck.syncTitle')}">Sync</button>
-            <button class="deck-loop">${t('deck.loop')}</button>
-            <button class="deck-load" title="${t('deck.load.title')}">${t('deck.load')}</button>
+            <button class="deck-sync" data-icon="link" title="${t('deck.syncTitle')}">Sync</button>
+            <button class="deck-loop" data-icon="loop">${t('deck.loop')}</button>
+            <button class="deck-load" data-icon="folder" title="${t('deck.load.title')}">${t('deck.load')}</button>
           </div>
           <label class="deck-pitch"><span>${t('deck.pitch')}</span><input type="range" min="-0.08" max="0.08" step="0.001"><em></em></label>
           <div class="mini-knobs deck-knobs"></div>

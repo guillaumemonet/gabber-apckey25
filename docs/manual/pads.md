@@ -48,7 +48,7 @@ The **Banks** window (Studio group) is for organising sounds; the Pads window st
   - **drag a pad onto another** to swap them; with **Alt**, it is copied;
   - **drag a pad onto a bank of the list** to move it there, to the first free pad (Alt = copy);
   - **click**: listen; **right-click**: listen, rename, change colour, open in the pad editor, empty.
-- For the bank: **Play** (make it the played bank), **Duplicate** (copy into the first empty bank), **Clear**, **Export** and **Import** a bank file (.apckit).
+- For the bank: **Play** (make it the played bank), **Duplicate** (copy into the first empty bank), **Clear**, **Export all** (the 25 banks and the instrument settings); 📁 / 💾 in the title bar open and save the bank (.apckit).
 - Everything is undone with Ctrl+Z and saved with the project. To put a timeline block on a given pad: right-click the block › **Send to…** (see [Timeline](timeline.md)).
 
 ## Tempo and loops

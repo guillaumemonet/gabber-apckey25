@@ -87,7 +87,7 @@ export function generateBreizhClips() {
   });
   renderTl();
   save();
-  toast(t('breizh.done', { name, bars: total / BEATS_PER_BAR, track: lanes.map(i => i + 1).join(' + ') }), 4000);
+  toast(t('breizh.done', { name, bars: total / BEATS_PER_BAR, bar: start / BEATS_PER_BAR + 1, track: lanes.map(i => i + 1).join(' + ') }), 4000);
 }
 
 // ---- Écoute (toutes les voix ; un deuxième clic arrête) ----
@@ -185,6 +185,7 @@ export function buildBreizh() {
   listen.dataset.icon = 'play';
   const go = bzButton(t('gen.go'), generateBreizhClips, 'primary');
   go.id = 'breizh-go';
+  go.dataset.icon = 'plus';
   const actions = row(idea, listen, go);
   actions.classList.add('gen-actions');
   const info = document.createElement('span');

@@ -88,7 +88,7 @@ export async function generateBuildup() {
   renderTl();
   save();
   renderLibrary();
-  toast(t('bu.done', { bars: b.bars, bar: drop / BEATS_PER_BAR + 1, n: made.length }), 4000);
+  toast(t('bu.done', { bars: b.bars, bar: drop / BEATS_PER_BAR + 1, n: made.length, track: made.map(i => i + 1).join(' + ') }), 4000);
   return { tracks: made, playing };
 }
 
@@ -126,6 +126,7 @@ export function buildBuildup() {
   listen.dataset.icon = 'play';
   listen.addEventListener('click', previewBuildup);
   const go = el('button', { id: 'bu-go', className: 'primary', textContent: t('gen.go') });
+  go.dataset.icon = 'plus';
   go.addEventListener('click', generateBuildup);
   const actions = row(listen, go);
   actions.classList.add('gen-actions');

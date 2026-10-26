@@ -73,7 +73,7 @@ The bar under the header opens and closes the plugins, in four groups: **Instrum
 - **Move** it by its title bar, **resize** it by its bottom-right corner; it **snaps** to the screen edges and to the other windows.
 - **?** opens the **help** for the window's content, next to it (**?** again, ✕ or Esc closes it).
 - **✕** closes it; the windows you use are remembered with their position.
-- The tools whose settings can be saved (TR-909, TB-303, Synth, Oscillator synth, Kick designer, Mixer, Patch, Scenes) also have **📁 / 💾** buttons in their title bar (see Saving and opening).
+- The tools whose settings can be saved (instruments, generators, designers, mixer, patch, scenes, decks, launcher, buses, visualizer, MIDI; the bank for Pads and Banks) also have **📁 / 💾** buttons in their title bar (see Saving and opening).
 - The **Reset windows** button (four squares, in the header) puts them back in their default place and size.
 
 ---

@@ -33,6 +33,7 @@ export function presetBar(wrap, cfg) {
     <button class="pb-del icon-only" data-icon="trash" title="${t('pb.del')}" aria-label="${t('pb.del')}"></button>`;
   const sel = wrap.querySelector('.pb-sel'), name = wrap.querySelector('.pb-name'), cat = wrap.querySelector('.pb-cat');
   for (const c of cfg.cats) cat.add(new Option(cfg.catLabel(c), c));
+  cat.hidden = cfg.cats.length < 2;   // une seule catégorie (vos réglages) : pas de menu
   name.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') wrap.querySelector('.pb-save').click(); });
   const render = () => {
     sel.innerHTML = '';

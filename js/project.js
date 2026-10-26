@@ -7,7 +7,8 @@ import { t } from './i18n.js';
 export const FILE_FORMAT = 'gabberkey-file';
 export const FILE_EXT = '.gabber';
 // Contenus possibles : projet, morceau, et un par outil.
-export const FILE_KINDS = ['project', 'song', 'tr', 'acid', 'osc', 'piano', 'kick', 'mix', 'patch', 'scenes'];
+export const FILE_KINDS = ['project', 'song', 'tr', 'acid', 'osc', 'piano', 'kick', 'mix', 'patch', 'scenes',
+  'gen', 'breizh', 'buildup', 'voice', 'tune', 'curve', 'decks', 'launcher', 'buses', 'viz', 'monitor'];
 
 const toDataUrl = bytes => new Promise((resolve, reject) => {
   const r = new FileReader();

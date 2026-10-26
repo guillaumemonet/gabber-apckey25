@@ -9,7 +9,7 @@ Saving and opening projects, songs and settings; WAV and stems export; kits.
 GabberKey saves everything automatically in the browser, and you can also keep your work in **`.gabber` files** (to back it up, move it to another computer or share it):
 - **Save project** (header): the whole project in one file: timeline, tempo, pads and banks, every tool, mixer, patch, scenes, windows, with your own sounds and recordings inside. **Open…** loads it back (everything is replaced, then the app restarts on it).
 - **Song** (the 📁 / 💾 buttons of the timeline toolbar): the timeline alone (tracks, blocks, track effects, length, tempo) with the recordings it uses. Opening a song replaces the timeline (Ctrl+Z brings the previous one back).
-- **Settings of a tool**: the 📁 / 💾 buttons in the title bar of the TR-909 (patterns and knobs), TB-303, Synth, Oscillator synth (with your presets), Kick designer, Mixer (with the sidechain and the master section), Patch and Scenes windows.
+- **Settings of a tool**: the 📁 / 💾 buttons in the title bar of the TR-909 (patterns and knobs), TB-303, Synth, Oscillator synth (with your presets), Kick designer, Mixer (with the sidechain and the master section), Patch, Scenes, Generator, Breizh generator, Build-up designer, Voice generator, Pitch correction, Effect designer (your curves), Decks (with their sounds), Launcher, Buses, Visualizer and MIDI (learned controls, devices, clock). In the **Pads** and **Banks** windows, 📁 / 💾 open and save the bank (`.apckit` file, see below).
 - Any **Open** button accepts any GabberKey file: it recognises what it contains and loads it where it belongs. Library sounds are referenced by name; imported sounds and recordings are embedded.
 
 ## Recording and kits
@@ -18,7 +18,7 @@ GabberKey saves everything automatically in the browser, and you can also keep y
 - **⤓ Stems** exports each non-empty track as its own full-length WAV file, all in one ZIP archive, ready to be mixed in another program. Stems come out **without the master chain** (no compressor, no limiter): that is up to the final mix.
 - When a WAV export ends, the message gives the file's **integrated loudness** (in LUFS) and its **peak**; they stay on display in the mixer's master chain.
 - **● REC** in the header records the master output live, including what you play and the performance effects. Press it again to download a WAV file.
-- **Export bank** / **Export all** creates a self-contained `.apckit` file with the sounds and settings. **Import…** loads it back: a bank goes into the displayed bank, and a session replaces everything.
+- 💾 (title bar of the **Pads** and **Banks** windows) saves the bank, **Export all** (Banks window) the whole session, in a self-contained `.apckit` file with the sounds and settings. 📁 loads it back: a bank goes into the displayed bank, and a session replaces everything.
 
 Your banks, sounds and settings are saved automatically in the browser.
 

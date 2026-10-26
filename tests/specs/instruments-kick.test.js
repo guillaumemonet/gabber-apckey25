@@ -63,11 +63,17 @@ export default async function (t, A) {
   await t.wait(150);
   t.ok(S.kick.params.zaag !== z0, 'le potentiomètre change le réglage');
   t.eq(S.kick.preset, null, 'le son devient perso');
-  // → Pad.
+  // Envoyer vers… : la grille des pads, banque 20, pad 1.
   t.$('#kick-to-pad').click();
-  const pad = await t.until(() => S.banks[S.bank][S.selected]?.buffer && S.banks[S.bank][S.selected], 5000);
-  t.ok(pad?.name?.startsWith('Kick'), 'le kick arrive sur le pad sélectionné', pad?.name);
-  t.ok(pad?.sampleId?.startsWith('user:'), 'son importé (user:)');
+  await t.wait(30);
+  t.ok(t.$('.send-menu') && !t.$('.send-menu .send-tabs [data-target="launcher"]'), 'Envoyer vers… : la grille des pads (pas le lanceur)');
+  const bk = t.$('.send-menu .send-bank');
+  bk.value = '19'; bk.dispatchEvent(new Event('change'));
+  t.$('.send-menu .send-cell[data-cell="0"]').click();
+  const pad = await t.until(() => S.banks[19][0]?.buffer && S.banks[19][0], 5000);
+  t.ok(pad?.name?.startsWith('Kick'), 'le kick arrive sur le pad choisi', pad?.name);
+  t.ok(pad?.sampleId?.startsWith('rec:'), 'enregistré avec le projet (rec:)');
+  S.banks[19][0] = null;
   // → Bibliothèque, puis retrait.
   t.$('#kick-to-lib').click();
   await t.until(() => S.userSounds.length === 1, 5000);

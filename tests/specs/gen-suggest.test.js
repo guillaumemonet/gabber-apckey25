@@ -20,7 +20,7 @@ export default async function (t, A) {
   cards[1].querySelector('button[data-icon="play"]').click();
   t.ok(A.genPreviewing(), 'Écouter joue l’idée');
   const pick = A.leadSuggestions[1];
-  cards[1].querySelector('button.primary').click();
+  cards[1].querySelector('button[data-icon="star"]').click();   // Choisir
   t.ok(!A.genPreviewing(), 'Choisir arrête l’écoute');
   t.eq(JSON.stringify(A.draft('lead').seq), JSON.stringify(pick.seq), 'l’idée choisie devient le brouillon de la mélodie');
   t.eq([S.gen.lead.seed, S.gen.lead.density], [pick.seed, pick.density], 'ses réglages (graine, densité) sont repris');
