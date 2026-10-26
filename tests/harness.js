@@ -59,7 +59,7 @@ export default async function run(spec) {
     await mod.default(t, window.__app);
     t.ok(!errors.length, 'aucune erreur JavaScript', errors.slice(0, 3).join(' | '));
   } catch (e) {
-    checks.push({ ok: false, msg: 'exception', detail: String(e?.stack || e).slice(0, 800) });
+    checks.push({ ok: false, msg: 'exception', detail: [String(e?.stack || e), document.querySelector('#start-msg')?.textContent, ...errors.slice(0, 3)].filter(Boolean).join(' | ').slice(0, 1200) });   // avec les erreurs JavaScript (démarrage raté)
   }
   await fetch('/__result', { method: 'POST', body: JSON.stringify({ spec, ok: checks.length > 0 && checks.every(c => c.ok), checks }) });
 }

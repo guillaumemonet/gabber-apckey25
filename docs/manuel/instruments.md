@@ -2,7 +2,7 @@
 
 ← [Timeline, bibliothèque et piano roll](timeline.md) · [Sommaire](README.md) · [Générateur : accords et mélodie](generateur.md) →
 
-TR-909, TB-303, synthé en couches, synthé à oscillateurs et designer de kick.
+TR-909, TR-808, séquenceur pas à pas, TB-303, synthé en couches, synthé à oscillateurs et designer de kick.
 
 ## TR-909
 
@@ -32,6 +32,37 @@ Chaque instrument a sa propre distorsion. La grosse caisse démarre avec une sat
 | 5 | Patterns 1 à 8 |
 
 Un appui sur un bouton SCENE LAUNCH ramène la grille aux pads du sampler.
+
+## TR-808
+
+[![Fenêtre TR-808 : les 13 instruments sur le séquenceur 16 pas, et leurs potentiomètres](../screenshots/tr8-fr.png)](../screenshots/tr8-fr.png)
+
+Une émulation de la Roland TR-808 avec ses 13 instruments : grosse caisse (résonateur à longue tenue, du coup sec au « boom »), caisse claire à deux oscillateurs, 3 toms, rim shot, clap, charley fermé et ouvert, cymbale (les charleys et la cymbale sont faits de six oscillateurs carrés, comme sur la machine), cloche, claves et maracas.
+
+La fenêtre fonctionne exactement comme celle de la TR-909 (le même code les construit) : 16 pas, 8 patterns, accent, shuffle, kits de son, une distorsion par instrument (Drive, Forme) et les mêmes potentiomètres.
+
+| K1-K4 | K5 | K6 | K7 | K8 |
+|---|---|---|---|---|
+| Paramètres de l'instrument choisi (ex. BD : Accord, Timbre, Déclin, Niveau) | **Drive** | **Forme** | Shuffle | Volume 808 |
+
+- **Patterns de départ** : électro, boom bap, hardcore à la 808, percussions (cloche, claves, toms, maracas).
+- **Kits** : **Classique** (808 propre, Électro, Hip-hop, Basse longue), **Hardcore** (Boom saturé, Gabber 808, Distordu) et **FX** (Lo-fi écrasé, Replié). Vos kits (★) s'enregistrent comme ceux de la 909.
+- **Grille de l'APC** (Maj + PLAY) : elle pilote la boîte à rythmes dont vous avez utilisé la fenêtre en dernier. Pour la 808 : rangées 1-2 = les 16 pas, rangées 3-4 = les 13 instruments puis **Accent**, **Effacer**, **Muet**, rangée 5 = patterns.
+- La 808 a sa **voie dans la table de mixage** (dans la fenêtre Mixeur ; les pages mixeur de l'APC gardent les sept premières voies), s'**enregistre en audio** sur une piste (source TR-808), joue un **appareil MIDI** (plan de batterie General MIDI) et ses patterns font partie des **scènes**. Sa grosse caisse déclenche le sidechain.
+
+## Séquenceur pas à pas
+
+[![Séquenceur pas à pas : une ligne par son de pad, 16 pas, patterns et longueur](../screenshots/seq-fr.png)](../screenshots/seq-fr.png)
+
+Un séquenceur pour **n'importe quel son de pad** : une ligne par pad (de n'importe quelle banque), 16, 32 ou 64 pas, 8 patterns. Il utilise la même horloge que les boîtes à rythmes : même tempo, même grille de mesures, même shuffle, et un changement de pattern attend la fin du pattern en cours. Les pads jouent avec leurs propres réglages (volume, hauteur, filtre, envois, effets de piste) et les kicks pilotent le sidechain.
+
+- **Pas** : un clic fait défiler note → accent → silence ; **glisser** peint la même valeur sur plusieurs pas. Un clic sur le **nom d'une ligne** joue son son.
+- **Lignes** : **Ajouter une ligne** prend le pad sélectionné ; le bouton **pad** d'une ligne ouvre la grille des pads (celle de « Envoyer vers… ») pour choisir son son dans n'importe quelle banque ; **couper** et **supprimer**. Chaque pattern a ses propres lignes (jusqu'à 32).
+- **Pas 16 / 32 / 64** (1, 2 ou 4 mesures) : en allongeant un pattern, ce qui est écrit se répète ; les boutons **Mesure 1-4** montrent chaque partie.
+- **Poser sur la timeline** : le pattern devient des blocs de pads, une piste par ligne (premières pistes libres depuis la piste armée), à partir de la mesure de la tête de lecture, répété de 1 à 8 fois (**Répéter**). Chaque bloc s'arrête au coup suivant du même pad.
+- **Enregistrer en jouant** : choisissez la source **Séquenceur pas à pas** sur une piste armée ; il démarre avec l'enregistrement et ses coups deviennent des blocs de pads, avec leur force.
+- Les **scènes** retiennent son pattern et s'il joue ; ses patterns s'annulent avec Ctrl+Z et s'enregistrent dans un fichier (📁 / 💾).
+- Le [découpeur de breaks](pads.md#découpeur-de-breaks) remplit un pattern avec les coups d'un break.
 
 ## TB-303
 

@@ -13,6 +13,9 @@ import { defaultPatch } from '../patch.js';
 import { defaultPlayState } from '../performer.js';
 import { defaultScState } from '../sidechain.js';
 import { defaultTlState } from '../timeline.js';
+import { defaultSlicer } from '../slicer.js';
+import { defaultSeqState } from '../stepseq.js';
+import { defaultTr8State } from '../tr808.js';
 import { defaultTrState } from '../tr909.js';
 import { mergeWindows } from '../windows.js';
 
@@ -20,7 +23,7 @@ translatePage();
 
 export const BANKS = 25;   // SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = banques 6-10, puis 11-15, 16-20 et 21-25 à chaque nouvel appui
 export const PAGE_ORDER = ['synth', 'fx', 'pad', 'eq'];   // boutons de piste 1 à 4 (EQ aussi via SUSTAIN)
-export const UI_PAGES = [...PAGE_ORDER, 'tr', 'acid', 'decks', 'osc', 'viz', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
+export const UI_PAGES = [...PAGE_ORDER, 'tr', 'tr8', 'acid', 'decks', 'osc', 'viz', ...MIX_FIELDS.map(f => `mix_${f}`)];   // + TR-909 (Maj + PLAY) et mixeur (Maj + piste 1-4)
 export const $ = sel => document.querySelector(sel);
 
 // Moteurs créés au démarrage par js/main.js (provide), ou à la première ouverture de leur fenêtre.
@@ -29,6 +32,8 @@ export const $ = sel => document.querySelector(sel);
 /** @type {{ name: string, color: number, buffer: AudioBuffer }[]} kit de départ (synthétisé) */ export let kit;
 /** @type {import('../recorder.js').Recorder} */ export let recorder;
 /** @type {import('../tr909.js').TR909} */ export let drum;
+/** @type {import('../tr808.js').TR808} */ export let drum808;
+/** @type {import('../stepseq.js').StepSeq} */ export let stepSeq;
 /** @type {import('../mixer.js').Mixer} */ export let mixer;
 /** @type {import('../windows.js').WindowManager} */ export let wm;
 /** @type {import('../timeline.js').Timeline} */ export let timeline;
@@ -67,6 +72,9 @@ export const state = {
   /** @type {(Pad|null)[][]} */
   banks: [],        // banks[b][i] = pad, ou null pour un pad vide
   tr: defaultTrState(),   // TR-909 : réglages, patterns, instrument choisi
+  tr8: defaultTr8State(), // TR-808 : pareil
+  seq: defaultSeqState(), // séquenceur pas à pas : patterns (lignes de pads, pas), longueur, shuffle (js/stepseq.js)
+  slicer: defaultSlicer(),   // découpeur de breaks : son, méthode, repères (js/slicer.js)
   mix: defaultMixState(), // table de mixage : voies, envois, effets d'insert
   windows: mergeWindows(null), // fenêtres des plugins : ouverte ou non, position, taille
   tl: defaultTlState(),        // timeline : pistes de clips (sons posés ou enregistrements d'outils)
@@ -122,6 +130,8 @@ export function provide(services) {
   if ('kit' in services) kit = services.kit;
   if ('recorder' in services) recorder = services.recorder;
   if ('drum' in services) drum = services.drum;
+  if ('drum808' in services) drum808 = services.drum808;
+  if ('stepSeq' in services) stepSeq = services.stepSeq;
   if ('mixer' in services) mixer = services.mixer;
   if ('wm' in services) wm = services.wm;
   if ('timeline' in services) timeline = services.timeline;

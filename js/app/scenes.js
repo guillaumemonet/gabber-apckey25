@@ -4,14 +4,15 @@ import { CHANNELS } from '../mixer.js';
 import { migratePreset } from '../presets.js';
 import { renderAcid } from './acid-ui.js';
 import { renderLeds } from './controller.js';
-import { $, acid, apc, drum, engine, mixer, state } from './core.js';
+import { $, acid, apc, drum, drum808, engine, mixer, state, stepSeq } from './core.js';
 import { toast } from './misc.js';
 import { renderMixer } from './mixer-ui.js';
 import { save } from './save.js';
 import { loadPad } from './sounds.js';
 import { applyPreset } from './synth-ui.js';
 import { setBpm } from './tempo.js';
-import { renderTr, toggleTrMode, trMode } from './tr909-ui.js';
+import { renderTr, toggleTrMode, trMode } from './drum-ui.js';
+import { loadSeqPads, renderSeq } from './seq-ui.js';
 
 // ---------- Scènes ----------
 
@@ -44,6 +45,8 @@ export function captureScene(n) {
     loops: [...engine.padVoices].filter(([, v]) => v.mode === 'loop').map(([k]) => k),
     running: drum.running,
     acid: { pattern: acid.queued ?? state.acid.pattern, running: acid.running },
+    tr8: { pattern: drum808.queued ?? state.tr8.pattern, mutes: { ...state.tr8.mutes }, running: drum808.running },
+    seq: { pattern: stepSeq.queued ?? state.seq.pattern, running: stepSeq.running },
     mix: Object.fromEntries(CHANNELS.map(id => {
       const { vol, pan, delay, reverb, mute, solo } = state.mix.channels[id];
       return [id, { vol, pan, delay, reverb, mute, solo }];
@@ -64,7 +67,7 @@ export function launchScene(n) {
   if (!sc) { toast(t('scene.empty', { n: n + 1 }), 3500); return; }
   const ctx = engine.ctx;
   if (sc.bpm && sc.bpm !== state.bpm) setBpm(sc.bpm);
-  const busy = drum.running || [...engine.padVoices.values()].some(v => v.mode === 'loop');
+  const busy = engine.seqRunning || [...engine.padVoices.values()].some(v => v.mode === 'loop');
   const at = busy ? engine.nextBar() : ctx.currentTime;
   queuedScene = n;
   drum.selectPattern(sc.tr.pattern);
@@ -78,6 +81,8 @@ export function launchScene(n) {
   }
   if (sc.running && !drum.running) drum.start();
   if (sc.acid) { acid.selectPattern(sc.acid.pattern); if (sc.acid.running && !acid.playing) acid.start(true); }
+  if (sc.tr8) { drum808.selectPattern(sc.tr8.pattern); if (sc.tr8.running && !drum808.running) drum808.start(); }
+  if (sc.seq) { stepSeq.selectPattern(sc.seq.pattern); if (sc.seq.running && !stepSeq.running) { loadSeqPads(); stepSeq.start(); } }
   const apply = () => {
     if (queuedScene !== n) return;   // une autre scène a été demandée entre-temps
     state.tr.mutes = { ...sc.tr.mutes };
@@ -87,6 +92,9 @@ export function launchScene(n) {
     if (sc.preset !== undefined && migratePreset(sc.preset) !== state.preset) applyPreset(migratePreset(sc.preset));
     if (!sc.running && drum.running) drum.stop();
     if (sc.acid && !sc.acid.running && acid.running) acid.stop();
+    if (sc.tr8) { state.tr8.mutes = { ...sc.tr8.mutes }; if (!sc.tr8.running && drum808.running) drum808.stop(); }
+    if (sc.seq && !sc.seq.running && stepSeq.running) stepSeq.stop();
+    renderSeq();
     renderAcid();
     currentScene = n;
     queuedScene = null;

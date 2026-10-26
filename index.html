@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Guillaume Monet">
   <title>GabberKey</title>
-  <link rel="stylesheet" href="css/style.css?v=121">
+  <link rel="stylesheet" href="css/style.css?v=122">
 </head>
 <body>
   <div id="start" class="overlay">
@@ -140,14 +140,77 @@
       <div class="section-title">
         <h2>TR-909</h2>
         <button id="tr-play" class="primary" data-icon="play"></button>
-        <div id="tr-patterns" class="segmented"></div>
+        <div id="tr-patterns" class="segmented tr-patterns"></div>
         <label class="tr-accent"><span data-i18n="tr.accent"></span><input id="tr-accent" type="range" min="0" max="100"></label>
-        <button id="tr-apc" data-icon="grid" data-i18n="tr.apcMode" data-i18n-title="tr.apcMode.title"></button>
+        <button id="tr-apc" class="tr-apc" data-icon="grid" data-i18n="tr.apcMode" data-i18n-title="tr.apcMode.title"></button>
         <span class="hint" data-i18n="tr.hint"></span>
       </div>
       <div id="tr-pbar"></div>
       <div id="tr-grid" class="tr-grid"></div>
       <div id="tr-knobs" class="mini-knobs row-knobs tr-knobs"></div>
+    </section>
+
+    <section class="window tr-area" data-win="tr8">
+      <div class="section-title">
+        <h2>TR-808</h2>
+        <button id="tr8-play" class="primary" data-icon="play"></button>
+        <div id="tr8-patterns" class="segmented tr-patterns"></div>
+        <label class="tr-accent"><span data-i18n="tr.accent"></span><input id="tr8-accent" type="range" min="0" max="100"></label>
+        <button id="tr8-apc" class="tr-apc" data-icon="grid" data-i18n="tr8.apcMode" data-i18n-title="tr8.apcMode.title"></button>
+        <span class="hint" data-i18n="tr.hint"></span>
+      </div>
+      <div id="tr8-pbar"></div>
+      <div id="tr8-grid" class="tr-grid"></div>
+      <div id="tr8-knobs" class="mini-knobs row-knobs tr-knobs"></div>
+    </section>
+
+    <section class="window seq-area" data-win="seq">
+      <div class="section-title">
+        <h2 data-i18n="seq.title"></h2>
+        <button id="seq-play" class="primary" data-icon="play"></button>
+        <div id="seq-patterns" class="segmented tr-patterns"></div>
+        <label class="tr-accent"><span data-i18n="tr.accent"></span><input id="seq-accent" type="range" min="0" max="100"></label>
+        <label class="tr-accent"><span data-i18n="tr.p.shuffle"></span><input id="seq-shuffle" type="range" min="0" max="100"></label>
+      </div>
+      <div class="row seq-bar">
+        <span class="hint" data-i18n="seq.len"></span>
+        <div id="seq-len" class="segmented"></div>
+        <div id="seq-pages" class="segmented"></div>
+        <button id="seq-add" data-icon="plus" data-i18n="seq.add" data-i18n-title="seq.add.title"></button>
+        <button id="seq-clear" data-icon="trash" data-i18n="seq.clear" data-i18n-title="seq.clear.title"></button>
+        <span class="spacer"></span>
+        <label class="seq-times" data-i18n-title="seq.times.title"><span data-i18n="seq.times"></span><select id="seq-times"><option value="1">×1</option><option value="2">×2</option><option value="4">×4</option><option value="8">×8</option></select></label>
+        <button id="seq-to-tl" data-icon="roll" data-i18n="seq.toTl" data-i18n-title="seq.toTl.title"></button>
+      </div>
+      <div id="seq-grid" class="tr-grid seq-grid"></div>
+      <p id="seq-empty" class="hint" data-i18n="seq.empty" hidden></p>
+      <p class="hint" data-i18n="seq.hint"></p>
+    </section>
+
+    <section class="window slicer-area" data-win="slicer">
+      <div class="section-title">
+        <h2 data-i18n="slicer.title"></h2>
+      </div>
+      <div class="row slicer-src">
+        <button id="sl-file" data-icon="folder" data-i18n="slicer.file" data-i18n-title="slicer.file.title"></button>
+        <button id="sl-pad" data-icon="pads" data-i18n="slicer.fromPad" data-i18n-title="slicer.fromPad.title"></button>
+        <span id="sl-name" class="slicer-name"></span>
+        <input id="sl-input" type="file" accept="audio/*" hidden>
+      </div>
+      <div class="row slicer-mode">
+        <div id="sl-mode" class="segmented" data-i18n-title="slicer.mode.title"><button data-mode="onset" data-i18n="slicer.mode.onset"></button><button data-mode="grid" data-i18n="slicer.mode.grid"></button></div>
+        <label id="sl-sens-wrap" class="tr-accent" data-i18n-title="slicer.sens.title"><span data-i18n="slicer.sens"></span><input id="sl-sens" type="range" min="0" max="100"></label>
+        <label id="sl-grid-wrap" class="slicer-field"><span data-i18n="slicer.grid"></span><select id="sl-grid"></select></label>
+        <label class="slicer-field" data-i18n-title="slicer.bpm.title"><span data-i18n="slicer.bpm"></span><input id="sl-bpm" type="number" min="40" max="400" step="0.01" placeholder="—"></label>
+        <span id="sl-info" class="hint"></span>
+      </div>
+      <div id="sl-wave-wrap" class="slicer-wave-wrap"><canvas id="sl-wave" height="150" data-i18n-title="slicer.wave.title"></canvas></div>
+      <div class="row slicer-actions">
+        <button id="sl-play" data-icon="play" data-i18n="slicer.play" data-i18n-title="slicer.play.title"></button>
+        <span class="spacer"></span>
+        <button id="sl-to-pads" data-icon="pads" data-i18n="slicer.toPads" data-i18n-title="slicer.toPads.title"></button>
+        <button id="sl-to-seq" class="primary" data-icon="seq" data-i18n="slicer.toSeq" data-i18n-title="slicer.toSeq.title"></button>
+      </div>
     </section>
 
     <section class="window acid-area" data-win="acid">
@@ -439,118 +502,124 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/app/acid-ui.js": "./js/app/acid-ui.js?v=121",
-      "./js/app/actions.js": "./js/app/actions.js?v=121",
-      "./js/app/controller.js": "./js/app/controller.js?v=121",
-      "./js/app/core.js": "./js/app/core.js?v=121",
-      "./js/app/audio-input.js": "./js/app/audio-input.js?v=121",
-      "./js/app/automation-ui.js": "./js/app/automation-ui.js?v=121",
-      "./js/app/banks-ui.js": "./js/app/banks-ui.js?v=121",
-      "./js/app/bars.js": "./js/app/bars.js?v=121",
-      "./js/app/breizh-ui.js": "./js/app/breizh-ui.js?v=121",
-      "./js/app/buildup-ui.js": "./js/app/buildup-ui.js?v=121",
-      "./js/app/voice-ui.js": "./js/app/voice-ui.js?v=121",
-      "./js/app/tune-ui.js": "./js/app/tune-ui.js?v=121",
-      "./js/app/buses-ui.js": "./js/app/buses-ui.js?v=121",
-      "./js/app/clip-menu.js": "./js/app/clip-menu.js?v=121",
-      "./js/app/curve-ui.js": "./js/app/curve-ui.js?v=121",
-      "./js/app/decks-ui.js": "./js/app/decks-ui.js?v=121",
-      "./js/app/devices.js": "./js/app/devices.js?v=121",
-      "./js/app/demo.js": "./js/app/demo.js?v=121",
-      "./js/app/export.js": "./js/app/export.js?v=121",
-      "./js/app/files.js": "./js/app/files.js?v=121",
-      "./js/app/freeze.js": "./js/app/freeze.js?v=121",
-      "./js/app/gen.js": "./js/app/gen.js?v=121",
-      "./js/app/inserts-ui.js": "./js/app/inserts-ui.js?v=121",
-      "./js/app/kick-ui.js": "./js/app/kick-ui.js?v=121",
-      "./js/app/knobs.js": "./js/app/knobs.js?v=121",
-      "./js/app/launcher.js": "./js/app/launcher.js?v=121",
-      "./js/app/library-ui.js": "./js/app/library-ui.js?v=121",
-      "./js/app/metro-ui.js": "./js/app/metro-ui.js?v=121",
-      "./js/app/markers.js": "./js/app/markers.js?v=121",
-      "./js/app/master-ui.js": "./js/app/master-ui.js?v=121",
-      "./js/app/midi-files.js": "./js/app/midi-files.js?v=121",
-      "./js/app/midi-ui.js": "./js/app/midi-ui.js?v=121",
-      "./js/app/misc.js": "./js/app/misc.js?v=121",
-      "./js/app/mixer-ui.js": "./js/app/mixer-ui.js?v=121",
-      "./js/app/osc-ui.js": "./js/app/osc-ui.js?v=121",
-      "./js/app/pads.js": "./js/app/pads.js?v=121",
-      "./js/app/patch-ui.js": "./js/app/patch-ui.js?v=121",
-      "./js/app/perf-fx.js": "./js/app/perf-fx.js?v=121",
-      "./js/app/play.js": "./js/app/play.js?v=121",
-      "./js/app/piano.js": "./js/app/piano.js?v=121",
-      "./js/app/plugins.js": "./js/app/plugins.js?v=121",
-      "./js/app/presets-bar.js": "./js/app/presets-bar.js?v=121",
-      "./js/app/roll-ui.js": "./js/app/roll-ui.js?v=121",
-      "./js/app/save.js": "./js/app/save.js?v=121",
-      "./js/app/scenes.js": "./js/app/scenes.js?v=121",
-      "./js/app/send-to.js": "./js/app/send-to.js?v=121",
-      "./js/app/sounds.js": "./js/app/sounds.js?v=121",
-      "./js/app/sidechain-ui.js": "./js/app/sidechain-ui.js?v=121",
-      "./js/app/synth-ui.js": "./js/app/synth-ui.js?v=121",
-      "./js/app/tempo.js": "./js/app/tempo.js?v=121",
-      "./js/app/tl-listen.js": "./js/app/tl-listen.js?v=121",
-      "./js/app/tl-record.js": "./js/app/tl-record.js?v=121",
-      "./js/app/tl-select.js": "./js/app/tl-select.js?v=121",
-      "./js/app/tool-presets.js": "./js/app/tool-presets.js?v=121",
-      "./js/app/tl.js": "./js/app/tl.js?v=121",
-      "./js/app/tr909-ui.js": "./js/app/tr909-ui.js?v=121",
-      "./js/app/trackfx-ui.js": "./js/app/trackfx-ui.js?v=121",
-      "./js/app/undo.js": "./js/app/undo.js?v=121",
-      "./js/app/warp.js": "./js/app/warp.js?v=121",
-      "./js/app/viz-ui.js": "./js/app/viz-ui.js?v=121",
-      "./js/acid.js": "./js/acid.js?v=121",
-      "./js/apc.js": "./js/apc.js?v=121",
-      "./js/audio.js": "./js/audio.js?v=121",
-      "./js/decks.js": "./js/decks.js?v=121",
-      "./js/dynamics.js": "./js/dynamics.js?v=121",
-      "./js/chords.js": "./js/chords.js?v=121",
-      "./js/help.js": "./js/help.js?v=121",
-      "./js/history.js": "./js/history.js?v=121",
-      "./js/i18n.js": "./js/i18n.js?v=121",
-      "./js/kickdesign.js": "./js/kickdesign.js?v=121",
-      "./js/kicksynth.js": "./js/kicksynth.js?v=121",
-      "./js/kit.js": "./js/kit.js?v=121",
-      "./js/kits.js": "./js/kits.js?v=121",
-      "./js/metronome.js": "./js/metronome.js?v=121",
-      "./js/cpumeter.js": "./js/cpumeter.js?v=121",
-      "./js/curves.js": "./js/curves.js?v=121",
-      "./js/library.js": "./js/library.js?v=121",
-      "./js/lufs.js": "./js/lufs.js?v=121",
-      "./js/breizh.js": "./js/breizh.js?v=121",
-      "./js/buildup.js": "./js/buildup.js?v=121",
-      "./js/voice.js": "./js/voice.js?v=121",
-      "./js/psola.js": "./js/psola.js?v=121",
-      "./js/autotune.js": "./js/autotune.js?v=121",
-      "./js/melody.js": "./js/melody.js?v=121",
-      "./js/midi.js": "./js/midi.js?v=121",
-      "./js/midiclock.js": "./js/midiclock.js?v=121",
-      "./js/smf.js": "./js/smf.js?v=121",
-      "./js/main.js": "./js/main.js?v=121",
-      "./js/mixer.js": "./js/mixer.js?v=121",
-      "./js/notes.js": "./js/notes.js?v=121",
-      "./js/osc.js": "./js/osc.js?v=121",
-      "./js/params.js": "./js/params.js?v=121",
-      "./js/patch.js": "./js/patch.js?v=121",
-      "./js/performer.js": "./js/performer.js?v=121",
-      "./js/pianoroll.js": "./js/pianoroll.js?v=121",
-      "./js/presets.js": "./js/presets.js?v=121",
-      "./js/project.js": "./js/project.js?v=121",
-      "./js/sidechain.js": "./js/sidechain.js?v=121",
-      "./js/recorder.js": "./js/recorder.js?v=121",
-      "./js/timeline.js": "./js/timeline.js?v=121",
-      "./js/storage.js": "./js/storage.js?v=121",
-      "./js/stretch.js": "./js/stretch.js?v=121",
-      "./js/suggest.js": "./js/suggest.js?v=121",
-      "./js/tr909.js": "./js/tr909.js?v=121",
-      "./js/trackfx.js": "./js/trackfx.js?v=121",
-      "./js/visualizer.js": "./js/visualizer.js?v=121",
-      "./js/viz3d.js": "./js/viz3d.js?v=121",
-      "./js/windows.js": "./js/windows.js?v=121",
-      "./js/zip.js": "./js/zip.js?v=121"
+      "./js/app/acid-ui.js": "./js/app/acid-ui.js?v=122",
+      "./js/app/actions.js": "./js/app/actions.js?v=122",
+      "./js/app/controller.js": "./js/app/controller.js?v=122",
+      "./js/app/core.js": "./js/app/core.js?v=122",
+      "./js/app/audio-input.js": "./js/app/audio-input.js?v=122",
+      "./js/app/automation-ui.js": "./js/app/automation-ui.js?v=122",
+      "./js/app/banks-ui.js": "./js/app/banks-ui.js?v=122",
+      "./js/app/bars.js": "./js/app/bars.js?v=122",
+      "./js/app/breizh-ui.js": "./js/app/breizh-ui.js?v=122",
+      "./js/app/buildup-ui.js": "./js/app/buildup-ui.js?v=122",
+      "./js/app/voice-ui.js": "./js/app/voice-ui.js?v=122",
+      "./js/app/tune-ui.js": "./js/app/tune-ui.js?v=122",
+      "./js/app/buses-ui.js": "./js/app/buses-ui.js?v=122",
+      "./js/app/clip-menu.js": "./js/app/clip-menu.js?v=122",
+      "./js/app/curve-ui.js": "./js/app/curve-ui.js?v=122",
+      "./js/app/decks-ui.js": "./js/app/decks-ui.js?v=122",
+      "./js/app/devices.js": "./js/app/devices.js?v=122",
+      "./js/app/demo.js": "./js/app/demo.js?v=122",
+      "./js/app/export.js": "./js/app/export.js?v=122",
+      "./js/app/files.js": "./js/app/files.js?v=122",
+      "./js/app/freeze.js": "./js/app/freeze.js?v=122",
+      "./js/app/gen.js": "./js/app/gen.js?v=122",
+      "./js/app/inserts-ui.js": "./js/app/inserts-ui.js?v=122",
+      "./js/app/kick-ui.js": "./js/app/kick-ui.js?v=122",
+      "./js/app/knobs.js": "./js/app/knobs.js?v=122",
+      "./js/app/launcher.js": "./js/app/launcher.js?v=122",
+      "./js/app/library-ui.js": "./js/app/library-ui.js?v=122",
+      "./js/app/metro-ui.js": "./js/app/metro-ui.js?v=122",
+      "./js/app/markers.js": "./js/app/markers.js?v=122",
+      "./js/app/master-ui.js": "./js/app/master-ui.js?v=122",
+      "./js/app/midi-files.js": "./js/app/midi-files.js?v=122",
+      "./js/app/midi-ui.js": "./js/app/midi-ui.js?v=122",
+      "./js/app/misc.js": "./js/app/misc.js?v=122",
+      "./js/app/mixer-ui.js": "./js/app/mixer-ui.js?v=122",
+      "./js/app/osc-ui.js": "./js/app/osc-ui.js?v=122",
+      "./js/app/pads.js": "./js/app/pads.js?v=122",
+      "./js/app/patch-ui.js": "./js/app/patch-ui.js?v=122",
+      "./js/app/perf-fx.js": "./js/app/perf-fx.js?v=122",
+      "./js/app/play.js": "./js/app/play.js?v=122",
+      "./js/app/piano.js": "./js/app/piano.js?v=122",
+      "./js/app/plugins.js": "./js/app/plugins.js?v=122",
+      "./js/app/presets-bar.js": "./js/app/presets-bar.js?v=122",
+      "./js/app/roll-ui.js": "./js/app/roll-ui.js?v=122",
+      "./js/app/save.js": "./js/app/save.js?v=122",
+      "./js/app/scenes.js": "./js/app/scenes.js?v=122",
+      "./js/app/send-to.js": "./js/app/send-to.js?v=122",
+      "./js/app/sounds.js": "./js/app/sounds.js?v=122",
+      "./js/app/sidechain-ui.js": "./js/app/sidechain-ui.js?v=122",
+      "./js/app/synth-ui.js": "./js/app/synth-ui.js?v=122",
+      "./js/app/tempo.js": "./js/app/tempo.js?v=122",
+      "./js/app/tl-listen.js": "./js/app/tl-listen.js?v=122",
+      "./js/app/tl-record.js": "./js/app/tl-record.js?v=122",
+      "./js/app/tl-select.js": "./js/app/tl-select.js?v=122",
+      "./js/app/tool-presets.js": "./js/app/tool-presets.js?v=122",
+      "./js/app/tl.js": "./js/app/tl.js?v=122",
+      "./js/app/drum-ui.js": "./js/app/drum-ui.js?v=122",
+      "./js/app/seq-ui.js": "./js/app/seq-ui.js?v=122",
+      "./js/app/slicer-ui.js": "./js/app/slicer-ui.js?v=122",
+      "./js/app/trackfx-ui.js": "./js/app/trackfx-ui.js?v=122",
+      "./js/app/undo.js": "./js/app/undo.js?v=122",
+      "./js/app/warp.js": "./js/app/warp.js?v=122",
+      "./js/app/viz-ui.js": "./js/app/viz-ui.js?v=122",
+      "./js/acid.js": "./js/acid.js?v=122",
+      "./js/apc.js": "./js/apc.js?v=122",
+      "./js/audio.js": "./js/audio.js?v=122",
+      "./js/decks.js": "./js/decks.js?v=122",
+      "./js/dynamics.js": "./js/dynamics.js?v=122",
+      "./js/chords.js": "./js/chords.js?v=122",
+      "./js/help.js": "./js/help.js?v=122",
+      "./js/history.js": "./js/history.js?v=122",
+      "./js/i18n.js": "./js/i18n.js?v=122",
+      "./js/kickdesign.js": "./js/kickdesign.js?v=122",
+      "./js/kicksynth.js": "./js/kicksynth.js?v=122",
+      "./js/kit.js": "./js/kit.js?v=122",
+      "./js/kits.js": "./js/kits.js?v=122",
+      "./js/metronome.js": "./js/metronome.js?v=122",
+      "./js/cpumeter.js": "./js/cpumeter.js?v=122",
+      "./js/curves.js": "./js/curves.js?v=122",
+      "./js/library.js": "./js/library.js?v=122",
+      "./js/lufs.js": "./js/lufs.js?v=122",
+      "./js/breizh.js": "./js/breizh.js?v=122",
+      "./js/buildup.js": "./js/buildup.js?v=122",
+      "./js/voice.js": "./js/voice.js?v=122",
+      "./js/psola.js": "./js/psola.js?v=122",
+      "./js/autotune.js": "./js/autotune.js?v=122",
+      "./js/melody.js": "./js/melody.js?v=122",
+      "./js/midi.js": "./js/midi.js?v=122",
+      "./js/midiclock.js": "./js/midiclock.js?v=122",
+      "./js/smf.js": "./js/smf.js?v=122",
+      "./js/main.js": "./js/main.js?v=122",
+      "./js/mixer.js": "./js/mixer.js?v=122",
+      "./js/notes.js": "./js/notes.js?v=122",
+      "./js/osc.js": "./js/osc.js?v=122",
+      "./js/params.js": "./js/params.js?v=122",
+      "./js/patch.js": "./js/patch.js?v=122",
+      "./js/performer.js": "./js/performer.js?v=122",
+      "./js/pianoroll.js": "./js/pianoroll.js?v=122",
+      "./js/presets.js": "./js/presets.js?v=122",
+      "./js/project.js": "./js/project.js?v=122",
+      "./js/sidechain.js": "./js/sidechain.js?v=122",
+      "./js/recorder.js": "./js/recorder.js?v=122",
+      "./js/timeline.js": "./js/timeline.js?v=122",
+      "./js/storage.js": "./js/storage.js?v=122",
+      "./js/stretch.js": "./js/stretch.js?v=122",
+      "./js/suggest.js": "./js/suggest.js?v=122",
+      "./js/drummachine.js": "./js/drummachine.js?v=122",
+      "./js/slicer.js": "./js/slicer.js?v=122",
+      "./js/stepseq.js": "./js/stepseq.js?v=122",
+      "./js/tr808.js": "./js/tr808.js?v=122",
+      "./js/tr909.js": "./js/tr909.js?v=122",
+      "./js/trackfx.js": "./js/trackfx.js?v=122",
+      "./js/visualizer.js": "./js/visualizer.js?v=122",
+      "./js/viz3d.js": "./js/viz3d.js?v=122",
+      "./js/windows.js": "./js/windows.js?v=122",
+      "./js/zip.js": "./js/zip.js?v=122"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=121"></script>
+  <script type="module" src="js/main.js?v=122"></script>
 </body>
 </html>

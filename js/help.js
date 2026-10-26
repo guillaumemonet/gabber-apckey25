@@ -35,6 +35,35 @@ export const HELP = {
         <li><b>APC grid</b> (Shift + PLAY): rows 1-2 = the 16 steps, row 3-4 = instruments, Accent, Clear, Mute, row 5 = patterns. A SCENE LAUNCH button brings the pads back.</li>
         <li>The bass drum also triggers the <b>sidechain</b> (Mixer window).</li>
       </ul>`,
+    tr8: `
+      <p>TR-808 emulation: 13 synthesised instruments (long resonant bass drum, two-oscillator snare, toms, rim shot, clap, hi-hats and cymbal made of six square oscillators, cowbell, claves, maracas) and the same 16-step sequencer as the TR-909.</p>
+      <ul>
+        <li><b>Click a step</b>: note → accent → off. <b>Click an instrument name</b> to play and select it.</li>
+        <li><b>Patterns 1-8</b> (4 presets: electro, boom bap, hardcore on the 808, percussion). A change waits for the next bar.</li>
+        <li><b>Sound kits</b>: Classic (Clean 808, Electro, Hip-hop, Long bass), Hardcore (Saturated boom, Gabber 808, Distorted), FX (Lo-fi crush, Folded). Your kits (★) are saved like the 909's.</li>
+        <li><b>Knobs</b> (also K1-K8 on the APC when this window is active): K1-K4 = parameters of the selected instrument (the bass drum <b>Decay</b> goes from a dry hit to the long boom), K5 = <b>drive</b>, K6 = distortion <b>shape</b>, K7 = shuffle, K8 = 808 volume.</li>
+        <li><b>APC grid</b> (Shift + PLAY): the grid drives the drum machine whose window you used last (909 or 808): rows 1-2 = steps, rows 3-4 = the 13 instruments, then Accent, Clear, Mute, row 5 = patterns.</li>
+        <li>The 808 has its own <b>mixer channel</b> (shown in the Mixer window; the APC mixer pages keep the first seven channels) and can be <b>recorded</b> on a track (source TR-808). The bass drum triggers the sidechain.</li>
+      </ul>`,
+    seq: `
+      <p>A step sequencer for any pad sound: one row per pad (any bank), 16, 32 or 64 steps, 8 patterns. The pads play with their own settings (volume, pitch, filter, sends) and the kicks drive the sidechain.</p>
+      <ul>
+        <li><b>Click a step</b>: note → accent → off; <b>drag</b> to paint several steps. <b>Click a row name</b> to hear its sound.</li>
+        <li>Row buttons: <b>pad</b> (choose its sound in the pad grid of any bank), <b>mute</b>, <b>remove</b>. <b>Add a row</b> uses the selected pad. Each pattern has its own rows.</li>
+        <li><b>Steps 16 / 32 / 64</b> (1, 2 or 4 bars): lengthening repeats what is written; <b>Bar 1-4</b> shows each part. <b>Accent</b> and <b>Shuffle</b> as on the drum machines.</li>
+        <li><b>Patterns 1-8</b>: a change waits for the end of the pattern; scenes remember the pattern and whether it plays.</li>
+        <li><b>Put on the timeline</b>: the pattern as pad blocks (one track per row) from the playhead bar, repeated 1 to 8 times. To record it live, choose the <b>Step sequencer</b> source on an armed track: it starts with the recording.</li>
+        <li>The <b>break slicer</b> fills a pattern with the hits of a break.</li>
+      </ul>`,
+    slicer: `
+      <p>Cuts a break (a drum loop) into one sound per hit, so it can follow any tempo without changing pitch, and be reordered.</p>
+      <ul>
+        <li><b>The sound</b>: <b>Load a sound…</b>, <b>Selected pad</b>, a library sound or an audio file dropped on the waveform, or <b>Slice in the break slicer…</b> in the menu of an audio block of the timeline.</li>
+        <li><b>Hits</b>: the markers are placed on the attacks (<b>Sensitivity</b>: higher finds the softer hits too). <b>Equal parts</b>: 4 to 32 slices of the same length.</li>
+        <li><b>Waveform</b>: click a slice to hear it; drag a marker to move it; double-click to add one; right-click a marker to remove it (32 slices at most).</li>
+        <li><b>Tempo</b>: tempo of the loop (known for library loops, otherwise guessed from its length). <b>Listen</b> plays the slices at the project tempo.</li>
+        <li><b>Send to pads…</b>: one pad per slice, from the pad you pick (any bank). <b>To the sequencer…</b> does the same and writes the original pattern in a free pattern of the step sequencer: change the tempo, move or swap the hits.</li>
+      </ul>`,
     acid: `
       <p>An acid bass line in the style of the TB-303: oscillator, resonant 24 dB low-pass filter driven by an envelope, accent, slide, and distortion.</p>
       <ul>
@@ -318,6 +347,35 @@ export const HELP = {
         <li><b>Potentiomètres</b> (sous la grille, aussi sur les potentiomètres K1-K8 de l'APC quand cette fenêtre est active) : K1-K4 = paramètres de l'instrument choisi, K5 = <b>drive</b>, K6 = <b>forme</b> de distorsion (douce, dure, lampe, repli, crush), K7 = shuffle, K8 = volume 909.</li>
         <li><b>Grille de l'APC</b> (Maj + PLAY) : rangées 1-2 = les 16 pas, rangées 3-4 = instruments, Accent, Effacer, Muet, rangée 5 = patterns. Un bouton SCENE LAUNCH ramène les pads.</li>
         <li>La grosse caisse déclenche aussi le <b>sidechain</b> (fenêtre Mixeur).</li>
+      </ul>`,
+    tr8: `
+      <p>Émulation de la TR-808 : 13 instruments synthétisés (grosse caisse résonante et longue, caisse claire à deux oscillateurs, toms, rim shot, clap, charleys et cymbale faits de six oscillateurs carrés, cloche, claves, maracas) et le même séquenceur 16 pas que la TR-909.</p>
+      <ul>
+        <li><b>Clic sur un pas</b> : note → accent → silence. <b>Clic sur le nom d'un instrument</b> pour le jouer et le choisir.</li>
+        <li><b>Patterns 1-8</b> (4 de départ : électro, boom bap, hardcore à la 808, percussions). Un changement attend la mesure suivante.</li>
+        <li><b>Kits de son</b> : Classique (808 propre, Électro, Hip-hop, Basse longue), Hardcore (Boom saturé, Gabber 808, Distordu), FX (Lo-fi écrasé, Replié). Vos kits (★) s'enregistrent comme ceux de la 909.</li>
+        <li><b>Potentiomètres</b> (aussi K1-K8 sur l'APC quand cette fenêtre est active) : K1-K4 = réglages de l'instrument choisi (le <b>Déclin</b> de la grosse caisse va du coup sec au long boom), K5 = <b>drive</b>, K6 = <b>forme</b> de la distorsion, K7 = shuffle, K8 = volume 808.</li>
+        <li><b>Grille de l'APC</b> (Maj + PLAY) : la grille pilote la boîte à rythmes dont vous avez utilisé la fenêtre en dernier (909 ou 808) : rangées 1-2 = pas, rangées 3-4 = les 13 instruments, puis Accent, Effacer, Muet, rangée 5 = patterns.</li>
+        <li>La 808 a sa propre <b>voie de mixage</b> (dans la fenêtre Mixeur ; les pages mixeur de l'APC gardent les sept premières voies) et s'<b>enregistre</b> sur une piste (source TR-808). La grosse caisse déclenche le sidechain.</li>
+      </ul>`,
+    seq: `
+      <p>Un séquenceur pas à pas pour n'importe quel son de pad : une ligne par pad (de n'importe quelle banque), 16, 32 ou 64 pas, 8 patterns. Les pads jouent avec leurs propres réglages (volume, hauteur, filtre, envois) et les kicks pilotent le sidechain.</p>
+      <ul>
+        <li><b>Clic sur un pas</b> : note → accent → silence ; <b>glisser</b> pour peindre plusieurs pas. <b>Clic sur le nom d'une ligne</b> pour écouter son son.</li>
+        <li>Boutons d'une ligne : <b>pad</b> (choisir son son dans la grille des pads de n'importe quelle banque), <b>couper</b>, <b>supprimer</b>. <b>Ajouter une ligne</b> prend le pad sélectionné. Chaque pattern a ses lignes.</li>
+        <li><b>Pas 16 / 32 / 64</b> (1, 2 ou 4 mesures) : en allongeant, ce qui est écrit se répète ; <b>Mesure 1-4</b> montre chaque partie. <b>Accent</b> et <b>Shuffle</b> comme sur les boîtes à rythmes.</li>
+        <li><b>Patterns 1-8</b> : un changement attend la fin du pattern ; les scènes retiennent le pattern et s'il joue.</li>
+        <li><b>Poser sur la timeline</b> : le pattern en blocs de pads (une piste par ligne) à partir de la mesure de la tête de lecture, répété de 1 à 8 fois. Pour l'enregistrer en jouant, choisissez la source <b>Séquenceur pas à pas</b> sur une piste armée : il démarre avec l'enregistrement.</li>
+        <li>Le <b>découpeur de breaks</b> remplit un pattern avec les coups d'un break.</li>
+      </ul>`,
+    slicer: `
+      <p>Découpe un break (une boucle de batterie) en un son par coup : il suit alors n'importe quel tempo sans changer de hauteur, et ses coups se réordonnent.</p>
+      <ul>
+        <li><b>Le son</b> : <b>Charger un son…</b>, <b>Pad sélectionné</b>, un son de la bibliothèque ou un fichier audio déposé sur la forme d'onde, ou <b>Découper dans le découpeur de breaks…</b> dans le menu d'un bloc audio de la timeline.</li>
+        <li><b>Coups</b> : les repères se placent sur les attaques (<b>Sensibilité</b> : plus haut, les coups faibles sont trouvés aussi). <b>Parts égales</b> : de 4 à 32 tranches de même longueur.</li>
+        <li><b>Forme d'onde</b> : clic sur une tranche pour l'écouter ; glisser un repère pour le déplacer ; double-clic pour en ajouter un ; clic droit sur un repère pour l'enlever (32 tranches au maximum).</li>
+        <li><b>Tempo</b> : tempo de la boucle (connu pour les boucles de la bibliothèque, sinon deviné d'après sa longueur). <b>Écouter</b> joue les tranches au tempo du projet.</li>
+        <li><b>Vers les pads…</b> : un pad par tranche, à partir du pad choisi (n'importe quelle banque). <b>Vers le séquenceur…</b> fait de même et écrit le motif d'origine dans un pattern libre du séquenceur pas à pas : changez le tempo, déplacez ou échangez les coups.</li>
       </ul>`,
     acid: `
       <p>Une ligne de basse acid façon TB-303 : oscillateur, filtre passe-bas 24 dB résonant piloté par une enveloppe, accent, slide et distorsion.</p>

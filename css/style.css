@@ -372,10 +372,6 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 20
 .tr-cell.on { background: var(--accent-2); border-color: var(--accent-2); }
 .tr-cell.accent { background: #ffd23f; border-color: #ffd23f; }
 .tr-cell.head { outline: 2px solid var(--accent); outline-offset: -2px; }
-#tr-patterns button { padding: 5px 10px; }
-#tr-patterns button.used { color: var(--text); }
-#tr-patterns button.queued { animation: blink .5s steps(2) infinite; }
-#tr-apc.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
 .tr-accent { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
 .tr-accent input { width: 90px; }
 @media (max-width: 980px) { .tr-grid { grid-template-columns: 40px repeat(16, 1fr); gap: 2px; } }
@@ -810,6 +806,10 @@ header button, header .status { white-space: nowrap; }
 [data-icon="layout"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="reset"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="pads"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M4 4h4v4H4zM10 4h4v4h-4zM16 4h4v4h-4zM4 10h4v4H4zM10 10h4v4h-4zM16 10h4v4h-4zM4 16h4v4H4zM10 16h4v4h-4zM16 16h4v4h-4z%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
+[data-icon="tr8"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M2 5h20v14H2z%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linejoin=%22round%22/%3E%3Ccircle cx=%227%22 cy=%229.5%22 r=%221.7%22 fill=%22%23000%22/%3E%3Ccircle cx=%2212%22 cy=%229.5%22 r=%221.7%22 fill=%22%23000%22/%3E%3Ccircle cx=%2217%22 cy=%229.5%22 r=%221.7%22 fill=%22%23000%22/%3E%3Cpath d=%22M5 13.5h3v2.5H5zM10.5 13.5h3v2.5h-3zM16 13.5h3v2.5h-3z%22 fill=%22%23000%22/%3E%3C/svg%3E"); }
+[data-icon="seq"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M2 3h5v5H2zM16 3h5v5h-5zM9 9.5h5v5H9zM2 16h5v5H2zM16 16h5v5h-5z%22 fill=%22%23000%22/%3E%3Cpath d=%22M9.6 3.6h3.8v3.8H9.6zM2.6 10.1h3.8v3.8H2.6zM16.6 10.1h3.8v3.8h-3.8zM9.6 16.6h3.8v3.8H9.6z%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.2%22/%3E%3C/svg%3E"); }
+[data-icon="slice"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M2 12h2l1.5-6 2 12 2-9 1.5 3h2l1.5-5 2 10 1.5-5H22%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M8.5 1.5v21M16.5 1.5v21%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.6%22 stroke-dasharray=%222.2 2%22/%3E%3C/svg%3E"); }
+[data-icon="mute"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M3 9h4l5-4v14l-5-4H3z%22 fill=%22%23000%22/%3E%3Cpath d=%22M15.5 9.5l5 5M20.5 9.5l-5 5%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="tr"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M2 6h20v12H2z%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Ccircle cx=%227%22 cy=%2212%22 r=%222%22 fill=%22%23000%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%222%22 fill=%22%23000%22/%3E%3Ccircle cx=%2217%22 cy=%2212%22 r=%222%22 fill=%22%23000%22/%3E%3C/svg%3E"); }
 [data-icon="acid"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M2 18l5-12 1 12 5-12 1 12 5-12 3 12%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
 [data-icon="keys"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M3 4h18v16H3zM8 4v10M12 4v16M16 4v10%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E"); }
@@ -1048,3 +1048,26 @@ header button, header .status { white-space: nowrap; }
 .tk-frozen-note { margin: 0 10px 10px; }
 .track-knob-foot { gap: 6px; flex-wrap: wrap; }
 .tk-freeze.active { background: #7fd4ff; border-color: #7fd4ff; color: #111; }
+
+/* TR-808 (même fenêtre que la 909), séquenceur pas à pas, découpeur de breaks */
+.tr-patterns button { padding: 5px 10px; }
+.tr-patterns button.used { color: var(--text); }
+.tr-patterns button.queued { animation: blink .5s steps(2) infinite; }
+.tr-apc.active { background: var(--accent-2); border-color: var(--accent-2); color: #000; }
+.seq-bar { margin: 8px 0; font-size: 12px; }
+.seq-bar .segmented button { padding: 4px 10px; font-size: 12px; }
+.seq-times { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.seq-grid { grid-template-columns: minmax(80px, 140px) repeat(16, 1fr) 26px 26px 26px; }
+.seq-name { text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-left: 4px solid var(--c, var(--line)); font-weight: 600; }
+.seq-tool { padding: 0; height: 26px; display: flex; align-items: center; justify-content: center; }
+.seq-tool[data-icon]::before { margin: 0; width: 14px; height: 14px; }
+.seq-tool.active { background: var(--accent); border-color: var(--accent); }
+.slicer-mode, .slicer-actions { margin: 8px 0; font-size: 12px; }
+.slicer-field { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+.slicer-field input[type=number] { width: 80px; }
+.slicer-name { font-weight: 600; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40ch; }
+.slicer-wave-wrap { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.slicer-wave-wrap.dragover { border-color: var(--accent); }
+#sl-wave { display: block; width: 100%; height: 150px; cursor: pointer; }
+@media (max-width: 980px) { .seq-grid { grid-template-columns: 64px repeat(16, 1fr) 22px 22px 22px; } }
+.seq-bar [hidden], .slicer-mode [hidden] { display: none; }

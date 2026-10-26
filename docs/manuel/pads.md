@@ -2,7 +2,7 @@
 
 ← [Le contrôleur APC Key 25](apc.md) · [Sommaire](README.md) · [Timeline, bibliothèque et piano roll](timeline.md) →
 
-Le sampler 40 pads, les 25 banques, les boucles calées sur le tempo.
+Le sampler 40 pads, les 25 banques, les boucles calées sur le tempo, le découpeur de breaks.
 
 ## Banques
 
@@ -64,3 +64,16 @@ Le tempo global (en-tête) pilote toutes les boucles. Chacune démarre sur la me
 ---
 
 ← [Le contrôleur APC Key 25](apc.md) · [Sommaire](README.md) · [Timeline, bibliothèque et piano roll](timeline.md) →
+
+## Découpeur de breaks
+
+[![Découpeur de breaks : un break découpé sur ses coups, tranches numérotées](../screenshots/slicer-fr.png)](../screenshots/slicer-fr.png)
+
+Le découpeur coupe un break (une boucle de batterie) en **un son par coup**. Rejoué coup par coup par le [séquenceur pas à pas](instruments.md#séquenceur-pas-à-pas), le break suit n'importe quel tempo **sans changer de hauteur**, et ses coups se déplacent, se répètent ou s'échangent.
+
+- **Le son** : **Charger un son…**, **Pad sélectionné**, un son de la bibliothèque ou un fichier audio déposé sur la forme d'onde, ou clic droit sur un bloc audio de la timeline › **Découper dans le découpeur de breaks…**
+- **Où couper** : **Coups** place les repères juste avant chaque attaque (**Sensibilité** : plus haut, les coups faibles sont trouvés aussi) ; **Parts égales** coupe en 4, 8, 16 ou 32 tranches de même longueur.
+- **Forme d'onde** : clic sur une tranche pour l'écouter ; glisser un repère pour le déplacer ; double-clic pour en ajouter un ; clic droit sur un repère pour l'enlever (32 tranches au maximum). Les repères se posent sur un passage par zéro (pas de clic).
+- **Tempo** : celui de la boucle (connu pour les boucles de la bibliothèque, sinon deviné d'après sa longueur) ; il place chaque coup sur son pas. **Écouter** joue les tranches au tempo du projet.
+- **Vers les pads…** : un pad par tranche, à partir du pad choisi dans la grille (n'importe quelle banque).
+- **Vers le séquenceur…** : la même chose, puis le motif d'origine est écrit dans un pattern libre du séquenceur pas à pas (une ligne par tranche, 16 à 64 pas selon la longueur du break), qui s'ouvre.

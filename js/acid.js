@@ -2,7 +2,7 @@
 // -> VCA -> distorsion (formes de la 909) -> volume. Séquenceur de 16 pas : note, octave, accent, slide.
 // Horloge : la sienne (grille des mesures), ou celle de la 909 (« Suivre la 909 », shuffle compris).
 import { t } from './i18n.js';
-import { distCurve, SHAPES, shapeIndex } from './tr909.js';
+import { distCurve, SHAPES, shapeIndex } from './drummachine.js';
 
 export const ACID_PATTERNS = 8;
 export const ACID_BASE = 41;   // fa2 : première ligne de la grille (tonalité des banques)

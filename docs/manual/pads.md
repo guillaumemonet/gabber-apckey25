@@ -2,7 +2,7 @@
 
 ← [The APC Key 25 controller](controller.md) · [Contents](README.md) · [Timeline, library and piano roll](timeline.md) →
 
-The 40-pad sampler, the 25 banks, loops locked to the tempo.
+The 40-pad sampler, the 25 banks, loops locked to the tempo, the break slicer.
 
 ## Banks
 
@@ -64,3 +64,16 @@ The global tempo (header) drives every loop. Each loop starts on the next bar an
 ---
 
 ← [The APC Key 25 controller](controller.md) · [Contents](README.md) · [Timeline, library and piano roll](timeline.md) →
+
+## Break slicer
+
+[![Break slicer: a break cut on its hits, numbered slices](../screenshots/slicer-en.png)](../screenshots/slicer-en.png)
+
+The slicer cuts a break (a drum loop) into **one sound per hit**. Played back hit by hit by the [step sequencer](instruments.md#step-sequencer), the break follows any tempo **without changing pitch**, and its hits can be moved, repeated or swapped.
+
+- **The sound**: **Load a sound…**, **Selected pad**, a library sound or an audio file dropped on the waveform, or right-click an audio block of the timeline › **Slice in the break slicer…**
+- **Where to cut**: **Hits** puts the markers just before each attack (**Sensitivity**: higher finds the softer hits too); **Equal parts** cuts into 4, 8, 16 or 32 slices of the same length.
+- **Waveform**: click a slice to hear it; drag a marker to move it; double-click to add one; right-click a marker to remove it (32 slices at most). The markers land on a zero crossing (no click).
+- **Tempo**: the tempo of the loop (known for library loops, otherwise guessed from its length); it puts each hit on its step. **Listen** plays the slices at the project tempo.
+- **Send to pads…**: one pad per slice, from the pad you pick in the grid (any bank).
+- **To the sequencer…**: the same, then the original pattern is written into a free pattern of the step sequencer (one row per slice, 16 to 64 steps depending on the length of the break), which opens.

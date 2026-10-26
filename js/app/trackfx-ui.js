@@ -2,7 +2,7 @@
 import { PALETTE } from '../apc.js';
 import { t } from '../i18n.js';
 import { BEATS_PER_BAR } from '../timeline.js';
-import { SHAPES } from '../tr909.js';
+import { SHAPES } from '../drummachine.js';
 import { FX_BANK, FX_FAMILY_COLORS, FX_TYPES as TFX_TYPES, bankName, fxDefaults } from '../trackfx.js';
 import { state, uiColor } from './core.js';
 import { curveById, curveItems, curveName, curveSvg, openCurve } from './curve-ui.js';

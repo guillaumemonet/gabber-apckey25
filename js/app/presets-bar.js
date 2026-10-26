@@ -6,7 +6,6 @@ import { prepareKickClips } from '../kicksynth.js';
 import { OSC_CATS, OSC_PRESETS, OSC_PRESET_CAT } from '../osc.js';
 import { PAGES, toValue } from '../params.js';
 import { FAMILIES, PRESETS } from '../presets.js';
-import { TR_CATS, TR_KITS, kitParams } from '../tr909.js';
 import { renderAcid, renderAcidKnobs } from './acid-ui.js';
 import { $, acid, engine, state } from './core.js';
 import { kickChanged, renderKick } from './kick-ui.js';
@@ -16,7 +15,7 @@ import { loadOscPreset, renderOsc } from './osc-ui.js';
 import { rollPresetOptions } from './roll-ui.js';
 import { save } from './save.js';
 import { applyPreset, renderSynthKnobs } from './synth-ui.js';
-import { renderTr } from './tr909-ui.js';
+import { DRUM_DEFS, renderTr } from './drum-ui.js';
 
 // ---------- Barre de presets (instruments) ----------
 
@@ -70,33 +69,34 @@ export function presetBar(wrap, cfg) {
   return { render };
 }
 
-// Kits de son de la TR-909.
-export let trPresets = null;
-export function buildTrPresets() {
-  trPresets = presetBar($('#tr-pbar'), {
-    cats: TR_CATS,
+// Kits de son des boîtes à rythmes (TR-909 : 'tr', TR-808 : 'tr8').
+export const drumPresets = {};
+export function buildDrumPresets(id) {
+  const def = DRUM_DEFS[id], st = () => state[id];
+  drumPresets[id] = presetBar($(`#${id}-pbar`), {
+    cats: def.cats,
     catLabel: c => t(`tr.cat.${c}`),
-    builtins: TR_KITS.map(k => ({ id: k.id, cat: k.cat, name: t(`tr.kit.${k.id}`) })),
-    user: () => state.tr.userKits,
-    current: () => state.tr.kit,
-    apply: id => {
-      const u = state.tr.userKits.find(x => x.id === id), b = TR_KITS.find(x => x.id === id);
+    builtins: def.kits.map(k => ({ id: k.id, cat: k.cat, name: t(`${id}.kit.${k.id}`) })),
+    user: () => st().userKits,
+    current: () => st().kit,
+    apply: kit => {
+      const u = st().userKits.find(x => x.id === kit), b = def.kits.find(x => x.id === kit);
       if (!u && !b) return;
-      state.tr.params = u ? kitParams(u.params) : kitParams(b.v);
-      state.tr.kit = id;
+      st().params = def.kitParams(u ? u.params : b.v);
+      st().kit = kit;
       renderTr();
       renderKnobs();
       save();
     },
     save: (name, cat) => {
-      let u = state.tr.userKits.find(x => x.name === name);
-      if (!u) { u = { id: `u:${crypto.randomUUID()}`, name }; state.tr.userKits.push(u); }
-      Object.assign(u, { cat, params: structuredClone(state.tr.params) });
-      state.tr.kit = u.id;
+      let u = st().userKits.find(x => x.name === name);
+      if (!u) { u = { id: `u:${crypto.randomUUID()}`, name }; st().userKits.push(u); }
+      Object.assign(u, { cat, params: structuredClone(st().params) });
+      st().kit = u.id;
       save();
       return u.id;
     },
-    remove: id => { state.tr.userKits = state.tr.userKits.filter(x => x.id !== id); state.tr.kit = null; save(); },
+    remove: kit => { st().userKits = st().userKits.filter(x => x.id !== kit); st().kit = null; save(); },
   });
 }
 

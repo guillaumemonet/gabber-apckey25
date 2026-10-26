@@ -15,7 +15,7 @@ import { launchRow, launcherMode, launcherPad, renderLauncherLeds, stopAllClips,
 import { captureScene, launchScene, renderSceneLeds, sceneMode, toggleSceneMode } from './scenes.js';
 import { presetKey } from './synth-ui.js';
 import { tlRec, tlRecToggle, tlToggle } from './tl.js';
-import { renderTrLeds, toggleTrMode, trMode, trPad } from './tr909-ui.js';
+import { renderTrLeds, toggleTrMode, trMode, trPad } from './drum-ui.js';
 
 // ---------- Contrôleur ----------
 

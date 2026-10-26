@@ -4,7 +4,7 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 
 ## Deux couches
 
-- **Les moteurs** (`js/*.js`) : le son et les données, sans interface. Chacun est autonome et ne connaît pas les autres : `audio.js` (synthé, sampler, effets du master), `timeline.js` (lecture des pistes), `tr909.js`, `acid.js`, `decks.js`, `mixer.js`, `trackfx.js`, `osc.js`, etc.
+- **Les moteurs** (`js/*.js`) : le son et les données, sans interface. Chacun est autonome et ne connaît pas les autres : `audio.js` (synthé, sampler, effets du master), `timeline.js` (lecture des pistes), `drummachine.js` (socle des boîtes à rythmes et du séquenceur : horloge des pas, distorsion, kits), `tr909.js`, `tr808.js`, `stepseq.js`, `slicer.js`, `acid.js`, `decks.js`, `mixer.js`, `trackfx.js`, `osc.js`, etc.
 - **L'application** (`js/main.js` et `js/app/*.js`) : l'interface, le contrôleur APC et les liaisons entre les moteurs. Un module par domaine.
 
 `js/main.js` est le point d'entrée : au clic sur « Démarrer », il crée les moteurs, les relie (table de mixage, sidechain, câblage), puis construit chaque fenêtre.
@@ -36,7 +36,9 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 | `gen.js` | Générateur de nappes : blocs d'accords posés sur la timeline |
 | `synth-ui.js` | Fenêtre du synthé en couches : presets, familles, potentiomètres d'expression |
 | `osc-ui.js` | Fenêtre du synthé à oscillateurs |
-| `tr909-ui.js` | Fenêtre de la TR-909 et grille de l'APC en mode 909 |
+| `drum-ui.js` | Fenêtres des boîtes à rythmes (TR-909, TR-808 : le même code) et grille de l'APC en mode boîte à rythmes |
+| `seq-ui.js` | Fenêtre du séquenceur pas à pas : lignes de pads, pas, pose sur la timeline |
+| `slicer-ui.js` | Fenêtre du découpeur de breaks : repères, tranches vers les pads et le séquenceur |
 | `acid-ui.js` | Fenêtre de la TB-303 |
 | `kick-ui.js` | Fenêtre du designer de kick |
 | `decks-ui.js` | Fenêtre des platines : chargement, scratch, transition automatique |

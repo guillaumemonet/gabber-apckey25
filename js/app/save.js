@@ -15,6 +15,9 @@ import { FAMILIES, PRESETS, migratePreset, presetById } from '../presets.js';
 import { mergeScState } from '../sidechain.js';
 import * as store from '../storage.js';
 import { mergeTlState } from '../timeline.js';
+import { mergeSlicer } from '../slicer.js';
+import { mergeSeqState } from '../stepseq.js';
+import { mergeTr8State } from '../tr808.js';
 import { mergeTrState } from '../tr909.js';
 import { mergeWindows } from '../windows.js';
 import { $, BANKS, kit, newPad, setLibAdded, state, tlHistory } from './core.js';
@@ -63,6 +66,9 @@ export async function restore() {
     state.libBanks = saved.libBanks ?? (saved.libImported ? ['Batterie', 'Électro', 'Boucles', 'Textures', 'Tabla & divers'] : []);
     state.model = saved.model ?? null;
     state.tr = mergeTrState(saved.tr);
+    state.tr8 = mergeTr8State(saved.tr8);
+    state.seq = mergeSeqState(saved.seq);
+    state.slicer = mergeSlicer(saved.slicer);
     state.mix = mergeMixState(saved.mix);
     state.windows = mergeWindows(saved.windows);
     state.tl = mergeTlState(saved.tl);
@@ -175,6 +181,9 @@ export function stateSnapshot() {
     model: state.model,
     globals: state.globals,
     tr: state.tr,
+    tr8: state.tr8,
+    seq: state.seq,
+    slicer: state.slicer,
     mix: state.mix,
     windows: state.windows,
     tl: state.tl,

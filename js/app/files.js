@@ -18,11 +18,14 @@ import { download, stamp } from '../recorder.js';
 import { mergeScState } from '../sidechain.js';
 import * as store from '../storage.js';
 import { mergeTlState } from '../timeline.js';
+import { mergeSlicer } from '../slicer.js';
+import { mergeSeqState } from '../stepseq.js';
+import { mergeTr8State } from '../tr808.js';
 import { mergeTrState } from '../tr909.js';
 import { renderAcid, renderAcidKnobs } from './acid-ui.js';
 import { renderBuses } from './buses-ui.js';
 import { clearBank } from './actions.js';
-import { $, BANKS, acid, drum, engine, mixer, padKey, patch, performer, sidechain, state, timeline, wm } from './core.js';
+import { $, BANKS, acid, drum, drum808, engine, mixer, padKey, patch, performer, sidechain, state, stepSeq, timeline, wm } from './core.js';
 import { renderCurveEditor } from './curve-ui.js';
 import { renderKick, renderKickKnobs } from './kick-ui.js';
 import { applyGlobals, renderKnobs } from './knobs.js';
@@ -34,7 +37,7 @@ import { renderFx, renderMixer } from './mixer-ui.js';
 import { oscChanged, oscPresetCache } from './osc-ui.js';
 import { renderMixerDest, renderPatch } from './patch-ui.js';
 import { renderPlayControls } from './play.js';
-import { acidPresets, kickPresets, synthPresets, trPresets } from './presets-bar.js';
+import { acidPresets, drumPresets, kickPresets, synthPresets } from './presets-bar.js';
 import { rollPresetOptions } from './roll-ui.js';
 import { save, saveTimer, setProjectLoading, stateSnapshot } from './save.js';
 import { mergeScenes, renderScenes, setCurrentScene, setQueuedScene } from './scenes.js';
@@ -57,7 +60,9 @@ import { cleanMidiMap, renderMidi } from './midi-ui.js';
 import { mergeTuneState, renderTuneWin } from './tune-ui.js';
 import { applyVizKnobs, mergeViz, renderViz } from './viz-ui.js';
 import { mergeVoiceState, renderVoiceWin, stopVoicePreview } from './voice-ui.js';
-import { renderTr } from './tr909-ui.js';
+import { renderTr } from './drum-ui.js';
+import { loadSeqPads, renderSeq } from './seq-ui.js';
+import { restoreSlicer, stopSlicerPreview } from './slicer-ui.js';
 
 // ---------- Kits (export / import) ----------
 
@@ -98,7 +103,7 @@ export async function kitExportBank(b = state.bank) {
 export async function kitExportAll() {
   toast(t('kit.exportingAll'));
   await loadPads(state.banks.flat());
-  const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr, mix: state.mix, scenes: state.scenes });
+  const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr, tr8: state.tr8, mix: state.mix, scenes: state.scenes });
   download(blob, `gabberkey-session-${stamp()}.apckit`);
   toast(t('kit.exportedAll'));
 }
@@ -134,6 +139,7 @@ export function bindKits() {
         if (kitData.scenes) { state.scenes = mergeScenes(kitData.scenes); setCurrentScene(null); renderScenes(); }
         if (kitData.mix) { state.mix = mergeMixState(kitData.mix); mixer.reload(); CHANNELS.forEach(renderFx); renderMixer(); }
         if (kitData.tr) { drum.stop(); state.tr = mergeTrState(kitData.tr); drum.setVolume(state.tr.globals.volume); renderTr(); }
+        if (kitData.tr8) { drum808.stop(); state.tr8 = mergeTr8State(kitData.tr8); drum808.setVolume(state.tr8.globals.volume); renderTr(); }
       } else {
         if (state.banks[target].some(Boolean) && !confirm(t('kit.confirmBank', { n: target + 1 }))) return;
         replaceBank(target, await Promise.all(kitData.banks[0].map(unpackPad)));
@@ -155,8 +161,16 @@ export const pickIds = (obj, page) => Object.fromEntries(PAGES[page].params.filt
 export const TOOL_IO = {
   tr: {
     get: () => ({ tr: state.tr }),
-    set: d => { drum.stop(); state.tr = mergeTrState(d.tr); drum.setVolume(state.tr.globals.volume); renderTr(); trPresets?.render(); },
+    set: d => { drum.stop(); state.tr = mergeTrState(d.tr); drum.setVolume(state.tr.globals.volume); renderTr(); drumPresets.tr?.render(); },
   },
+  tr8: {
+    get: () => ({ tr8: state.tr8 }),
+    set: d => { drum808.stop(); state.tr8 = mergeTr8State(d.tr8); drum808.setVolume(state.tr8.globals.volume); renderTr(); drumPresets.tr8?.render(); },
+  },
+  // Séquenceur pas à pas : ses patterns (les lignes désignent des pads : banque et numéro).
+  seq: { get: () => ({ seq: state.seq }), set: d => { stepSeq.stop(); state.seq = mergeSeqState(d.seq); loadSeqPads(); renderSeq(); } },
+  // Découpeur : réglages, repères et le son découpé (il voyage avec le fichier).
+  slicer: { get: () => ({ slicer: state.slicer }), samples: () => [state.slicer.sampleId].filter(Boolean), set: async d => { stopSlicerPreview(); state.slicer = mergeSlicer(d.slicer); await restoreSlicer(); } },
   acid: {
     get: () => ({ acid: state.acid }),
     set: d => { acid.stop(); state.acid = mergeAcidState(d.acid); acid.update(); renderAcid(); renderAcidKnobs(); acidPresets?.render(); },
@@ -260,7 +274,7 @@ export const FILE_TOOLS = Object.keys(TOOL_IO);
 export const songSampleIds = () => state.tl.tracks.flatMap(tr => tr.clips.flatMap(c => [c.sampleId, c.tune?.src])).filter(Boolean);
 export const projectSampleIds = () => [
   ...songSampleIds(), ...state.banks.flat().map(p => p?.sampleId), ...state.userSounds.map(s => s.sampleId),
-  ...DECK_IDS.map(id => state.decks[id]?.sampleId),
+  ...DECK_IDS.map(id => state.decks[id]?.sampleId), state.slicer.sampleId,
 ].filter(Boolean);
 
 export async function saveFile(kind) {

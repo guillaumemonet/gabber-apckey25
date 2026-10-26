@@ -15,13 +15,15 @@ import { presetById } from './presets.js';
 import { Recorder } from './recorder.js';
 import { Sidechain } from './sidechain.js';
 import { Timeline } from './timeline.js';
+import { StepSeq } from './stepseq.js';
+import { TR808 } from './tr808.js';
 import { TR909 } from './tr909.js';
 import { WindowManager } from './windows.js';
 import { buildAcid } from './app/acid-ui.js';
 import { onPadState, setPage } from './app/actions.js';
 import { bindController, renderLeds, setStatus } from './app/controller.js';
 import {
-  $, acid, apc, decks, drum, engine, kickSynth, libAdded, mixer, oscSynth, padKey, performer, provide, sidechain, state, timeline,
+  $, acid, apc, decks, drum, drum808, engine, kickSynth, libAdded, mixer, oscSynth, padKey, performer, provide, sidechain, state, stepSeq, timeline,
   viz, wm
 } from './app/core.js';
 import { buildCurve } from './app/curve-ui.js';
@@ -55,7 +57,7 @@ import { buildPatch } from './app/patch-ui.js';
 import { buildPerf } from './app/perf-fx.js';
 import { bindComputerKeyboard, buildPiano } from './app/piano.js';
 import { buildPluginBar, onWindowToggle } from './app/plugins.js';
-import { buildKickPresets, buildTrPresets } from './app/presets-bar.js';
+import { buildDrumPresets, buildKickPresets } from './app/presets-bar.js';
 import { buildRoll } from './app/roll-ui.js';
 import { restore, save } from './app/save.js';
 import { buildScenes } from './app/scenes.js';
@@ -66,7 +68,9 @@ import { buildPresets } from './app/synth-ui.js';
 import { bindTempo } from './app/tempo.js';
 import { buildTl, clipBuffer, loadTlBuffers, tlRec } from './app/tl.js';
 import { tlRecordArpNote, tlRecordNote } from './app/tl-record.js';
-import { buildTr, onTrStep, renderTr } from './app/tr909-ui.js';
+import { buildDrum, onDrumStep, renderTr } from './app/drum-ui.js';
+import { buildSeq, onSeqStep, renderSeq, seqHit } from './app/seq-ui.js';
+import { buildSlicer } from './app/slicer-ui.js';
 import { cleanRecordings, initHistory } from './app/undo.js';
 import { buildViz } from './app/viz-ui.js';
 
@@ -93,8 +97,17 @@ async function start() {
   provide({ recorder: new Recorder(engine.ctx, engine.output) });
   provide({ drum: new TR909(engine, () => state.tr) });
   drum.setVolume(state.tr.globals.volume);
-  drum.onStep = onTrStep;
+  drum.onStep = step => onDrumStep('tr', step);
   drum.onPattern = () => { renderTr(); renderLeds(); save(); };
+  provide({ drum808: new TR808(engine, () => state.tr8) });
+  drum808.setVolume(state.tr8.globals.volume);
+  drum808.onStep = step => onDrumStep('tr8', step);
+  drum808.onPattern = () => { renderTr(); renderLeds(); save(); };
+  provide({ stepSeq: new StepSeq(engine, () => state.seq) });
+  stepSeq.onHit = seqHit;
+  stepSeq.onStep = onSeqStep;
+  stepSeq.onPattern = () => { renderSeq(); save(); };
+  stepSeq.onStop = () => renderSeq();   // bouton Lecture à jour (Panique, fin d'enregistrement, scène)
   // Toutes les sources passent par la table de mixage avant le master.
   provide({ mixer: new Mixer(engine, () => state.mix) });
   engine.padBus.disconnect();
@@ -107,7 +120,8 @@ async function start() {
   engine.padOut = pad => (isDuckedSound(pad.sampleId, padCat(pad)) ? sidechain.pads : engine.padBus);
   sidechain.onKick = time => viz?.kick(time);   // flash du visualiseur sur chaque kick
   drum.onKick = time => { sidechain.kick(time); tlRec?.audio.find(r => r.source === 'tr')?.kicks.push(time); };
-  sidechain.isRunning = () => timeline?.playing || drum.running || [...engine.padVoices.values()].some(v => v.mode === 'loop');
+  drum808.onKick = time => { sidechain.kick(time); tlRec?.audio.find(r => r.source === 'tr8')?.kicks.push(time); };
+  sidechain.isRunning = () => timeline?.playing || drum.running || drum808.running || stepSeq.running || [...engine.padVoices.values()].some(v => v.mode === 'loop');
   sidechain.loopKicks = padLoopKicks;
   provide({ acid: new Acid303(engine, () => state.acid) });
   acid.out.connect(sidechain.acid).connect(mixer.input('acid'));
@@ -119,6 +133,7 @@ async function start() {
   decks.out.connect(mixer.input('decks'));
   provide({ patch: new Patch(engine, mixer, () => state.patch) });   // sorties des voies -> master ou boîtes à effets
   drum.setDestinations(Object.fromEntries(['bd', 'snare', 'toms', 'hats', 'cym'].map(g => [g, mixer.input('tr')])));
+  drum808.setDestinations({ all: mixer.input('tr8') });
   provide({ timeline: new Timeline(engine, () => state.tl, clipBuffer, mixer.input('tl')) });
   engine.gridBusy = () => timeline.playing;
   timeline.getPad = (b, i) => state.banks[b]?.[i];
@@ -150,13 +165,18 @@ async function start() {
   buildEditor();
   buildKnobRow($('#pad-knobs'), 'pad');
   buildKnobRow($('#tr-knobs'), 'tr');
+  buildKnobRow($('#tr8-knobs'), 'tr8');
   buildKnobRow($('#master-eq'), 'eq');
   buildKnobRow($('#master-fx'), 'fx');
   buildPiano();
   buildPresets();
   buildPerf();
-  buildTr();
-  buildTrPresets();
+  buildDrum('tr');
+  buildDrum('tr8');
+  buildSeq();
+  buildSlicer();
+  buildDrumPresets('tr');
+  buildDrumPresets('tr8');
   buildAcid();
   buildKick();
   buildKickPresets();

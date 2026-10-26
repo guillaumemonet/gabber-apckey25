@@ -14,6 +14,7 @@ import { slotFromLibrary } from './launcher.js';
 import { save } from './save.js';
 import { beatPx, ensureBuffer, tlPlaceItem, tlTarget } from './tl.js';
 import { FX_FAMILIES, fxColor, fxItems, tlPlaceFx } from './trackfx-ui.js';
+import { openSlicer } from './slicer-ui.js';
 
 // ---------- Bibliothèque de sons ----------
 
@@ -132,10 +133,11 @@ export function startLibDrag(e, item) {
     const deckEl = item.kind !== 'fx' ? under?.closest('.deck') : null;
     const padEl = item.kind !== 'fx' ? under?.closest('#pads .pad') : null;
     const slotEl = item.kind !== 'fx' ? under?.closest('.ln-slot') : null;
-    for (const d of document.querySelectorAll('.deck.dragover, #pads .pad.dragover, .ln-slot.dragover')) if (d !== deckEl && d !== padEl && d !== slotEl) d.classList.remove('dragover');
-    (deckEl ?? padEl ?? slotEl)?.classList.add('dragover');
-    target = deckEl ? { deck: deckEl.dataset.deck } : padEl ? { pad: padEls.indexOf(padEl) } : slotEl ? { slot: [+slotEl.dataset.row, +slotEl.dataset.col] } : tlTarget(ev);
-    if (target && !target.deck && target.pad === undefined && !target.slot) {
+    const slicerEl = item.kind !== 'fx' ? under?.closest('#sl-wave-wrap') : null;
+    for (const d of document.querySelectorAll('.deck.dragover, #pads .pad.dragover, .ln-slot.dragover, #sl-wave-wrap.dragover')) if (d !== deckEl && d !== padEl && d !== slotEl && d !== slicerEl) d.classList.remove('dragover');
+    (deckEl ?? padEl ?? slotEl ?? slicerEl)?.classList.add('dragover');
+    target = deckEl ? { deck: deckEl.dataset.deck } : padEl ? { pad: padEls.indexOf(padEl) } : slotEl ? { slot: [+slotEl.dataset.row, +slotEl.dataset.col] } : slicerEl ? { slicer: true } : tlTarget(ev);
+    if (target && !target.deck && target.pad === undefined && !target.slot && !target.slicer) {
       const bars = item.kind === 'fx' ? item.len / BEATS_PER_BAR : item.loop && item.bars ? item.bars : 1;
       Object.assign(drop.style, { left: `${target.beat * beatPx()}px`, width: `${bars * state.tl.zoom}px` });
       target.lane.appendChild(drop);
@@ -148,8 +150,9 @@ export function startLibDrag(e, item) {
     ghost?.remove();
     libSelected = item;
     if (!ghost) { if (item.kind !== 'fx') previewSample(item); renderLibrary(); return; }
-    for (const d of document.querySelectorAll('.deck.dragover, #pads .pad.dragover, .ln-slot.dragover')) d.classList.remove('dragover');
-    if (target?.slot) slotFromLibrary(...target.slot, item);
+    for (const d of document.querySelectorAll('.deck.dragover, #pads .pad.dragover, .ln-slot.dragover, #sl-wave-wrap.dragover')) d.classList.remove('dragover');
+    if (target?.slicer) openSlicer({ sampleId: item.sampleId, name: item.name, bpm: item.loop ? item.bpm : 0 });
+    else if (target?.slot) slotFromLibrary(...target.slot, item);
     else if (target?.deck) loadDeck(target.deck, item);
     else if (target?.pad >= 0) loadItemIntoPad(item, target.pad);
     else if (target) (item.kind === 'fx' ? tlPlaceFx : tlPlaceItem)(item, target.track, target.beat);

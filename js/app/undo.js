@@ -17,18 +17,20 @@ import { renderScenes } from './scenes.js';
 import { loadBank, loadPads, padsInUse } from './sounds.js';
 import { loadTlBuffers, renderTl, tlRec } from './tl.js';
 import { tlSelect } from './tl-select.js';
-import { renderTr } from './tr909-ui.js';
+import { renderTr } from './drum-ui.js';
+import { renderSeq } from './seq-ui.js';
 
 // ---------- Annuler / rétablir (timeline) ----------
 
 // Instantané de la timeline : pistes (muets et blocs) et longueur. La position de lecture n'en fait pas partie.
 // Instantané de ce qu'« Annuler » ramène : la timeline (pistes, blocs, longueur, marqueurs, bus), les pads (son, nom,
-// couleur : pas la position de leurs potentiomètres), les patterns de la TR-909 et de la TB-303, les scènes.
+// couleur : pas la position de leurs potentiomètres), les patterns de la TR-909, de la TR-808, du séquenceur pas à pas
+// et de la TB-303, les scènes.
 // Les réglages tournés en continu (potentiomètres, faders) n'en font pas partie : chaque cran serait une étape.
 const padSnap = p => p && { name: p.name, color: p.color, sampleId: p.sampleId, bpm: p.bpm ?? 0 };
 export const tlSnapshot = () => JSON.stringify({
   bars: state.tl.bars, tracks: state.tl.tracks, markers: state.tl.markers, buses: state.tl.buses,
-  pads: state.banks.map(b => b.map(padSnap)), tr: state.tr.patterns, acid: state.acid.patterns, scenes: state.scenes,
+  pads: state.banks.map(b => b.map(padSnap)), tr: state.tr.patterns, tr8: state.tr8.patterns, seq: state.seq.patterns, acid: state.acid.patterns, scenes: state.scenes,
   launcher: state.launcher.slots,
 });
 
@@ -58,7 +60,10 @@ export function initHistory() {
     state.tl.markers = cleanMarkers(s.markers);
     if (s.buses) state.tl.buses = s.buses.map(cleanBus);
     restorePads(s.pads);
-    if (s.tr) { state.tr.patterns = s.tr; renderTr(); }
+    if (s.tr) state.tr.patterns = s.tr;
+    if (s.tr8) state.tr8.patterns = s.tr8;
+    renderTr();
+    if (s.seq) { state.seq.patterns = s.seq; renderSeq(); }
     if (s.acid) { state.acid.patterns = s.acid; renderAcid(); }
     if (s.scenes) { state.scenes = s.scenes; renderScenes(); }
     if (s.launcher) { state.launcher = cleanLauncher({ slots: s.launcher }); renderLauncher(); }

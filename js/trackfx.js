@@ -3,7 +3,7 @@
 // elle agit (automation calée sur l'horloge audio) pendant sa durée. Plusieurs blocs se cumulent.
 // Un bloc : { id, fx (type), start, len (en temps), p (réglages), name }.
 import { t } from './i18n.js';
-import { distCurve } from './tr909.js';
+import { distCurve } from './drummachine.js';
 import { curveSamples, curveNeutral } from './curves.js';
 
 // Courbes des blocs « Courbe » (designer d'effet) : identifiant -> courbe ; branché par l'application.

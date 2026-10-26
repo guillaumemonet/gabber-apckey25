@@ -37,7 +37,8 @@ export const padAt = (row, col) => (LN_ROWS - 1 - row) * LN_COLS + col;
 
 /**
  * Ouvre le choix de la destination du bloc `clip` (piste `track`), au point (x, y). `sound` : un son fabriqué par un
- * outil (designer de kick…) au lieu d'un bloc : { name, toPad(banque, pad) } ; seulement les pads.
+ * outil (designer de kick…) au lieu d'un bloc : { name, toPad(banque, pad) } ; seulement les pads. Avec `pick` (et
+ * `head`, `hint`), la même grille sert à choisir un pad (son d'une ligne du séquenceur, premier pad des tranches…).
  */
 export function openSendTo(track, clip, x, y, sound = null) {
   closeSendTo();
@@ -50,7 +51,7 @@ export function openSendTo(track, clip, x, y, sound = null) {
     menu.innerHTML = '';
     const head = document.createElement('div');
     head.className = 'cm-head';
-    head.textContent = t('send.head', { name: clip.name ?? '' });
+    head.textContent = sound?.head ?? t('send.head', { name: clip.name ?? '' });
     const tabs = document.createElement('div');
     tabs.className = 'send-tabs';
     for (const k of sound ? ['pads'] : ['pads', 'launcher']) {
@@ -98,7 +99,7 @@ export function openSendTo(track, clip, x, y, sound = null) {
       const item = target === 'pads' ? state.banks[bank]?.[padAt(r, c)] : state.launcher.slots[r][c];
       const label = target === 'pads' ? `${padAt(r, c) + 1}` : `${r + 1}·${c + 1}`;
       cell.dataset.cell = target === 'pads' ? padAt(r, c) : `${r}:${c}`;
-      cell.title = item ? t('send.replace', { where: label, name: item.name ?? '' }) : t('send.put', { where: label });
+      cell.title = sound?.pick ? t('send.pick', { where: label, name: item?.name ?? '—' }) : item ? t('send.replace', { where: label, name: item.name ?? '' }) : t('send.put', { where: label });
       cell.textContent = item ? (item.name ?? '').slice(0, 7) : label;
       cell.classList.toggle('used', !!item);
       const col = item && colorOf(item.color);
@@ -114,7 +115,7 @@ export function openSendTo(track, clip, x, y, sound = null) {
     menu.appendChild(grid);
     const hint = document.createElement('div');
     hint.className = 'hint send-hint';
-    hint.textContent = t(target === 'pads' ? 'send.padsHint' : 'send.launcherHint');
+    hint.textContent = sound?.hint ?? t(target === 'pads' ? 'send.padsHint' : 'send.launcherHint');
     menu.appendChild(hint);
   };
   fill();
@@ -137,15 +138,18 @@ function plainSample(clip) {
   return clip.loop || !(clip.len < natural - 0.05);
 }
 
-/** Pose un son (AudioBuffer) sur le pad `i` de la banque `b`, enregistré comme une prise (ses réglages gardés s'il était occupé). */
-export function bufferToPad(buffer, name, color, b, i, { loop = false, bpm = 0 } = {}) {
+/**
+ * Pose un son (AudioBuffer) sur le pad `i` de la banque `b`, enregistré comme une prise (ses réglages gardés s'il était
+ * occupé). quiet : sans message (plusieurs pads d'un coup).
+ */
+export function bufferToPad(buffer, name, color, b, i, { loop = false, bpm = 0, quiet = false } = {}) {
   const sampleId = `rec:${crypto.randomUUID()}`;
   bufferCache.set(sampleId, buffer);
   store.saveSample(sampleId, { name, data: encodeWav([0, 1].map(c => buffer.getChannelData(Math.min(c, buffer.numberOfChannels - 1))), buffer.sampleRate) })
     .then(renderLibrary).catch(err => console.warn('Pad', err));
-  return placePad({ name, color, sampleId, buffer, bpm, loop }, b, i);
+  return placePad({ name, color, sampleId, buffer, bpm, loop, quiet }, b, i);
 }
-function placePad({ name, color, sampleId, buffer, bpm, loop }, b, i) {
+function placePad({ name, color, sampleId, buffer, bpm, loop, quiet }, b, i) {
   const old = state.banks[b][i];
   engine.stopPad(padKey(b, i));
   const pad = newPad((name ?? '').slice(0, 24), Number.isInteger(color) ? color : old?.color ?? 0, sampleId, buffer, bpm);
@@ -154,7 +158,7 @@ function placePad({ name, color, sampleId, buffer, bpm, loop }, b, i) {
   state.banks[b][i] = pad;
   if (b === state.bank) { renderPad(i); renderEditor(); }
   save();
-  toast(t('send.padDone', { n: i + 1, bank: b + 1 }), 3000);
+  if (!quiet) toast(t('send.padDone', { n: i + 1, bank: b + 1 }), 3000);
   return pad;
 }
 

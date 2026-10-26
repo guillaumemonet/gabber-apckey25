@@ -10,7 +10,7 @@ import { prepareKickClips } from '../kicksynth.js';
 import { BEATS_PER_BAR, MAX_INSERTS, MAX_TRACKS, MIN_TRACKS, REC_SOURCES, TRACK_DEFAULTS, newTrack, trackAudible } from '../timeline.js';
 import { renderAcid } from './acid-ui.js';
 import { renderLeds } from './controller.js';
-import { $, acid, drum, engine, metro, mixer, state, timeline, uiColor, wm } from './core.js';
+import { $, acid, drum, drum808, engine, metro, mixer, state, stepSeq, timeline, uiColor, wm } from './core.js';
 import { openDemoMenu } from './demo.js';
 import { exportSong, songEndBeats } from './export.js';
 import { bounceTrack, freezeState, freezeTrack, openTrackMenu, unfreezeTrack } from './freeze.js';
@@ -32,7 +32,8 @@ import { stopTlPreview, tlPrev, tlPreviewClip } from './tl-listen.js';
 import { growHeldNote, lastRecRender, setLastRecRender } from './tl-record.js';
 import { setTlFocus, tlGroupDown, tlKey, tlLaneDown, tlPicked, tlSelect } from './tl-select.js';
 import { openBarMenu } from './bars.js';
-import { renderTr } from './tr909-ui.js';
+import { renderTr } from './drum-ui.js';
+import { loadSeqPads, renderSeq } from './seq-ui.js';
 import { renderTuneTarget } from './tune-ui.js';
 import { FX_ROW, closeFxEditor, fxEditing, fxEl, fxOutside, fxRows, setFxEditing } from './trackfx-ui.js';
 
@@ -88,12 +89,12 @@ export function tlSourceNode(source) {
 }
 
 // Pistes armées et l'instrument que chacune enregistre (le sien, sinon le choix « Enregistrer » de la barre).
-export const AUDIO_SOURCES = new Set(['tr', 'acid', 'decks', 'input']);
+export const AUDIO_SOURCES = new Set(['tr', 'tr8', 'acid', 'decks', 'input']);
 export const trackSource = tr => tr.src || state.tl.source;
 export const armedTrack = () => Math.max(0, state.tl.tracks.findIndex(tr => tr.arm));
 
 // Enregistrement : chaque piste armée enregistre son instrument, toutes en même temps.
-// Pads / synthés : chaque coup ou note devient un bloc, en direct ; TR-909 / TB-303 / platines : audio.
+// Pads / séquenceur / synthés : chaque coup ou note devient un bloc, en direct ; TR-909 / TR-808 / TB-303 / platines : audio.
 export async function tlStartRec() {
   if (timeline.playing) timeline.stop(true);
   const targets = state.tl.tracks.map((tr, i) => ({ track: i, src: trackSource(tr), arm: tr.arm && !tr.frozen })).filter(x => x.arm);   // une piste gelée n'enregistre pas
@@ -116,11 +117,13 @@ export async function tlStartRec() {
   const beat = Math.round(state.tl.playhead);
   timeline.recording = audio.length > 0;   // l'audio s'enregistre d'un trait (sans boucle)
   const time = timeline.play(beat);
-  let startedDrum = false, startedAcid = false;
+  let startedDrum = false, startedAcid = false, started808 = false, startedSeq = false;
   const has = src => audio.some(r => r.source === src);
   if (has('tr') && !drum.running) { drum.start(true); startedDrum = true; }   // la 909 joue calée sur la timeline
+  if (has('tr8') && !drum808.running) { drum808.start(true); started808 = true; }
+  if (events.seq !== undefined && !stepSeq.running) { loadSeqPads(); stepSeq.start(true); startedSeq = true; }   // ses coups deviennent des blocs
   if (has('acid') && !acid.playing) { if (state.acid.link) { if (!drum.running) { drum.start(true); startedDrum = true; } } else acid.start(true); startedAcid = true; }
-  tlRec = { beat, time, events, audio, open: new Map(), notes: [], dirty: false, startedDrum, startedAcid, bpm: state.bpm };
+  tlRec = { beat, time, events, audio, open: new Map(), notes: [], dirty: false, startedDrum, startedAcid, started808, startedSeq, bpm: state.bpm };
   renderTl();
   renderTr();
   renderLeds();
@@ -136,6 +139,8 @@ export async function tlStopRec() {
   for (const r of rec.audio) raws.push(await r.recorder.stopRaw().catch(() => null));
   timeline.stop(true);
   if (rec.startedDrum) drum.stop();
+  if (rec.started808) drum808.stop();
+  if (rec.startedSeq) { stepSeq.stop(); renderSeq(); }
   if (rec.startedAcid) acid.stop();
   renderAcid();
   try { mergeTake(rec.notes, rec.events); } catch (err) { console.warn('Take', err); }
@@ -478,7 +483,7 @@ export function openTrackKnobs(i, anchor) {
 }
 
 export const trackName = i => state.tl.tracks[i]?.name || t('tl.track', { n: i + 1 });
-export const SRC_ICONS = { pads: 'pads', synth: 'keys', osc: 'osc', tr: 'tr', acid: 'acid', decks: 'decks', input: 'rec' };
+export const SRC_ICONS = { pads: 'pads', seq: 'seq', synth: 'keys', osc: 'osc', tr: 'tr', tr8: 'tr8', acid: 'acid', decks: 'decks', input: 'rec' };
 // Couleurs de fond des pistes.
 export const TRACK_COLORS = ['#e5484d', '#f76b15', '#ffc53d', '#46a758', '#12a594', '#0090ff', '#6e56cf', '#d6409f', '#8d8d86'];
 

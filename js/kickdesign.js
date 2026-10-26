@@ -6,7 +6,7 @@
 // Le mode simple montre 12 potentiomètres ; le mode expert, ceux de chaque couche. Les réglages experts ont une
 // valeur neutre par défaut : un kick fait en mode simple sonne pareil dans les deux modes.
 import { t } from './i18n.js';
-import { distCurve, SHAPES, shapeIndex } from './tr909.js';
+import { distCurve, SHAPES, shapeIndex } from './drummachine.js';
 
 const expMap = (lo, hi) => p => lo * Math.pow(hi / lo, p);
 const ms = v => (v < 1 ? `${Math.round(v * 1000)} ms` : `${v.toFixed(2)} s`);

@@ -3,16 +3,15 @@ import { acidKnobDefs } from '../acid.js';
 import { DECK_IDS, deckKnobDefs } from '../decks.js';
 import { t } from '../i18n.js';
 import { catColor } from '../library.js';
-import { mixKnobDefs } from '../mixer.js';
+import { APC_CHANNELS, mixKnobDefs } from '../mixer.js';
 import { oscKnobDefs } from '../osc.js';
 import { PAGES, toValue } from '../params.js';
 import * as store from '../storage.js';
-import { trKnobDefs } from '../tr909.js';
 import { renderAcidKnobs } from './acid-ui.js';
 import { renderLeds } from './controller.js';
 import {
-  acid, currentPad, decks, drum, engine, mixer, newPad, oscSynth, padKey, performer, pickerColors, playing, shiftHeld,
-  sidechain, state, timeline
+  acid, currentPad, decks, drum, drum808, engine, mixer, newPad, oscSynth, padKey, performer, pickerColors, playing, shiftHeld,
+  sidechain, state, stepSeq, timeline
 } from './core.js';
 import { renderDecks } from './decks-ui.js';
 import { kickKnobEls, renderKick } from './kick-ui.js';
@@ -23,7 +22,7 @@ import { masterDef, mixField, renderMixer, renderStrip } from './mixer-ui.js';
 import { oscChanged } from './osc-ui.js';
 import { renderEditor, renderEditorKnobs, renderPad, renderPads } from './pads.js';
 import { PERF, heldRolls, perfActive, renderPerf } from './perf-fx.js';
-import { acidPresets, synthTouched, trPresets } from './presets-bar.js';
+import { acidPresets, drumPresets, synthTouched } from './presets-bar.js';
 import { save } from './save.js';
 import { haltLauncher } from './launcher.js';
 import { bankLoaded, loadBank, loadPad } from './sounds.js';
@@ -32,7 +31,7 @@ import { renderSynthKnobs, synthKnobDefs } from './synth-ui.js';
 import { ensureBuffer, tlRec, tlStopRec } from './tl.js';
 import { stopTlPreview } from './tl-listen.js';
 import { tlRecordPad } from './tl-record.js';
-import { renderTr } from './tr909-ui.js';
+import { DRUM_DEFS, DRUM_IDS, drumOf, renderTr } from './drum-ui.js';
 import { applyVizKnobs, renderViz, vizKnobDefs } from './viz-ui.js';
 
 // ---------- Actions (communes souris / contrôleur) ----------
@@ -106,6 +105,8 @@ export function panic() {
   haltLauncher();
   stopTlPreview();
   drum.stop();
+  drum808.stop();
+  stepSeq.stop();
   acid.stop();
   decks.stopAll();
   engine.stopAllPads();
@@ -132,7 +133,7 @@ export function onPadState(key, isPlaying, mode) {
 // Potentiomètres d'une page (par défaut celle que pilotent les potentiomètres de l'APC) : définitions et objet qui stocke leurs positions.
 export function knobDefs(page = state.page) {
   if (mixField(page)) {
-    const defs = mixKnobDefs(mixField(page));
+    const defs = mixKnobDefs(mixField(page)).slice(0, APC_CHANNELS);   // la TR-808 se règle à l'écran
     return [...defs, ...new Array(7 - defs.length).fill(null), masterDef()];   // K8 = volume général
   }
   if (page === 'synth') return synthKnobDefs();
@@ -140,7 +141,7 @@ export function knobDefs(page = state.page) {
   if (page === 'osc') return oscKnobDefs();
   if (page === 'viz') return vizKnobDefs();
   if (page === 'decks') return [...deckKnobDefs(), masterDef()];
-  return page === 'tr' ? trKnobDefs(state.tr.sel) : PAGES[page].params;
+  return DRUM_IDS.includes(page) ? DRUM_DEFS[page].knobDefs(state[page].sel) : PAGES[page].params;
 }
 export function knobTarget(def, page = state.page) {
   if (!def) return null;
@@ -151,7 +152,7 @@ export function knobTarget(def, page = state.page) {
   if (def.osc) return state.osc.params;
   if (def.viz) return state.viz.k;
   if (def.deck) return def.deck === 'x' ? state.decks : state.decks[def.deck];
-  if (page === 'tr') return def.group === 'global' ? state.tr.globals : state.tr.params[state.tr.sel];
+  if (DRUM_IDS.includes(page)) return def.group === 'global' ? state[page].globals : state[page].params[state[page].sel];
   return state.globals;
 }
 
@@ -176,8 +177,8 @@ export function turnKnob(index, { delta, value }, page = state.page) {
     engine.updatePadVoice(padKey(state.bank, state.selected), pad);
     renderEditorKnobs();
     if (def.id === 'mode') { renderPad(state.selected); renderEditor(); }
-  } else if (page === 'tr') {
-    if (def.id === 'volume') drum.setVolume(target.volume);
+  } else if (DRUM_IDS.includes(page)) {
+    if (def.id === 'volume') drumOf(page).setVolume(target.volume);
   } else if (def.acid) {
     state.acid.sound = null;
     acid.update();
@@ -196,7 +197,7 @@ export function turnKnob(index, { delta, value }, page = state.page) {
     engine.set(def.id, toValue(def, target[def.id]));
     if (page === 'synth') synthTouched();
   }
-  if (page === 'tr' && def.group === 'inst' && state.tr.kit !== null) { state.tr.kit = null; trPresets?.render(); }
+  if (DRUM_IDS.includes(page) && def.group === 'inst' && state[page].kit !== null) { state[page].kit = null; drumPresets[page]?.render(); }
   if (def.id === 'master') renderMixer();
   if (page === 'synth') renderSynthKnobs();
   flashKnob(page, index);

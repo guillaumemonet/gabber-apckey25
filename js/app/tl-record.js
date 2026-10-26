@@ -33,8 +33,9 @@ export function recPosition() {
   return snapRec(timeline.length ? pos % timeline.length : pos);
 }
 
-export function tlRecordPad(bank, i, at) {
-  const ti = tlRec?.events.pads;
+// src : l'instrument qui joue le pad (les pads eux-mêmes, ou le séquenceur pas à pas) ; vel : force du coup.
+export function tlRecordPad(bank, i, at, src = 'pads', vel = 1) {
+  const ti = tlRec?.events[src];
   if (ti === undefined || !timeline.playing) return;
   const pad = state.banks[bank][i];
   if (!pad?.buffer) return;
@@ -42,8 +43,8 @@ export function tlRecordPad(bank, i, at) {
   const ahead = at ? Math.max(0, at - engine.ctx.currentTime) / timeline.beatDur : 0;
   const start = ahead ? snapRec((timeline.position() + ahead) % (timeline.length || Infinity)) : recPosition();
   const len = Math.max(REC_GRID, Math.ceil(pad.buffer.duration / timeline.beatDur / REC_GRID) * REC_GRID);
-  const clip = { id: crypto.randomUUID(), type: 'pad', bank, pad: i, sampleId: pad.sampleId, name: pad.name, color: pad.color, cat: 'drums', start, len, loop: false };
-  state.tl.tracks[freeTrack(start, len, ti, 'pads')].clips.push(clip);
+  const clip = { id: crypto.randomUUID(), type: 'pad', bank, pad: i, sampleId: pad.sampleId, name: pad.name, color: pad.color, cat: 'drums', start, len, loop: false, ...(vel < 1 ? { vel } : {}) };
+  state.tl.tracks[freeTrack(start, len, ti, src)].clips.push(clip);
   tlRec.dirty = true;
 }
 

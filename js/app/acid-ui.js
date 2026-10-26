@@ -5,7 +5,7 @@ import { $, acid, drum, state, timeline, wm } from './core.js';
 import { arcPath } from './knobs.js';
 import { acidSoundChanged, buildAcidPresets } from './presets-bar.js';
 import { save } from './save.js';
-import { renderTr } from './tr909-ui.js';
+import { renderTr } from './drum-ui.js';
 
 // ---------- TB-303 ----------
 

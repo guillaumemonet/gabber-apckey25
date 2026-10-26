@@ -31,7 +31,7 @@ export function applyGlobals() {
 export const pageLabel = page => PAGES[page]?.label ?? t(`page.${page}`);
 
 // Groupe de potentiomètres d'une fenêtre qui correspond à une page (entouré quand l'APC le pilote).
-export const PAGE_GROUP = { viz: '#viz-knobs', osc: '#osc-modules', synth: '#synth-knobs', pad: '#pad-knobs, #ed-knobs', acid: '#acid-knobs', decks: '.decks', tr: '#tr-knobs', eq: '#master-eq', fx: '#master-fx' };
+export const PAGE_GROUP = { viz: '#viz-knobs', osc: '#osc-modules', synth: '#synth-knobs', pad: '#pad-knobs, #ed-knobs', acid: '#acid-knobs', decks: '.decks', tr: '#tr-knobs', tr8: '#tr8-knobs', eq: '#master-eq', fx: '#master-fx' };
 export const pageGroup = page => (mixField(page) ? '#mixer' : PAGE_GROUP[page]);
 
 export function renderPages() {
@@ -46,7 +46,7 @@ export function renderPages() {
 // Fenêtre active -> page des potentiomètres de l'APC (les autres fenêtres ne changent rien).
 export function pageForWindow(id) {
   if (id === 'mix') return mixField(state.page) || ['eq', 'fx'].includes(state.page) ? null : 'mix_vol';
-  return { piano: 'synth', osc: 'osc', viz: 'viz', tr: 'tr', acid: 'acid', decks: 'decks', editor: 'pad', pads: 'pad' }[id] ?? null;
+  return { piano: 'synth', osc: 'osc', viz: 'viz', tr: 'tr', tr8: 'tr8', acid: 'acid', decks: 'decks', editor: 'pad', pads: 'pad' }[id] ?? null;
 }
 
 export const ARC = 270;

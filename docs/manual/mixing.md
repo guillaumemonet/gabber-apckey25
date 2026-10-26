@@ -22,7 +22,7 @@ Draw how a setting of a track moves over **1, 2 or 4 beats**: the shape repeats 
 
 [![Mixer: channels, insert effects, sidechain and the master chain with the LUFS loudness](../screenshots/mixer-en.png)](../screenshots/mixer-en.png)
 
-One channel per tool: **Pads**, **Synth**, **TR-909**, **Timeline**, **TB-303**, **Decks** and **Oscillator synth**, then the master (performance effects, master EQ and limiter). The level of each sound stays in its tool (pad volume, 909 instrument levels); the mixer balances the tools.
+One channel per tool: **Pads**, **Synth**, **TR-909**, **Timeline**, **TB-303**, **Decks**, **Oscillator synth** and **TR-808**, then the master (performance effects, master EQ and limiter). The level of each sound stays in its tool (pad volume, 909 instrument levels); the mixer balances the tools.
 
 Each channel has insert effects (**+ FX**, up to 4, applied in order), reverb and delay sends, pan, a fader (0 dB at three quarters), **M**ute, **S**olo and a meter. Available effects:
 - **Distortion**: drive and the 5 shapes of the 909.
@@ -88,7 +88,7 @@ The **Patch** window wires the tools and **effect boxes** freely, like a rack of
 
 [![Patch window: tools on the left, effect boxes in the middle, the master on the right](../screenshots/patch-en.png)](../screenshots/patch-en.png)
 
-- On the left, one block per **tool**: pads, synth, TR-909, timeline, TB-303, turntables, oscillator synth. Each tool keeps its **mixer channel** (volume, pan, mute, solo, insert effects, sends); the patch decides where that channel goes. On the right, the **Master**.
+- On the left, one block per **tool**: pads, synth, TR-909, timeline, TB-303, turntables, oscillator synth, TR-808. Each tool keeps its **mixer channel** (volume, pan, mute, solo, insert effects, sends); the patch decides where that channel goes. On the right, the **Master**.
 - **Effect boxes**: **Distortion** (drive, the 909's 5 shapes, tone, mix), **PCF** (rhythmic LP / BP filter restarted by a 16-step pattern, always on the tempo grid), **Filter** (LP, HP or BP with a tempo-synced LFO), **Delay** (in note values: 1/4, 1/8, dotted 1/8, 1/16, quarter-note triplet), **Reverb**, **Compressor**, **Bitcrusher**. Double-click a box for its settings, ✕ removes it.
 - **Wire**: drag from an output (right-hand socket) onto a box or the master. An output can feed several destinations, a box can receive several sources, and boxes can be chained. A cable that would create a loop is refused. **Click a cable** to unplug it. A tool that goes nowhere is silent: the mixer shows where each channel goes, under its name.
 - **All to master** wires every tool straight to the master again. The fast WAV export and the stems rebuild exactly the same wiring.

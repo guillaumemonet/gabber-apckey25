@@ -1,11 +1,12 @@
 // Table de mixage : une voie par outil (pads, synthé, TR-909) avec effets en insert,
 // panoramique, fader, envois delay / reverb, muet / solo et vumètre, puis le master du moteur.
 import { t } from './i18n.js';
-import { distCurve, SHAPES } from './tr909.js';
+import { distCurve, SHAPES } from './drummachine.js';
 import { CLIP_PARAMS, OTT_PARAMS, STEREO_PARAMS, buildClipper, buildOtt, buildStereo } from './dynamics.js';
 
 // Les niveaux de chaque son restent dans leur outil (volume des pads, niveaux de la 909).
-export const CHANNELS = ['pads', 'synth', 'tr', 'tl', 'acid', 'decks', 'osc'];   // TB-303, platines, synthé à oscillateurs : K5, K6, K7 sur les pages mixeur
+export const CHANNELS = ['pads', 'synth', 'tr', 'tl', 'acid', 'decks', 'osc', 'tr8'];   // TB-303, platines, synthé à oscillateurs : K5, K6, K7 sur les pages mixeur ; TR-808 : à l'écran
+export const APC_CHANNELS = 7;   // voies réglées par les potentiomètres de l'APC (K8 = volume général)
 export const MIX_FIELDS = ['vol', 'pan', 'delay', 'reverb'];   // pages de potentiomètres Maj + piste 1 à 4
 export const MAX_FX = 4;
 

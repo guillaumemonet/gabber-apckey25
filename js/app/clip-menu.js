@@ -11,6 +11,7 @@ import { save } from './save.js';
 import { tlDelete, renderTl } from './tl.js';
 import { tlPreviewClip } from './tl-listen.js';
 import { tlPicked, tlSelect } from './tl-select.js';
+import { openSlicer } from './slicer-ui.js';
 import { openTune } from './tune-ui.js';
 
 export const FADES = [0, 0.25, 0.5, 1, 2, 4, 8, 16];   // durées de fondu proposées (en temps)
@@ -202,6 +203,7 @@ export function openClipMenu(track, clip, x, y, at = null) {
   if (notes && clips.length === 1) item(t('cm.roll'), () => { closeClipMenu(); openRoll(clip, true); }, '', 'roll');
   // Autotune : la voix du bloc recalée sur une gamme ou sur une mélodie (fenêtre Autotune).
   if (audio && clips.length === 1 && clip.sampleId && !state.tl.tracks[track].frozen) item(clip.tune ? t('cm.tuneOn') : t('cm.tune'), () => { closeClipMenu(); openTune(track, clip); }, '', 'tune').title = t('cm.tuneTitle');
+  if (audio && clips.length === 1 && clip.sampleId) item(t('cm.slice'), () => { closeClipMenu(); openSlicer({ sampleId: clip.sampleId, name: clip.name, bpm: clip.bpm || 0 }); }, '', 'slice').title = t('cm.sliceTitle');
   // Rendre en audio les blocs visés de cette piste (avec ses effets) : un bloc audio sur une piste libre.
   const mine = new Set(list.filter(l => l.track === track).map(l => l.clip.id));
   item(t('frz.bounceSel', { n: mine.size }), () => { closeClipMenu(); bounceTrack(track, mine); }, '', 'bounce').title = t('frz.bounceSelTitle');

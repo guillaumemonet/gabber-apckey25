@@ -1,7 +1,7 @@
-// Émulation Roland TR-909 : 11 instruments synthétisés en direct (comme les circuits analogiques
-// de la machine) et séquenceur 16 pas calé sur le transport du moteur (même tempo et même mesure
-// que les boucles des pads).
-import { t } from './i18n.js';
+// Émulation Roland TR-909 : 11 instruments synthétisés en direct (comme les circuits analogiques de la machine) et
+// séquenceur 16 pas calé sur le transport du moteur. L'horloge, la distorsion, les kits et l'état sont communs aux
+// boîtes à rythmes (js/drummachine.js).
+import { DrumMachine, drumMachineDef } from './drummachine.js';
 
 // Paramètres propres à chaque instrument (K1-K4) ; tous ont en plus Drive et Shape (K5-K6).
 export const TR_INSTR = [
@@ -17,61 +17,15 @@ export const TR_INSTR = [
   { id: 'cr', params: ['tune', 'level'] },
   { id: 'rd', params: ['tune', 'level'] },
 ];
-export const TR_GLOBALS = ['shuffle', 'volume'];   // K7-K8 ; l'accent se règle à l'écran
-const DIST = ['drive', 'shape'];
-export const SHAPES = ['soft', 'hard', 'tube', 'fold', 'crush'];
-const PARAM_DEFAULTS = { tune: 0.5, attack: 0.5, decay: 0.5, level: 0.8, drive: 0, shape: 0, tone: 0.5, snappy: 0.6 };
-const GLOBAL_DEFAULTS = { accent: 0.6, shuffle: 0, volume: 0.8 };
-export const PATTERNS = 8;
-
-const pct = v => `${Math.round(v * 100)}%`;
-
-export const shapeIndex = pos => Math.round(pos * (SHAPES.length - 1));
-
-// Courbe de distorsion partagée (909 et table de mixage) : quantité 0..1 et forme.
-const curves = new Map();
-export function distCurve(amount, shape) {
-  const key = `${shape}:${Math.round(amount * 50)}`;
-  if (!curves.has(key)) {
-    const a = Math.round(amount * 50) / 50;
-    const k = 1 + a * a * 60;
-    const levels = Math.max(2, Math.round(2 + (1 - a) ** 2 * 60));
-    const f = {
-      soft: x => Math.tanh(k * x) / Math.tanh(k),
-      hard: x => Math.max(-1, Math.min(1, k * x)),
-      tube: x => (x >= 0 ? Math.tanh(k * x) : Math.tanh(k * 0.45 * x) * 0.8) + 0.1 * a * x * x,
-      fold: x => Math.sin(x * (1 + a * 7) * Math.PI / 2),
-      crush: x => Math.round(Math.tanh((1 + a * 6) * x) * levels) / levels,
-    }[shape] ?? (x => x);
-    const c = Float32Array.from({ length: 2048 }, (_, i) => f((i / 2047) * 2 - 1));
-    const peak = c.reduce((m, v) => Math.max(m, Math.abs(v)), 1e-6);
-    curves.set(key, c.map(v => v / peak));
-  }
-  return curves.get(key);
-}
 
 // Voie de la table de mixage qui reçoit chaque instrument.
 export const TR_GROUPS = { bd: 'bd', sd: 'snare', rs: 'snare', hc: 'snare', lt: 'toms', mt: 'toms', ht: 'toms', ch: 'hats', oh: 'hats', cr: 'cym', rd: 'cym' };
 
-// Définitions des 8 potentiomètres de la page TR-909 : paramètres de l'instrument choisi (K1-K4),
-// sa distorsion Drive / Shape (K5-K6), puis Shuffle et Volume (K7-K8). Valeurs = positions 0..1.
-export function trKnobDefs(sel) {
-  const inst = TR_INSTR.find(i => i.id === sel) ?? TR_INSTR[0];
-  const def = p => ({ id: p, group: 'inst', label: `${inst.id.toUpperCase()} · ${t(`tr.p.${p}`)}`, min: 0, max: 1, def: PARAM_DEFAULTS[p], fmt: pct });
-  const defs = inst.params.map(def);
-  while (defs.length < 4) defs.push(null);
-  defs.push(def('drive'), { ...def('shape'), steps: SHAPES.length, max: SHAPES.length - 1, fmt: v => t('tr.shapes')[v] });
-  return [...defs, ...TR_GLOBALS.map(g => ({ id: g, group: 'global', label: t(`tr.p.${g}`), min: 0, max: 1, def: GLOBAL_DEFAULTS[g], fmt: pct }))];
-}
-
-const emptyPattern = () => Object.fromEntries(TR_INSTR.map(i => [i.id, new Array(16).fill(0)]));
-
-// État par défaut, avec 4 patterns de départ (0 = silence, 1 = note, 2 = note accentuée).
 // Kits de son : réglages des instruments (positions 0..1) ; ce qui n'est pas donné garde sa valeur par défaut.
 export const TR_CATS = ['hard', 'classic', 'fx'];
 const ALL = fn => Object.fromEntries(TR_INSTR.map(i => [i.id, fn(i.id)]));
 export const TR_KITS = [
-  { id: 'gabber', cat: 'hard', v: { bd: { drive: 0.45, shape: 0.5 } } },
+  { id: 'gabber', cat: 'hard', v: { bd: { drive: 0.45, shape: 0.5 } } },   // grosse caisse saturée « tube » : le son gabber, par défaut
   { id: 'rotterdam', cat: 'hard', v: { bd: { tune: 0.35, attack: 0.7, decay: 0.75, drive: 0.8, shape: 0.5 }, sd: { drive: 0.3, shape: 0.25 }, oh: { decay: 0.4 } } },
   { id: 'terror', cat: 'hard', v: { bd: { tune: 0.6, attack: 0.9, decay: 0.4, drive: 1, shape: 0.25 }, sd: { tone: 0.7, snappy: 0.8, drive: 0.5, shape: 0.25 }, ch: { decay: 0.3 }, oh: { decay: 0.3 } } },
   // Early hardcore : grosse caisse longue écrêtée, clap et caisse claire saturés (style des grandes salles du milieu des années 90).
@@ -85,146 +39,40 @@ export const TR_KITS = [
   { id: 'lofi', cat: 'fx', v: ALL(() => ({ drive: 0.5, shape: 1 })) },
   { id: 'folded', cat: 'fx', v: ALL(() => ({ drive: 0.6, shape: 0.75 })) },
 ];
-export const kitParams = v => Object.fromEntries(TR_INSTR.map(i => [i.id, { ...Object.fromEntries([...i.params, ...DIST].map(p => [p, PARAM_DEFAULTS[p]])), ...(v?.[i.id] ?? {}) }]));
 
-export function defaultTrState() {
-  const params = Object.fromEntries(TR_INSTR.map(i => [i.id, Object.fromEntries([...i.params, ...DIST].map(p => [p, PARAM_DEFAULTS[p]]))]));
-  params.bd.drive = 0.45;   // grosse caisse saturée « tube » par défaut : le son gabber
-  params.bd.shape = 0.5;
-  const patterns = Array.from({ length: PATTERNS }, emptyPattern);
-  const set = (pat, id, steps, v = 1) => steps.forEach(s => { patterns[pat][id][s] = v; });
-  const all = [...Array(16).keys()];
-  // 1 : gabber
-  set(0, 'bd', [0, 4, 8, 12], 2); set(0, 'oh', [2, 6, 10, 14]); set(0, 'hc', [4, 12]);
-  // 2 : rave
-  set(1, 'bd', [0, 4, 8, 12], 2); set(1, 'sd', [4, 12]); set(1, 'ch', all.filter(s => s % 4 !== 2));
-  set(1, 'oh', [2, 6, 10, 14]); set(1, 'rd', [0, 4, 8, 12]);
-  // 3 : breakbeat
-  set(2, 'bd', [0, 2, 10, 11]); set(2, 'sd', [7, 9, 15]); set(2, 'sd', [4, 12], 2); set(2, 'ch', all.filter(s => s % 2 === 0));
-  // 4 : roll de grosse caisse
-  set(3, 'bd', all); set(3, 'bd', [0, 4, 8, 12], 2); set(3, 'cr', [0]);
-  return { params, globals: { ...GLOBAL_DEFAULTS }, patterns, pattern: 0, sel: 'bd', mutes: {}, kit: 'gabber', userKits: [] };
-}
+export const TR_DEF = drumMachineDef({
+  prefix: 'tr',
+  instruments: TR_INSTR,
+  paramDefaults: { tune: 0.5, attack: 0.5, decay: 0.5, level: 0.8, drive: 0, shape: 0, tone: 0.5, snappy: 0.6 },
+  globalDefaults: { accent: 0.6, shuffle: 0, volume: 0.8 },
+  kits: TR_KITS,
+  cats: TR_CATS,
+  kitDefault: 'gabber',
+  init(set, all) {
+    // 1 : gabber
+    set(0, 'bd', [0, 4, 8, 12], 2); set(0, 'oh', [2, 6, 10, 14]); set(0, 'hc', [4, 12]);
+    // 2 : rave
+    set(1, 'bd', [0, 4, 8, 12], 2); set(1, 'sd', [4, 12]); set(1, 'ch', all.filter(s => s % 4 !== 2));
+    set(1, 'oh', [2, 6, 10, 14]); set(1, 'rd', [0, 4, 8, 12]);
+    // 3 : breakbeat
+    set(2, 'bd', [0, 2, 10, 11]); set(2, 'sd', [7, 9, 15]); set(2, 'sd', [4, 12], 2); set(2, 'ch', all.filter(s => s % 2 === 0));
+    // 4 : roll de grosse caisse
+    set(3, 'bd', all); set(3, 'bd', [0, 4, 8, 12], 2); set(3, 'cr', [0]);
+  },
+});
+export const kitParams = TR_DEF.kitParams;
+export const defaultTrState = TR_DEF.defaultState;
+export const mergeTrState = TR_DEF.mergeState;
+export const trKnobDefs = TR_DEF.knobDefs;
 
-// Fusionne un état sauvegardé avec les valeurs par défaut (instruments ou champs ajoutés plus tard).
-export function mergeTrState(saved) {
-  const base = defaultTrState();
-  if (!saved) return base;
-  for (const i of TR_INSTR) Object.assign(base.params[i.id], saved.params?.[i.id]);
-  Object.assign(base.globals, saved.globals);
-  if (Array.isArray(saved.patterns)) {
-    base.patterns = base.patterns.map((p, k) => (saved.patterns[k] ? { ...emptyPattern(), ...saved.patterns[k] } : p));
-  }
-  base.pattern = saved.pattern ?? 0;
-  base.sel = TR_INSTR.some(i => i.id === saved.sel) ? saved.sel : 'bd';
-  base.mutes = saved.mutes ?? {};
-  base.kit = typeof saved.kit === 'string' || saved.kit === null ? saved.kit : saved.params ? null : 'gabber';
-  if (Array.isArray(saved.userKits)) {
-    base.userKits = saved.userKits.filter(u => typeof u?.id === 'string' && u.id.startsWith('u:') && typeof u.name === 'string' && u.params)
-      .map(u => ({ id: u.id, name: u.name.slice(0, 24), cat: TR_CATS.includes(u.cat) ? u.cat : 'hard', params: kitParams(u.params) }));
-  }
-  return base;
-}
+export class TR909 extends DrumMachine {
+  constructor(engine, getState) { super(engine, getState, TR_INSTR, TR_GROUPS); }
 
-export class TR909 {
-  constructor(engine, getState) {
-    this.engine = engine;
-    this.ctx = engine.ctx;
-    this.getState = getState;
-    this.volume = 1;
-    this.buses = {};     // groupe -> gain de volume, relié à la voie du mixeur (ou au master)
-    this.dests = {};
-    this.noise = this.ctx.createBuffer(1, this.ctx.sampleRate * 2, this.ctx.sampleRate);
-    const d = this.noise.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-    this.openHat = null;
-    this.running = false;
-    this.idx = 0;
-    this.queued = null;
-    this.onStep = () => {};      // (pas 0-15, ou -1 à l'arrêt)
-    this.onPattern = () => {};   // changement de pattern effectué
-    this.onKick = () => {};      // (instant) : grosse caisse jouée, pour le sidechain
-    this.listeners = [];         // autres séquenceurs calés sur la même horloge : (pas, instant, durée d'un pas)
-    this.onStop = () => {};
-  }
+  metal909(time, dur, base) { return this.metal(time, dur, [2, 3, 4.16, 5.43, 6.79, 8.21].map(r => base * r)); }
 
-  get st() { return this.getState(); }
-  p(id, param) { return this.st.params[id]?.[param] ?? 0.5; }
-
-  setVolume(v) {
-    this.volume = v * v * 1.3;
-    for (const g of Object.values(this.buses)) g.gain.setTargetAtTime(this.volume, this.ctx.currentTime, 0.02);
-  }
-
-  bus(id) {
-    const group = TR_GROUPS[id];
-    if (!this.buses[group]) {
-      this.buses[group] = this.gain(this.volume);
-      this.buses[group].connect(this.dests[group] ?? this.engine.master);
-    }
-    return this.buses[group];
-  }
-
-  // Envoie chaque groupe d'instruments vers une voie de la table de mixage.
-  setDestinations(dests) {
-    this.dests = dests;
-    for (const [group, bus] of Object.entries(this.buses)) {
-      bus.disconnect();
-      bus.connect(dests[group] ?? this.engine.master);
-    }
-  }
-
-  // --- briques de synthèse ---
-  gain(v = 1) { const g = this.ctx.createGain(); g.gain.value = v; return g; }
-  filter(type, f, q = 0.7) { const b = this.ctx.createBiquadFilter(); b.type = type; b.frequency.value = f; b.Q.value = q; return b; }
-  noiseSrc(time, dur) {
-    const s = this.ctx.createBufferSource();
-    s.buffer = this.noise;
-    s.start(time, Math.random() * 1.5);
-    s.stop(time + dur);
-    return s;
-  }
-  osc(type, f, time, dur) {
-    const o = this.ctx.createOscillator();
-    o.type = type;
-    o.frequency.setValueAtTime(f, time);
-    o.start(time);
-    o.stop(time + dur);
-    return o;
-  }
-  env(g, time, peak, decay, attack = 0.001) {
-    g.gain.setValueAtTime(0, time);
-    g.gain.linearRampToValueAtTime(peak, time + attack);
-    g.gain.setTargetAtTime(0, time + attack, decay / 4);
-    return g;
-  }
-  // Six oscillateurs carrés aux rapports inharmoniques, comme les cymbales analogiques.
-  metal(time, dur, base) {
-    const mix = this.gain(0.25);
-    for (const r of [2, 3, 4.16, 5.43, 6.79, 8.21]) this.osc('square', base * r, time, dur).connect(mix);
-    return mix;
-  }
-
-  // Joue un instrument à l'instant `time` (secondes, horloge audio) avec une vélocité 0..1.
-  trigger(id, time = this.ctx.currentTime, vel = 1) {
-    if (id === 'bd') this.onKick(time);
-    const level = this.p(id, 'level') * vel;
-    const out = this.gain(level);
-    // Chaîne de sortie : [distorsion + filtre anti-crissement] -> niveau -> bus 909.
-    const drive = this.p(id, 'drive');
-    if (drive > 0.01) {
-      const shaper = this.ctx.createWaveShaper();
-      shaper.curve = distCurve(drive, SHAPES[shapeIndex(this.p(id, 'shape'))]);
-      shaper.oversample = '2x';
-      const tame = this.filter('lowpass', 16000 - drive * 8000, 0.7);
-      shaper.connect(tame).connect(this.gain(1 - drive * 0.35)).connect(this.bus(id));
-      out.connect(shaper);
-    } else {
-      out.connect(this.bus(id));
-    }
+  voice(id, time, out, level) {
     const tune = this.p(id, 'tune');
     const decay = this.p(id, 'decay');
-
     switch (id) {
       case 'bd': {
         const f0 = 42 + tune * 30;
@@ -285,15 +133,10 @@ export class TR909 {
         break;
       }
       case 'ch': case 'oh': {
-        // Le charley fermé coupe l'ouvert, comme sur la machine.
-        if (this.openHat) {
-          this.openHat.gain.cancelScheduledValues(time);
-          this.openHat.gain.setTargetAtTime(0, time, 0.005);
-          this.openHat = null;
-        }
+        this.chokeHat(time);
         const dec = id === 'ch' ? 0.02 + decay * 0.12 : 0.12 + decay * 0.9;
         const g = this.env(this.gain(), time, 1, dec);
-        this.metal(time, dec * 2 + 0.05, 40).connect(this.filter('bandpass', 10000, 0.8)).connect(this.filter('highpass', 7000)).connect(g);
+        this.metal909(time, dec * 2 + 0.05, 40).connect(this.filter('bandpass', 10000, 0.8)).connect(this.filter('highpass', 7000)).connect(g);
         this.noiseSrc(time, dec * 2).connect(this.filter('highpass', 8000)).connect(this.gain(0.3)).connect(g);
         g.connect(out);
         if (id === 'oh') this.openHat = g;
@@ -304,83 +147,11 @@ export class TR909 {
         const dec = id === 'cr' ? 1.6 : 1.1;
         const g = this.env(this.gain(), time, 1, dec);
         const base = (id === 'cr' ? 47 : 58) * k;
-        this.metal(time, dec * 2, base).connect(this.filter('bandpass', id === 'cr' ? 8000 : 9500, id === 'cr' ? 0.5 : 2)).connect(g);
+        this.metal909(time, dec * 2, base).connect(this.filter('bandpass', id === 'cr' ? 8000 : 9500, id === 'cr' ? 0.5 : 2)).connect(g);
         if (id === 'cr') this.noiseSrc(time, dec * 2).connect(this.filter('highpass', 4000 * k)).connect(this.gain(0.5)).connect(g);
         g.connect(out);
         break;
       }
-    }
-  }
-
-  // --- séquenceur ---
-  stepDur() { return 60 / this.engine.bpm / 4; }
-
-  timeOf(idx) {
-    const swing = idx % 2 ? this.st.globals.shuffle * 0.5 * this.stepDur() : 0;
-    return this.engine.origin + idx * this.stepDur() + swing;
-  }
-
-  // keepOrigin : la grille a déjà été posée (timeline) ; la 909 démarre sur le pas suivant de cette grille.
-  start(keepOrigin = false) {
-    if (this.running) return;
-    const e = this.engine;
-    const looping = [...e.padVoices.values()].some(v => v.mode === 'loop');
-    let startAt;
-    if (keepOrigin && e.origin !== null) {
-      startAt = e.origin + Math.max(0, Math.ceil((this.ctx.currentTime + 0.02 - e.origin) / this.stepDur())) * this.stepDur();
-    } else if (!looping || e.origin === null) {
-      e.origin = this.ctx.currentTime + 0.05;
-      startAt = e.origin;
-    } else {
-      startAt = e.nextBar();   // se cale sur la mesure des boucles en cours
-    }
-    this.idx = Math.round((startAt - e.origin) / this.stepDur());
-    this.running = true;
-    e.seqs.add(this);
-    this.timer = setInterval(() => this.tick(), 25);
-    this.tick();
-  }
-
-  stop() {
-    if (!this.running) return;
-    this.running = false;
-    this.engine.seqs.delete(this);
-    clearInterval(this.timer);
-    this.onStop();
-    this.onStep(-1);
-  }
-
-  toggle() { if (this.running) this.stop(); else this.start(); }
-
-  // Change de pattern : tout de suite à l'arrêt, sinon au début de la mesure suivante.
-  selectPattern(k) {
-    if (!this.running) { this.st.pattern = k; this.queued = null; this.onPattern(); return; }
-    this.queued = k === this.st.pattern ? null : k;
-    this.onPattern();
-  }
-
-  tick() {
-    const now = this.ctx.currentTime;
-    // Onglet mis en veille : on rattrape la grille au lieu de rejouer les pas en retard.
-    if (this.timeOf(this.idx) < now - 0.1) this.idx = Math.ceil((now - this.engine.origin) / this.stepDur());
-    while (this.timeOf(this.idx) < now + 0.12) {
-      const step = ((this.idx % 16) + 16) % 16;
-      if (step === 0 && this.queued !== null) {
-        this.st.pattern = this.queued;
-        this.queued = null;
-        this.onPattern();
-      }
-      const time = this.timeOf(this.idx);
-      const pat = this.st.patterns[this.st.pattern];
-      const accent = this.st.globals.accent;
-      for (const { id } of TR_INSTR) {
-        const v = pat[id][step];
-        if (v && !this.st.mutes[id]) this.trigger(id, time, v === 2 ? 1 : 1 - accent * 0.45);
-      }
-      for (const listen of this.listeners) listen(step, time, this.stepDur());
-      const delay = Math.max(0, (time - now) * 1000);
-      setTimeout(() => { if (this.running) this.onStep(step); }, delay);
-      this.idx++;
     }
   }
 }

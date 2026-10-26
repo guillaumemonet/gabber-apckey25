@@ -16,6 +16,9 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 - **Plugins** dans des fenêtres déplaçables et aimantées :
   - **Sampler 40 pads** avec 25 banques (les sons d'une banque se chargent quand vous l'affichez : démarrage rapide), des LEDs synchronisées avec l'écran, et le glisser-déposer de vos propres sons ;
   - **Émulation TR-909** : les 11 instruments synthétisés en direct, **distorsion par instrument (drive + 5 formes)**, séquenceur 16 pas et 8 patterns ;
+  - **Émulation TR-808** : ses 13 instruments (grosse caisse à longue tenue, cloche, claves, maracas…), avec le même séquenceur, les mêmes kits et la même distorsion que la 909 ;
+  - **Séquenceur pas à pas** : n'importe quel son de pad sur 16 à 64 pas, 8 patterns, posé sur la timeline en blocs de pads ou enregistré en jouant ;
+  - **Découpeur de breaks** : un break coupé sur ses coups (ou en parts égales), un pad par tranche et le motif d'origine dans le séquenceur pas à pas, pour le jouer à n'importe quel tempo sans changer de hauteur ;
   - **Piano roll** : éditez les notes des blocs du synthé (hauteur, durée, vélocité, copier / coller, quantification, saisie pas à pas au clavier de l'APC) ;
   - **Designer de kick** : fabriquez votre propre kick distordu avec 12 potentiomètres et 12 presets, ou en mode expert couche par couche (clic, corps, queue avec deboom), accordez sa queue sur la tonalité du morceau, faites-lui jouer une mélodie de kick dans le piano roll, puis envoyez-le sur un pad ou dans la bibliothèque ;
   - **Designer d'effet** : dessinez la courbe d'un effet (volume, filtres, panoramique, saturation, envois) sur 1, 2 ou 4 temps et posez-la sur n'importe quelle piste ;
@@ -51,6 +54,7 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
 | **Piano roll**<br>[![Piano roll : le hook de hoover de la démo 2, avec la bande des vélocités](docs/screenshots/roll-fr.png)](docs/screenshots/roll-fr.png) | **Synthé à oscillateurs**<br>[![Synthé à oscillateurs : trois oscillateurs, filtre, enveloppes, LFO et presets](docs/screenshots/osc-fr.png)](docs/screenshots/osc-fr.png) |
 | **Visualiseur : fractale + kaléidoscope + glitch**<br>[![Visualiseur, Fractale 3D avec les filtres kaléidoscope et glitch empilés](docs/screenshots/viz-fr.png)](docs/screenshots/viz-fr.png) | **Visualiseur : Paysage 3D**<br>[![Visualiseur, Paysage 3D : grille synthwave façonnée par le spectre](docs/screenshots/viz3d-fr.png)](docs/screenshots/viz3d-fr.png) |
 | **Générateur : accords et mélodie**<br>[![Fenêtre Générateur, onglet Mélodie : réglages de la mélodie et son brouillon dans le piano roll](docs/screenshots/gen-fr.png)](docs/screenshots/gen-fr.png) | **Designer d'effet**<br>[![Designer d'effet : une courbe de volume dessinée sur un temps](docs/screenshots/curve-fr.png)](docs/screenshots/curve-fr.png) |
+| **Séquenceur pas à pas**<br>[![Séquenceur pas à pas : une ligne par son de pad, 16 pas, patterns et longueur](docs/screenshots/seq-fr.png)](docs/screenshots/seq-fr.png) | **Découpeur de breaks**<br>[![Découpeur de breaks : un break découpé sur ses coups, tranches numérotées](docs/screenshots/slicer-fr.png)](docs/screenshots/slicer-fr.png) |
 
 ## Démarrage rapide
 
@@ -66,9 +70,9 @@ Le mode d'emploi complet est dans [docs/manuel](docs/manuel/README.md) ; chaque 
 
 1. **[Premiers pas](docs/manuel/demarrage.md)** : Prérequis, Installation, Lancement, Langue, Compatibilité matérielle
 2. **[Le contrôleur APC Key 25](docs/manuel/apc.md)** : Commandes sur l'APC, Potentiomètres, Effets de performance, Autres claviers MIDI et MIDI learn
-3. **[Pads et banques](docs/manuel/pads.md)** : Banques, Tempo et boucles
+3. **[Pads et banques](docs/manuel/pads.md)** : Banques, Tempo et boucles, Découpeur de breaks
 4. **[Timeline, bibliothèque et piano roll](docs/manuel/timeline.md)** : Timeline et bibliothèque de sons, Automation, Marqueurs, Effets de piste, Geler une piste, Piano roll, Démo
-5. **[Instruments](docs/manuel/instruments.md)** : TR-909, TB-303, Synthé, Synthé à oscillateurs, Designer de kick
+5. **[Instruments](docs/manuel/instruments.md)** : TR-909, TR-808, Séquenceur pas à pas, TB-303, Synthé, Synthé à oscillateurs, Designer de kick
 6. **[Générateur : accords et mélodie](docs/manuel/generateur.md)**
 7. **[Mixage et effets](docs/manuel/mixage.md)** : Designer d'effet, Table de mixage, Bus, Chaîne master et sonie, Câblage
 8. **[Live : platines, scènes, visualiseur](docs/manuel/live.md)** : Platines, Lanceur de clips, Scènes, Visualiseur, Fenêtres des plugins
@@ -87,7 +91,7 @@ Objectif : faire de GabberKey un outil professionnel, au studio comme en live, �
 6. **Tonalité et étirement** : étirement temporel qui garde la hauteur et transposition des sons de la timeline et du lanceur. *(fait ; les boucles des pads suivront)*
 7. **Entrées** : enregistrement audio (micro, carte son) et fichiers MIDI. *(fait)*
 
-Idées gardées pour plus tard : un **séquenceur de pas** pour n'importe quel son, un **sampler de voix et vocoder**, **plusieurs exemplaires** de la TB-303 et de la TR-909, un **découpeur de breaks**, une **TR-808**, une **version en ligne** jouable sans rien installer, et un **générateur de boucles par IA** (un modèle de musique open source qui tourne sur votre machine).
+Idées gardées pour plus tard : un **sampler de voix et vocoder**, **plusieurs exemplaires** de la TB-303 et de la TR-909, une **version en ligne** jouable sans rien installer, et un **générateur de boucles par IA** (un modèle de musique open source qui tourne sur votre machine).
 
 Les idées et suggestions sont les bienvenues dans les [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 

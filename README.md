@@ -16,6 +16,9 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 - **Plugins** in movable, magnetic windows:
   - **40-pad sampler** with 25 banks (a bank's sounds load when you show it, so startup is fast), pad LEDs synced to the screen, and drag & drop of your own sounds;
   - **TR-909 emulation**: the 11 instruments synthesised live, per-instrument **distortion (drive + 5 shapes)**, 16-step sequencer with 8 patterns;
+  - **TR-808 emulation**: its 13 instruments (long booming bass drum, cowbell, claves, maracas…), with the same sequencer, kits and distortion as the 909;
+  - **Step sequencer**: any pad sound on 16 to 64 steps, 8 patterns, laid on the timeline as pad blocks or recorded live;
+  - **Break slicer**: a break cut on its hits (or into equal parts), one pad per slice and the original pattern in the step sequencer, to play it at any tempo without changing pitch;
   - **Piano roll**: edit the notes of the synth blocks (pitch, length, velocity, copy / paste, quantize, step input from the APC keyboard);
   - **Kick designer**: build your own distorted kick from 12 knobs and 12 presets, or in expert mode layer by layer (click, body, tail with deboom), tune its tail to the key of the song, make it play a kick melody in the piano roll, then send it to a pad or the library;
   - **Effect designer**: draw the curve of an effect (volume, filters, pan, saturation, sends) over 1, 2 or 4 beats and put it on any track;
@@ -51,6 +54,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 | **Piano roll**<br>[![Piano roll: the hoover hook of demo 2, with the velocity lane](docs/screenshots/roll-en.png)](docs/screenshots/roll-en.png) | **Oscillator synth**<br>[![Oscillator synth: three oscillators, filter, envelopes, LFO and presets](docs/screenshots/osc-en.png)](docs/screenshots/osc-en.png) |
 | **Visualizer: fractal + kaleidoscope + glitch**<br>[![Visualizer, 3D fractal with the kaleidoscope and glitch filters stacked](docs/screenshots/viz-en.png)](docs/screenshots/viz-en.png) | **Visualizer: 3D landscape**<br>[![Visualizer, 3D landscape: synthwave grid shaped by the spectrum](docs/screenshots/viz3d-en.png)](docs/screenshots/viz3d-en.png) |
 | **Generator: chords and melody**<br>[![Generator window, Melody tab: the melody settings and its draft in the piano roll](docs/screenshots/gen-en.png)](docs/screenshots/gen-en.png) | **Effect designer**<br>[![Effect designer: a volume curve drawn over one beat](docs/screenshots/curve-en.png)](docs/screenshots/curve-en.png) |
+| **Step sequencer**<br>[![Step sequencer: one row per pad sound, 16 steps, patterns and length](docs/screenshots/seq-en.png)](docs/screenshots/seq-en.png) | **Break slicer**<br>[![Break slicer: a break cut on its hits, numbered slices](docs/screenshots/slicer-en.png)](docs/screenshots/slicer-en.png) |
 
 ## Quick start
 
@@ -66,9 +70,9 @@ The complete guide is in [docs/manual](docs/manual/README.md); every window in t
 
 1. **[Getting started](docs/manual/getting-started.md)**: Requirements, Installation, Starting, Language, Hardware compatibility
 2. **[The APC Key 25 controller](docs/manual/controller.md)**: Controls on the APC, Knobs, Performance effects, Other MIDI keyboards and MIDI learn
-3. **[Pads and banks](docs/manual/pads.md)**: Banks, Tempo and loops
+3. **[Pads and banks](docs/manual/pads.md)**: Banks, Tempo and loops, Break slicer
 4. **[Timeline, library and piano roll](docs/manual/timeline.md)**: Timeline and sound library, Automation, Markers, Track effects, Freeze a track, Piano roll, Demo
-5. **[Instruments](docs/manual/instruments.md)**: TR-909, TB-303, Synth, Oscillator synth, Kick designer
+5. **[Instruments](docs/manual/instruments.md)**: TR-909, TR-808, Step sequencer, TB-303, Synth, Oscillator synth, Kick designer
 6. **[Generator: chords and melody](docs/manual/generator.md)**
 7. **[Mixing and effects](docs/manual/mixing.md)**: Effect designer, Mixer, Buses, Master chain and loudness, Patch
 8. **[Live: turntables, scenes, visualizer](docs/manual/live.md)**: Turntables, Clip launcher, Scenes, Visualizer, Plugin windows
@@ -87,7 +91,7 @@ Goal: make GabberKey a professional tool, in the studio and on stage, step by st
 6. **Key and stretching**: time-stretching that keeps the pitch and transposition of timeline and launcher sounds. *(done; pad loops will follow)*
 7. **Inputs**: audio recording (microphone, sound card) and MIDI files. *(done)*
 
-Ideas kept for later: a **step sequencer** for any sound, a **vocal sampler and vocoder**, **several instances** of the TB-303 and TR-909, a **break slicer**, a **TR-808**, an **online version** playable without installing anything, and an **AI loop generator** (an open-source music model running on your own computer).
+Ideas kept for later: a **vocal sampler and vocoder**, **several instances** of the TB-303 and TR-909, an **online version** playable without installing anything, and an **AI loop generator** (an open-source music model running on your own computer).
 
 Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
 

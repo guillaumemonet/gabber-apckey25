@@ -5,7 +5,7 @@
 import { t } from '../i18n.js';
 import { Performer } from '../performer.js';
 import { triggerPad, releasePad, setPage } from './actions.js';
-import { $, UI_PAGES, apc, drum, engine, kickSynth, oscSynth, state, wm } from './core.js';
+import { $, UI_PAGES, apc, drum, drum808, engine, kickSynth, oscSynth, state, wm } from './core.js';
 import { pageLabel } from './knobs.js';
 import { renderKeysTarget } from './osc-ui.js';
 import { buildPiano, pianoCount } from './piano.js';
@@ -15,10 +15,12 @@ import { tlRecordArpNote, tlRecordNote } from './tl-record.js';
 
 export const APC_DEVICE = 'apc';
 // Instruments qu'un appareil peut jouer. Page des potentiomètres de chacun (aucune : ils ne font rien).
-export const DEVICE_INSTS = ['auto', 'synth', 'osc', 'pads', 'tr', 'acid', 'decks', 'kick', 'mix', 'none'];
-const INST_PAGE = { synth: 'synth', osc: 'osc', pads: 'pad', tr: 'tr', acid: 'acid', decks: 'decks', mix: 'mix_vol' };
+export const DEVICE_INSTS = ['auto', 'synth', 'osc', 'pads', 'tr', 'tr8', 'acid', 'decks', 'kick', 'mix', 'none'];
+const INST_PAGE = { synth: 'synth', osc: 'osc', pads: 'pad', tr: 'tr', tr8: 'tr8', acid: 'acid', decks: 'decks', mix: 'mix_vol' };
 // Notes vers les instruments de la TR-909 (plan de batterie General MIDI).
 const GM_909 = { 35: 'bd', 36: 'bd', 37: 'rs', 38: 'sd', 40: 'sd', 39: 'hc', 41: 'lt', 43: 'lt', 45: 'mt', 47: 'mt', 48: 'ht', 50: 'ht', 42: 'ch', 44: 'ch', 46: 'oh', 49: 'cr', 57: 'cr', 51: 'rd', 59: 'rd' };
+// Plan de batterie General MIDI pour la TR-808 (congas sur les toms, comme la machine).
+const GM_808 = { 35: 'bd', 36: 'bd', 37: 'rs', 38: 'sd', 40: 'sd', 39: 'cp', 41: 'lt', 43: 'lt', 45: 'mt', 47: 'mt', 48: 'ht', 50: 'ht', 42: 'ch', 44: 'ch', 46: 'oh', 49: 'cy', 57: 'cy', 51: 'cy', 56: 'cb', 75: 'cl', 70: 'ma', 62: 'ht', 63: 'mt', 64: 'lt' };
 const PAD_NOTE0 = 36;   // do2 = pad 1 (contrôleurs à pads)
 
 // Nombre de touches d'un clavier (clavier à l'écran du synthé).
@@ -126,6 +128,7 @@ export function deviceKey(id, { note, velocity, on }) {
   if (inst === 'synth' || inst === 'osc') performerFor(id, inst).noteOn(note, velocity);
   else if (inst === 'pads') { const i = note - PAD_NOTE0; if (i >= 0 && i < 40) triggerPad(i); }
   else if (inst === 'tr') { const v = GM_909[note]; if (v) drum.trigger(v, undefined, Math.max(0.2, velocity)); }
+  else if (inst === 'tr8') { const v = GM_808[note]; if (v) drum808.trigger(v, undefined, Math.max(0.2, velocity)); }
   else if (inst === 'kick') kickSynth.noteOn(note, velocity, undefined, `dev:${id}:${note}`, state.kick.params);
   notes.set(note, inst);
   return true;

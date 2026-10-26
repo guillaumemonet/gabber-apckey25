@@ -2,7 +2,7 @@
 
 ← [Timeline, library and piano roll](timeline.md) · [Contents](README.md) · [Generator: chords and melody](generator.md) →
 
-TR-909, TB-303, layered synth, oscillator synth and kick designer.
+TR-909, TR-808, step sequencer, TB-303, layered synth, oscillator synth and kick designer.
 
 ## TR-909
 
@@ -32,6 +32,37 @@ Every instrument has its own distortion. The bass drum starts with a "Tube" driv
 | 5 | Patterns 1-8 |
 
 Pressing a SCENE LAUNCH button brings the grid back to the sampler pads.
+
+## TR-808
+
+[![TR-808 window: the 13 instruments on the 16-step sequencer, and their knobs](../screenshots/tr8-en.png)](../screenshots/tr8-en.png)
+
+An emulation of the Roland TR-808 with its 13 instruments: bass drum (a long resonator, from a dry hit to the "boom"), two-oscillator snare, 3 toms, rim shot, clap, closed and open hi-hat, cymbal (the hi-hats and the cymbal are made of six square oscillators, as on the machine), cowbell, claves and maracas.
+
+The window works exactly like the TR-909's (the same code builds both): 16 steps, 8 patterns, accent, shuffle, sound kits, a distortion per instrument (Drive, Shape) and the same knobs.
+
+| K1-K4 | K5 | K6 | K7 | K8 |
+|---|---|---|---|---|
+| Parameters of the selected instrument (e.g. BD: Tune, Tone, Decay, Level) | **Drive** | **Shape** | Shuffle | 808 volume |
+
+- **Starting patterns**: electro, boom bap, hardcore on the 808, percussion (cowbell, claves, toms, maracas).
+- **Kits**: **Classic** (Clean 808, Electro, Hip-hop, Long bass), **Hardcore** (Saturated boom, Gabber 808, Distorted) and **FX** (Lo-fi crush, Folded). Your kits (★) are saved like the 909's.
+- **APC grid** (Shift + PLAY): it drives the drum machine whose window you used last. For the 808: rows 1-2 = the 16 steps, rows 3-4 = the 13 instruments then **Accent**, **Clear**, **Mute**, row 5 = patterns.
+- The 808 has its **mixer channel** (in the Mixer window; the APC mixer pages keep the first seven channels), is **recorded as audio** on a track (source TR-808), plays from a **MIDI device** (General MIDI drum map) and its patterns are part of the **scenes**. Its bass drum triggers the sidechain.
+
+## Step sequencer
+
+[![Step sequencer: one row per pad sound, 16 steps, patterns and length](../screenshots/seq-en.png)](../screenshots/seq-en.png)
+
+A sequencer for **any pad sound**: one row per pad (from any bank), 16, 32 or 64 steps, 8 patterns. It uses the same clock as the drum machines: same tempo, same bar grid, same shuffle, and a pattern change waits for the end of the current pattern. The pads play with their own settings (volume, pitch, filter, sends, track effects) and the kicks drive the sidechain.
+
+- **Steps**: a click cycles note → accent → off; **drag** to paint the same value over several steps. A click on a **row name** plays its sound.
+- **Rows**: **Add a row** uses the selected pad; the **pad** button of a row opens the pad grid (the one of "Send to…") to choose its sound in any bank; **mute** and **remove**. Each pattern has its own rows (up to 32).
+- **Steps 16 / 32 / 64** (1, 2 or 4 bars): lengthening a pattern repeats what is written; the **Bar 1-4** buttons show each part.
+- **Put on the timeline**: the pattern becomes pad blocks, one track per row (first free tracks from the armed track), from the playhead bar, repeated 1 to 8 times (**Repeat**). Each block stops at the next hit of the same pad.
+- **Record by playing**: choose the **Step sequencer** source on an armed track; it starts with the recording and its hits become pad blocks, with their velocity.
+- **Scenes** remember its pattern and whether it plays; its patterns are undone with Ctrl+Z and saved to a file (📁 / 💾).
+- The [break slicer](pads.md#break-slicer) fills a pattern with the hits of a break.
 
 ## TB-303
 
