@@ -1,10 +1,11 @@
 // Modules de tracker (.mod, .xm) ouverts avec « Ouvrir… » : les samples vont sur les pads d'une banque vide, chaque voie
-// du module devient un bloc de notes joué par l'instrument échantillon (js/sampler.js), à partir de la mesure de la tête
-// de lecture ; le tempo du module est repris si la timeline est vide.
+// du module devient une piste, avec un bloc de notes par passage de pattern (un pattern répété donne des blocs de même
+// nom et de même couleur), joué par l'instrument échantillon (js/sampler.js), à partir de la mesure de la tête de
+// lecture ; le tempo du module est repris si la timeline est vide.
 import { encodeWav } from '../recorder.js';
 import { t } from '../i18n.js';
 import { catColor, guessCat } from '../library.js';
-import { readTracker, trackerKind, TRACKER_EXT } from '../tracker.js';
+import { readTracker, splitSections, trackerKind, TRACKER_EXT } from '../tracker.js';
 import { BEATS_PER_BAR } from '../timeline.js';
 import * as store from '../storage.js';
 import { BANKS, engine, newPad, state } from './core.js';
@@ -16,6 +17,9 @@ import { setBpm } from './tempo.js';
 import { renderTl } from './tl.js';
 
 export const isTrackerFile = file => TRACKER_EXT.test(file.name);
+
+// Couleur des blocs d'un pattern (les couleurs vives de la palette de l'APC), la même à chaque passage.
+const PATTERN_COLORS = [5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45, 49, 53, 57];
 
 // Banques vides à la suite pour `n` sons (à partir de la banque affichée). -> première banque, ou -1
 function emptyBanks(n) {
@@ -63,32 +67,36 @@ export async function importTrackerFile(file) {
   const scale = state.bpm / mod.bpm;   // temps du module -> temps du morceau (même durée)
   const start = Math.floor(state.tl.playhead / BEATS_PER_BAR) * BEATS_PER_BAR;
   const title = mod.title || file.name.replace(TRACKER_EXT, '');
-  const blocks = channels.map(({ c, notes }) => {
-    const refs = [...new Set(notes.map(n => n.s))];
-    const seq = notes.map(n => {
-      const e = { ...n, t: +(n.t * scale).toFixed(4), len: +(n.len * scale).toFixed(4), s: refs.indexOf(n.s) };
-      if (n.pv) e.pv = n.pv.map(([d, v]) => [+(d * scale).toFixed(4), v]);
-      if (n.pp) e.pp = n.pp.map(([d, v]) => [+(d * scale).toFixed(4), v]);
+  const sc = x => +(x * scale).toFixed(4);
+  const lanesClips = channels.map(({ c, notes }) => splitSections(mod, notes).filter(s => s.notes.length).map(sec => {
+    const refs = [...new Set(sec.notes.map(n => n.s))];
+    const seq = sec.notes.map(n => {
+      const e = { ...n, t: sc(n.t), len: sc(n.len), s: refs.indexOf(n.s) };
+      if (n.pv) e.pv = n.pv.map(([d, v]) => [sc(d), v]);
+      if (n.pp) e.pp = n.pp.map(([d, v]) => [sc(d), v]);
       return e;
     });
-    const last = Math.max(...seq.map(n => n.t + n.len));
-    const len = Math.max(BEATS_PER_BAR, Math.ceil(last / BEATS_PER_BAR - 1e-6) * BEATS_PER_BAR);
-    const name = t('mod.channel', { n: c + 1, name: title }).slice(0, 32);
-    return { len, clip: { id: crypto.randomUUID(), type: 'note', seq, pat: len, len, start, name, cat: 'lead', color: catColor('lead'), loop: false,
-      smps: refs.map(s => slot.get(s)) } };
+    const len = Math.max(0.25, sc(sec.end - sec.t));
+    return { id: crypto.randomUUID(), type: 'note', seq, pat: len, len, start: start + sc(sec.t), name: t('mod.pattern', { p: sec.pat, n: c + 1 }).slice(0, 32),
+      cat: 'lead', color: PATTERN_COLORS[sec.pat % PATTERN_COLORS.length], loop: false, smps: refs.map(s => slot.get(s)) };
+  }));
+  const blocks = lanesClips.flat();
+  const end = start + Math.ceil(sc(mod.beats) / BEATS_PER_BAR - 1e-6) * BEATS_PER_BAR;
+  const lanes = freeTracks(start, end, lanesClips.length);
+  lanesClips.slice(0, lanes.length).forEach((clips, k) => {   // une piste par voie, nommée d'après elle si elle n'a pas de nom
+    const tr = state.tl.tracks[lanes[k]];
+    tr.clips.push(...clips);
+    if (!tr.name) tr.name = t('mod.channel', { n: channels[k].c + 1, name: title }).slice(0, 24);
   });
-  const end = start + Math.max(...blocks.map(b => b.len));
-  const lanes = freeTracks(start, end, blocks.length);
-  blocks.slice(0, lanes.length).forEach((b, k) => state.tl.tracks[lanes[k]].clips.push(b.clip));
   if (end > state.tl.bars * BEATS_PER_BAR) state.tl.bars = Math.min(256, Math.ceil(end / BEATS_PER_BAR));
   renderAll();
   renderTl();
   renderLibrary();
   save();
-  const placed = Math.min(lanes.length, blocks.length);
+  const placed = Math.min(lanes.length, lanesClips.length);
   const skipped = Object.values(mod.skipped).reduce((a, b) => a + b, 0);
-  toast([t('mod.imported', { name: title, n: placed, pads: used.length, bank: bank + 1, bpm: Math.round(mod.bpm * 10) / 10 }),
-    ...(placed < blocks.length ? [t('midi.noRoom', { n: blocks.length - placed })] : []),
+  toast([t('mod.imported', { name: title, n: placed, blocks: blocks.length, pads: used.length, bank: bank + 1, bpm: Math.round(mod.bpm * 10) / 10 }),
+    ...(placed < lanesClips.length ? [t('midi.noRoom', { n: lanesClips.length - placed })] : []),
     ...(skipped ? [t('mod.skipped', { n: skipped, fx: Object.keys(mod.skipped).sort().join(' ') })] : [])].join(' · '), 7000);
   return placed;
 }

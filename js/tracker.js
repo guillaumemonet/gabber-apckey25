@@ -296,6 +296,7 @@ export function readTracker(buf) {
 
   // Ordre de lecture : positions, lignes déjà jouées (le morceau qui reboucle s'arrête).
   const visited = new Set();
+  const sections = [];   // passages de pattern : { t, pos, pat }
   let pos = 0, row = 0;
   outer:
   while (pos < m.orders.length && time < MAX_SECONDS) {
@@ -307,6 +308,7 @@ export function readTracker(buf) {
       if (visited.has(k)) break;
       visited.add(k);
     }
+    if (sections.at(-1)?.pos !== pos) sections.push({ t: Math.round(beatsOf(time) * 1e4) / 1e4, pos, pat: m.orders[pos] });
     let jump = -1, brk = -1, patDelay = 0, loopTo = -1;
     const cells = pat[row];
     // Tick 0 : notes, instruments, volumes, effets posés.
@@ -493,5 +495,62 @@ export function readTracker(buf) {
       n.len = Math.round(n.len * 1e4) / 1e4;
     }
   }
-  return { format: m.format, title: m.title, bpm, samples, channels, beats: Math.round(beatsOf(time) * 1e4) / 1e4, skipped };
+  const beats = Math.round(beatsOf(time) * 1e4) / 1e4;
+  return { format: m.format, title: m.title, bpm, samples, channels, beats, skipped,
+    sections: sections.filter((s, k) => (sections[k + 1]?.t ?? beats) > s.t + 1e-4) };
+}
+
+/**
+ * Notes d'une voie découpées par passage de pattern : [{ t, end, pos, pat, notes }], temps des notes depuis le début du
+ * passage. Une note tenue d'un passage au suivant y continue là où le son en était (départ dans le sample, volume et
+ * hauteur du moment), sans nouvelle attaque.
+ */
+export function splitSections(mod, notes) {
+  const bd = 60 / mod.bpm;
+  const out = mod.sections.map((s, k) => ({ ...s, end: mod.sections[k + 1]?.t ?? mod.beats, notes: [] }));
+  if (!out.length) return out;
+  const r4 = x => Math.round(x * 1e4) / 1e4;
+  for (let n of notes) {
+    let k = out.findLastIndex(s => s.t <= n.t + 1e-6);
+    if (k < 0) k = 0;
+    while (n && k < out.length - 1 && n.t + n.len > out[k].end + 1e-4) {
+      const cut = out[k].end - n.t;
+      out[k].notes.push(notePart(n, cut));
+      n = noteRest(mod, n, cut, bd);
+      k++;
+    }
+    if (n) out[k].notes.push(n);
+  }
+  for (const s of out) for (const n of s.notes) n.t = r4(n.t - s.t);
+  return out;
+
+  // Début d'une note jusqu'à `cut` (temps depuis son départ).
+  function notePart(n, cut) {
+    const e = { ...n, len: r4(cut) };
+    for (const k of ['pv', 'pp']) { if (n[k]) e[k] = n[k].filter(([d]) => d < cut - 1e-6); if (!e[k]?.length) delete e[k]; }
+    return e;
+  }
+}
+
+// Suite d'une note après `cut` temps : départ dans le son là où il en était (lecture intégrée sur les écarts de
+// hauteur, boucle comprise), volume et hauteur du moment. null si le son est déjà fini.
+function noteRest(mod, n, cut, bd) {
+  const s = mod.samples[n.s], r4 = x => Math.round(x * 1e4) / 1e4;
+  const at = (pts, first) => { let v = first; for (const [d, x] of pts ?? []) if (d <= cut + 1e-6) v = x; return v; };
+  let pos = n.ofs ?? 0, prev = 0, semis = 0;
+  const speed = () => 2 ** ((n.note - s.root + semis) / 12);
+  for (const [d, x] of n.pp ?? []) { if (d > cut) break; pos += (d - prev) * bd * speed(); prev = d; semis = x; }
+  pos += (cut - prev) * bd * speed();
+  const dur = s.data.length / s.rate;
+  if (s.loop) {
+    const [a, b] = [s.loop[0] / s.rate, s.loop[1] / s.rate];
+    if (pos >= b) pos = a + (pos - a) % (b - a);
+  } else if (pos >= dur - 1e-4) return null;
+  const e = { ...n, t: r4(n.t + cut), len: r4(n.len - cut), vel: at(n.pv, n.vel), ofs: r4(pos) };
+  delete e.pv; delete e.pp;
+  const pv = (n.pv ?? []).filter(([d]) => d > cut + 1e-6).map(([d, v]) => [r4(d - cut), v]);
+  const p0 = at(n.pp, 0), pp = [...(p0 ? [[0, p0]] : []), ...(n.pp ?? []).filter(([d]) => d > cut + 1e-6).map(([d, v]) => [r4(d - cut), v])];
+  if (pv.length) e.pv = pv;
+  if (pp.length) e.pp = pp;
+  return e.len > 1e-4 ? e : null;
 }

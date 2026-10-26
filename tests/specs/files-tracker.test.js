@@ -1,7 +1,8 @@
 // Modules de tracker : lecture d'un .mod (volume, glissement vers la note, glissement de volume, arpège, coupure, fin
-// de pattern) et d'un .xm (note relative, boucle aller-retour, enveloppe de volume, note relâchée, glissement vers le
-// haut, tempo ramené entre 40 et 240), puis import par « Ouvrir… » (samples sur les pads d'une banque vide, voies en
-// blocs de notes joués par l'instrument échantillon, tempo du module), lecture, fichier illisible.
+// de pattern, pattern joué deux fois, note tenue d'un passage au suivant) et d'un .xm (note relative, boucle
+// aller-retour, enveloppe de volume, note relâchée, glissement vers le haut, tempo ramené entre 40 et 240), puis import
+// par « Ouvrir… » (samples sur les pads d'une banque vide, une piste par voie et un bloc par passage de pattern, joués
+// par l'instrument échantillon, tempo du module), lecture, menu des sons du piano roll, fichier illisible.
 
 // .mod ProTracker à 4 voies : cells[ligne][voie] = [période, sample, effet, paramètre].
 function buildMod(samples, cells) {
@@ -18,7 +19,7 @@ function buildMod(samples, cells) {
     head.set([...s.name].map(c => c.charCodeAt(0)), at);
     head.set([s.data.length >> 9, (s.data.length >> 1) & 255, 0, s.vol, 0, (s.ls ?? 0) >> 1, 0, (s.ll ?? 2) >> 1], at + 22);
   });
-  head[950] = 1;
+  head[950] = 2;   // le pattern 0 joué deux fois
   head.set([...'M.K.'].map(c => c.charCodeAt(0)), 1080);
   return new Uint8Array([...head, ...pat, ...samples.flatMap(s => [...s.data])]).buffer;
 }
@@ -63,7 +64,8 @@ export default async function (t, A) {
   });
   t.eq(A.trackerKind(mod), 'mod', 'module MOD reconnu (signature M.K.)');
   const m = A.readTracker(mod);
-  t.eq([m.format, m.bpm, m.beats], ['mod', 125, 8], 'tempo (vitesse 6, 125) et durée : 32 lignes = 8 temps');
+  t.eq([m.format, m.bpm, m.beats], ['mod', 125, 16], 'tempo (vitesse 6, 125) et durée : deux fois 32 lignes = 16 temps');
+  t.eq(m.sections, [{ t: 0, pos: 0, pat: 0 }, { t: 8, pos: 1, pat: 0 }], 'passages de pattern : le pattern 0 deux fois');
   t.near(m.samples[0].root, 60, 0.01, 'sample : do2 de ProTracker = note MIDI 60 à vitesse normale');
   t.eq(m.samples[0].loop, [0, 64], 'boucle du sample');
   const [n1, n2] = m.channels[0];
@@ -73,7 +75,11 @@ export default async function (t, A) {
   t.eq([n2.t, n2.note], [3, 64], 'note suivante : mi, ligne 12');
   t.ok([3, 7].every(s => n2.pp.some(([, v]) => v === s)), 'arpège 0x37 : tierce et quinte', n2.pp);
   t.near(n2.len, 1 + 2 / 24, 1e-3, 'coupée au 2e tick de la ligne 16 (EC2)');
-  t.eq(m.channels[2].map(n => [n.t, n.note]), [[5, 72]], 'voie 3 : do3 de ProTracker = note 72');
+  t.eq(m.channels[2].map(n => [n.t, n.note]), [[5, 72], [13, 72]], 'voie 3 : do3 de ProTracker = note 72');
+  const secs = A.splitSections(m, m.channels[2]);
+  t.eq(secs.map(s => s.notes.map(n => [n.t, n.len])), [[[5, 3]], [[0, 5], [5, 3]]], 'découpe par passage : la note tenue continue dans le suivant');
+  const rest = secs[1].notes[0], loopEnd = 64 / m.samples[0].rate;
+  t.ok(rest.ofs > 0 && rest.ofs < loopEnd && rest.vel === secs[0].notes[0].vel, 'la suite reprend le son là où il en était (dans la boucle), au même volume', rest);
   t.ok(m.channels[1][0].len < 0.1, 'sample sans boucle : la note dure le temps du son', m.channels[1][0].len);
 
   // --- .xm ---
@@ -101,7 +107,12 @@ export default async function (t, A) {
   input.files = dt.files;
   input.dispatchEvent(new Event('change'));
   const blocks = () => S.tl.tracks.flatMap(tr => tr.clips).filter(c => c.smps);
-  t.ok(await t.until(() => blocks().length === 3, 3000), 'trois voies importées en blocs de notes', blocks().length);
+  t.ok(await t.until(() => blocks().length === 6, 3000), 'trois voies, un bloc par passage de pattern', blocks().length);
+  const lanes = S.tl.tracks.filter(tr => tr.clips.some(c => c.smps));
+  t.eq(lanes.map(tr => tr.clips.map(c => c.start)), [[0, 8], [0, 8], [0, 8]], 'une piste par voie, les passages à la suite');
+  t.ok(lanes.every(tr => tr.clips[0].name === tr.clips[1].name && tr.clips[0].color === tr.clips[1].color && /0/.test(tr.clips[0].name)),
+    'un pattern répété : blocs de même nom et de même couleur', lanes.map(tr => tr.clips.map(c => c.name)));
+  t.ok(lanes[2].clips[1].seq[0].ofs > 0, 'la note tenue continue dans le bloc suivant');
   t.eq(S.bpm, 125, 'timeline vide : le tempo du module est repris');
   const pads = S.banks[free].slice(0, 2);
   t.eq(pads.map(p => p?.name), ['saw', 'hat'], 'samples sur les pads de la première banque vide', free);

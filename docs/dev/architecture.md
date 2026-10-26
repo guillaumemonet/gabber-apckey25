@@ -51,7 +51,7 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 | `viz-ui.js` | Visualiseur et fenêtre projecteur |
 | `plugins.js` | Barre des plugins et ouverture des fenêtres |
 | `files.js` | Fichiers : kits, projet, morceau, réglages de chaque outil |
-| `tracker-files.js` | Import des modules de tracker : samples sur les pads d'une banque vide, voies en blocs de notes |
+| `tracker-files.js` | Import des modules de tracker : samples sur les pads d'une banque vide, une piste par voie et un bloc de notes par passage de pattern |
 | `export.js` | Enregistrement du master et export rapide (WAV, stems) hors temps réel |
 | `tune-ui.js` | Fenêtre Correction de justesse : voix d'un bloc audio recalée sur une gamme ou une mélodie |
 | `freeze.js` | Geler une piste (son rendu hors temps réel joué à la place de ses blocs), rendre une piste en audio |
