@@ -1,18 +1,22 @@
 // Fenêtre Générateur : à partir d'une suite d'accords, pose sur la timeline des blocs d'accords (cordes, nappes,
-// chœurs…, avec une basse) ou une mélodie (lead) qui suit les accords (js/melody.js).
+// chœurs…, avec une basse simple), une mélodie (lead) qui suit les accords (js/melody.js) ou une ligne de basse dans les
+// rythmes des styles hardcore (js/bassline.js).
 // Chaque onglet a son brouillon (un passage de la suite) affiché dans un piano roll sous les réglages : les réglages
 // le recalculent tant qu'il n'a pas été retouché à la main ; Écouter et Générer utilisent le brouillon tel qu'il est.
 import { PROGRESSIONS, bassNote, parseProgression, voiceChords } from '../chords.js';
 import { t } from '../i18n.js';
 import { catColor } from '../library.js';
 import { LEAD_DENSITIES, LEAD_REGISTERS, LEAD_STYLES, generateLead } from '../melody.js';
+import { BASS_OCTAVES, BASS_STYLES, generateBass } from '../bassline.js';
+import { OSC_PRESETS, OSC_PRESET_CAT } from '../osc.js';
 import { FEATURES, learnTaste, suggestLeads, suggestProgressions } from '../suggest.js';
 import { PAGES } from '../params.js';
 import { PianoRoll } from '../pianoroll.js';
 import { PALETTE } from '../apc.js';
 import { PRESETS, presetById } from '../presets.js';
 import { BEATS_PER_BAR } from '../timeline.js';
-import { $, engine, state, timeline, uiColor } from './core.js';
+import { $, engine, oscSynth, state, timeline, uiColor } from './core.js';
+import { oscPresetValues } from './osc-ui.js';
 import { toast } from './misc.js';
 import { save } from './save.js';
 import { armedTrack, renderTl } from './tl.js';
@@ -26,8 +30,12 @@ export const GEN_REGISTERS = { low: 55, mid: 62, high: 69 };
 export const GEN_RHYTHMS = ['hold', 'beats', 'offbeat', 'eighths'];
 export const GEN_BASS = { none: null, sub: { preset: 'sub_bass', rhythm: 'hold' }, offbeat: { preset: 'bass', rhythm: 'offbeat' }, reese: { preset: 'reese', rhythm: 'hold' } };
 export const defaultLead = () => ({ preset: 'hardstyle_lead', register: 'high', style: 'anthem', density: 'mid', double: false, seed: 1 });
+// Basse : son = preset du synthé ou « osc:<id> » (synthé à oscillateurs) ; passing = note de passage vers l'accord suivant.
+export const defaultBassline = () => ({ preset: 'bass', style: 'offbeat', octave: 'low', passing: true, seed: 1 });
+export const GEN_TABS = ['chords', 'lead', 'bass'];
 export const defaultGen = () => ({ tab: 'chords', prog: PROGRESSIONS[0], preset: 'epic_strings', register: 'mid', bars: 2, repeat: 2, rhythm: 'hold', bass: 'none', lead: defaultLead(),
-  draft: { chords: null, lead: null },   // brouillons : { seq, edited } (notes d'un passage de la suite)
+  bassline: defaultBassline(),
+  draft: { chords: null, lead: null, bass: null },   // brouillons : { seq, edited } (notes d'un passage de la suite)
   taste: null });                        // goût appris par les suggestions : { n, mean } (js/suggest.js)
 
 // Brouillon d'une sauvegarde : notes valides seulement.
@@ -41,7 +49,7 @@ function cleanDraft(d) {
 export function mergeGen(saved) {
   const g = defaultGen();
   if (!saved || typeof saved !== 'object') return g;
-  if (saved.tab === 'lead') g.tab = 'lead';
+  if (GEN_TABS.includes(saved.tab)) g.tab = saved.tab;
   if (typeof saved.prog === 'string') g.prog = saved.prog;
   if (saved.preset === 'current' || PRESETS.some(p => p.id === saved.preset)) g.preset = saved.preset;
   if (saved.register in GEN_REGISTERS) g.register = saved.register;
@@ -58,7 +66,15 @@ export function mergeGen(saved) {
     g.lead.double = !!l.double;
     if (Number.isInteger(l.seed) && l.seed > 0) g.lead.seed = l.seed;
   }
-  g.draft = { chords: cleanDraft(saved.draft?.chords), lead: cleanDraft(saved.draft?.lead) };
+  const b = saved.bassline;
+  if (b && typeof b === 'object') {
+    if (isBassSound(b.preset)) g.bassline.preset = b.preset;
+    if (BASS_STYLES.includes(b.style)) g.bassline.style = b.style;
+    if (b.octave in BASS_OCTAVES) g.bassline.octave = b.octave;
+    g.bassline.passing = b.passing !== false;
+    if (Number.isInteger(b.seed) && b.seed > 0) g.bassline.seed = b.seed;
+  }
+  g.draft = { chords: cleanDraft(saved.draft?.chords), lead: cleanDraft(saved.draft?.lead), bass: cleanDraft(saved.draft?.bass) };
   if (Number.isInteger(saved.taste?.n) && saved.taste.n > 0 && saved.taste.mean && FEATURES.every(k => Number.isFinite(saved.taste.mean[k]))) g.taste = { n: saved.taste.n, mean: { ...saved.taste.mean } };
   return g;
 }
@@ -89,6 +105,14 @@ export function genHits(rhythm, beats) {
 // Son choisi, ou le preset joué au clavier.
 export const genPreset = () => (state.gen.preset === 'current' ? state.preset : state.gen.preset);
 export const leadPreset = () => (state.gen.lead.preset === 'current' ? state.preset : state.gen.lead.preset);
+export const bassPreset = () => (state.gen.bassline.preset === 'current' ? state.preset : state.gen.bassline.preset);
+// Sons de la basse : basses du synthé, presets de basse du synthé à oscillateurs (« osc:<id> »).
+const BASS_OSC = OSC_PRESETS.filter(p => OSC_PRESET_CAT[p.id] === 'bass').map(p => p.id);
+const isBassSound = v => v === 'current' || PRESETS.some(p => p.id === v) || (typeof v === 'string' && v.startsWith('osc:') && (BASS_OSC.includes(v.slice(4)) || state.osc?.user.some(u => u.id === v.slice(4))));
+// Son d'un onglet : preset de l'onglet ; « osc:<id> » = synthé à oscillateurs.
+const tabSound = tab => (tab === 'lead' ? leadPreset() : tab === 'bass' ? bassPreset() : genPreset());
+// Champs d'un bloc de notes pour un son : { preset } ou { osc }.
+export const soundFields = id => (id?.startsWith('osc:') ? { osc: id.slice(4) } : { preset: id });
 
 // Accords de la suite tapée ; un message si aucun n'est reconnu.
 function progression() {
@@ -185,6 +209,33 @@ export function generateLeadClip() {
   toast(bad.length ? `${msg} · ${t('gen.bad', { list: bad.join(' ') })}` : msg, 4000);
 }
 
+// ---- Basse ----
+
+export function bassSeq(chords) {
+  const g = state.gen, b = g.bassline;
+  return generateBass(chords, { style: b.style, octave: b.octave, beatsPerChord: g.bars * BEATS_PER_BAR, seed: b.seed, passing: b.passing });
+}
+
+// Un seul bloc de notes : la ligne, répétée sur toute la durée.
+export function generateBassClip() {
+  const g = state.gen;
+  const { chords, bad } = progression();
+  if (!chords.length) return;
+  const phrase = g.bars * BEATS_PER_BAR * chords.length;
+  const start = genStart();
+  const total = phrase * g.repeat;
+  const lanes = freeLanes(start, total, 1);
+  if (!lanes) return;
+  const clip = { id: crypto.randomUUID(), type: 'note', seq: draft('bass').seq.filter(n => n.t < phrase - 1e-6).map(n => ({ ...n })), pat: phrase, ...soundFields(bassPreset()),
+    name: t(`gen.bstyle.${g.bassline.style}`), cat: 'bass', color: catColor('bass'), start, len: total, loop: false };
+  state.tl.tracks[lanes[0]].clips.push(clip);
+  growSong(start + total);
+  renderTl();
+  save();
+  const msg = t('gen.bassDone', { notes: clip.seq.length, bars: total / BEATS_PER_BAR, bar: start / BEATS_PER_BAR + 1, track: lanes[0] + 1 });
+  toast(bad.length ? `${msg} · ${t('gen.bad', { list: bad.join(' ') })}` : msg, 4000);
+}
+
 // ---- Brouillons ----
 
 const phraseBeats = n => n * state.gen.bars * BEATS_PER_BAR;
@@ -208,13 +259,12 @@ export function refreshDraft(tab, force = false) {
   const g = state.gen, d = g.draft[tab];
   if (d?.edited && !force) return;
   const { chords } = parseProgression(g.prog);
-  const seq = !chords.length ? [] : tab === 'lead' ? leadSeq(chords) : chordsSeq(chords);
+  const seq = !chords.length ? [] : tab === 'lead' ? leadSeq(chords) : tab === 'bass' ? bassSeq(chords) : chordsSeq(chords);
   g.draft[tab] = { seq, edited: false, pat: 0, len: 0 };
 }
 // Un réglage a changé : les brouillons non retouchés suivent.
 function onGenChange() {
-  refreshDraft('chords');
-  refreshDraft('lead');
+  for (const tab of GEN_TABS) refreshDraft(tab);
   save();
   renderGenInfo();
   renderGenRoll(true);
@@ -223,22 +273,26 @@ function onGenChange() {
 // ---- Écoute ----
 
 // Voix de l'écoute en cours (le moteur les oublie dès que leur fin est programmée : on les garde pour pouvoir les couper).
-let preview = [], previewEnd = 0, previewT0 = 0, previewTimer = 0;
-export const genPreviewing = () => engine.ctx.currentTime < previewEnd && (preview.length > 0 || !!previewTimer);
+let preview = [], previewEnd = 0, previewT0 = 0, previewTimer = 0, previewOsc = false;   // previewOsc : notes du synthé à oscillateurs
+export const genPreviewing = () => engine.ctx.currentTime < previewEnd && (preview.length > 0 || !!previewTimer || previewOsc);
 // Coupe l'écoute ; renvoie true si elle jouait encore.
 export function stopGenPreview() {
   const was = genPreviewing();
   clearInterval(previewTimer);
   previewTimer = 0;
   for (const v of preview) engine.releaseVoice(v, 0.01);
+  if (previewOsc) oscSynth.cut('gen:');
+  previewOsc = false;
   preview = [];
   previewEnd = 0;
   return was;
 }
 // Notes programmées au fil de l'écoute (un peu d'avance) : un long arpège ne crée pas des centaines de voix d'un coup.
 function playNotes(notes, preset) {
-  const patch = presetPatch(preset);
-  const out = engine.previewOut(patch.values);   // le son du preset seul (pas la saturation du synthé en cours)
+  const osc = preset?.startsWith('osc:') ? oscPresetValues(preset.slice(4)) ?? oscSynth.values : null;
+  const patch = osc ? null : presetPatch(preset);
+  const out = osc ? undefined : engine.previewOut(patch.values);   // le son du preset seul (pas la saturation du synthé en cours)
+  previewOsc = !!osc;
   const t0 = previewT0, bd = 60 / state.bpm;
   const queue = notes.map((n, k) => ({ ...n, k })).sort((a, b) => a.t - b.t);
   let next = 0;
@@ -246,6 +300,11 @@ function playNotes(notes, preset) {
     const horizon = engine.ctx.currentTime + 0.4;
     while (next < queue.length && t0 + queue[next].t * bd < horizon) {
       const n = queue[next++], key = `gen:${n.k}`;
+      if (osc) {   // synthé à oscillateurs : coupé par sa clé (stopGenPreview)
+        oscSynth.noteOn(n.note, n.vel, t0 + n.t * bd, key, osc);
+        oscSynth.noteOff(n.note, false, t0 + (n.t + n.len) * bd, key);
+        continue;
+      }
       engine.noteOn(n.note, n.vel, t0 + n.t * bd, key, patch, out);
       const v = engine.voices.get(key);
       engine.noteOff(n.note, false, t0 + (n.t + n.len) * bd, key);
@@ -269,7 +328,7 @@ export function previewGen() {
   const end = d.pat;
   previewT0 = engine.ctx.currentTime + 0.05;
   previewEnd = previewT0 + end * 60 / state.bpm + 0.3;
-  playNotes(d.seq.filter(n => n.t < end).map(n => ({ ...n, len: Math.min(n.len, end - n.t) })), g.tab === 'lead' ? leadPreset() : genPreset());
+  playNotes(d.seq.filter(n => n.t < end).map(n => ({ ...n, len: Math.min(n.len, end - n.t) })), tabSound(g.tab));
 }
 
 // ---- Fenêtre ----
@@ -297,8 +356,8 @@ function select(obj, key, options, cast = v => v) {
   el.addEventListener('change', () => { obj()[key] = cast(el.value); onGenChange(); });
   return el;
 }
-// Presets des familles proposées, ou le preset joué au clavier.
-function soundSelect(obj, families) {
+// Presets des familles proposées, ou le preset joué au clavier ; osc : presets de ce type du synthé à oscillateurs.
+function soundSelect(obj, families, osc = null) {
   const el = document.createElement('select');
   el.dataset.key = 'preset';
   el.add(new Option(t('gen.current'), 'current'));
@@ -306,6 +365,12 @@ function soundSelect(obj, families) {
     const grp = document.createElement('optgroup');
     grp.label = t(`family.${f}`);
     for (const p of PRESETS.filter(p => p.family === f)) grp.appendChild(new Option(p.name, p.id));
+    el.appendChild(grp);
+  }
+  if (osc) {
+    const grp = document.createElement('optgroup');
+    grp.label = t('win.osc');
+    for (const p of OSC_PRESETS.filter(p => OSC_PRESET_CAT[p.id] === osc)) grp.appendChild(new Option(t(`osc.preset.${p.id}`), `osc:${p.id}`));
     el.appendChild(grp);
   }
   el.value = obj().preset;
@@ -318,7 +383,7 @@ export function buildGen() {
   const G = () => state.gen, L = () => state.gen.lead;
   const tabs = document.createElement('div');
   tabs.className = 'gen-tabs';
-  for (const id of ['chords', 'lead']) {
+  for (const id of GEN_TABS) {
     tabs.appendChild(button(t(`gen.tab.${id}`), () => { stopGenPreview(); state.gen.tab = id; $('#gen .gen-sugs').hidden = true; save(); renderGen(); renderGenRoll(true); })).dataset.tab = id;
   }
   // Commun : suite d'accords, mesures par accord, répétitions.
@@ -380,9 +445,36 @@ export function buildGen() {
     field(t('gen.double'), dbl),
     idea,
   );
+  // Basse.
+  const B = () => state.gen.bassline;
+  const bass = document.createElement('div');
+  bass.className = 'gen-row gen-panel';
+  bass.dataset.panel = 'bass';
+  const passing = document.createElement('input');
+  passing.type = 'checkbox';
+  passing.id = 'gen-passing';
+  passing.addEventListener('change', () => { state.gen.bassline.passing = passing.checked; onGenChange(); });
+  const bassIdea = button(t('gen.idea'), () => {
+    stopGenPreview();
+    state.gen.bassline.seed = 1 + Math.floor(Math.random() * 1e6);
+    refreshDraft('bass', true);
+    save();
+    renderGenRoll(true);
+    previewGen();
+  });
+  bassIdea.id = 'gen-bass-idea';
+  bassIdea.dataset.icon = 'wand';
+  bassIdea.title = t('gen.bassIdeaTitle');
+  bass.append(
+    field(t('gen.sound'), soundSelect(B, ['basses'], 'bass')),
+    field(t('gen.style'), select(B, 'style', BASS_STYLES.map(k => [k, t(`gen.bstyle.${k}`)]))),
+    field(t('gen.octave'), select(B, 'octave', Object.keys(BASS_OCTAVES).map(k => [k, t(`gen.boct.${k}`)]))),
+    field(t('gen.passing'), passing),
+    bassIdea,
+  );
   const actions = document.createElement('div');
   actions.className = 'gen-row gen-actions';
-  const go = button(t('gen.go'), () => (state.gen.tab === 'lead' ? generateLeadClip() : generatePads()), 'primary');
+  const go = button(t('gen.go'), () => (state.gen.tab === 'lead' ? generateLeadClip() : state.gen.tab === 'bass' ? generateBassClip() : generatePads()), 'primary');
   go.id = 'gen-go';
   go.dataset.icon = 'plus';
   const listen = button(t('gen.listen'), previewGen);
@@ -414,15 +506,20 @@ export function buildGen() {
   const sugBox = document.createElement('div');
   sugBox.className = 'gen-sugs';
   sugBox.hidden = true;
-  box.append(tabs, row1, row2, chords, lead, actions, sugBox, info, bar, wrap);
+  box.append(tabs, row1, row2, chords, lead, bass, actions, sugBox, info, bar, wrap);
   const held = new Map();
   genRoll = new PianoRoll(cv, {
     clip: () => draft(state.gen.tab),
     changed: () => { state.gen.draft[state.gen.tab].edited = true; save(); renderGenEdited(); },
-    noteOn: (n, v) => { held.set(n, true); engine.noteOn(n, v, undefined, `genroll:${n}`, presetPatch(state.gen.tab === 'lead' ? leadPreset() : genPreset())); },
-    noteOff: n => { held.delete(n); engine.noteOff(n, false, undefined, `genroll:${n}`); },
+    noteOn: (n, v) => {
+      const id = tabSound(state.gen.tab);
+      held.set(n, id?.startsWith('osc:'));
+      if (held.get(n)) oscSynth.noteOn(n, v, undefined, `genroll:${n}`, oscPresetValues(id.slice(4)) ?? oscSynth.values);
+      else engine.noteOn(n, v, undefined, `genroll:${n}`, presetPatch(id));
+    },
+    noteOff: n => { (held.get(n) ? oscSynth : engine).noteOff(n, false, undefined, `genroll:${n}`); held.delete(n); },
     playhead: () => (genPreviewing() ? (engine.ctx.currentTime - previewT0) / (60 / state.bpm) : null),
-    color: () => PALETTE[uiColor(catColor(state.gen.tab === 'lead' ? 'lead' : 'pad'))],
+    color: () => PALETTE[uiColor(catColor({ lead: 'lead', bass: 'bass' }[state.gen.tab] ?? 'pad'))],
     noteName: noteLabel,
   });
   // Raccourcis du piano roll (copier, coller, supprimer, transposer…) quand il a le focus.
@@ -523,10 +620,11 @@ export function renderGen() {
   for (const p of box.querySelectorAll('.gen-panel')) p.hidden = p.dataset.panel !== g.tab;
   box.querySelector('#gen-prog').value = g.prog;
   for (const p of box.querySelectorAll('.gen-panel, .gen-row')) {
-    const obj = p.dataset.panel === 'lead' ? g.lead : g;
+    const obj = p.dataset.panel === 'lead' ? g.lead : p.dataset.panel === 'bass' ? g.bassline : g;
     for (const s of p.querySelectorAll(':scope > label > select')) s.value = obj[s.dataset.key];
   }
   box.querySelector('#gen-double').checked = g.lead.double;
+  box.querySelector('#gen-passing').checked = g.bassline.passing;
   renderGenInfo();
 }
 

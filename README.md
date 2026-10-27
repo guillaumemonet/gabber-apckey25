@@ -22,7 +22,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Piano roll**: edit the notes of the synth blocks (pitch, length, velocity, copy / paste, quantize, step input from the APC keyboard);
   - **Kick designer**: build your own distorted kick from 12 knobs and 12 presets, or in expert mode layer by layer (click, body, tail with deboom), tune its tail to the key of the song, make it play a kick melody in the piano roll, then send it to a pad or the library;
   - **Effect designer**: draw the curve of an effect (volume, filters, pan, saturation, sends) over 1, 2 or 4 beats and put it on any track;
-  - **Generator**: anthem chords and melody from a chord progression, with suggestions that learn your taste;
+  - **Generator**: anthem chords, melody and bass line (offbeat, rolling, hardstyle reverse bass, acid…) from a chord progression, with suggestions that learn your taste;
   - **Breizh generator**: tunes in the style of Breton pipers (an dro, gavotte, march, gwerz) played by the bombarde, the biniou, the bagpipe, a pair of pipers or a bagad, with grace notes and drones;
   - **Pitch correction**: a vocal take put in tune on a key (the Generator one) or on the melody of a lead, from the robotic effect to natural correction (retune speed, humanize, formant, mix), consonants and breaths untouched;
   - **Build-up designer**: the build-up before a drop in one click: noise riser, uplifter, snare roll getting tighter, kick roll, sub drop and impact, rising filter and silence before the drop;
@@ -73,7 +73,7 @@ The complete guide is in [docs/manual](docs/manual/README.md); every window in t
 3. **[Pads and banks](docs/manual/pads.md)**: Banks, Tempo and loops, Break slicer
 4. **[Timeline, library and piano roll](docs/manual/timeline.md)**: Timeline and sound library, Automation, Markers, Track effects, Freeze a track, Piano roll, Demo
 5. **[Instruments](docs/manual/instruments.md)**: TR-909, TR-808, Step sequencer, TB-303, Synth, Oscillator synth, Kick designer
-6. **[Generator: chords and melody](docs/manual/generator.md)**
+6. **[Generator: chords, melody and bass](docs/manual/generator.md)**
 7. **[Mixing and effects](docs/manual/mixing.md)**: Effect designer, Mixer, Buses, Master chain and loudness, Patch
 8. **[Live: turntables, scenes, visualizer](docs/manual/live.md)**: Turntables, Clip launcher, Scenes, Visualizer, Plugin windows
 9. **[Files and recording](docs/manual/files.md)**: Saving and opening, Recording and kits, MIDI files, Tracker modules, Audio input (microphone, sound card)

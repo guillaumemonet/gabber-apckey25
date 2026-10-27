@@ -9,7 +9,7 @@ Le mode d'emploi complet, chapitre par chapitre. Chaque fenêtre de l'applicatio
 3. **[Pads et banques](pads.md)** : Banques, Tempo et boucles, Découpeur de breaks
 4. **[Timeline, bibliothèque et piano roll](timeline.md)** : Timeline et bibliothèque de sons, Automation, Marqueurs, Effets de piste, Geler une piste, Correction de justesse, Piano roll, Démo
 5. **[Instruments](instruments.md)** : TR-909, TR-808, Séquenceur pas à pas, TB-303, Synthé, Synthé à oscillateurs, Designer de kick
-6. **[Générateur : accords, mélodie et voix](generateur.md)**
+6. **[Générateur : accords, mélodie, basse et voix](generateur.md)**
 7. **[Mixage et effets](mixage.md)** : Designer d'effet, Table de mixage, Bus, Chaîne master et sonie, Câblage
 8. **[Live : platines, scènes, visualiseur](live.md)** : Platines, Lanceur de clips, Scènes, Visualiseur, Fenêtres des plugins
 9. **[Fichiers et enregistrement](fichiers.md)** : Enregistrer et ouvrir, Enregistrement et kits, Fichiers MIDI, Modules de tracker, Entrée audio (micro, carte son)

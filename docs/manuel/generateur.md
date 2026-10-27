@@ -1,17 +1,17 @@
-# Générateur : accords et mélodie
+# Générateur : accords, mélodie et basse
 
 ← [Instruments](instruments.md) · [Sommaire](README.md) · [Mixage et effets](mixage.md) →
 
 [![Fenêtre Générateur, onglet Mélodie : réglages de la mélodie et son brouillon dans le piano roll](../screenshots/gen-fr.png)](../screenshots/gen-fr.png)
 
-La fenêtre **Générateur** (barre des plugins, groupe Outils) part d'une suite d'accords et pose sur la timeline, au choix (deux onglets), des **blocs d'accords** (cordes, nappes, chœurs…) ou une **mélodie (lead)** qui suit ces accords.
+La fenêtre **Générateur** (barre des plugins, groupe Outils) part d'une suite d'accords et pose sur la timeline, au choix (trois onglets), des **blocs d'accords** (cordes, nappes, chœurs…), une **mélodie (lead)** ou une **ligne de basse** qui suivent ces accords.
 
 **Accords**
 
 - **Suite d'accords** : tapez les accords séparés par des espaces ou des tirets (`Fm Db Eb Cm`, `Fm-Bbm-Db-C`…), ou cliquez sur une suite toute prête. Reconnus : majeur (`Db`), mineur (`Fm`), `7`, `m7`, `maj7`, `sus2`, `sus4`, `dim`, `aug`, `5`, `add9`, avec `#` / `b`.
 - **Son** : le preset du synthé en cours, ou un preset parmi les familles cordes, nappes, chœurs, supersaw, stabs ou claviers. Chaque bloc garde **son propre preset** : vous pouvez jouer autre chose au clavier, ou changer de preset, sans changer les nappes.
 - **Registre** (grave, médium, aigu), **mesures par accord** (1, 2 ou 4), **répétitions** (×1, ×2, ×4), **rythme** (tenu, chaque temps, contretemps, croches).
-- **Basse** : aucune, sub (tenue), hardcore en contretemps ou reese (tenue), sur la fondamentale de chaque accord, sur une deuxième piste.
+- **Basse** : aucune, sub (tenue), hardcore en contretemps ou reese (tenue), sur la fondamentale de chaque accord, sur une deuxième piste. Pour une vraie ligne de basse, utilisez l'onglet **Basse**.
 - Les accords s'enchaînent en douceur : les notes communes sont gardées et les autres bougent le moins possible.
 - **▶ Écouter** joue le premier accord ; **Générer** pose les blocs à partir de la mesure de la tête de lecture, sur la première piste libre sur toute la durée, en partant de la piste armée. La timeline s'allonge si besoin.
 
@@ -24,6 +24,21 @@ Un bloc d'accord se manipule comme les autres : le déplacer, l'allonger, le cop
 - **Son** (supersaw, leads, hoovers, stabs ou le preset du synthé en cours), **densité** (aérée, moyenne, dense), **registre** (médium, aigu), **doublée à l'octave**.
 - **Nouvelle idée** tire une autre mélodie et la fait écouter ; **Écouter** joue exactement ce que **Générer** posera (un deuxième clic arrête).
 - La mélodie est posée en **un seul bloc de notes**, répété sur toute la durée : double-cliquez dessus pour la retoucher note par note dans le piano roll.
+
+**Basse**
+
+- Même **suite d'accords**, mêmes **mesures par accord** et **répétitions** : la ligne suit l'harmonie, la fondamentale de chaque accord sur ses temps forts.
+- **Style**, dans les rythmes des styles hardcore :
+  - **Sub tenu** : la fondamentale tenue sur tout l'accord (breaks d'hymne, nappes de basse) ;
+  - **Contretemps** : une croche entre les temps, quand le kick ne joue pas (rave, early hardcore, frenchcore) ;
+  - **Roulante** : trois doubles croches entre les temps (rave, hard trance) ;
+  - **Reverse bass** : les deux doubles croches après le contretemps, la basse « ta-ka » de la hardstyle ;
+  - **Octaves** : croches fondamentale / octave (happy hardcore) ;
+  - **Marche** : fondamentale, quinte et octave en croches, parfois la tierce (rave) ;
+  - **Acid** : doubles croches façon TB-303, avec silences, sauts d'octave, accents et glissés (avec le preset Acid bass du synthé à oscillateurs, les notes qui se chevauchent glissent).
+- **Son** : les basses du synthé (Bass, Reese, Sub) ou celles du **synthé à oscillateurs** (Reese, Acid bass, Sub, Wobble), ou le preset en cours. **Octave** : grave (fondamentale entre fa1 et mi2) ou médium (une octave plus haut).
+- **Note de passage** : sur le dernier contretemps de chaque accord, une note qui mène à l'accord suivant (un demi-ton ou un ton sous ou sur sa fondamentale, dans la tonalité).
+- **Idée** tire une autre variante des styles Marche et Acid et la fait écouter. Comme la mélodie, la basse est posée en **un seul bloc de notes** répété, à retoucher dans le piano roll.
 
 **Modifier les notes avant de les poser**
 

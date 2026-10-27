@@ -537,7 +537,7 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .sc-meter { width: 60px; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
 .sc-meter i { display: block; height: 100%; width: 0; background: var(--accent-2); }
 .gen { display: flex; flex-direction: column; gap: 10px; font-size: 12px; }
-.gen-tabs { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.gen-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
 .gen-tabs button { border: none; border-radius: 0; padding: 6px; font-weight: 600; background: transparent; }
 .gen-tabs button + button { border-left: 1px solid var(--line); }
 .gen-tabs button.active { background: var(--accent-2); color: #000; }

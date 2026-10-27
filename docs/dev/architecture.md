@@ -4,7 +4,7 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 
 ## Deux couches
 
-- **Les moteurs** (`js/*.js`) : le son et les données, sans interface. Chacun est autonome et ne connaît pas les autres : `audio.js` (synthé, sampler, effets du master), `timeline.js` (lecture des pistes), `drummachine.js` (socle des boîtes à rythmes et du séquenceur : horloge des pas, distorsion, kits), `tr909.js`, `tr808.js`, `stepseq.js`, `slicer.js`, `tracker.js` (lecture et rejeu des modules .mod / .xm), `sampler.js` (instrument échantillon : un pad joué en notes), `acid.js`, `decks.js`, `mixer.js`, `trackfx.js`, `osc.js`, etc.
+- **Les moteurs** (`js/*.js`) : le son et les données, sans interface. Chacun est autonome et ne connaît pas les autres : `audio.js` (synthé, sampler, effets du master), `timeline.js` (lecture des pistes), `drummachine.js` (socle des boîtes à rythmes et du séquenceur : horloge des pas, distorsion, kits), `tr909.js`, `tr808.js`, `stepseq.js`, `slicer.js`, `bassline.js` (lignes de basse du générateur), `tracker.js` (lecture et rejeu des modules .mod / .xm), `sampler.js` (instrument échantillon : un pad joué en notes), `acid.js`, `decks.js`, `mixer.js`, `trackfx.js`, `osc.js`, etc.
 - **L'application** (`js/main.js` et `js/app/*.js`) : l'interface, le contrôleur APC et les liaisons entre les moteurs. Un module par domaine.
 
 `js/main.js` est le point d'entrée : au clic sur « Démarrer », il crée les moteurs, les relie (table de mixage, sidechain, câblage), puis construit chaque fenêtre.

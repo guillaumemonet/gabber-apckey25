@@ -1,17 +1,17 @@
-# Generator: chords and melody
+# Generator: chords, melody and bass
 
 ← [Instruments](instruments.md) · [Contents](README.md) · [Mixing and effects](mixing.md) →
 
 [![Generator window, Melody tab: the melody settings and its draft in the piano roll](../screenshots/gen-en.png)](../screenshots/gen-en.png)
 
-The **Generator** window (plugin bar, Tools group) starts from a chord progression and lays on the timeline, in two tabs, either **chord blocks** (strings, pads, choirs…) or a **melody (lead)** that follows those chords.
+The **Generator** window (plugin bar, Tools group) starts from a chord progression and lays on the timeline, in three tabs, **chord blocks** (strings, pads, choirs…), a **melody (lead)** or a **bass line** that follow those chords.
 
 **Chords**
 
 - **Progression**: type the chords separated by spaces or dashes (`Fm Db Eb Cm`, `Fm-Bbm-Db-C`…), or click a ready-made one. Recognised: major (`Db`), minor (`Fm`), `7`, `m7`, `maj7`, `sus2`, `sus4`, `dim`, `aug`, `5`, `add9`, with `#` / `b`.
 - **Sound**: the current synth preset, or a preset from the strings, pads, choirs, supersaw, stabs or keys families. Each block keeps **its own preset**: you can play something else on the keyboard, or change preset, without changing the pads.
 - **Register** (low, middle, high), **bars per chord** (1, 2 or 4), **repeat** (×1, ×2, ×4), **rhythm** (held, every beat, offbeat, 8th notes).
-- **Bass**: none, sub (held), hardcore offbeat or reese (held), on the root of each chord, on a second track.
+- **Bass**: none, sub (held), hardcore offbeat or reese (held), on the root of each chord, on a second track. For a real bass line, use the **Bass** tab.
 - The chords follow each other with smooth **voice leading**: common notes are kept and the others move as little as possible.
 - **▶ Listen** plays the first chord; **Generate** places the blocks from the playhead's bar, on the first track that is free for the whole length, starting from the armed track. The timeline grows if needed.
 
@@ -24,6 +24,21 @@ A chord block works like any other block: move it, lengthen it, copy it (Alt), o
 - **Sound** (supersaw, leads, hoovers, stabs or the current synth preset), **density** (sparse, medium, dense), **register** (middle, high), **octave doubling**.
 - **New idea** draws another melody and plays it; **Listen** plays exactly what **Generate** will lay down (click again to stop).
 - The melody is laid as **a single note block**, repeated over the whole length: double-click it to edit it note by note in the piano roll.
+
+**Bass**
+
+- Same **chord progression**, **bars per chord** and **repeats**: the line follows the harmony, with the root of each chord on its strong beats.
+- **Style**, in the rhythms of the hardcore styles:
+  - **Held sub**: the root held over the whole chord (anthem breaks, bass pads);
+  - **Offbeat**: an 8th note between the beats, where the kick does not play (rave, early hardcore, frenchcore);
+  - **Rolling**: three 16th notes between the beats (rave, hard trance);
+  - **Reverse bass**: the two 16th notes after the offbeat, the "ta-ka" bass of hardstyle;
+  - **Octaves**: 8th notes root / octave (happy hardcore);
+  - **Walk**: root, fifth and octave in 8th notes, sometimes the third (rave);
+  - **Acid**: TB-303-style 16th notes, with rests, octave jumps, accents and slides (with the Acid bass preset of the oscillator synth, overlapping notes glide).
+- **Sound**: the basses of the synth (Bass, Reese, Sub) or those of the **oscillator synth** (Reese, Acid bass, Sub, Wobble), or the current preset. **Octave**: low (root between F1 and E2) or middle (one octave higher).
+- **Passing note**: on the last offbeat of each chord, a note leading to the next chord (a semitone or a tone below or above its root, in the key).
+- **Idea** draws another variation of the Walk and Acid styles and plays it. Like the melody, the bass is laid as **a single note block**, repeated, to edit in the piano roll.
 
 **Editing the notes before laying them**
 
