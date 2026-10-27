@@ -57,7 +57,7 @@ The header shows **1 device connected** with a green dot once the controller is 
 3. **Fill in** (all ticked by default):
    - **Kick**: a kick melody (one kick per beat, on the roots of the chords) in the intro, drops and outro;
    - **Drums**: hats and claps from the "Anthem drums" or "Early hardcore" banks, a crash at the start of each drop;
-   - **Bass**: the bass generator line in the drops (the anthem sub in the breaks); no bass for the styles where the kick tail is the bass;
+   - **Bass**: the bass generator line in the drops (the anthem sub in the breaks); for the styles where the kick tail is the bass, the box is unticked: tick it to add an offbeat bass in the drops anyway;
    - **Chords**: build-ups, drops and breaks;
    - **Lead**: drops, and a sparser version in the breaks;
    - **Build-ups**: the **build-up designer** right before each drop (rising noise and tone, snare and kick rolls, sub drop, impact, rising filter on the other tracks, silence before the drop).

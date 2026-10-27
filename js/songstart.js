@@ -9,7 +9,8 @@ export const MAX_SECTIONS = 16;
 /**
  * Styles. kick : preset du designer de kick ; drums : kit (banque de la bibliothèque), charleston (off = contretemps,
  * 8 = croches, 16 = doubles croches), clap (24 = temps 2 et 4, 4 = temps 4), ride sur les temps ; bass : style du
- * générateur de basse, son et parties où elle joue (null : la queue du kick fait la basse) ; chords : son et rythme
+ * générateur de basse, son et parties où elle joue (null : la queue du kick fait la basse, case Basse décochée ;
+ * cochée, KICK_BASS) ; chords : son et rythme
  * du générateur ; lead : son, style et densité de la mélodie (breizh : l'air du Breizh generator).
  */
 export const STYLES = {
@@ -59,7 +60,10 @@ const PLAYS = {
   chords: ['build', 'drop', 'break'],
   lead: ['drop', 'break'],
 };
-export const plays = (part, type, style) => (part === 'bass' ? !!style.bass?.in.includes(type) : !!PLAYS[part]?.includes(type));
+// Basse ajoutée à un style où le kick fait la basse : contretemps dans les drops, entre les kicks.
+export const KICK_BASS = { style: 'offbeat', preset: 'bass', in: ['drop'] };
+export const styleBass = style => style.bass ?? KICK_BASS;
+export const plays = (part, type, style) => (part === 'bass' ? styleBass(style).in.includes(type) : !!PLAYS[part]?.includes(type));
 
 export const defaultStart = () => ({ style: 'anthem', bpm: STYLES.anthem.bpm, prog: STYLES.anthem.prog, plan: 'club', sections: PLANS.club.map(([type, bars]) => ({ type, bars })),
   parts: Object.fromEntries(START_PARTS.map(p => [p, true])) });

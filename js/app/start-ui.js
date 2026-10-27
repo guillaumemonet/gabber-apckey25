@@ -8,7 +8,7 @@ import { t } from '../i18n.js';
 import { KICK_PRESETS, kickDefaults, kickTailNote } from '../kickdesign.js';
 import { prepareKickClips } from '../kicksynth.js';
 import { catColor } from '../library.js';
-import { DRUM_KITS, MAX_SECTIONS, PLANS, PLAN_IDS, SECTION_BARS, SECTION_TYPES, START_PARTS, STYLES, STYLE_IDS, drumHits, kickLine, layoutSections, plays } from '../songstart.js';
+import { DRUM_KITS, MAX_SECTIONS, PLANS, PLAN_IDS, SECTION_BARS, SECTION_TYPES, START_PARTS, STYLES, STYLE_IDS, drumHits, kickLine, layoutSections, plays, styleBass } from '../songstart.js';
 import { BEATS_PER_BAR, newTrack } from '../timeline.js';
 import { breizhDraft, breizhParts, refreshBreizh, renderBreizh } from './breizh-ui.js';
 import { generateBuildup } from './buildup-ui.js';
@@ -34,6 +34,7 @@ const style = () => STYLES[state.start.style];
 export function setStartStyle(id) {
   if (!(id in STYLES)) return;
   Object.assign(state.start, { style: id, bpm: STYLES[id].bpm, prog: STYLES[id].prog });
+  state.start.parts.bass = !!STYLES[id].bass;   // décochée quand le kick fait la basse
   save();
   renderStart();
 }
@@ -95,7 +96,8 @@ async function fillSong() {
   const g = state.gen;
   Object.assign(g, { prog: st.prog, bars: 2, preset: sty.chords.preset, rhythm: sty.chords.rhythm, register: 'mid' });
   if (!sty.lead.breizh) Object.assign(g.lead, { preset: sty.lead.preset, style: sty.lead.style, density: sty.lead.density });
-  if (sty.bass) Object.assign(g.bassline, { style: sty.bass.style, preset: sty.bass.preset });
+  const bass = styleBass(sty);
+  Object.assign(g.bassline, { style: bass.style, preset: bass.preset });
   for (const tab of ['chords', 'lead', 'bass']) refreshDraft(tab, true);
   state.kick.params = { ...kickDefaults(), ...KICK_PRESETS[sty.kick] };
   state.kick.preset = sty.kick;
@@ -105,7 +107,7 @@ async function fillSong() {
   }
 
   // Timeline neuve : pistes des parties cochées, puis pistes libres pour les montées.
-  const parts = START_PARTS.filter(p => st.parts[p] && p !== 'buildups' && (p !== 'bass' || sty.bass));
+  const parts = START_PARTS.filter(p => st.parts[p] && p !== 'buildups');
   state.tl.tracks = Array.from({ length: parts.length + BUILDUP_TRACKS }, () => newTrack());
   parts.forEach((p, i) => { state.tl.tracks[i].name = t(`start.track.${p}`); });
   state.tl.tracks[0].arm = true;
@@ -120,7 +122,7 @@ async function fillSong() {
   // Passage de la suite : 2 mesures par accord.
   const phrase = chords.length * 2 * BEATS_PER_BAR;
   const kickSeq = kickLine(chords, 2 * BEATS_PER_BAR, kickTailNote(state.kick.params));
-  const chordNotes = chordsSeq(chords), bassNotes = sty.bass ? bassSeq(chords) : [];
+  const chordNotes = chordsSeq(chords), bassNotes = st.parts.bass ? bassSeq(chords) : [];
   const leadOf = density => {
     if (sty.lead.breizh) {
       const d = breizhDraft(), p = breizhParts()[0];
@@ -147,7 +149,7 @@ async function fillSong() {
       if (!plays(p, sec.type, sty)) return;
       if (p === 'kick') note(track, sec, { seq: kickSeq.map(n => ({ ...n })), pat: phrase, kick: { ...state.kick.params }, kickSrc: `p:${sty.kick}`, name: t('kick.melodyName'), cat: 'kick', color: catColor('kick') });
       else if (p === 'chords') note(track, sec, { seq: chordNotes.map(n => ({ ...n })), pat: phrase, preset: sty.chords.preset, name: st.prog.slice(0, 32), cat: 'pad', color: catColor('pad') });
-      else if (p === 'bass') note(track, sec, { seq: bassNotes.map(n => ({ ...n })), pat: phrase, ...soundFields(sty.bass.preset), gain: BASS_GAIN, name: t(`gen.bstyle.${sty.bass.style}`), cat: 'bass', color: catColor('bass') });
+      else if (p === 'bass') note(track, sec, { seq: bassNotes.map(n => ({ ...n })), pat: phrase, ...soundFields(bass.preset), gain: BASS_GAIN, name: t(`gen.bstyle.${bass.style}`), cat: 'bass', color: catColor('bass') });
       else if (p === 'lead') {
         const l = leads[sec.type === 'break' ? 'break' : 'drop'];
         note(track, sec, { seq: l.seq.map(n => ({ ...n })), pat: l.pat, preset: l.preset, ...(l.tune ? { tune: l.tune } : {}), name: l.name, cat: 'lead', color: catColor('lead') });
@@ -281,10 +283,8 @@ export function renderStart() {
   box.querySelector('.start-sections').replaceChildren(...st.sections.map(sectionRow));
   box.querySelector('#start-add').disabled = st.sections.length >= MAX_SECTIONS;
   for (const c of box.querySelectorAll('.start-parts input')) {
-    const noBass = c.dataset.part === 'bass' && !style().bass;
-    c.checked = st.parts[c.dataset.part] && !noBass;
-    c.disabled = noBass;
-    c.parentElement.title = noBass ? t('start.noBass') : '';
+    c.checked = st.parts[c.dataset.part];
+    c.parentElement.title = c.dataset.part === 'bass' && !style().bass ? t('start.addBass') : '';
   }
   renderStartInfo();
 }

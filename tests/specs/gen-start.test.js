@@ -68,7 +68,9 @@ export default async function (t, A) {
   // Style où le kick fait la basse ; Breizhcore sans montées.
   pick('#start-style', 'gabber');
   const bassBox = box.querySelector('.start-parts input[data-part="bass"]');
-  t.ok(bassBox.disabled && !bassBox.checked, 'Gabber : pas de basse (le kick fait la basse)');
+  t.ok(!bassBox.disabled && !bassBox.checked, 'Gabber : basse décochée (le kick fait la basse), mais cochable');
+  bassBox.checked = true; bassBox.dispatchEvent(new Event('change'));
+  t.ok(S.start.parts.bass, 'basse ajoutée quand même');
   pick('#start-style', 'breizhcore');
   const bu = box.querySelector('.start-parts input[data-part="buildups"]');
   bu.checked = false; bu.dispatchEvent(new Event('change'));

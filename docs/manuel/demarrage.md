@@ -57,7 +57,7 @@ L'en-tête affiche **1 appareil branché** avec un point vert quand le contrôle
 3. **Remplir** (tout coché par défaut) :
    - **Kick** : une mélodie de kick (un kick par temps, sur les fondamentales des accords) dans l'intro, les drops et l'outro ;
    - **Batterie** : charleston et clap des banques « Anthem drums » ou « Early hardcore », crash au début de chaque drop ;
-   - **Basse** : la ligne du générateur de basse dans les drops (le sub de l'anthem dans les breaks) ; pas de basse pour les styles où la queue du kick la fait ;
+   - **Basse** : la ligne du générateur de basse dans les drops (le sub de l'anthem dans les breaks) ; pour les styles où la queue du kick fait la basse, la case est décochée : cochez-la pour ajouter quand même une basse en contretemps dans les drops ;
    - **Accords** : montées, drops et breaks ;
    - **Lead** : drops, et une version plus aérée dans les breaks ;
    - **Montées** : le **designer de montée** juste avant chaque drop (bruit et note qui montent, roulement de caisse claire et de kick, sub drop, impact, filtre qui monte sur les autres pistes, silence avant le drop).
