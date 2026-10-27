@@ -4,7 +4,7 @@ Le mode d'emploi complet, chapitre par chapitre. Chaque fenêtre de l'applicatio
 
 [English manual](../manual/README.md) · [Retour au projet](../../README.fr.md)
 
-1. **[Premiers pas](demarrage.md)** : Prérequis, Installation, Lancement, Nouveau morceau, Langue, Compatibilité matérielle
+1. **[Premiers pas](demarrage.md)** : Prérequis, Installation, Lancement, Nouveau morceau, Compositeur IA, Langue, Compatibilité matérielle
 2. **[Le contrôleur APC Key 25](apc.md)** : Commandes sur l'APC, Potentiomètres, Effets de performance, Autres claviers MIDI et MIDI learn
 3. **[Pads et banques](pads.md)** : Banques, Tempo et boucles, Découpeur de breaks
 4. **[Timeline, bibliothèque et piano roll](timeline.md)** : Timeline et bibliothèque de sons, Automation, Marqueurs, Effets de piste, Geler une piste, Correction de justesse, Piano roll, Démo

@@ -2,7 +2,7 @@
 
 [Sommaire](README.md) · [Le contrôleur APC Key 25](apc.md) →
 
-Ce qu'il faut, l'installation, le lancement, un premier morceau en quelques secondes et la langue de l'interface.
+Ce qu'il faut, l'installation, le lancement, un premier morceau en quelques secondes, le compositeur IA et la langue de l'interface.
 
 ## Prérequis
 
@@ -64,6 +64,42 @@ L'en-tête affiche **1 appareil branché** avec un point vert quand le contrôle
 4. **Créer le morceau** remplace la timeline (après confirmation ; **Ctrl+Z** la ramène en une fois) : une piste nommée par élément, un bloc par partie, un **repère** au début de chaque partie. Le **Générateur**, le **designer de kick** et le **synthé du clavier** prennent les réglages du style : régénérez une mélodie ou une ligne de basse, changez de kick, tout se retouche ensuite comme d'habitude.
 
 [![Le morceau créé dans la timeline : pistes nommées, mélodie de kick, batterie, accords, lead, éléments de la montée avant le drop, repère de chaque partie](../screenshots/start-song-fr.png)](../screenshots/start-song-fr.png)
+
+## Compositeur IA (optionnel)
+
+**Compositeur IA** (barre des plugins, groupe Outils) compose un morceau à partir d'une demande en quelques mots, par exemple « frenchcore sombre à 200 BPM, un long break mélancolique aux cordes, un kick très saturé ». Un modèle de langage qui tourne **sur votre ordinateur** écrit un **plan de morceau** avec les outils du studio : style, tempo, suite d'accords, réglages du kick, batterie, basse, sons, parties et ce qui joue dans chacune. Rien n'est envoyé sur Internet.
+
+[![Fenêtre Compositeur IA : la demande, puis le plan proposé avec ses parties, ses sons et les boutons Modifier, Autre version et Créer le morceau](../screenshots/ai-fr.png)](../screenshots/ai-fr.png)
+
+### Installer le serveur IA
+
+Le serveur IA est un conteneur Docker, à installer une seule fois. GabberKey fonctionne sans lui : seule cette fenêtre en a besoin.
+
+1. Installez [Docker Desktop](https://www.docker.com/products/docker-desktop/). Avec une carte graphique NVIDIA, installez aussi son pilote à jour : Docker l'utilise directement.
+2. Dans le dossier de GabberKey, lancez :
+
+   ```
+   docker compose -f ai/docker-compose.yml up -d
+   ```
+
+   Le premier lancement télécharge le serveur (environ 2 Go) et le modèle (`qwen2.5:7b`, environ 4,7 Go, licence Apache 2.0). Le serveur redémarre ensuite tout seul avec Docker.
+3. Sans carte graphique NVIDIA, le modèle tourne sur le processeur, plus lentement (une à deux minutes par plan) :
+
+   ```
+   docker compose -f ai/docker-compose.yml -f ai/docker-compose.cpu.yml up -d
+   ```
+
+Avec une carte graphique de 8 Go, un plan arrive en 3 à 10 secondes (la toute première demande charge le modèle et prend plus de temps). Pour arrêter le serveur : `docker compose -f ai/docker-compose.yml down` ; pour supprimer aussi le modèle téléchargé : ajoutez `-v`.
+
+### Composer
+
+1. **Serveur IA** et **Modèle** : `http://localhost:11434` et `qwen2.5:7b` par défaut. **Tester** vérifie que le serveur répond et que le modèle est là. Un autre modèle de la bibliothèque Ollama peut être utilisé : téléchargez-le avec `docker exec gabberkey-ai-ollama-1 ollama pull <modèle>`, puis tapez son nom.
+2. **Votre demande**, un **Style** si vous voulez l'imposer, puis **Composer**. L'avancement s'affiche ; **Arrêter** abandonne la demande.
+3. Le plan est **vérifié** avant d'être montré : une valeur que le studio ne connaît pas est remplacée par celle du style (le nombre est indiqué, le détail au survol), un morceau sans drop en reçoit un, et la basse ne joue pas dans les styles où la queue du kick la fait, sauf si la demande en veut une. Le résumé donne le style, le tempo, les accords, la durée, les sons et chaque partie avec ce qui y joue.
+4. **Modifier** : décrivez le changement avec vos mots (« un break plus long », « pas de basse dans le premier drop », « plus rapide ») ; l'IA renvoie le plan modifié. **Autre version** redemande le même morceau.
+5. **Créer le morceau** le construit comme [Nouveau morceau](#nouveau-morceau--démarrer-par-un-style) : la timeline est remplacée (**Ctrl+Z** la ramène), le générateur, le designer de kick et le synthé du clavier prennent les réglages du plan.
+
+La mélodie et la ligne de basse sont écrites par les générateurs du studio, dans le style et la densité choisis par l'IA, et changent à chaque version. Le modèle est petit : il lui arrive d'oublier une montée ou de mal comprendre une demande. Le plan reste un point de départ, à retoucher comme n'importe quel morceau.
 
 ## Langue
 

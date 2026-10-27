@@ -1,0 +1,5 @@
+# Sans carte graphique NVIDIA : le modèle tourne sur le processeur (une composition prend alors une à deux minutes).
+#   docker compose -f ai/docker-compose.yml -f ai/docker-compose.cpu.yml up -d
+services:
+  ollama:
+    deploy: !reset {}

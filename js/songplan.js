@@ -170,9 +170,10 @@ export const calmNotes = seq => {
 
 /**
  * Schéma JSON d'un plan (pour la sortie structurée d'un modèle de langage) : les valeurs possibles viennent des
- * listes de l'application. extraSounds : sons acceptés en plus (presets personnels).
+ * listes de l'application. extraSounds : sons acceptés en plus (presets personnels) ; notes : false = sans les notes
+ * du lead ; required : champs obligatoires.
  */
-export function planSchema(extraSounds = []) {
+export function planSchema(extraSounds = [], { notes = true, required = ['style', 'bpm', 'prog', 'sections'] } = {}) {
   const sounds = [...SYNTH_IDS, ...extraSounds];
   const e = list => ({ type: 'string', enum: [...list] });
   const note = { type: 'object', properties: { t: { type: 'number' }, len: { type: 'number' }, note: { type: 'integer' }, vel: { type: 'number' } }, required: ['t', 'len', 'note'] };
@@ -183,11 +184,11 @@ export function planSchema(extraSounds = []) {
       style: e(Object.keys(STYLES)),
       bpm: { type: 'integer', minimum: PLAN_LIMITS.bpm[0], maximum: PLAN_LIMITS.bpm[1] },
       prog: { type: 'string' },
-      kick: { type: 'object', properties: { preset: e(Object.keys(KICK_PRESETS)), params: { type: 'object', properties: Object.fromEntries(KICK_PARAMS.map(id => [id, { type: 'number', minimum: 0, maximum: 1 }])) } }, required: ['preset'] },
+      kick: { type: 'object', properties: { preset: e(Object.keys(KICK_PRESETS)), params: { type: 'object', properties: Object.fromEntries(KICK_PARAMS.map(id => [id, { type: 'number', minimum: 0, maximum: 1 }])) } } },
       drums: { type: 'object', properties: { kit: e(Object.keys(DRUM_KITS)), hat: e(DRUM_HATS), clap: e(DRUM_CLAPS), ride: { type: 'boolean' } } },
       bass: { type: 'object', properties: { style: e(BASS_STYLES), sound: e([...sounds, ...BASS_OSC]), octave: e(Object.keys(BASS_OCTAVES)) } },
       chords: { type: 'object', properties: { sound: e(sounds), rhythm: e(CHORD_RHYTHMS), register: e(CHORD_REGISTERS) } },
-      lead: { type: 'object', properties: { sound: e(sounds), style: e(LEAD_STYLES), density: e(LEAD_DENSITIES), register: e(Object.keys(LEAD_REGISTERS)), notes: { type: 'array', items: note } } },
+      lead: { type: 'object', properties: { sound: e(sounds), style: e(LEAD_STYLES), density: e(LEAD_DENSITIES), register: e(Object.keys(LEAD_REGISTERS)), ...(notes ? { notes: { type: 'array', items: note } } : {}) } },
       buildups: { type: 'boolean' },
       sections: {
         type: 'array', minItems: 1, maxItems: PLAN_LIMITS.sections,
@@ -195,6 +196,6 @@ export function planSchema(extraSounds = []) {
           play: { type: 'array', items: e(PLAN_PARTS) }, name: { type: 'string' }, prog: { type: 'string' }, lead: e(LEAD_MOODS) }, required: ['type', 'bars', 'play'] },
       },
     },
-    required: ['style', 'bpm', 'prog', 'sections'],
+    required,
   };
 }

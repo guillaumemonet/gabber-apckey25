@@ -106,6 +106,7 @@ export const state = {
   devices: {},                        // instrument associé à chaque appareil : { nom: { inst } } (js/app/devices.js)
   bankNames: [],                      // noms des 25 banques de pads ('' = automatique) (js/app/banks-ui.js)
   buildup: null,                      // designer de montée (js/buildup.js, js/app/buildup-ui.js)
+  ai: null,                           // compositeur IA : serveur, modèle, demande (js/aicompose.js, js/app/ai-ui.js)
   start: null,                        // fenêtre Nouveau morceau : style, plan, parties (js/songstart.js, js/app/start-ui.js)
   toolPresets: {},                    // presets des générateurs : { outil: [{ id, name, data }] } (js/app/tool-presets.js)
   midiClock: { out: '', in: '' },     // horloge MIDI : sortie qui la reçoit, entrée suivie (noms des ports)

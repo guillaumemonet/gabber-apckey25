@@ -65,6 +65,42 @@ The header shows **1 device connected** with a green dot once the controller is 
 
 [![The song created in the timeline: named tracks, kick melody, drums, chords, lead, build-up elements before the drop, markers for each part](../screenshots/start-song-en.png)](../screenshots/start-song-en.png)
 
+## AI composer (optional)
+
+**AI composer** (plugin bar, Tools group) composes a song from a request in a few words, for example "dark frenchcore at 200 BPM, a long melancholic break with strings, a very distorted kick". A language model running **on your computer** writes a **song plan** with the tools of the studio: style, tempo, chord progression, kick settings, drums, bass, sounds, parts and what plays in each. Nothing is sent over the Internet.
+
+[![AI composer window: the request, then the proposed plan with its parts, its sounds and the Change, Another version and Create the song buttons](../screenshots/ai-en.png)](../screenshots/ai-en.png)
+
+### Installing the AI server
+
+The AI server is a Docker container, installed once. GabberKey works without it: only this window needs it.
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/). With an NVIDIA graphics card, also install its latest driver: Docker uses it directly.
+2. In the GabberKey folder, run:
+
+   ```
+   docker compose -f ai/docker-compose.yml up -d
+   ```
+
+   The first start downloads the server (about 2 GB) and the model (`qwen2.5:7b`, about 4.7 GB, Apache 2.0 license). The server then restarts by itself with Docker.
+3. Without an NVIDIA graphics card, the model runs on the processor, more slowly (one to two minutes per plan):
+
+   ```
+   docker compose -f ai/docker-compose.yml -f ai/docker-compose.cpu.yml up -d
+   ```
+
+With an 8 GB graphics card, a plan comes in 3 to 10 seconds (the very first request loads the model and takes longer). To stop the server: `docker compose -f ai/docker-compose.yml down`; to also delete the downloaded model, add `-v`.
+
+### Composing
+
+1. **AI server** and **Model**: `http://localhost:11434` and `qwen2.5:7b` by default. **Test** checks that the server answers and that the model is there. Another model of the Ollama library can be used: download it with `docker exec gabberkey-ai-ollama-1 ollama pull <model>`, then type its name.
+2. **Your request**, a **Style** if you want to impose one, then **Compose**. The progress is shown; **Stop** gives up the request.
+3. The plan is **checked** before it is shown: a value the studio does not know is replaced by the style's (the number is shown, the details on hover), a song with no drop gets one, and the bass does not play in the styles where the kick tail is the bass, unless the request wants one. The summary gives the style, tempo, chords, length, sounds and each part with what plays in it.
+4. **Change**: describe the change in your words ("a longer break", "no bass in the first drop", "faster"); the AI sends back the changed plan. **Another version** asks for the same song again.
+5. **Create the song** builds it like [New song](#new-song-start-from-a-style): the timeline is replaced (**Ctrl+Z** brings it back), the Generator, the kick designer and the keyboard synth take the settings of the plan.
+
+The melody and the bass line are written by the generators of the studio, in the style and density chosen by the AI, and change with each version. The model is small: it may forget a build-up or misread a request. The plan is a starting point, edited like any other song.
+
 ## Language
 
 The interface follows the browser language: French if the browser is set to French, English otherwise. To force a language, add `?lang=en` or `?lang=fr` to the address.
