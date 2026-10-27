@@ -34,8 +34,30 @@ Vos banques, vos sons et vos réglages sont sauvegardés automatiquement dans le
 - Chaque **voie** du module devient une **piste** (libre, à partir de la piste armée), avec un **bloc de notes par passage de pattern**, dans l'ordre du morceau, à partir de la mesure de la tête de lecture. Un pattern joué plusieurs fois donne des blocs **de même nom et de même couleur** (« Pattern 3 · voie 2 ») : les répétitions se voient d'un coup d'œil. Une note tenue d'un pattern au suivant continue dans le bloc suivant là où le son en était, sans nouvelle attaque.
 - Les blocs sont joués par l'**instrument échantillon** : il joue le son d'un pad à la hauteur de chaque note, avec sa boucle (les boucles aller-retour comprises).
 - Le **tempo** du module est repris si la timeline est vide (4 lignes par temps à la vitesse de départ) ; sinon le morceau garde le sien et les notes sont recalées pour garder la même durée.
-- Le morceau est rejoué tick par tick comme dans le tracker : vitesse et tempo, ordre des patterns, sauts, fins et répétitions de pattern, volumes, glissements de volume et de hauteur, glissement vers la note, vibrato, trémolo, arpèges, départ dans le sample, notes coupées, retardées et rejouées, panoramique, volume global, et les **enveloppes de volume** des instruments XM. Ces mouvements sont gardés dans chaque note. Les effets rares qui ne sont pas joués sont comptés dans le message de fin d'import.
+- Le morceau est rejoué **tick par tick** comme dans le tracker, et les mouvements de volume et de hauteur sont gardés dans chaque note (voir la compatibilité ci-dessous). Les effets qui ne sont pas joués sont comptés dans le message de fin d'import.
 - Dans le **piano roll**, le menu des sons d'un de ces blocs montre **Samples du module (pads)** : choisissez un autre son pour le jouer avec un synthé, revenez-y quand vous voulez. Remplacer le son d'un pad change aussi l'instrument dans les blocs qui le jouent.
+
+### Compatibilité
+
+| Format | Programmes d'origine | Pris en charge |
+|---|---|---|
+| `.mod` 4 voies (signatures `M.K.`, `M!K!`, `M&K!`, `FLT4`, `4CHN`, `N.T.`) | ProTracker, NoiseTracker, StarTrekker 4 voies | oui |
+| `.mod` 15 samples, sans signature | Ultimate Soundtracker et premiers Soundtracker | oui (reconnu à l'extension `.mod`) |
+| `.mod` de 2 à 32 voies (`2CHN` à `9CHN`, `10CH` à `32CH`, `OCTA`, `CD81`) | FastTracker 1 et 2, Octalyser, OctaMED (export MOD) | oui |
+| `.mod` 8 voies `FLT8` | StarTrekker 8 voies | non garanti : ses patterns sont rangés autrement |
+| `.xm` | FastTracker 2, MilkyTracker, OpenMPT, Renoise (export XM) | oui, fréquences linéaires et Amiga |
+| `.s3m`, `.it`, `.mptm`, `.med`, `.mtm`, `.669`, `.mo3` | Scream Tracker 3, Impulse Tracker, OpenMPT, OctaMED… | pas encore |
+
+**Joué fidèlement** : vitesse et tempo (y compris quand ils changent en cours de morceau), ordre des patterns et sauts (`Bxx`), fins de pattern (`Dxx`), répétitions (`E6x`) et retard de pattern (`EEx`) ; volume (`Cxx`, colonne de volume XM), glissements de volume (`Axy`, `EAx`, `EBx`, colonne de volume), volume global (`Gxx`, `Hxy`) ; glissements de hauteur (`1xx`, `2xx`, `E1x`, `E2x`, `X1x`, `X2x`), glissement vers la note (`3xx`, `5xy`), vibrato (`4xy`, `6xy`) et trémolo (`7xy`) avec leur forme (`E4x`, `E7x`), arpèges (`0xy`), réglage fin (`E5x`) ; départ dans le sample (`9xx`), notes coupées (`ECx`), retardées (`EDx`), rejouées (`E9x`, `Rxy`), relâchées (`Kxx`, note « === ») ; panoramique (`8xx`, `Pxy`, colonne de volume) ; samples 8 et 16 bits, boucles avant et aller-retour, note relative et réglage fin ; instruments XM à plusieurs samples (clavier), **enveloppes de volume** (maintien, boucle) et extinction après la note relâchée.
+
+**Pas joué** (compté dans le message) : glissando par demi-tons (`E3x`), filtre Amiga (`E0x`), panoramique grossier (`E8x`), inversion de boucle (`EFx`), position d'enveloppe (`Lxx`), trémor (`Txy`). **Ignoré sans message** : enveloppes de panoramique et vibrato automatique des instruments XM, glissements de panoramique de la colonne de volume.
+
+**À savoir** :
+- Le morceau s'arrête au premier endroit où il reboucle (la position de reprise du module n'est pas utilisée) ; 30 minutes au plus.
+- Une seule vitesse de timeline : un changement de vitesse ou de tempo en cours de morceau garde la bonne durée, mais les blocs suivants ne tombent plus pile sur les mesures.
+- Voies d'un `.mod` : placées à mi-chemin à gauche et à droite (gauche, droite, droite, gauche), comme la plupart des lecteurs actuels, plutôt que tout à gauche ou tout à droite comme sur l'Amiga.
+- Les pads gardent leur emplacement : échanger des pads dans la fenêtre **Banques** change aussi le son des blocs qui les jouent.
+- Vérifié sur des modules réels, en comparant avec un lecteur de référence (libopenmpt) : même durée, même volume seconde par seconde, spectre très proche.
 
 ## Entrée audio (micro, carte son)
 

@@ -34,8 +34,30 @@ Your banks, sounds and settings are saved automatically in the browser.
 - Each **channel** of the module becomes a **track** (a free one, from the armed track), with **one note block per pattern played**, in song order, from the playhead bar. A pattern played several times gives blocks with **the same name and colour** ("Pattern 3 · channel 2"): repeats show at a glance. A note held from one pattern to the next goes on in the next block where the sound was, without a new attack.
 - The blocks are played by the **sample instrument**: it plays the sound of a pad at the pitch of each note, with its loop (ping-pong loops included).
 - The module **tempo** is used if the timeline is empty (4 rows per beat at the starting speed); otherwise the song keeps its own and the notes are moved to keep the same length.
-- The song is replayed tick by tick like in the tracker: speed and tempo, pattern order, jumps, pattern breaks and loops, volumes, volume and pitch slides, tone portamento, vibrato, tremolo, arpeggios, sample offset, cut, delayed and retriggered notes, panning, global volume, and the **volume envelopes** of XM instruments. These movements are kept in each note. Rare effects that are not played are counted in the message at the end of the import.
+- The song is replayed **tick by tick** like in the tracker, and volume and pitch movements are kept in each note (see compatibility below). Effects that are not played are counted in the message at the end of the import.
 - In the **piano roll**, the sound menu of one of these blocks shows **Module samples (pads)**: pick another sound to play it with a synth, come back to it whenever you like. Replacing the sound of a pad also changes the instrument in the blocks that play it.
+
+### Compatibility
+
+| Format | Original programs | Supported |
+|---|---|---|
+| 4-channel `.mod` (signatures `M.K.`, `M!K!`, `M&K!`, `FLT4`, `4CHN`, `N.T.`) | ProTracker, NoiseTracker, 4-channel StarTrekker | yes |
+| 15-sample `.mod`, no signature | Ultimate Soundtracker and early Soundtrackers | yes (recognised by the `.mod` extension) |
+| 2 to 32-channel `.mod` (`2CHN` to `9CHN`, `10CH` to `32CH`, `OCTA`, `CD81`) | FastTracker 1 and 2, Octalyser, OctaMED (MOD export) | yes |
+| 8-channel `FLT8` `.mod` | 8-channel StarTrekker | not guaranteed: its patterns are stored differently |
+| `.xm` | FastTracker 2, MilkyTracker, OpenMPT, Renoise (XM export) | yes, linear and Amiga frequencies |
+| `.s3m`, `.it`, `.mptm`, `.med`, `.mtm`, `.669`, `.mo3` | Scream Tracker 3, Impulse Tracker, OpenMPT, OctaMED… | not yet |
+
+**Played faithfully**: speed and tempo (including changes during the song), pattern order and jumps (`Bxx`), pattern breaks (`Dxx`), loops (`E6x`) and pattern delay (`EEx`); volume (`Cxx`, XM volume column), volume slides (`Axy`, `EAx`, `EBx`, volume column), global volume (`Gxx`, `Hxy`); pitch slides (`1xx`, `2xx`, `E1x`, `E2x`, `X1x`, `X2x`), tone portamento (`3xx`, `5xy`), vibrato (`4xy`, `6xy`) and tremolo (`7xy`) with their waveform (`E4x`, `E7x`), arpeggios (`0xy`), finetune (`E5x`); sample offset (`9xx`), note cut (`ECx`), delay (`EDx`), retrigger (`E9x`, `Rxy`), key off (`Kxx`, "===" note); panning (`8xx`, `Pxy`, volume column); 8 and 16-bit samples, forward and ping-pong loops, relative note and finetune; XM instruments with several samples (keymap), **volume envelopes** (sustain, loop) and fadeout after key off.
+
+**Not played** (counted in the message): glissando control (`E3x`), Amiga filter (`E0x`), coarse panning (`E8x`), invert loop (`EFx`), envelope position (`Lxx`), tremor (`Txy`). **Ignored without a message**: panning envelopes and auto-vibrato of XM instruments, panning slides of the volume column.
+
+**Good to know**:
+- The song stops where it first loops back (the module restart position is not used); 30 minutes at most.
+- One timeline tempo: a speed or tempo change during the song keeps the right length, but the following blocks no longer fall exactly on bars.
+- `.mod` channels: placed halfway left and right (left, right, right, left), like most current players, rather than hard left and right as on the Amiga.
+- Pads keep their slot: swapping pads in the **Banks** window also changes the sound of the blocks that play them.
+- Checked on real modules against a reference player (libopenmpt): same length, same level second by second, very close spectrum.
 
 ## Audio input (microphone, sound card)
 

@@ -60,6 +60,11 @@ export default async function (t, A) {
     12: [[339, 1, 0, 0x37]],
     16: [[0, 0, 14, 0xc2]],
     20: [null, null, [214, 1, 0, 0]],
+    23: [null, null, null, [0, 0, 14, 0x42]],
+    24: [null, null, null, [428, 1, 4, 0x48]],
+    25: [null, null, null, [0, 0, 4, 0]],
+    26: [null, null, null, [0, 0, 4, 0]],
+    27: [null, null, null, [0, 0, 4, 0]],
     31: [[0, 0, 13, 0]],
   });
   t.eq(A.trackerKind(mod), 'mod', 'module MOD reconnu (signature M.K.)');
@@ -80,6 +85,9 @@ export default async function (t, A) {
   t.eq(secs.map(s => s.notes.map(n => [n.t, n.len])), [[[5, 3]], [[0, 5], [5, 3]]], 'découpe par passage : la note tenue continue dans le suivant');
   const rest = secs[1].notes[0], loopEnd = 64 / m.samples[0].rate;
   t.ok(rest.ofs > 0 && rest.ofs < loopEnd && rest.vel === secs[0].notes[0].vel, 'la suite reprend le son là où il en était (dans la boucle), au même volume', rest);
+  const vib = m.channels[3][0].pp ?? [];
+  t.ok(vib.length > 2 && new Set(vib.map(([, v]) => v).filter(Boolean)).size === 2 && vib.some(([, v]) => v > 0) && vib.some(([, v]) => v < 0), 'vibrato en forme carrée (E42) : une hauteur au-dessus, une en dessous', vib);
+  t.eq(Object.keys(m.skipped), [], 'aucun effet ignoré');
   t.ok(m.channels[1][0].len < 0.1, 'sample sans boucle : la note dure le temps du son', m.channels[1][0].len);
 
   // --- .xm ---
@@ -107,9 +115,9 @@ export default async function (t, A) {
   input.files = dt.files;
   input.dispatchEvent(new Event('change'));
   const blocks = () => S.tl.tracks.flatMap(tr => tr.clips).filter(c => c.smps);
-  t.ok(await t.until(() => blocks().length === 6, 3000), 'trois voies, un bloc par passage de pattern', blocks().length);
+  t.ok(await t.until(() => blocks().length === 8, 3000), 'quatre voies, un bloc par passage de pattern', blocks().length);
   const lanes = S.tl.tracks.filter(tr => tr.clips.some(c => c.smps));
-  t.eq(lanes.map(tr => tr.clips.map(c => c.start)), [[0, 8], [0, 8], [0, 8]], 'une piste par voie, les passages à la suite');
+  t.eq(lanes.map(tr => tr.clips.map(c => c.start)), [[0, 8], [0, 8], [0, 8], [0, 8]], 'une piste par voie, les passages à la suite');
   t.ok(lanes.every(tr => tr.clips[0].name === tr.clips[1].name && tr.clips[0].color === tr.clips[1].color && /0/.test(tr.clips[0].name)),
     'un pattern répété : blocs de même nom et de même couleur', lanes.map(tr => tr.clips.map(c => c.name)));
   t.ok(lanes[2].clips[1].seq[0].ofs > 0, 'la note tenue continue dans le bloc suivant');

@@ -13,7 +13,7 @@ const C4_PERIOD = 1712;   // période (×4) du do4 de FastTracker = do2 de ProTr
 const PT_PERIODS = [856, 808, 762, 720, 678, 640, 604, 570, 538, 508, 480, 453, 428, 404, 381, 360, 339, 320, 302, 285, 269, 254, 240, 226,
   214, 202, 190, 180, 170, 160, 151, 143, 135, 127, 120, 113];
 // Effets pris en compte (les autres sont comptés comme ignorés).
-const DONE = new Set(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E1', 'E2', 'E5', 'E6', 'E9', 'EA', 'EB', 'EC', 'ED', 'EE',
+const DONE = new Set(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E1', 'E2', 'E4', 'E5', 'E6', 'E7', 'E9', 'EA', 'EB', 'EC', 'ED', 'EE',
   'F', 'G', 'H', 'K', 'P', 'R', 'X1', 'X2']);
 const FX_NAMES = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -431,6 +431,8 @@ export function readTracker(buf) {
       if (hi === 11) st.vol = Math.max(0, st.vol - (lo || st.mem.fvd || 0)), lo && (st.mem.fvd = lo);
       if (hi === 12) { st.cut = lo; if (!lo) { st.vol = 0; st.cutDone = true; } }
       if (hi === 9) st.retrig = lo;
+      if (hi === 4) st.vibType = lo;   // forme du vibrato : sinus, dent de scie, carré (+4 : sans retour au début)
+      if (hi === 7) st.treType = lo;   // forme du trémolo
     }
     if (fx === 33) {
       if (hi === 1) pitchSlide(st, -(lo || st.mem.xu || 0)), lo && (st.mem.xu = lo);
