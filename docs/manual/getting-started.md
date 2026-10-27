@@ -52,8 +52,9 @@ The header shows **1 device connected** with a green dot once the controller is 
    | Rave | 145 | 909 | walk (reese) | riff, mentasm |
    | Hardstyle | 150 | Raw | reverse bass | anthem, hardstyle lead |
    | Breizhcore | 190 | Mainstream | offbeat | the tune of the Breizh generator |
+   | Dark hardcore | 170 (F minor, G♭ and E) | Dark (long tail on F) | the kick | riff, hoover, from the intro |
 
-2. **Plan**: **Club** (intro 16, build-up 16, drop 32, break 32, build-up 16, drop 32, outro 16: about 3:30 at 190 BPM), **Short** (a sketch of about 1:20) or **DJ** (32-bar intro and outro, kick and drums only, for mixing). Each part (Intro, Build-up, Drop, Break, Outro) has its length (4 to 32 bars); ↑ / ↓ move it, ✕ removes it, **Add a part** adds one. The total length is shown.
+2. **Plan**: **Club** (intro 16, build-up 16, drop 32, break 32, build-up 16, drop 32, outro 16: about 3:30 at 190 BPM), **Short** (a sketch of about 1:20) **DJ** (32-bar intro and outro, kick and drums only, for mixing) or **Chained drops** (melodic intro without kick, drops relaunched by cuts, a single short break: the plan of Dark hardcore, offered when it is picked). Each part (Intro, Build-up, Drop, Break, Cut, Outro) has its length (1 to 32 bars; a **Cut** of 1 or 2 bars stops the kick, drums and bass to relaunch the next drop); ↑ / ↓ move it, ✕ removes it, **Add a part** adds one. The total length is shown.
 3. **Fill in** (all ticked by default):
    - **Kick**: a kick melody (one kick per beat, on the roots of the chords) in the intro, drops and outro;
    - **Drums**: hats and claps from the "Anthem drums" or "Early hardcore" banks, a crash at the start of each drop;

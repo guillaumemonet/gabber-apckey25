@@ -7,7 +7,7 @@ import { KICK_PRESETS } from './kickdesign.js';
 import { LEAD_STYLES } from './melody.js';
 import { PRESETS } from './presets.js';
 import { BASS_OSC, PLAN_LIMITS, planSchema } from './songplan.js';
-import { STYLES } from './songstart.js';
+import { PLANS, STYLES } from './songstart.js';
 
 export const AI_URL = 'http://localhost:11434';
 export const AI_MODEL = 'qwen2.5:7b';
@@ -37,7 +37,8 @@ export function systemPrompt({ extraSounds = [] } = {}) {
   const styles = Object.entries(STYLES).map(([id, s]) => {
     const b = s.bass ? `${s.bass.style} bass (${s.bass.preset}) in ${s.bass.in.join('/')}` : 'no bass: the kick tail is the bass';
     const lead = s.lead.breizh ? 'Breton folk tune (bombarde) from the Breizh generator' : `${s.lead.style} lead (${s.lead.preset}, ${s.lead.density} density)`;
-    return `- ${id}: ${s.bpm} BPM, chords "${s.prog}" (${s.chords.preset}, ${s.chords.rhythm}), kick ${s.kick}, ${b}, ${lead}`;
+    const form = s.plan ? `, form ${PLANS[s.plan].map(([type, bars]) => `${type} ${bars}`).join(', ')}` : '';
+    return `- ${id}: ${s.bpm} BPM, chords "${s.prog}" (${s.chords.preset}, ${s.chords.rhythm}), kick ${s.kick}, ${b}, ${lead}${form}`;
   }).join('\n');
   const lines = [
     'You are the composer and producer inside GabberKey, a hardcore / gabber music studio.',
@@ -62,7 +63,7 @@ export function systemPrompt({ extraSounds = [] } = {}) {
     '',
     'CHORD PROGRESSION ("prog"): 2 to 8 chord symbols separated by spaces, each chord lasts 2 bars. Symbols: root A-G with # or b, then nothing (major), m, 5, dim, aug, sus2, sus4, 7, m7, maj7, add9, madd9. Example: "Fm Db Ab Eb". Hardcore is mostly in minor keys; happy hardcore in major. A section may have its own "prog" (a break with other chords, for example).',
     '',
-    `SECTIONS: types intro, build (build-up), drop, break, outro; bars from ${PLAN_LIMITS.bars[0]} to ${PLAN_LIMITS.bars[1]} (use 8, 16 or 32). "play" lists what plays in the section among kick, drums, bass, chords, lead. "lead": full or calm (calm = sparser, for breaks).`,
+    `SECTIONS: types intro, build (build-up), drop, break, cut (1 or 2 bars where the kick, drums and bass stop to relaunch the next drop), outro; bars from ${PLAN_LIMITS.bars[0]} to ${PLAN_LIMITS.bars[1]} (use 8, 16 or 32). "play" lists what plays in the section among kick, drums, bass, chords, lead. "lead": full or calm (calm = sparser, for breaks).`,
     'Usual hardcore form: intro (kick and drums, 16 bars), build (chords, 8 or 16 bars), drop (everything, 32 bars), break (no kick: chords and a calm lead, 16 or 32 bars), build, drop, outro (kick and drums). A build placed right before a drop gets a riser, a snare roll and a silence before the drop when "buildups" is true. The kick never plays in a break or a build. A whole song is usually 96 to 160 bars.',
     'Choose what fits the request: style, tempo, key and chords, sounds, kick settings, which elements play where. Vary the structure when it serves the music.',
   ];

@@ -1,9 +1,9 @@
 // Nouveau morceau : styles (tempo, suite d'accords, kick, batterie, basse, accords, mélodie) et plans de morceau
 // (parties et longueurs). Ce module ne fait que décrire et calculer : la fenêtre (js/app/start-ui.js) pose les blocs.
 
-export const SECTION_TYPES = ['intro', 'build', 'drop', 'break', 'outro'];
+export const SECTION_TYPES = ['intro', 'build', 'drop', 'break', 'cut', 'outro'];   // cut : coupure de 1 ou 2 mesures avant un drop
 export const START_PARTS = ['kick', 'drums', 'bass', 'chords', 'lead', 'buildups'];
-export const SECTION_BARS = [4, 8, 16, 32];
+export const SECTION_BARS = [1, 2, 4, 8, 16, 32];
 export const MAX_SECTIONS = 16;
 
 /**
@@ -11,7 +11,8 @@ export const MAX_SECTIONS = 16;
  * 8 = croches, 16 = doubles croches), clap (24 = temps 2 et 4, 4 = temps 4), ride sur les temps ; bass : style du
  * générateur de basse, son et parties où elle joue (null : la queue du kick fait la basse, case Basse décochée ;
  * cochée, KICK_BASS) ; chords : son et rythme
- * du générateur ; lead : son, style et densité de la mélodie (breizh : l'air du Breizh generator).
+ * du générateur ; lead : son, style et densité de la mélodie (breizh : l'air du Breizh generator) ; plan : plan proposé
+ * quand on choisit le style ; plays : parties où joue un élément, à la place de celles par défaut.
  */
 export const STYLES = {
   early: { bpm: 175, prog: 'Fm Eb Db C', kick: 'early', drums: { kit: 'early', hat: 'off', clap: '24' }, bass: null,
@@ -36,6 +37,11 @@ export const STYLES = {
     chords: { preset: 'supersaw_pad', rhythm: 'hold' }, lead: { preset: 'hardstyle_lead', style: 'anthem', density: 'mid' } },
   breizhcore: { bpm: 190, prog: 'Fm Eb Db C', kick: 'mainstream', drums: { kit: 'anthem', hat: 'off', clap: '24' }, bass: { style: 'offbeat', preset: 'bass', in: ['drop'] },
     chords: { preset: 'epic_strings', rhythm: 'hold' }, lead: { breizh: true, density: 'mid' } },
+  // Hardcore sombre : 170 BPM, fa mineur aux couleurs phrygiennes (sol bémol, mi), kick long qui fait la basse, hoover ;
+  // intro mélodique sans kick, drops enchaînés relancés par des coupures, un seul break court.
+  dark: { bpm: 170, prog: 'Fm Gb Db C', kick: 'dark', drums: { kit: 'early', hat: 'off', clap: null }, bass: null,
+    chords: { preset: 'dark_pad', rhythm: 'hold' }, lead: { preset: 'hoover', style: 'riff', density: 'mid' }, plan: 'chain',
+    plays: { kick: ['drop', 'outro'], drums: ['drop', 'outro'], chords: ['intro', 'build', 'drop', 'break', 'cut'], lead: ['intro', 'drop', 'break', 'cut'] } },
 };
 export const STYLE_IDS = Object.keys(STYLES);
 
@@ -50,6 +56,7 @@ export const PLANS = {
   club: [['intro', 16], ['build', 16], ['drop', 32], ['break', 32], ['build', 16], ['drop', 32], ['outro', 16]],
   short: [['intro', 8], ['drop', 16], ['break', 16], ['build', 8], ['drop', 16]],
   dj: [['intro', 32], ['build', 16], ['drop', 32], ['break', 32], ['build', 16], ['drop', 32], ['outro', 32]],
+  chain: [['intro', 16], ['drop', 16], ['break', 8], ['build', 8], ['cut', 2], ['drop', 32], ['cut', 2], ['drop', 16], ['cut', 2], ['drop', 16], ['outro', 8]],
 };
 export const PLAN_IDS = Object.keys(PLANS);
 
@@ -57,13 +64,13 @@ export const PLAN_IDS = Object.keys(PLANS);
 const PLAYS = {
   kick: ['intro', 'drop', 'outro'],
   drums: ['intro', 'drop', 'outro'],
-  chords: ['build', 'drop', 'break'],
-  lead: ['drop', 'break'],
+  chords: ['build', 'drop', 'break', 'cut'],
+  lead: ['drop', 'break', 'cut'],
 };
 // Basse ajoutée à un style où le kick fait la basse : contretemps dans les drops, entre les kicks.
 export const KICK_BASS = { style: 'offbeat', preset: 'bass', in: ['drop'] };
 export const styleBass = style => style.bass ?? KICK_BASS;
-export const plays = (part, type, style) => (part === 'bass' ? styleBass(style).in.includes(type) : !!PLAYS[part]?.includes(type));
+export const plays = (part, type, style) => (part === 'bass' ? styleBass(style).in.includes(type) : !!(style.plays?.[part] ?? PLAYS[part])?.includes(type));
 
 export const defaultStart = () => ({ style: 'anthem', bpm: STYLES.anthem.bpm, prog: STYLES.anthem.prog, plan: 'club', sections: PLANS.club.map(([type, bars]) => ({ type, bars })),
   parts: Object.fromEntries(START_PARTS.map(p => [p, true])) });

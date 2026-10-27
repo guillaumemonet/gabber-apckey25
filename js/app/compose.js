@@ -163,9 +163,10 @@ async function buildSong(plan) {
     state.tl.tracks[free].arm = true;
     const keep = state.buildup.bars;
     for (const [k, sec] of secs.entries()) {
-      if (sec.type !== 'build' || secs[k + 1]?.type !== 'drop') continue;
+      const drop = secs.slice(k + 1).find(s => s.type !== 'cut');   // une coupure peut séparer la montée du drop
+      if (sec.type !== 'build' || drop?.type !== 'drop') continue;
       state.buildup.bars = [...BU_BARS].reverse().find(b => b <= sec.bars) ?? BU_BARS[0];
-      state.tl.playhead = sec.start + sec.len;
+      state.tl.playhead = drop.start;
       const made = await generateBuildup();
       if (made) blocks += made.tracks.length;
     }

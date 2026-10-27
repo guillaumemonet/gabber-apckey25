@@ -32,7 +32,7 @@ export default async function (t, A) {
   await t.wait(50);
   t.eq(t.$$('#kick-knobs .knob').length, 12, '12 potentiomètres');
   const presets = t.$$('#kick-presets button');
-  t.eq(presets.length, 12, '12 presets');
+  t.eq(presets.length, 13, '13 presets');
   // Hauteur de la queue : fa (87 Hz), puis une octave au-dessus.
   const base = { ...S.kick.params, length: 0.6, bend: 0, drive: 0.3, zaag: 0 };
   const k1 = await A.synthKick(base, sr);

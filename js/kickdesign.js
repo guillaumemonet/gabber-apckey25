@@ -80,10 +80,12 @@ export const KICK_PRESETS = {
   hall: { tune: 0.21, pitch: 0.4, sweep: 0.35, bend: 0.12, length: 0.75, zaag: 0, drive: 0.7, shape: 0, tone: 0.35, bite: 0.4, click: 0.3, top: 0.3 },
   doef: { tune: 0.42, pitch: 0.38, sweep: 0.32, bend: 0.2, length: 0.55, zaag: 0, drive: 0.8, shape: 0.25, tone: 0.3, bite: 0.55, click: 0.3, top: 0.35 },
   clipped: { tune: 0.5, pitch: 0.45, sweep: 0.5, bend: 0.08, length: 0.42, zaag: 0, drive: 1, shape: 0.25, tone: 0.5, bite: 0.5, click: 0.5, top: 0.4 },
+  // Sombre : queue sur fa1 (44 Hz) tenue tout le temps, départ vers 95 Hz qui descend en 140 ms, saturation modérée, sombre.
+  dark: { tune: 0, pitch: 0.3, sweep: 0.74, bend: 0.1, length: 0.62, zaag: 0, drive: 0.45, shape: 0, tone: 0.25, bite: 0.2, click: 0.3, top: 0.35 },
 };
 
 export const KICK_CATS = ['gabber', 'hardcore', 'modern'];
-export const KICK_PRESET_CAT = { rotterdam: 'gabber', early: 'gabber', tr909: 'gabber', hall: 'gabber', doef: 'gabber', clipped: 'gabber', terror: 'hardcore', industrial: 'hardcore', frenchcore: 'hardcore', mainstream: 'modern', uptempo: 'modern', raw: 'modern' };
+export const KICK_PRESET_CAT = { rotterdam: 'gabber', early: 'gabber', tr909: 'gabber', hall: 'gabber', doef: 'gabber', clipped: 'gabber', terror: 'hardcore', dark: 'hardcore', industrial: 'hardcore', frenchcore: 'hardcore', mainstream: 'modern', uptempo: 'modern', raw: 'modern' };
 
 export function defaultKickState() {
   return { params: { ...kickDefaults(), ...KICK_PRESETS.mainstream }, preset: 'mainstream', auto: true, user: [], expert: false, solo: null };

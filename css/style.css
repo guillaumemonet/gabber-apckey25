@@ -1093,6 +1093,7 @@ header button, header .status { white-space: nowrap; }
 .start-sec-build { border-left-color: #ffb13d; }
 .start-sec-drop { border-left-color: var(--accent); }
 .start-sec-break { border-left-color: #5cc8ff; }
+.start-sec-cut { border-left-color: #a78bfa; }
 .start-parts-title { color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
 .gen-row .start-part { flex-direction: row; align-items: center; gap: 6px; }
 .gen-row .start-part > span { text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--text); }

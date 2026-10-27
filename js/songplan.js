@@ -12,7 +12,7 @@ import { DRUM_KITS, SECTION_TYPES, STYLES, plays, styleBass } from './songstart.
 
 export const PLAN_VERSION = 1;
 export const PLAN_PARTS = ['kick', 'drums', 'bass', 'chords', 'lead'];
-export const PLAN_LIMITS = { sections: 32, bars: [2, 64], totalBars: 512, bpm: [40, 240], notes: 512, phraseBeats: 64, name: 32, prog: 80 };
+export const PLAN_LIMITS = { sections: 32, bars: [1, 64], totalBars: 512, bpm: [40, 240], notes: 512, phraseBeats: 64, name: 32, prog: 80 };
 export const CHORD_REGISTERS = ['low', 'mid', 'high'];
 export const CHORD_RHYTHMS = ['hold', 'beats', 'offbeat', 'eighths'];
 export const DRUM_HATS = ['off', '8', '16', 'none'];

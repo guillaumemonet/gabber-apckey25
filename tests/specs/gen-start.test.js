@@ -79,5 +79,23 @@ export default async function (t, A) {
   const air = S.tl.tracks[4].clips[0];
   t.ok(['bombardes', 'bombarde', 'biniou', 'cornemuse', 'bagad'].includes(air.preset), 'mélodie : l’air du Breizh generator', air.preset);
   bu.checked = true; bu.dispatchEvent(new Event('change'));
+
+  // Hardcore sombre : plan Drops enchaînés, coupures, intro mélodique sans kick, montée séparée du drop par une coupure.
+  pick('#start-style', 'dark');
+  t.eq([S.start.plan, S.start.bpm, S.start.parts.bass], ['chain', 170, false], 'Hardcore sombre : son plan, son tempo, pas de basse');
+  t.ok(S.start.sections.some(s => s.type === 'cut' && s.bars === 2), 'coupures de 2 mesures');
+  await A.createSong();   // le bouton peut être encore grisé par la création précédente
+  t.ok(await t.until(() => S.bpm === 170 && /Hardcore sombre|Dark hardcore/.test(t.$('#toast').textContent), 30000), 'Hardcore sombre créé', t.$('#toast').textContent);
+  const secs = A.layoutSections(S.start.sections, 4);
+  const at = type => secs.filter(s => s.type === type).map(s => s.start);
+  const names = S.tl.tracks.map(tr => tr.name);
+  const tr = p => S.tl.tracks[names.indexOf(A.t(`start.track.${p}`))].clips.map(c => c.start);
+  t.ok(!names.includes(A.t('start.track.bass')), 'pas de piste de basse');
+  t.ok(!tr('kick').includes(0) && at('cut').every(b => !tr('kick').includes(b)) && at('drop').every(b => tr('kick').includes(b)), 'kick : drops, pas dans l’intro ni les coupures');
+  t.ok(tr('lead').includes(0) && at('cut').every(b => tr('lead').includes(b)), 'lead dès l’intro et dans les coupures');
+  t.eq(S.kick.preset, 'dark', 'kick sombre');
+  const firstCut = at('cut')[0], drop2 = at('drop')[1];
+  const rise = S.tl.tracks.slice(names.indexOf(A.t('start.track.lead')) + 1).flatMap(x => x.clips);
+  t.ok(rise.length && rise.some(c => c.start < firstCut) && rise.every(c => c.start <= drop2), 'montée avant la coupure, jusqu’au drop', rise.map(c => c.start));
   A.wm.toggle('start', false);
 }

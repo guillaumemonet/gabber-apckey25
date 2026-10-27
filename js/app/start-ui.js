@@ -21,6 +21,7 @@ export function setStartStyle(id) {
   if (!(id in STYLES)) return;
   Object.assign(state.start, { style: id, bpm: STYLES[id].bpm, prog: STYLES[id].prog });
   state.start.parts.bass = !!STYLES[id].bass;   // décochée quand le kick fait la basse
+  if (STYLES[id].plan) return setStartPlan(STYLES[id].plan);
   save();
   renderStart();
 }

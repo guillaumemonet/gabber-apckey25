@@ -52,8 +52,9 @@ L'en-tête affiche **1 appareil branché** avec un point vert quand le contrôle
    | Rave | 145 | 909 | marche (reese) | riff, mentasm |
    | Hardstyle | 150 | Raw | reverse bass | hymne, lead hardstyle |
    | Breizhcore | 190 | Mainstream | contretemps | l'air du Breizh generator |
+   | Hardcore sombre | 170 (fa mineur, sol♭ et mi) | Sombre (queue longue sur fa) | le kick | riff, hoover, dès l'intro |
 
-2. **Plan** : **Club** (intro 16, montée 16, drop 32, break 32, montée 16, drop 32, outro 16 : environ 3 min 30 à 190 BPM), **Court** (une maquette d'environ 1 min 20) ou **DJ** (intro et outro de 32 mesures, kick et batterie seuls, pour mixer). Chaque partie (Intro, Montée, Drop, Break, Outro) a sa longueur (4 à 32 mesures) ; ↑ / ↓ la déplacent, ✕ la supprime, **Ajouter une partie** en ajoute une. La longueur totale est affichée.
+2. **Plan** : **Club** (intro 16, montée 16, drop 32, break 32, montée 16, drop 32, outro 16 : environ 3 min 30 à 190 BPM), **Court** (une maquette d'environ 1 min 20) **DJ** (intro et outro de 32 mesures, kick et batterie seuls, pour mixer) ou **Drops enchaînés** (intro mélodique sans kick, drops relancés par des coupures, un seul break court : le plan du Hardcore sombre, proposé quand on le choisit). Chaque partie (Intro, Montée, Drop, Break, Coupure, Outro) a sa longueur (1 à 32 mesures ; une **Coupure** de 1 ou 2 mesures arrête kick, batterie et basse pour relancer le drop suivant) ; ↑ / ↓ la déplacent, ✕ la supprime, **Ajouter une partie** en ajoute une. La longueur totale est affichée.
 3. **Remplir** (tout coché par défaut) :
    - **Kick** : une mélodie de kick (un kick par temps, sur les fondamentales des accords) dans l'intro, les drops et l'outro ;
    - **Batterie** : charleston et clap des banques « Anthem drums » ou « Early hardcore », crash au début de chaque drop ;
