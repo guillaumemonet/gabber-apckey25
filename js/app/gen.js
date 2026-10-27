@@ -108,7 +108,9 @@ export const leadPreset = () => (state.gen.lead.preset === 'current' ? state.pre
 export const bassPreset = () => (state.gen.bassline.preset === 'current' ? state.preset : state.gen.bassline.preset);
 // Sons de la basse : basses du synthé, presets de basse du synthé à oscillateurs (« osc:<id> »).
 const BASS_OSC = OSC_PRESETS.filter(p => OSC_PRESET_CAT[p.id] === 'bass').map(p => p.id);
-const isBassSound = v => v === 'current' || PRESETS.some(p => p.id === v) || (typeof v === 'string' && v.startsWith('osc:') && (BASS_OSC.includes(v.slice(4)) || state.osc?.user.some(u => u.id === v.slice(4))));
+// Sons acceptés : presets du synthé, et pour la basse les basses du synthé à oscillateurs (presets personnels compris).
+export const isSynthSound = v => PRESETS.some(p => p.id === v);
+export const isBassSound = v => v === 'current' || PRESETS.some(p => p.id === v) || (typeof v === 'string' && v.startsWith('osc:') && (BASS_OSC.includes(v.slice(4)) || state.osc?.user.some(u => u.id === v.slice(4))));
 // Son d'un onglet : preset de l'onglet ; « osc:<id> » = synthé à oscillateurs.
 const tabSound = tab => (tab === 'lead' ? leadPreset() : tab === 'bass' ? bassPreset() : genPreset());
 // Champs d'un bloc de notes pour un son : { preset } ou { osc }.
