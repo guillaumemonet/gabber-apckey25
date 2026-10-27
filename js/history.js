@@ -10,6 +10,7 @@ export class History {
     this.past = [];
     this.future = [];
     this.last = read();
+    this.paused = false;   // une opération en plusieurs temps : une seule étape, enregistrée à la reprise
     this.onChange = () => {};
   }
 
@@ -17,6 +18,7 @@ export class History {
   get canRedo() { return this.future.length > 0; }
 
   commit() {
+    if (this.paused) return;
     const cur = this.read();
     if (cur === this.last) return;
     this.past.push(this.last);

@@ -1072,3 +1072,17 @@ header button, header .status { white-space: nowrap; }
 @media (max-width: 980px) { .seq-grid { grid-template-columns: 64px repeat(16, 1fr) 22px 22px 22px; } }
 .seq-bar [hidden], .slicer-mode [hidden] { display: none; }
 .gen-row [hidden], .gen-row[hidden] { display: none; }
+/* Nouveau morceau : parties du plan (couleur par type), cases des éléments à remplir */
+.start-style-info, .start-total { font-size: 12px; }
+#start-bpm { width: 70px; }
+.start-sections { display: flex; flex-direction: column; gap: 4px; }
+.start-sec { display: grid; grid-template-columns: 22px minmax(0, 1fr) minmax(0, 1fr) repeat(3, 32px); gap: 6px; align-items: center; padding: 3px 6px; border-left: 4px solid var(--muted); border-radius: 6px; background: var(--panel-2); }
+.start-sec select { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; }
+.start-sec button { padding: 3px 0; }
+.start-sec-n { color: var(--muted); font-size: 11px; text-align: right; }
+.start-sec-build { border-left-color: #ffb13d; }
+.start-sec-drop { border-left-color: var(--accent); }
+.start-sec-break { border-left-color: #5cc8ff; }
+.start-parts-title { color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
+.gen-row .start-part { flex-direction: row; align-items: center; gap: 6px; }
+.gen-row .start-part > span { text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--text); }

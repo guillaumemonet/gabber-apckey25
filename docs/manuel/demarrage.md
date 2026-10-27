@@ -2,7 +2,7 @@
 
 [Sommaire](README.md) · [Le contrôleur APC Key 25](apc.md) →
 
-Ce qu'il faut, l'installation, le lancement et la langue de l'interface.
+Ce qu'il faut, l'installation, le lancement, un premier morceau en quelques secondes et la langue de l'interface.
 
 ## Prérequis
 
@@ -30,6 +30,40 @@ Ou téléchargez le ZIP depuis GitHub et décompressez-le.
 3. Dans le navigateur, cliquez sur **Démarrer**, puis **autorisez les appareils MIDI** quand le navigateur le demande.
 
 L'en-tête affiche **1 appareil branché** avec un point vert quand le contrôleur est détecté ; un clic dessus montre la liste des appareils (APC Key 25 mk1 ou mk2, autres appareils MIDI).
+
+## Nouveau morceau : démarrer par un style
+
+**Nouveau morceau…** (en-tête, ou barre des plugins, groupe Outils) lance un morceau en quelques secondes.
+
+[![Fenêtre Nouveau morceau : style, tempo, suite d'accords, les parties du plan Club et ce qui est rempli](../screenshots/start-fr.png)](../screenshots/start-fr.png)
+
+1. **Style** : il règle le tempo, la suite d'accords, le kick (preset du designer de kick), le rythme de la batterie, la ligne de basse, les sons des accords et du lead. Le **tempo** et la **suite d'accords** se changent avant de créer.
+
+   | Style | Tempo | Kick | Basse | Mélodie |
+   |---|---|---|---|---|
+   | Early hardcore | 175 | Early | le kick | riff, early hoover |
+   | Gabber (Rotterdam) | 185 | Rotterdam | le kick | riff, hoover |
+   | Anthem / mainstream | 190 | Mainstream | sub tenu dans les breaks | hymne, lead hardstyle |
+   | Frenchcore | 200 | Frenchcore | contretemps | riff, screech |
+   | Uptempo | 210 | Uptempo | le kick | riff dense, screech |
+   | Industrial | 160 | Industrial | le kick | riff aéré, alarme |
+   | Terror | 240 | Terror | le kick | riff dense, screech |
+   | Happy hardcore | 175 (tonalité majeure) | 909 | octaves | hymne dense, supersaw |
+   | Rave | 145 | 909 | marche (reese) | riff, mentasm |
+   | Hardstyle | 150 | Raw | reverse bass | hymne, lead hardstyle |
+   | Breizhcore | 190 | Mainstream | contretemps | l'air du Breizh generator |
+
+2. **Plan** : **Club** (intro 16, montée 16, drop 32, break 32, montée 16, drop 32, outro 16 : environ 3 min 30 à 190 BPM), **Court** (une maquette d'environ 1 min 20) ou **DJ** (intro et outro de 32 mesures, kick et batterie seuls, pour mixer). Chaque partie (Intro, Montée, Drop, Break, Outro) a sa longueur (4 à 32 mesures) ; ↑ / ↓ la déplacent, ✕ la supprime, **Ajouter une partie** en ajoute une. La longueur totale est affichée.
+3. **Remplir** (tout coché par défaut) :
+   - **Kick** : une mélodie de kick (un kick par temps, sur les fondamentales des accords) dans l'intro, les drops et l'outro ;
+   - **Batterie** : charleston et clap des banques « Anthem drums » ou « Early hardcore », crash au début de chaque drop ;
+   - **Basse** : la ligne du générateur de basse dans les drops (le sub de l'anthem dans les breaks) ; pas de basse pour les styles où la queue du kick la fait ;
+   - **Accords** : montées, drops et breaks ;
+   - **Lead** : drops, et une version plus aérée dans les breaks ;
+   - **Montées** : le **designer de montée** juste avant chaque drop (bruit et note qui montent, roulement de caisse claire et de kick, sub drop, impact, filtre qui monte sur les autres pistes, silence avant le drop).
+4. **Créer le morceau** remplace la timeline (après confirmation ; **Ctrl+Z** la ramène en une fois) : une piste nommée par élément, un bloc par partie, un **repère** au début de chaque partie. Le **Générateur**, le **designer de kick** et le **synthé du clavier** prennent les réglages du style : régénérez une mélodie ou une ligne de basse, changez de kick, tout se retouche ensuite comme d'habitude.
+
+[![Le morceau créé dans la timeline : pistes nommées, mélodie de kick, batterie, accords, lead, éléments de la montée avant le drop, repère de chaque partie](../screenshots/start-song-fr.png)](../screenshots/start-song-fr.png)
 
 ## Langue
 

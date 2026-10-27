@@ -40,6 +40,7 @@ import { cleanLauncher } from './launcher.js';
 import { cleanMidiMap } from './midi-ui.js';
 import { mergeViz } from './viz-ui.js';
 import { cleanSmp } from '../sampler.js';
+import { mergeStart } from '../songstart.js';
 
 // ---------- Sauvegarde ----------
 
@@ -50,6 +51,7 @@ export async function restore() {
   state.breizh = defaultBreizh();
   state.bankNames = cleanBankNames(saved?.bankNames);
   state.buildup = mergeBuildup(saved?.buildup);
+  state.start = mergeStart(saved?.start);
   state.toolPresets = cleanToolPresets(saved?.toolPresets);
   state.voice = mergeVoiceState(saved?.voice);
   state.tune = mergeTuneState(saved?.tune);
@@ -217,6 +219,7 @@ export function stateSnapshot() {
     devices: state.devices,
     bankNames: state.bankNames,
     buildup: state.buildup,
+    start: state.start,
     toolPresets: state.toolPresets,
     launcher: state.launcher,
     input: state.input,

@@ -234,6 +234,14 @@ export const HELP = {
         <li><b>Play</b> makes it the played bank; <b>Duplicate</b> copies it into the first empty bank; <b>Clear</b>, <b>Export</b>, <b>Import</b> (bank files .apckit).</li>
         <li>Everything is undone with Ctrl+Z. To put a timeline block on a pad: right-click the block › <b>Send to…</b>.</li>
       </ul>`,
+    start: `
+      <p>Start a song in a few seconds: pick a style, adjust the plan, then <b>Create the song</b>. Also opened by <b>New song…</b> in the header.</p>
+      <ul>
+        <li><b>Style</b>: Early hardcore, Gabber, Anthem / mainstream, Frenchcore, Uptempo, Industrial, Terror, Happy hardcore, Rave, Hardstyle, Breizhcore. Each sets the tempo, the chord progression, the kick of the kick designer, the drum pattern, the bass line, the chord and lead sounds. <b>Tempo</b> and <b>progression</b> can be changed before creating.</li>
+        <li><b>Plan</b>: Club (about 3:30), Short (sketch) or DJ (long intro and outro). Each part (Intro, Build-up, Drop, Break, Outro) has a length (4 to 32 bars) and can be moved, removed or added.</li>
+        <li><b>Fill in</b> (all ticked by default): kick (intro, drops, outro), drums (hats and claps, crash at the start of drops), bass (drops, or breaks for the anthem sub; not for styles where the kick is the bass), chords (build-ups, drops, breaks), lead (drops, calmer in breaks), build-ups (the build-up designer before each drop).</li>
+        <li><b>Create the song</b> replaces the timeline (Ctrl+Z brings it back): one block per part on named tracks, a marker per part. The Generator, the kick designer and the keyboard synth take the settings of the style: regenerate a melody or a bass line from there.</li>
+      </ul>`,
     buildup: `
       <p>Makes the build-up before a drop. Put the playhead on the drop bar, choose the elements, <b>Listen</b>, then <b>Generate</b>.</p>
       <ul>
@@ -547,6 +555,14 @@ export const HELP = {
         <li><b>Clic</b> sur un pad pour l'écouter ; <b>clic droit</b> : écouter, nom, couleur, ouvrir dans l'éditeur de pad, vider.</li>
         <li><b>Jouer</b> en fait la banque jouée ; <b>Dupliquer</b> la copie dans la première banque vide ; <b>Vider</b>, <b>Exporter</b>, <b>Importer</b> (fichiers de banque .apckit).</li>
         <li>Tout s'annule avec Ctrl+Z. Pour mettre un bloc de la timeline sur un pad : clic droit sur le bloc › <b>Envoyer vers…</b>.</li>
+      </ul>`,
+    start: `
+      <p>Démarrer un morceau en quelques secondes : choisissez un style, ajustez le plan, puis <b>Créer le morceau</b>. Aussi ouvert par <b>Nouveau morceau…</b> dans l'en-tête.</p>
+      <ul>
+        <li><b>Style</b> : Early hardcore, Gabber, Anthem / mainstream, Frenchcore, Uptempo, Industrial, Terror, Happy hardcore, Rave, Hardstyle, Breizhcore. Chacun règle le tempo, la suite d'accords, le kick du designer de kick, le rythme de la batterie, la ligne de basse, les sons des accords et du lead. Le <b>tempo</b> et la <b>suite d'accords</b> se changent avant de créer.</li>
+        <li><b>Plan</b> : Club (environ 3 min 30), Court (maquette) ou DJ (intro et outro longues). Chaque partie (Intro, Montée, Drop, Break, Outro) a sa longueur (4 à 32 mesures) et se déplace, se supprime ou s'ajoute.</li>
+        <li><b>Remplir</b> (tout coché par défaut) : kick (intro, drops, outro), batterie (charleston et clap, crash au début des drops), basse (drops, ou breaks pour le sub de l'anthem ; pas pour les styles où le kick fait la basse), accords (montées, drops, breaks), lead (drops, plus calme dans les breaks), montées (le designer de montée avant chaque drop).</li>
+        <li><b>Créer le morceau</b> remplace la timeline (Ctrl+Z la ramène) : un bloc par partie sur des pistes nommées, un repère par partie. Le Générateur, le designer de kick et le synthé du clavier prennent les réglages du style : régénérez une mélodie ou une ligne de basse à partir de là.</li>
       </ul>`,
     buildup: `
       <p>Fabrique la montée avant un drop. Placez la tête de lecture sur la mesure du drop, choisissez les éléments, <b>Écouter</b>, puis <b>Générer</b>.</p>

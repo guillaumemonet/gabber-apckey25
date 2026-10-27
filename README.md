@@ -35,6 +35,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Patch**: wire the tools and **effect boxes** (distortion, PCF, filter, delay, reverb, compressor, bitcrusher) freely, everything in sync with the tempo;
   - **Visualizer** in the Winamp spirit: 21 modes (LED spectrum, oscilloscope, Milk swirls, hi-fi VU meters, text slam, particles, Amiga bars, spectrogram, and 3D / GPU modes: tunnel, synthwave landscape, blob, hyperspace, fractal, lasers, spectrum city, LED wall, metaballs, plasma, rotozoomer, fluid, reaction-diffusion), stackable filters (CRT, kaleidoscope, glitch, strobe), and a projector window for a second screen;
   - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **clip launcher** (also on the APC's 40 pads), **MIDI clock**, **MIDI learn** for any other MIDI keyboard or controller, with a MIDI monitor.
+- **New song**: pick a style (early hardcore, gabber, anthem, frenchcore, uptempo, industrial, terror, happy hardcore, rave, hardstyle, breizhcore) and a song plan, and the song is laid out in seconds: tempo, kick, drums, bass, chords, lead, build-ups before the drops and markers.
 - **Save and open** the whole project, the song or the settings of each tool (`.gabber` files), **fast WAV export and stems**, **WAV recording** of your session and **kit export / import**; **MIDI files** and **tracker modules** (.mod, .xm: samples on the pads, one track per channel and one block per pattern) are imported too.
 - Interface in **English or French**, following the browser language.
 
@@ -68,7 +69,7 @@ All you need is Python 3, for the small local server. Details: [Getting started]
 
 The complete guide is in [docs/manual](docs/manual/README.md); every window in the app also has its own help (**?** button).
 
-1. **[Getting started](docs/manual/getting-started.md)**: Requirements, Installation, Starting, Language, Hardware compatibility
+1. **[Getting started](docs/manual/getting-started.md)**: Requirements, Installation, Starting, New song, Language, Hardware compatibility
 2. **[The APC Key 25 controller](docs/manual/controller.md)**: Controls on the APC, Knobs, Performance effects, Other MIDI keyboards and MIDI learn
 3. **[Pads and banks](docs/manual/pads.md)**: Banks, Tempo and loops, Break slicer
 4. **[Timeline, library and piano roll](docs/manual/timeline.md)**: Timeline and sound library, Automation, Markers, Track effects, Freeze a track, Piano roll, Demo

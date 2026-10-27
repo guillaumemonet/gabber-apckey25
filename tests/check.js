@@ -37,6 +37,9 @@ for (const f of js) {
   for (const [, k] of src.matchAll(/\bt\('([a-zA-Z0-9_.-]+)'/g)) if (!en.has(k)) fail(`${f} utilise une clé inconnue : ${k}`);
 }
 
+// Identifiants uniques dans la page (deux éléments du même id : le second n'est jamais trouvé par $('#…')).
+const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]);
+for (const id of new Set(ids.filter((x, i) => ids.indexOf(x) !== i))) fail(`index.html : id en double : ${id}`);
 // Chaque module est dans l'import map d'index.html (version des scripts, contre les anciens caches).
 for (const f of js) if (!/-(worklet|worker).js$/.test(f) && !html.includes(`"./js/${f}": "./js/${f}?v=`)) fail(`index.html : module absent de l'import map : js/${f}`);
 

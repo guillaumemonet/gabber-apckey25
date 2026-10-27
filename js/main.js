@@ -33,6 +33,7 @@ import { buildFreeze } from './app/freeze.js';
 import { buildBreizh } from './app/breizh-ui.js';
 import { buildBankMgr, mgrBank } from './app/banks-ui.js';
 import { buildBuildup } from './app/buildup-ui.js';
+import { buildStart } from './app/start-ui.js';
 import { buildToolPresets } from './app/tool-presets.js';
 import { buildVoiceWin } from './app/voice-ui.js';
 import { buildTuneWin } from './app/tune-ui.js';
@@ -203,6 +204,7 @@ async function start() {
   buildBreizh();
   buildBankMgr();
   buildBuildup();
+  buildStart();
   buildToolPresets();
   buildVoiceWin();
   buildTuneWin();
