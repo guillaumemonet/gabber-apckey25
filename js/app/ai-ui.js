@@ -1,10 +1,11 @@
 // Fenêtre Composer avec l'IA : une demande en quelques mots, le modèle de langage local (Ollama, ai/docker-compose.yml)
-// répond par un plan de morceau, vérifié (cleanPlan) et résumé ici ; « Créer le morceau » le construit
-// (js/app/compose.js). « Autre version » redemande, « Modifier » fait retoucher le plan proposé.
-import { AI_MODEL, AI_URL, adjustReply, chatBody, parseReply, refineMessage, startChat } from '../aicompose.js';
+// répond par un plan de morceau, vérifié (cleanPlan) et résumé ici ; « Créer le morceau » fait écrire le lead et la
+// basse par le compositeur musical (ai/music), puis construit le morceau (js/app/compose.js). « Autre version »
+// redemande, « Modifier » fait retoucher le plan proposé.
+import { AI_MODEL, AI_URL, MUSIC_URL, adjustReply, chatBody, musicJobs, parseReply, refineMessage, startChat } from '../aicompose.js';
 import { parseProgression } from '../chords.js';
 import { t } from '../i18n.js';
-import { cleanPlan } from '../songplan.js';
+import { cleanNotes, cleanPlan } from '../songplan.js';
 import { STYLE_IDS } from '../songstart.js';
 import { composeSong } from './compose.js';
 import { $, state } from './core.js';
@@ -39,6 +40,57 @@ export async function checkAi() {
     return 'off';
   }
 }
+/** État du compositeur musical : true s'il répond. */
+export async function checkMusic() {
+  const a = state.ai;
+  let ok = false;
+  try { ok = !!(await (await fetch(`${a.musicUrl}/health`, { signal: AbortSignal.timeout(3000) })).json()).ok; } catch { /* absent */ }
+  const s = $('#ai-composer .ai-music-status');
+  if (s) {
+    s.textContent = ok ? t('ai.musicReady') : t('ai.musicOff');
+    s.className = `ai-music-status hint ${ok ? 'ok' : 'warn'}`;
+  }
+  return ok;
+}
+
+// Le compositeur musical écrit le lead et la basse du plan. -> { [prog]: { lead, bass } } (vide s'il ne répond pas)
+async function writeMusic(plan) {
+  const a = state.ai, notes = {}, jobs = musicJobs(plan);
+  if (!a.music || !jobs.length) return notes;
+  busy = new AbortController();
+  renderAi();
+  try {
+    for (const [i, job] of jobs.entries()) {
+      setStatus(t('ai.musicWriting', { part: t(`start.part.${job.part}`).toLowerCase(), i: i + 1, n: jobs.length }));
+      const res = await fetch(`${a.musicUrl}/generate`, { method: 'POST', body: JSON.stringify(job.body), signal: busy.signal });
+      const seq = cleanNotes((await res.json()).notes);
+      if (!res.ok || !seq.length) throw new Error(`HTTP ${res.status}`);
+      (notes[job.prog] ??= {})[job.part] = seq;
+    }
+    setStatus(t('ai.musicDone'), 'ok');
+    return notes;
+  } catch (e) {
+    if (e.name === 'AbortError') throw e;
+    setStatus(t('ai.musicFailed'), 'warn');
+    return notes;
+  } finally {
+    busy = null;
+    renderAi();
+  }
+}
+
+// Créer le morceau : les notes du compositeur musical, puis la construction.
+async function create() {
+  if (busy || !result) return;
+  try {
+    const notes = await writeMusic(result.plan);
+    await composeSong(result.plan, notes);
+  } catch (e) {
+    if (e.name === 'AbortError') setStatus(t('ai.stopped'));
+    else throw e;
+  }
+}
+
 function setStatus(text, kind = '') {
   const s = $('#ai-composer .ai-status');
   if (!s) return;
@@ -123,12 +175,16 @@ export function buildAi() {
   model.addEventListener('change', () => { a().model = model.value.trim() || AI_MODEL; save(); checkAi(); });
   const test = el('button', { textContent: t('ai.test') });
   test.dataset.icon = 'link';
-  test.addEventListener('click', checkAi);
+  test.addEventListener('click', () => { checkAi(); checkMusic(); });
   const prompt = el('textarea', { id: 'ai-prompt', rows: 3, placeholder: t('ai.placeholder') });
   prompt.addEventListener('input', () => { a().prompt = prompt.value.slice(0, 2000); save(); });
   const style = el('select', { id: 'ai-style' });
   style.add(new Option(t('ai.anyStyle'), ''));
   for (const id of STYLE_IDS) style.add(new Option(t(`start.style.${id}`), id));
+  const musicUrl = el('input', { id: 'ai-music-url', type: 'url', spellcheck: false, placeholder: MUSIC_URL });
+  musicUrl.addEventListener('change', () => { a().musicUrl = (musicUrl.value.trim() || MUSIC_URL).replace(/\/+$/, ''); save(); checkMusic(); });
+  const music = el('input', { id: 'ai-music', type: 'checkbox' });
+  music.addEventListener('change', () => { a().music = music.checked; save(); });
   const go = el('button', { id: 'ai-go', className: 'primary', textContent: t('ai.compose') });
   go.dataset.icon = 'wand';
   go.addEventListener('click', () => compose('new'));
@@ -138,6 +194,8 @@ export function buildAi() {
   box.append(
     el('div', { className: 'gen-row' }, field(t('ai.url'), url), field(t('ai.model'), model), test),
     el('div', { className: 'ai-status hint' }),
+    el('div', { className: 'gen-row' }, el('label', { className: 'start-part', title: t('ai.musicHint') }, music, el('span', { textContent: t('ai.music') })),
+      field(t('ai.musicUrl'), musicUrl), el('span', { className: 'ai-music-status hint' })),
     el('div', { className: 'hint ai-setup', textContent: t('ai.setup') }),
     field(t('ai.request'), prompt),
     el('div', { className: 'gen-row' }, field(t('start.style'), style), go, stop),
@@ -152,6 +210,8 @@ export function renderAi() {
   const a = state.ai;
   box.querySelector('#ai-url').value = a.url;
   box.querySelector('#ai-model').value = a.model;
+  box.querySelector('#ai-music-url').value = a.musicUrl;
+  box.querySelector('#ai-music').checked = a.music;
   if (document.activeElement !== box.querySelector('#ai-prompt')) box.querySelector('#ai-prompt').value = a.prompt;
   box.querySelector('#ai-go').disabled = !!busy;
   box.querySelector('#ai-stop').hidden = !busy;
@@ -160,7 +220,7 @@ export function renderAi() {
   const p = result.plan;
   const bars = p.sections.reduce((s, x) => s + x.bars, 0), sec = Math.round(bars * 4 * 60 / p.bpm);
   const chords = parseProgression(p.prog).chords.map(c => c.name).join(' – ');
-  const lead = p.lead.breizh ? t('win.breizh') : `${soundName(p.lead.sound)} (${t(`gen.style.${p.lead.style}`)}${p.lead.notes ? `, ${t('ai.ownMelody')}` : ''})`;
+  const lead = p.lead.breizh ? t('win.breizh') : `${soundName(p.lead.sound)} (${a.music ? t('ai.byMusic') : t(`gen.style.${p.lead.style}`)})`;
   const parts = el('div', { className: 'start-sections' }, ...p.sections.map((s, k) => el('div', { className: `start-sec ai-sec start-sec-${s.type}` },
     el('span', { className: 'start-sec-n', textContent: String(k + 1) }),
     el('b', { textContent: s.name ?? t(`start.sec.${s.type}`) }),
@@ -177,12 +237,12 @@ export function renderAi() {
   out.replaceChildren(
     el('h3', { textContent: p.title ?? t(`start.style.${p.style}`) }),
     el('div', { className: 'hint', textContent: t('ai.summary', { style: t(`start.style.${p.style}`), bpm: p.bpm, chords, bars, min: Math.floor(sec / 60), sec: String(sec % 60).padStart(2, '0') }) }),
-    el('div', { className: 'hint', textContent: t('ai.sounds', { kick: t(`kick.preset.${p.kick.preset}`) + (p.kick.params ? ` (${t('ai.kickTuned')})` : ''), bass: `${soundName(p.bass.sound)} (${t(`gen.bstyle.${p.bass.style}`)})`, chords: soundName(p.chords.sound), lead }) }),
+    el('div', { className: 'hint', textContent: t('ai.sounds', { kick: t(`kick.preset.${p.kick.preset}`) + (p.kick.params ? ` (${t('ai.kickTuned')})` : ''), bass: `${soundName(p.bass.sound)} (${a.music ? t('ai.byMusic') : t(`gen.bstyle.${p.bass.style}`)})`, chords: soundName(p.chords.sound), lead }) }),
     parts,
     ...(result.warnings.length ? [el('div', { className: 'hint warn', title: result.warnings.join('\n'), textContent: t('ai.warnings', { n: result.warnings.length }) })] : []),
     el('div', { className: 'gen-row' }, refine, btn('ai-refine-go', t('ai.refine'), 'editor', () => compose('refine'))),
     el('div', { className: 'gen-row gen-actions' }, btn('ai-again', t('ai.again'), 'dice', () => compose('again')),
-      btn('ai-create', t('start.create'), 'plus', async e => { e.target.disabled = true; try { await composeSong(result.plan); } finally { e.target.disabled = false; } }, true)),
+      btn('ai-create', t('start.create'), 'plus', create, true)),
   );
 }
 
@@ -190,6 +250,7 @@ export function renderAi() {
 export function aiWinOpened() {
   renderAi();
   checkAi();
+  checkMusic();
 }
 
 /** Pour les tests : l'échange en cours et le dernier plan. */

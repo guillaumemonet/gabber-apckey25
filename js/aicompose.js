@@ -3,6 +3,7 @@
 // choisissant parmi les outils de l'application ; l'application le vérifie (cleanPlan) avant de le construire.
 // Ce module ne touche pas à l'état.
 import { BASS_STYLES } from './bassline.js';
+import { parseProgression } from './chords.js';
 import { KICK_PRESETS } from './kickdesign.js';
 import { LEAD_STYLES } from './melody.js';
 import { PRESETS } from './presets.js';
@@ -12,14 +13,17 @@ import { PLANS, STYLES } from './songstart.js';
 export const AI_URL = 'http://localhost:11434';
 export const AI_MODEL = 'qwen2.5:7b';
 export const AI_CTX = 8192;   // mots (tokens) de contexte : la consigne, le schéma et quelques échanges
+export const MUSIC_URL = 'http://127.0.0.1:8090';   // compositeur musical (ai/music) : écrit le lead et la basse
 
-export const defaultAi = () => ({ url: AI_URL, model: AI_MODEL, prompt: '' });
+export const defaultAi = () => ({ url: AI_URL, model: AI_MODEL, prompt: '', musicUrl: MUSIC_URL, music: true });
 export function mergeAi(saved) {
   const a = defaultAi();
   if (!saved || typeof saved !== 'object') return a;
   if (typeof saved.url === 'string' && /^https?:\/\/[^\s]+$/.test(saved.url.trim())) a.url = saved.url.trim().replace(/\/+$/, '');
   if (typeof saved.model === 'string' && /^[\w.:/-]{1,80}$/.test(saved.model.trim())) a.model = saved.model.trim();
   if (typeof saved.prompt === 'string') a.prompt = saved.prompt.slice(0, 2000);
+  if (typeof saved.musicUrl === 'string' && /^https?:\/\/[^\s]+$/.test(saved.musicUrl.trim())) a.musicUrl = saved.musicUrl.trim().replace(/\/+$/, '');
+  a.music = saved.music !== false;
   return a;
 }
 
@@ -129,3 +133,48 @@ export function adjustReply(raw, seed = () => 1 + Math.floor(Math.random() * 1e6
 
 /** Demande de modification d'un plan déjà proposé : le modèle renvoie le plan complet, modifié. */
 export const refineMessage = request => `Change the plan as follows, and answer with the complete new plan: ${request}`;
+
+// ---- Compositeur musical (ai/music) : les notes du lead et de la basse ----
+
+const MUSIC_MAX_BEATS = 64;
+const CHORD_BEATS = 8;   // 2 mesures par accord, comme la construction du morceau
+// Instrument de référence du lead selon son style (le modèle écrit comme cet instrument) : riff dense en doubles
+// croches (violon), mélodie d'hymne (onde carrée), arpège (harpe), appel et réponse (dent de scie).
+const LEAD_PROGRAMS = { riff: 40, anthem: 80, arp: 46, call: 81 };
+
+/**
+ * Ce que le compositeur musical doit écrire pour un plan : une demande par élément (lead, basse) et par suite
+ * d'accords où il joue. -> [{ prog, part, body }] (body : la requête /generate)
+ */
+export function musicJobs(plan) {
+  const jobs = [];
+  const wants = { lead: !plan.lead.breizh, bass: true };
+  for (const part of ['lead', 'bass']) {
+    if (!wants[part]) continue;
+    const progs = new Set(plan.sections.filter(s => s.play.includes(part)).map(s => s.prog ?? plan.prog));
+    for (const prog of progs) {
+      const body = musicBody(plan, prog, part);
+      if (body) jobs.push({ prog, part, body });
+    }
+  }
+  return jobs;
+}
+
+/** Requête /generate : tempo, longueur du passage, accords (posés autour du do médium), un kick par temps. */
+export function musicBody(plan, prog, part) {
+  const chords = parseProgression(prog).chords;
+  const beats = chords.length * CHORD_BEATS;
+  if (!chords.length || beats > MUSIC_MAX_BEATS) return null;
+  return {
+    bpm: plan.bpm, beats, part,
+    density: part === 'lead' ? plan.lead.density ?? 'mid' : 'mid',
+    ...(part === 'lead' && LEAD_PROGRAMS[plan.lead.style] !== undefined ? { program: LEAD_PROGRAMS[plan.lead.style] } : {}),
+    candidates: part === 'lead' && plan.lead.style === 'riff' ? 2 : 3,
+    chords: chords.map((c, i) => {
+      const root = 48 + c.root + (c.root < 5 ? 12 : 0);   // fondamentale entre fa2 et mi3
+      return { t: i * CHORD_BEATS, len: CHORD_BEATS, notes: c.intervals.map(iv => root + iv) };
+    }),
+    kick: Array.from({ length: beats }, (_, b) => b),
+    seed: 1 + Math.floor(Math.random() * 1e6),
+  };
+}

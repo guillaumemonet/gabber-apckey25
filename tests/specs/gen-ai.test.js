@@ -1,12 +1,16 @@
 // Compositeur IA avec un faux serveur Ollama : état du serveur (prêt, modèle absent, introuvable), demande (consigne,
 // schéma du plan, réponse lue au fil de l'eau), plan vérifié et résumé, modification, autre version, réponse
-// illisible, création du morceau.
+// illisible ; compositeur musical (faux) : le lead et la basse qu'il écrit vont dans le morceau, les générateurs
+// prennent le relais s'il ne répond pas.
 export default async function (t, A) {
   const S = A.state;
   window.confirm = () => true;
   const realFetch = window.fetch;
   const sent = [];
-  let server = 'ok', reply = null;
+  let server = 'ok', reply = null, music = 'ok';
+  const musicSent = [];
+  const LEAD = [{ t: 0, len: 2, note: 81, vel: 0.9 }, { t: 2, len: 1, note: 79, vel: 0.8 }, { t: 3, len: 1, note: 76, vel: 0.8 }, { t: 8, len: 4, note: 77, vel: 0.9 }];
+  const BASS = [{ t: 0, len: 1, note: 33, vel: 0.9 }, { t: 8, len: 1, note: 29, vel: 0.9 }];
   const plan = (title, extra = {}) => ({
     title, style: 'frenchcore', bpm: 202, prog: 'Am F C G', kick: { preset: 'frenchcore', params: { drive: 0.95 } },
     bass: { style: 'offbeat', sound: 'osc:reese' }, chords: { sound: 'dark_strings', rhythm: 'hold' }, lead: { sound: 'screech', style: 'riff', density: 'high' },
@@ -24,6 +28,13 @@ export default async function (t, A) {
       if (server === 'off') throw new TypeError('Failed to fetch');
       if (url.endsWith('/api/tags')) return new Response(JSON.stringify({ models: server === 'ok' ? [{ name: 'qwen2.5:7b' }] : [{ name: 'llama3:8b' }] }));
       if (url.endsWith('/api/chat')) { sent.push(JSON.parse(opts.body)); return stream(typeof reply === 'string' ? reply : JSON.stringify(reply)); }
+    }
+    if (String(url).startsWith('http://127.0.0.1:8090')) {
+      if (music === 'off') throw new TypeError('Failed to fetch');
+      if (url.endsWith('/health')) return new Response(JSON.stringify({ ok: true }));
+      const body = JSON.parse(opts.body);
+      musicSent.push(body);
+      return new Response(JSON.stringify({ notes: body.part === 'lead' ? LEAD : BASS }));
     }
     return realFetch(url, opts);
   };
@@ -92,6 +103,19 @@ export default async function (t, A) {
     t.ok(await t.until(() => /Orage 3/.test(t.$('#toast').textContent), 30000), 'morceau créé', t.$('#toast').textContent);
     t.eq(S.tl.markers[2].name, 'Pluie', 'repère nommé par l’IA');
     t.ok(S.tl.tracks[2].clips[0]?.osc === 'reese' && Math.abs(S.kick.params.drive - 0.95) < 1e-9, 'basse du synthé à oscillateurs, réglage du kick');
+    t.eq(musicSent.map(b => [b.part, b.bpm, b.beats, b.chords.length, b.kick.length, b.density]), [['lead', 202, 32, 4, 32, 'high'], ['bass', 202, 32, 4, 32, 'mid']], 'compositeur musical : lead et basse demandés');
+    t.eq(musicSent[0].chords.map(c => c.notes.map(n => n % 12)), [[9, 0, 4], [5, 9, 0], [0, 4, 7], [7, 11, 2]], 'accords envoyés (la mineur, fa, do, sol)');
+    t.eq(S.tl.tracks[4].clips[0].seq.map(n => n.note), LEAD.map(n => n.note), 'le lead du morceau : celui de l’IA musicale');
+    t.eq(S.tl.tracks[2].clips[0].seq.map(n => n.note), BASS.map(n => n.note), 'la basse : celle de l’IA musicale');
+    t.eq(S.gen.draft.lead.seq.map(n => n.note), LEAD.map(n => n.note), 'le lead reste dans le générateur');
+
+    // Compositeur musical absent : les générateurs écrivent la mélodie.
+    music = 'off';
+    musicSent.length = 0;
+    t.eq(await A.checkMusic(), false, 'IA musicale introuvable');
+    box.querySelector('#ai-create').click();
+    t.ok(await t.until(() => /Orage 3/.test(t.$('#toast').textContent) && S.tl.tracks[4].clips.length > 0 && S.tl.tracks[4].clips[0].seq.map(n => n.note).join() !== LEAD.map(n => n.note).join(), 30000), 'morceau créé sans l’IA musicale');
+    t.ok(/IA musicale|music AI/.test(status()), 'message : les générateurs ont pris le relais', status());
   } finally {
     window.fetch = realFetch;
     A.wm.toggle('ai', false);

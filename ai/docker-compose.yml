@@ -6,6 +6,11 @@
 #
 # Au premier lancement, le service « pull » télécharge le modèle (environ 4,7 Go) puis s'arrête.
 # GABBERKEY_MODEL choisit un autre modèle de la bibliothèque Ollama (il doit savoir répondre en JSON).
+#
+# IA musicale (lead et basse écrits par un modèle entraîné sur de la musique MIDI), en plus, carte NVIDIA :
+#   docker compose -f ai/docker-compose.yml --profile music up -d
+# L'image est construite sur place (environ 9 Go : PyTorch pour carte graphique), le modèle (1,4 Go) est
+# téléchargé au premier lancement.
 name: gabberkey-ai
 
 services:
@@ -42,5 +47,23 @@ services:
     entrypoint: ["ollama", "pull", "${GABBERKEY_MODEL:-qwen2.5:7b}"]
     restart: "no"
 
+  music:
+    profiles: ["music"]
+    build: ./music
+    image: gabberkey-music
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8090:8090"            # accessible depuis cette machine seulement
+    volumes:
+      - music-models:/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
 volumes:
   models:
+  music-models:

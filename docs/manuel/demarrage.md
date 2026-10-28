@@ -92,6 +92,18 @@ Le serveur IA est un conteneur Docker, à installer une seule fois. GabberKey fo
 
 Avec une carte graphique de 8 Go, un plan arrive en 3 à 10 secondes (la toute première demande charge le modèle et prend plus de temps). Pour arrêter le serveur : `docker compose -f ai/docker-compose.yml down` ; pour supprimer aussi le modèle téléchargé : ajoutez `-v`.
 
+### Installer l'IA musicale (optionnel)
+
+L'**IA musicale** écrit elle-même le **lead** et la **ligne de basse** du morceau : c'est un modèle entraîné sur de la musique en MIDI ([Anticipatory Music Transformer](https://github.com/jthickstun/anticipation), Stanford, licence Apache 2.0). On lui donne les accords et le kick du plan ; il écrit une piste qui va avec, note par note. Sans elle, ce sont les générateurs du studio qui écrivent la mélodie.
+
+Elle demande une carte graphique NVIDIA et environ **11 Go** de disque (le conteneur avec PyTorch, environ 9 Go, construit sur place ; le modèle, 1,4 Go, téléchargé au premier lancement) :
+
+```
+docker compose -f ai/docker-compose.yml --profile music up -d
+```
+
+Un lead prend de 10 secondes à environ une minute (les riffs denses sont les plus longs), une basse de 10 à 30 secondes.
+
 ### Composer
 
 1. **Serveur IA** et **Modèle** : `http://localhost:11434` et `qwen2.5:7b` par défaut. **Tester** vérifie que le serveur répond et que le modèle est là. Un autre modèle de la bibliothèque Ollama peut être utilisé : téléchargez-le avec `docker exec gabberkey-ai-ollama-1 ollama pull <modèle>`, puis tapez son nom.
@@ -100,7 +112,7 @@ Avec une carte graphique de 8 Go, un plan arrive en 3 à 10 secondes (la toute p
 4. **Modifier** : décrivez le changement avec vos mots (« un break plus long », « pas de basse dans le premier drop », « plus rapide ») ; l'IA renvoie le plan modifié. **Autre version** redemande le même morceau.
 5. **Créer le morceau** le construit comme [Nouveau morceau](#nouveau-morceau--démarrer-par-un-style) : la timeline est remplacée (**Ctrl+Z** la ramène), le générateur, le designer de kick et le synthé du clavier prennent les réglages du plan.
 
-La mélodie et la ligne de basse sont écrites par les générateurs du studio, dans le style et la densité choisis par l'IA, et changent à chaque version. Le modèle est petit : il lui arrive d'oublier une montée ou de mal comprendre une demande. Le plan reste un point de départ, à retoucher comme n'importe quel morceau.
+Avec **Mélodie et basse écrites par l'IA musicale** (cochée par défaut, l'état de l'IA musicale est affiché à côté), « Créer le morceau » lui fait d'abord écrire le lead et la basse de chaque suite d'accords, avec l'avancement ; le style de lead choisi par le plan oriente son écriture (riff dense en doubles croches, mélodie d'hymne, arpège, appel et réponse), et chaque création donne une nouvelle mélodie. Les notes restent dans le Générateur, retouchables au piano roll. Sans l'IA musicale (décochée, absente ou sans réponse), les générateurs du studio écrivent la mélodie et la basse, dans le style et la densité choisis par l'IA. Le modèle est petit : il lui arrive d'oublier une montée ou de mal comprendre une demande. Le plan reste un point de départ, à retoucher comme n'importe quel morceau.
 
 ## Langue
 

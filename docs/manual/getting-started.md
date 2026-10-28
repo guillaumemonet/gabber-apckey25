@@ -92,6 +92,18 @@ The AI server is a Docker container, installed once. GabberKey works without it:
 
 With an 8 GB graphics card, a plan comes in 3 to 10 seconds (the very first request loads the model and takes longer). To stop the server: `docker compose -f ai/docker-compose.yml down`; to also delete the downloaded model, add `-v`.
 
+### Installing the music AI (optional)
+
+The **music AI** writes the **lead** and the **bass line** of the song itself: it is a model trained on MIDI music ([Anticipatory Music Transformer](https://github.com/jthickstun/anticipation), Stanford, Apache 2.0 license). It is given the chords and the kick of the plan; it writes a part that goes with them, note by note. Without it, the generators of the studio write the melody.
+
+It needs an NVIDIA graphics card and about **11 GB** of disk (the container with PyTorch, about 9 GB, built on the spot; the model, 1.4 GB, downloaded on the first start):
+
+```
+docker compose -f ai/docker-compose.yml --profile music up -d
+```
+
+A lead takes from 10 seconds to about a minute (dense riffs take longest), a bass line 10 to 30 seconds.
+
 ### Composing
 
 1. **AI server** and **Model**: `http://localhost:11434` and `qwen2.5:7b` by default. **Test** checks that the server answers and that the model is there. Another model of the Ollama library can be used: download it with `docker exec gabberkey-ai-ollama-1 ollama pull <model>`, then type its name.
@@ -100,7 +112,7 @@ With an 8 GB graphics card, a plan comes in 3 to 10 seconds (the very first requ
 4. **Change**: describe the change in your words ("a longer break", "no bass in the first drop", "faster"); the AI sends back the changed plan. **Another version** asks for the same song again.
 5. **Create the song** builds it like [New song](#new-song-start-from-a-style): the timeline is replaced (**Ctrl+Z** brings it back), the Generator, the kick designer and the keyboard synth take the settings of the plan.
 
-The melody and the bass line are written by the generators of the studio, in the style and density chosen by the AI, and change with each version. The model is small: it may forget a build-up or misread a request. The plan is a starting point, edited like any other song.
+With **Melody and bass written by the music AI** (ticked by default, the state of the music AI is shown next to it), "Create the song" first has it write the lead and the bass of each chord progression, with the progress; the lead style chosen by the plan guides its writing (dense 16th-note riff, anthem melody, arpeggio, call and response), and each creation gives a new melody. The notes stay in the Generator, editable in the piano roll. Without the music AI (unticked, missing or not answering), the generators of the studio write the melody and the bass, in the style and density chosen by the AI. The model is small: it may forget a build-up or misread a request. The plan is a starting point, edited like any other song.
 
 ## Language
 
