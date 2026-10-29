@@ -84,5 +84,5 @@ export function onWindowToggle(id, open) {
   if (!open && id === 'breizh') stopBreizhPreview();
   if (!open && id === 'voice') stopVoicePreview();
   if (!open && id === 'tune') stopTunePreview();
-  if (id === 'viz') { if (open) viz.addOutput($('#viz-canvas')); else viz.removeOutput($('#viz-canvas')); }
+  if (id === 'viz') { if (open) viz.addOutput($('#viz-canvas'), { preview: true }); else viz.removeOutput($('#viz-canvas')); }
 }

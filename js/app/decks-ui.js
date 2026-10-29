@@ -3,6 +3,7 @@ import { DECK_IDS, DECK_KNOBS, guessBpm, secFromTurns, vinylTurns } from '../dec
 import { t } from '../i18n.js';
 import { guessCat } from '../library.js';
 import * as store from '../storage.js';
+import { everyFrame } from '../ticker.js';
 import { $, decks, engine, state, timeline, wm } from './core.js';
 import { arcPath, renderKnobs } from './knobs.js';
 import { libSelected, renderLibrary } from './library-ui.js';
@@ -154,10 +155,7 @@ export function buildDecks() {
     if (sid) ensureBuffer(sid).then(buf => { if (buf) { decks.decks[id].setBuffer(buf); decks.decks[id].update(); drawDeckWave(id); renderDecks(); } });
   }
   renderDecks();
-  (function frame() {
-    if (wm?.isOpen('decks')) for (const id of DECK_IDS) drawDeck(id);
-    requestAnimationFrame(frame);
-  })();
+  everyFrame(() => DECK_IDS.forEach(drawDeck), () => wm?.isOpen('decks'));
   // Fenêtre redimensionnée : les formes d'onde sont redessinées à la bonne largeur.
   let resizeTimer;
   new ResizeObserver(() => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => DECK_IDS.forEach(drawDeckWave), 120); }).observe($('.decks'));

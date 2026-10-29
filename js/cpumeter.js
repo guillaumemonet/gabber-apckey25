@@ -4,6 +4,8 @@
 //   (son haché). Dans ce cas la barre montre ce retard.
 // - Interface : part du temps où la page n'arrive plus à afficher ses images (calculs, dessin de la timeline…).
 
+import { everyFrame } from './ticker.js';
+
 const WINDOW = 500;   // ms entre deux mesures
 
 export class CpuMeter {
@@ -29,13 +31,11 @@ export class CpuMeter {
         rc.start({ updateInterval: WINDOW / 1000 });
       }
     } catch { /* pas de mesure du navigateur */ }
-    const frame = now => {
+    everyFrame(now => {
       const d = now - this.lastFrame;
       this.lastFrame = now;
       if (d > 0) { this.frames++; this.minFrame = Math.min(this.minFrame, d); }
-      requestAnimationFrame(frame);
-    };
-    requestAnimationFrame(frame);
+    });
     this.timer = setInterval(() => this.measure(), WINDOW);
   }
 

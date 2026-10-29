@@ -31,10 +31,10 @@ export default async function (t, A) {
   A.timeline.chains.set(99, new Map([['x', { reset() { throw new Error('boom'); } }]]));
   btn.click();
   await t.wait(150);
-  const x1 = t.$('#tl-playhead').style.left;
+  const x1 = t.$('#tl-playhead').style.transform;
   await t.wait(400);
   t.ok(!A.timeline.playing, 'arrêtée malgré un effet qui refuse sa remise à zéro');
   t.eq(btn.dataset.icon, 'play', 'le bouton repasse sur ▶');
-  t.eq(t.$('#tl-playhead').style.left, x1, 'la tête de lecture est immobile');
+  t.eq(t.$('#tl-playhead').style.transform, x1, 'la tête de lecture est immobile');
   A.timeline.chains.delete(99);
 }

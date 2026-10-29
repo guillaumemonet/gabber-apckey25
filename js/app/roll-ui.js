@@ -9,6 +9,7 @@ import { prepareKickClips } from '../kicksynth.js';
 import { KICK_PRESETS, kickDefaults } from '../kickdesign.js';
 import { FAMILIES, PRESETS } from '../presets.js';
 import { BEATS_PER_BAR } from '../timeline.js';
+import { everyFrame } from '../ticker.js';
 import { $, defaultRoll, engine, kickSynth, oscSynth, state, timeline, uiColor, wm } from './core.js';
 import { presetPatch } from './gen.js';
 import { toast } from './misc.js';
@@ -134,12 +135,11 @@ export function buildRoll() {
   }, true);
   // Tête de lecture (écoute du motif ou lecture de la timeline).
   let wasMoving = false;
-  (function frame() {
+  everyFrame(() => {
     const moving = !!(wm?.isOpen('roll') && (rollPlay || timeline.playing));
     if (moving || wasMoving) pianoRoll.draw();
     wasMoving = moving;
-    requestAnimationFrame(frame);
-  })();
+  });
   renderRollBar();
 }
 

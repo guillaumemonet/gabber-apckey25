@@ -513,7 +513,7 @@ main.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px m
 .tl-grip { position: absolute; top: 0; right: 0; bottom: 0; width: 7px; cursor: ew-resize; background: rgba(255, 255, 255, .18); }
 .tl-grip:hover { background: rgba(255, 255, 255, .45); }
 .tl-drop { position: absolute; top: 2px; bottom: 2px; border: 2px dashed var(--accent-2); border-radius: 4px; background: rgba(61, 214, 140, .12); pointer-events: none; }
-.tl-playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent); pointer-events: none; z-index: 2; }   /* sous les en-têtes de piste (3) et la règle (4), qui restent fixes au défilement */
+.tl-playhead { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; will-change: transform; background: var(--accent); pointer-events: none; z-index: 2; }   /* sous les en-têtes de piste (3) et la règle (4), qui restent fixes au défilement */
 .tl-src { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
 .tl-src select { font: inherit; font-size: 12px; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 4px; }
 .tl-bars { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }

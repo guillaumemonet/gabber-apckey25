@@ -2,7 +2,9 @@
 // nom, effets d'insert, panoramique, volume, muet / solo, vumètre, pistes envoyées.
 import { t } from '../i18n.js';
 import { BUS_COUNT, BUS_DEFAULTS, MAX_INSERTS } from '../timeline.js';
+import { everyFrame } from '../ticker.js';
 import { $, state, timeline, wm } from './core.js';
+import { levelMeter } from './meters.js';
 import { fxOptions, renderInsertRack } from './inserts-ui.js';
 import { save } from './save.js';
 import { renderTl, trackName } from './tl.js';
@@ -48,20 +50,8 @@ export function buildBuses() {
   }
   renderBuses();
   // Vumètres (seulement quand la fenêtre est ouverte).
-  const levels = [];
-  (function frame() {
-    if (wm?.isOpen('buses')) {
-      for (let b = 0; b < BUS_COUNT; b++) {
-        levels[b] = Math.max(timeline.busLevel(b), (levels[b] ?? 0) * 0.88);
-        const cv = els[b].querySelector('.vu'), g = cv.getContext('2d');
-        g.clearRect(0, 0, cv.width, cv.height);
-        const h = Math.min(1, levels[b]) * cv.height;
-        g.fillStyle = levels[b] > 0.95 ? '#ff5a36' : levels[b] > 0.7 ? '#ffd23f' : '#3dd68c';
-        g.fillRect(0, cv.height - h, cv.width, h);
-      }
-    }
-    requestAnimationFrame(frame);
-  })();
+  const meters = els.map(el => levelMeter(el.querySelector('.vu'), { vertical: true }));
+  everyFrame(() => meters.forEach((m, b) => m(timeline.busLevel(b))), () => wm?.isOpen('buses'));
 }
 
 export function renderBus(b) {

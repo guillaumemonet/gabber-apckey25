@@ -2,6 +2,7 @@
 import { t } from '../i18n.js';
 import { guessCat } from '../library.js';
 import { SC_DUCKED, SC_SOURCES, defaultScState } from '../sidechain.js';
+import { everyFrame } from '../ticker.js';
 import { $, engine, kit, sidechain, state } from './core.js';
 import { libManifest } from './library-ui.js';
 import { save } from './save.js';
@@ -82,13 +83,14 @@ export function buildSidechain() {
   sidechain.shaper.connect(probe);
   const data = new Float32Array(probe.fftSize);
   const bar = box.querySelector('.sc-meter i');
-  (function frame() {
+  let shown = '';
+  everyFrame(() => {
     probe.getFloatTimeDomainData(data);
     let min = 0;
     for (const v of data) min = Math.min(min, v);
-    bar.style.width = state.sc.on ? `${Math.round(-min * 100)}%` : '0';
-    requestAnimationFrame(frame);
-  })();
+    const w = state.sc.on ? `${Math.round(-min * 100)}%` : '0';
+    if (w !== shown) bar.style.width = shown = w;
+  }, () => bar.offsetParent !== null);   // témoin affiché seulement
   renderSidechain();
 }
 

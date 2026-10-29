@@ -2,6 +2,7 @@
 import { CpuMeter } from '../cpumeter.js';
 import { t } from '../i18n.js';
 import { Metronome } from '../metronome.js';
+import { everyFrame } from '../ticker.js';
 import { $, engine, metro, oscSynth, provide, state, timeline } from './core.js';
 import { save } from './save.js';
 import { countingIn, tlRec } from './tl.js';
@@ -42,11 +43,10 @@ export function buildMetro() {
   $('#metro-opts').addEventListener('click', e => openMetroOptions(e.currentTarget));
   const dots = [...document.querySelectorAll('#metro .metro-dots i')];
   let lastBeat = -2;
-  (function frame() {
+  everyFrame(() => {
     const b = state.metro.on || countingIn ? metro.current() : -1;
     if (b !== lastBeat) { dots.forEach((d, k) => { d.classList.toggle('on', k === b); d.classList.toggle('one', k === b && b === 0); }); lastBeat = b; }
-    requestAnimationFrame(frame);
-  })();
+  });
   renderMetro();
 }
 

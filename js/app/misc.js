@@ -3,7 +3,9 @@ import { t } from '../i18n.js';
 import * as store from '../storage.js';
 import { panic } from './actions.js';
 import { renderLeds } from './controller.js';
+import { everyFrame } from '../ticker.js';
 import { $, engine } from './core.js';
+import { levelMeter, peakOf } from './meters.js';
 import { renderKnobs, renderPages } from './knobs.js';
 import { renderBanks, renderEditor, renderPads } from './pads.js';
 
@@ -24,20 +26,12 @@ export function toast(text, duration = 1800) {
 }
 
 export function drawMeter() {
-  const cv = $('#meter');
-  const g = cv.getContext('2d');
   const data = new Float32Array(engine.analyser.fftSize);
-  let level = 0;
-  (function frame() {
+  const meter = levelMeter($('#meter'), { decay: 0.9, yellow: false });
+  everyFrame(() => {
     engine.analyser.getFloatTimeDomainData(data);
-    let peak = 0;
-    for (const v of data) peak = Math.max(peak, Math.abs(v));
-    level = Math.max(peak, level * 0.9);
-    g.clearRect(0, 0, cv.width, cv.height);
-    g.fillStyle = level > 0.95 ? '#ff5a36' : '#3dd68c';
-    g.fillRect(0, 0, cv.width * Math.min(1, level), cv.height);
-    requestAnimationFrame(frame);
-  })();
+    meter(peakOf(data));
+  });
 }
 
 export function renderAll() {

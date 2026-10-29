@@ -27,7 +27,7 @@ export default async function (t, A) {
   const dryStop = await peakAfter(400);
   t.ok(demoPlaying > 0.05, 'la démo joue', demoPlaying);
   t.ok(dryStop < 0.05 && dryStop < demoPlaying * 0.3, 'la démo se tait à l\'arrêt', { demoPlaying, dryStop });
-  const x = t.$('#tl-playhead').style.left;
+  const x = t.$('#tl-playhead').style.transform;
   await t.wait(400);
-  t.eq(t.$('#tl-playhead').style.left, x, 'la tête de lecture ne bouge plus');
+  t.eq(t.$('#tl-playhead').style.transform, x, 'la tête de lecture ne bouge plus');
 }

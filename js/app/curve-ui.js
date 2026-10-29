@@ -3,6 +3,7 @@ import { CURVE_BEATS, CURVE_SHAPES, CURVE_TARGETS, cleanCurve, curveAt, curveVal
 import { t } from '../i18n.js';
 import { BEATS_PER_BAR } from '../timeline.js';
 import { TrackChain, setCurveResolver } from '../trackfx.js';
+import { everyFrame } from '../ticker.js';
 import { $, engine, state, timeline, wm } from './core.js';
 import { libManifest, libTab, renderLibrary, showLibrary } from './library-ui.js';
 import { toast } from './misc.js';
@@ -146,7 +147,7 @@ export async function curvePreviewToggle() {
   curvePreviewUpdate();
   $('#curve-play').classList.add('active');
   $('#curve-play').textContent = t('curve.stop');
-  (function frame() { if (!curvePrev) return; renderCurveCanvas(); requestAnimationFrame(frame); })();
+  const stop = everyFrame(() => { if (curvePrev) renderCurveCanvas(); else stop(); });
 }
 
 export function curvePreviewUpdate() {

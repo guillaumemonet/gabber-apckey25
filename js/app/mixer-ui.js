@@ -2,7 +2,9 @@
 import { t } from '../i18n.js';
 import { CHANNELS, MAX_FX, MIX_FIELDS, mixKnobDefs } from '../mixer.js';
 import { PAGES, toValue } from '../params.js';
-import { $, engine, mixer, patch, state } from './core.js';
+import { everyFrame } from '../ticker.js';
+import { $, engine, mixer, patch, state, wm } from './core.js';
+import { levelMeter, peakOf } from './meters.js';
 import { fxOptions, renderInsertRack } from './inserts-ui.js';
 import { renderKnobs } from './knobs.js';
 import { renderMixerDest } from './patch-ui.js';
@@ -100,25 +102,11 @@ export function renderFx(id) {
 }
 
 export function drawMixerMeters() {
-  const levels = {};
   const master = new Float32Array(engine.analyser.fftSize);
-  const draw = (cv, lvl) => {
-    const g = cv.getContext('2d');
-    g.clearRect(0, 0, cv.width, cv.height);
-    const h = Math.min(1, lvl) * cv.height;
-    g.fillStyle = lvl > 0.95 ? '#ff5a36' : lvl > 0.7 ? '#ffd23f' : '#3dd68c';
-    g.fillRect(0, cv.height - h, cv.width, h);
-  };
-  (function frame() {
-    for (const id of CHANNELS) {
-      levels[id] = Math.max(mixer.level(id), (levels[id] ?? 0) * 0.88);
-      draw(stripEls[id].querySelector('.vu'), levels[id]);
-    }
+  const meters = Object.fromEntries([...CHANNELS, 'master'].map(id => [id, levelMeter(stripEls[id].querySelector('.vu'), { vertical: true })]));
+  everyFrame(() => {
+    for (const id of CHANNELS) meters[id](mixer.level(id));
     engine.analyser.getFloatTimeDomainData(master);
-    let peak = 0;
-    for (const v of master) peak = Math.max(peak, Math.abs(v));
-    levels.master = Math.max(peak, (levels.master ?? 0) * 0.88);
-    draw(stripEls.master.querySelector('.vu'), levels.master);
-    requestAnimationFrame(frame);
-  })();
+    meters.master(peakOf(master));
+  }, () => wm?.isOpen('mix'));
 }

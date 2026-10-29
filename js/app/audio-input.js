@@ -4,7 +4,9 @@
 // Latence : en jouant par-dessus la lecture, on entend le morceau un peu en retard et le micro arrive lui aussi en retard ;
 // la prise est recalée d'autant (estimation automatique, ou valeur réglée à la main).
 import { t } from '../i18n.js';
+import { everyFrame } from '../ticker.js';
 import { $, engine, mixer, state, wm } from './core.js';
+import { levelMeter } from './meters.js';
 import { toast } from './misc.js';
 import { save } from './save.js';
 
@@ -106,17 +108,8 @@ export function buildInput() {
   $('#input-latency').addEventListener('input', e => { state.input.latency = +e.target.value; renderInput(); });
   $('#input-latency').addEventListener('change', () => save());
   // Vumètre (fenêtre ouverte, entrée active).
-  let lvl = 0;
-  (function frame() {
-    if (wm?.isOpen('input')) {
-      lvl = Math.max(inputLevel(), lvl * 0.9);
-      const cv = $('#input-meter'), g = cv.getContext('2d');
-      g.clearRect(0, 0, cv.width, cv.height);
-      g.fillStyle = lvl > 0.95 ? '#ff5a36' : lvl > 0.7 ? '#ffd23f' : '#3dd68c';
-      g.fillRect(0, 0, cv.width * Math.min(1, lvl), cv.height);
-    }
-    requestAnimationFrame(frame);
-  })();
+  const meter = levelMeter($('#input-meter'), { decay: 0.9 });
+  everyFrame(() => meter(inputLevel()), () => wm?.isOpen('input'));
   renderInput();
 }
 

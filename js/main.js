@@ -233,7 +233,7 @@ async function start() {
   $('#layout-reset').addEventListener('click', () => wm.reset());
   buildPluginBar();
   buildLibrary();
-  if (wm.isOpen('viz')) viz.addOutput($('#viz-canvas'));
+  if (wm.isOpen('viz')) viz.addOutput($('#viz-canvas'), { preview: true });
   $('#start').classList.add('hidden');
   if (libAdded.length) toast(libAdded.map(a => t('lib.added', { name: a.name, n: a.bank })).join(' · '), 6000);
 

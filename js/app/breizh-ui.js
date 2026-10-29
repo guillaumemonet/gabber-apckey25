@@ -9,6 +9,7 @@ import { catColor } from '../library.js';
 import { PALETTE } from '../apc.js';
 import { PianoRoll } from '../pianoroll.js';
 import { BEATS_PER_BAR } from '../timeline.js';
+import { everyFrame } from '../ticker.js';
 import { $, engine, state, uiColor } from './core.js';
 import { freeLanes, presetPatch } from './gen.js';
 import { toast } from './misc.js';
@@ -227,11 +228,10 @@ export function buildBreizh() {
   });
   cv.addEventListener('keydown', e => { if (breizhRoll.key(e)) { e.preventDefault(); e.stopPropagation(); } });
   cv.addEventListener('pointerdown', () => cv.focus());
-  (function frame() {
+  everyFrame(() => {
     if (breizhPreviewing() || wasPreviewing) breizhRoll.draw();
     wasPreviewing = breizhPreviewing();
-    requestAnimationFrame(frame);
-  })();
+  });
   renderBreizh();
 }
 

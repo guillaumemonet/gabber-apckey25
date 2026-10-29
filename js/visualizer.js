@@ -8,6 +8,7 @@
 // Les couleurs avancent avec le tempo (une teinte par temps) ; chaque kick fait un flash.
 // Rien n'est calculé quand aucune sortie n'est affichée.
 
+import { everyFrame } from './ticker.js';
 import { VizGL, GL_MODES } from './viz3d.js';
 
 const GL_OK = VizGL.supported();
@@ -18,6 +19,7 @@ export const VIZ_MODES = [...VIZ_2D, ...VIZ_3D];
 export const VIZ_FILTERS = GL_OK ? ['crt', 'kaleido', 'glitch', 'strobe'] : [];
 const SCENE_SCALE = { fractal: 0.5, blob: 0.55, terrain: 0.6, city: 0.6, metaballs: 0.6, plasma: 0.5, lasers: 0.7, starfield: 0.8, tunnel: 0.75, rotozoom: 0.75, ledwall: 1 };
 const MAX_PIXELS = 1920 * 1080;
+const PREVIEW_PIXELS = 960 * 540;   // l'aperçu de la fenêtre n'a pas besoin de plus (le projecteur, lui, va jusqu'à la Full HD)
 const STROBE_GAP = 0.34;   // au plus 3 flashs par seconde (recommandation pour l'épilepsie photosensible)
 
 const TAU = Math.PI * 2;
@@ -74,7 +76,7 @@ export class Visualizer {
     this.needles = [0, 0];
     this.clips = [0, 0];
     this.chan = {};
-    this.outputs = new Set();
+    this.outputs = new Map();   // canvas -> { w, h, dpr, preview } (tailles suivies, pas relues à chaque image)
     this.running = false;
     this.src = document.createElement('canvas');   // image des modes 2D
     this.fb = document.createElement('canvas');    // image précédente (Milk)
@@ -85,20 +87,28 @@ export class Visualizer {
 
   kick(time) { this.kicks.push(time); }
 
-  // Une sortie = un canvas affiché (aperçu de la fenêtre, projecteur). Le calcul tourne tant qu'il y en a une.
-  addOutput(cv) {
-    this.outputs.add(cv);
+  // Une sortie = un canvas affiché (aperçu de la fenêtre : preview, projecteur). Le calcul tourne tant qu'il y en a une.
+  addOutput(cv, { preview = false } = {}) {
+    if (this.outputs.has(cv)) return;
+    const view = cv.ownerDocument.defaultView;
+    const out = { preview };
+    const measure = () => Object.assign(out, { w: cv.clientWidth, h: cv.clientHeight, dpr: Math.min(2, view?.devicePixelRatio || 1) });
+    measure();
+    out.ro = new view.ResizeObserver(measure);
+    out.ro.observe(cv);
+    this.outputs.set(cv, out);
     if (this.running) return;
     this.running = true;
-    const loop = () => {
-      if (!this.outputs.size) { this.running = false; return; }
+    const stop = everyFrame(() => {
+      if (!this.outputs.size) { this.running = false; stop(); return; }
       try { this.frame(); } catch (err) { console.warn('Visualizer', err); }
-      requestAnimationFrame(loop);
-    };
-    requestAnimationFrame(loop);
+    });
   }
 
-  removeOutput(cv) { this.outputs.delete(cv); }
+  removeOutput(cv) {
+    this.outputs.get(cv)?.ro.disconnect();
+    this.outputs.delete(cv);
+  }
 
   setMode(mode) {
     if (mode === this.mode) return;
@@ -108,14 +118,15 @@ export class Visualizer {
 
   frame() {
     // Taille de travail : la plus grande des sorties visibles (plafonnée à la Full HD).
-    const outs = [...this.outputs].filter(c => c.isConnected && c.clientWidth > 0 && c.clientHeight > 0);
+    const outs = [...this.outputs].filter(([c, o]) => c.isConnected && o.w > 0 && o.h > 0);
     if (!outs.length) return;
-    const px = c => Math.min(2, c.ownerDocument.defaultView?.devicePixelRatio || 1);
-    let W = Math.max(...outs.map(c => c.clientWidth * px(c))), H = Math.max(...outs.map(c => c.clientHeight * px(c)));
-    const k = Math.min(1, Math.sqrt(MAX_PIXELS / (W * H)));
-    W = Math.max(2, Math.round(W * k));
-    H = Math.max(2, Math.round(H * k));
-    const cssW = Math.max(...outs.map(c => c.clientWidth));
+    // Pixels d'une sortie : sa taille à l'écran, plafonnée (l'aperçu de la fenêtre plus bas que le projecteur).
+    const dims = outs.map(([c, o]) => {
+      const w = o.w * o.dpr, h = o.h * o.dpr, k = Math.min(1, Math.sqrt((o.preview ? PREVIEW_PIXELS : MAX_PIXELS) / (w * h)));
+      return [c, Math.max(2, Math.round(w * k)), Math.max(2, Math.round(h * k))];
+    });
+    const W = Math.max(...dims.map(d => d[1])), H = Math.max(...dims.map(d => d[2]));
+    const cssW = Math.max(...outs.map(([, o]) => o.w));
 
     const now = this.ctx.currentTime;
     let kicked = false;
@@ -167,8 +178,7 @@ export class Visualizer {
       this.glp.post(v, { crt: this.fx.crt || 0, kaleido: this.fx.kaleido || 0, glitch: this.fx.glitch || 0, strobe: this.strobe });
       source = this.glp.cv;
     } else source = this.src;
-    for (const c of outs) {
-      const w = Math.round(Math.min(W, c.clientWidth * px(c))), h = Math.round(Math.min(H, c.clientHeight * px(c)));
+    for (const [c, w, h] of dims) {
       if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
       c.getContext('2d').drawImage(source, 0, 0, w, h);
     }

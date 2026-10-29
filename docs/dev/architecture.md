@@ -4,7 +4,7 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 
 ## Deux couches
 
-- **Les moteurs** (`js/*.js`) : le son et les données, sans interface. Chacun est autonome et ne connaît pas les autres : `audio.js` (synthé, sampler, effets du master), `timeline.js` (lecture des pistes), `drummachine.js` (socle des boîtes à rythmes et du séquenceur : horloge des pas, distorsion, kits), `tr909.js`, `tr808.js`, `stepseq.js`, `slicer.js`, `songstart.js` (styles et plans de « Nouveau morceau »), `songplan.js` (plan de morceau : format et nettoyage de ce qui arrive), `bassline.js` (lignes de basse du générateur), `tracker.js` (lecture et rejeu des modules .mod / .xm), `sampler.js` (instrument échantillon : un pad joué en notes), `acid.js`, `decks.js`, `mixer.js`, `trackfx.js`, `osc.js`, etc.
+- **Les moteurs** (`js/*.js`) : le son et les données, sans interface. Chacun est autonome et ne connaît pas les autres : `audio.js` (synthé, sampler, effets du master), `timeline.js` (lecture des pistes), `drummachine.js` (socle des boîtes à rythmes et du séquenceur : horloge des pas, distorsion, kits), `tr909.js`, `tr808.js`, `stepseq.js`, `slicer.js`, `songstart.js` (styles et plans de « Nouveau morceau »), `songplan.js` (plan de morceau : format et nettoyage de ce qui arrive), `ticker.js` (la seule boucle d'affichage : chaque vumètre, tête de lecture ou animation s'y inscrit, avec la condition qui la rend utile), `bassline.js` (lignes de basse du générateur), `tracker.js` (lecture et rejeu des modules .mod / .xm), `sampler.js` (instrument échantillon : un pad joué en notes), `acid.js`, `decks.js`, `mixer.js`, `trackfx.js`, `osc.js`, etc.
 - **L'application** (`js/main.js` et `js/app/*.js`) : l'interface, le contrôleur APC et les liaisons entre les moteurs. Un module par domaine.
 
 `js/main.js` est le point d'entrée : au clic sur « Démarrer », il crée les moteurs, les relie (table de mixage, sidechain, câblage), puis construit chaque fenêtre.
@@ -42,6 +42,7 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 | `acid-ui.js` | Fenêtre de la TB-303 |
 | `kick-ui.js` | Fenêtre du designer de kick |
 | `decks-ui.js` | Fenêtre des platines : chargement, scratch, transition automatique |
+| `meters.js` | Vumètres de l'interface (niveau qui retombe, redessiné seulement quand il bouge) |
 | `mixer-ui.js` | Fenêtre de la table de mixage |
 | `patch-ui.js` | Page de câblage : boîtes à effets et câbles |
 | `sidechain-ui.js` | Sidechain : kicks des sons et fenêtre de réglage |

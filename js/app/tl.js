@@ -8,6 +8,7 @@ import { Recorder, encodeWav } from '../recorder.js';
 import * as store from '../storage.js';
 import { prepareKickClips } from '../kicksynth.js';
 import { BEATS_PER_BAR, MAX_INSERTS, MAX_TRACKS, MIN_TRACKS, REC_SOURCES, TRACK_DEFAULTS, newTrack, trackAudible } from '../timeline.js';
+import { everyFrame } from '../ticker.js';
 import { renderAcid } from './acid-ui.js';
 import { renderLeds } from './controller.js';
 import { $, acid, drum, drum808, engine, metro, mixer, state, stepSeq, timeline, uiColor, wm } from './core.js';
@@ -271,8 +272,12 @@ export function buildTl() {
   // Les raccourcis (Suppr, Ctrl+C / V…) vont à la timeline quand on vient de cliquer dedans.
   document.addEventListener('pointerdown', e => { setTlFocus(!!e.target.closest?.('#timeline, #library')); }, true);
   timeline.onStop = () => { renderTl(); renderLeds(); };
+  // Tête de lecture : déplacée par transformation (sans recalcul de la mise en page), la largeur de la vue mémorisée ;
+  // les lectures (défilement) avant les écritures.
   const scroll = $('#tl-scroll');
-  (function frame() {
+  let viewW = scroll.clientWidth, lineX = null;
+  new ResizeObserver(() => { viewW = scroll.clientWidth; }).observe(scroll);
+  everyFrame(() => {
     if (tlRec) {
       for (const clip of tlRec.open.values()) growHeldNote(clip);
       if ((tlRec.dirty || tlRec.open.size) && performance.now() - lastRecRender > 100) { tlRec.dirty = false; setLastRecRender(performance.now()); renderTl(); }
@@ -280,12 +285,14 @@ export function buildTl() {
     const pos = timeline.position();
     renderTlTime(pos);
     const x = TL_HEAD + pos * beatPx();
-    line.style.left = `${x}px`;
     // Pendant la lecture, la vue suit la tête de lecture : elle est replacée juste après les en-têtes de piste (fixes au
     // défilement, TL_HEAD de large), jamais dessous.
-    if (timeline.playing && (x > scroll.scrollLeft + scroll.clientWidth - 60 || x < scroll.scrollLeft + TL_HEAD + 2)) scroll.scrollLeft = Math.max(0, x - TL_HEAD - 60);
-    requestAnimationFrame(frame);
-  })();
+    if (timeline.playing) {
+      const left = scroll.scrollLeft;
+      if (x > left + viewW - 60 || x < left + TL_HEAD + 2) scroll.scrollLeft = Math.max(0, x - TL_HEAD - 60);
+    }
+    if (x !== lineX) line.style.transform = `translateX(${lineX = x}px)`;
+  });
   renderTl();
 }
 

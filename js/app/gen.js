@@ -15,6 +15,7 @@ import { PianoRoll } from '../pianoroll.js';
 import { PALETTE } from '../apc.js';
 import { PRESETS, presetById } from '../presets.js';
 import { BEATS_PER_BAR } from '../timeline.js';
+import { everyFrame } from '../ticker.js';
 import { $, engine, oscSynth, state, timeline, uiColor } from './core.js';
 import { oscPresetValues } from './osc-ui.js';
 import { toast } from './misc.js';
@@ -527,11 +528,10 @@ export function buildGen() {
   // Raccourcis du piano roll (copier, coller, supprimer, transposer…) quand il a le focus.
   cv.addEventListener('keydown', e => { if (genRoll.key(e)) { e.preventDefault(); e.stopPropagation(); } });
   cv.addEventListener('pointerdown', () => cv.focus());
-  (function frame() {
+  everyFrame(() => {
     if (genPreviewing() || wasPreviewing) genRoll.draw();
     wasPreviewing = genPreviewing();
-    requestAnimationFrame(frame);
-  })();
+  });
   renderGen();
 }
 
