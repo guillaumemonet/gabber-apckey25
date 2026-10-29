@@ -1,4 +1,4 @@
-"""Local web server for GabberKey (Web MIDI requires localhost or HTTPS).
+"""Local web server for Ravebench (Web MIDI requires localhost or HTTPS).
 
 Unlike `python -m http.server`, it tells the browser to always revalidate files,
 so updated code and sound banks show up on a simple reload, and it forces the
@@ -38,5 +38,5 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 if __name__ == '__main__':
     handler = functools.partial(Handler, directory=str(ROOT))
     with http.server.ThreadingHTTPServer(('127.0.0.1', PORT), handler) as httpd:
-        print(f'GabberKey: http://localhost:{PORT}  (Ctrl+C to stop)')
+        print(f'Ravebench: http://localhost:{PORT}  (Ctrl+C to stop)')
         httpd.serve_forever()

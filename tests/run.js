@@ -1,4 +1,4 @@
-// Lanceur des tests de GabberKey (aucune dépendance) : `npm test` ou `node tests/run.js [filtre…]`.
+// Lanceur des tests de Ravebench (aucune dépendance) : `npm test` ou `node tests/run.js [filtre…]`.
 // Pour chaque test (tests/specs/*.test.js) : sert l'application, ouvre Firefox sans fenêtre sur une page de test
 // générée en mémoire (l'application + un accès à ses variables internes + le test), attend le résultat, ferme Firefox.
 // Variables : FIREFOX = chemin de Firefox ; TEST_TIMEOUT = délai par test en secondes (180 par défaut) ; TEST_JOBS = tests en parallèle (2).
@@ -14,7 +14,7 @@ const SPECS = path.join(ROOT, 'tests', 'specs');
 const TIMEOUT = (+process.env.TEST_TIMEOUT || 180) * 1000;
 const JOBS = Math.max(1, +process.env.TEST_JOBS || 2);
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.flac': 'audio/flac', '.ogg': 'audio/ogg',
-  '.wav': 'audio/wav', '.png': 'image/png', '.svg': 'image/svg+xml', '.gabber': 'application/json', '.apckit': 'application/json' };
+  '.wav': 'audio/wav', '.png': 'image/png', '.svg': 'image/svg+xml', '.ravebench': 'application/json', '.gabber': 'application/json', '.apckit': 'application/json' };
 
 function firefoxPath() {
   if (process.env.FIREFOX) return process.env.FIREFOX;

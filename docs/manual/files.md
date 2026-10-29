@@ -6,11 +6,11 @@ Saving and opening projects, songs and settings; WAV and stems export; kits.
 
 ## Saving and opening
 
-GabberKey saves everything automatically in the browser, and you can also keep your work in **`.gabber` files** (to back it up, move it to another computer or share it):
+Ravebench saves everything automatically in the browser, and you can also keep your work in **`.ravebench` files** (files saved before the change of name, `.gabber`, still open; to back it up, move it to another computer or share it):
 - **Save project** (header): the whole project in one file: timeline, tempo, pads and banks, every tool, mixer, patch, scenes, windows, with your own sounds and recordings inside. **Open…** loads it back (everything is replaced, then the app restarts on it).
 - **Song** (the 📁 / 💾 buttons of the timeline toolbar): the timeline alone (tracks, blocks, track effects, length, tempo) with the recordings it uses. Opening a song replaces the timeline (Ctrl+Z brings the previous one back).
 - **Settings of a tool**: the 📁 / 💾 buttons in the title bar of the TR-909 (patterns and knobs), TB-303, Synth, Oscillator synth (with your presets), Kick designer, Mixer (with the sidechain and the master section), Patch, Scenes, Generator, Breizh generator, Build-up designer, Voice generator, Pitch correction, Effect designer (your curves), Decks (with their sounds), Launcher, Buses, Visualizer and MIDI (learned controls, devices, clock). In the **Pads** and **Banks** windows, 📁 / 💾 open and save the bank (`.apckit` file, see below).
-- Any **Open** button accepts any GabberKey file: it recognises what it contains and loads it where it belongs. Library sounds are referenced by name; imported sounds and recordings are embedded.
+- Any **Open** button accepts any Ravebench file: it recognises what it contains and loads it where it belongs. Library sounds are referenced by name; imported sounds and recordings are embedded.
 
 ## Recording and kits
 

@@ -30,7 +30,7 @@ export function timelineMidiTracks() {
 export function exportMidi() {
   const tracks = timelineMidiTracks();
   if (!tracks.length) { toast(t('midi.noNotes'), 3500); return; }
-  download(new Blob([writeMidi(tracks, state.bpm)], { type: 'audio/midi' }), `gabberkey-${stamp()}.mid`);
+  download(new Blob([writeMidi(tracks, state.bpm)], { type: 'audio/midi' }), `ravebench-${stamp()}.mid`);
   toast(t('midi.exported', { n: tracks.length }), 3000);
 }
 

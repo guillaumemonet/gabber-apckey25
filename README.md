@@ -1,12 +1,14 @@
-# GabberKey
+# Ravebench
 
-**A complete music studio in your browser, born for hardcore / gabber, played with an Akai APC Key 25.**
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="img/logo-dark.png"><img src="img/logo.png" alt="Ravebench" width="300"></picture></p>
+
+**The sound workbench: a complete music studio in your browser, for the studio and the stage, born in hardcore and open to every style.**
 
 *By Guillaume Monet* · [Version française](README.fr.md) · <sub>[☕ Support the project](https://paypal.me/holythunderblade)</sub>
 
-![GabberKey: sound library, timeline with the demo song, and the pads window](docs/screenshots/overview-en.png)
+![Ravebench: sound library, timeline with the demo song, and the pads window](docs/screenshots/overview-en.png)
 
-GabberKey is built around a **timeline**: drag sounds from a library sorted by category onto tracks, the blocks snap to the bar and everything plays at the same tempo. The other tools (sampler pads, TR-909, synth, mixer, effects…) are **plugins** that open in windows, and the Akai APC Key 25 (mk1 or mk2) plays them live. Nothing to install except a web browser:
+Ravebench is built around a **timeline**: drag sounds from a library sorted by category onto tracks, the blocks snap to the bar and everything plays at the same tempo. The other tools (sampler pads, TR-909, synth, mixer, effects…) are **plugins** that open in windows, and the Akai APC Key 25 (mk1 or mk2) plays them live. Nothing to install except a web browser:
 
 - **Timeline**: 16 tracks to start (up to 64), each with its own knobs (volume, pan, filters, sends); drag, lengthen (loops repeat), copy and move blocks; play the pads or the keyboard while recording and every hit becomes a block, live, and the synth notes one note block; edit the notes in a **piano roll**; record the TR-909 as audio; select several blocks and copy / paste them.
 - **Freeze a track / render to audio**: a heavy track is rendered once and played as audio (lighter playback), its volume, pan, sends and bus staying live; or it becomes an audio block on a new track.
@@ -36,10 +38,10 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
   - **Visualizer** in the Winamp spirit: 21 modes (LED spectrum, oscilloscope, Milk swirls, hi-fi VU meters, text slam, particles, Amiga bars, spectrogram, and 3D / GPU modes: tunnel, synthwave landscape, blob, hyperspace, fractal, lasers, spectrum city, LED wall, metaballs, plasma, rotozoomer, fluid, reaction-diffusion), stackable filters (CRT, kaleidoscope, glitch, strobe), and a projector window for a second screen;
   - **Performance effects** (rolls, filter sweeps, tape stop, pump), **master EQ**, **scenes** recalled on the next bar, **clip launcher** (also on the APC's 40 pads), **MIDI clock**, **MIDI learn** for any other MIDI keyboard or controller, with a MIDI monitor.
 - **New song**: pick a style (early hardcore, gabber, anthem, frenchcore, uptempo, industrial, terror, happy hardcore, rave, hardstyle, breizhcore, dark hardcore) and a song plan, and the song is laid out in seconds: tempo, kick, drums, bass, chords, lead, build-ups before the drops and markers.
-- **Save and open** the whole project, the song or the settings of each tool (`.gabber` files), **fast WAV export and stems**, **WAV recording** of your session and **kit export / import**; **MIDI files** and **tracker modules** (.mod, .xm: samples on the pads, one track per channel and one block per pattern) are imported too.
+- **Save and open** the whole project, the song or the settings of each tool (`.ravebench` files), **fast WAV export and stems**, **WAV recording** of your session and **kit export / import**; **MIDI files** and **tracker modules** (.mod, .xm: samples on the pads, one track per channel and one block per pattern) are imported too.
 - Interface in **English or French**, following the browser language.
 
-> 🚧 **GabberKey is constantly evolving.** New features land regularly, and plenty more is on the way: MIDI learn for other controllers, an online version… and much more. Star or watch the repository to follow what's coming (see the [roadmap](#roadmap))!
+> 🚧 **Ravebench is constantly evolving.** New features land regularly, and plenty more is on the way: MIDI learn for other controllers, an online version… and much more. Star or watch the repository to follow what's coming (see the [roadmap](#roadmap))!
 
 ---
 
@@ -59,7 +61,7 @@ GabberKey is built around a **timeline**: drag sounds from a library sorted by c
 
 ## Quick start
 
-1. Get the project: `git clone https://github.com/guillaumemonet/gabber-apckey25.git`, or the ZIP from GitHub.
+1. Get the project: `git clone https://github.com/guillaumemonet/ravebench.git`, or the ZIP from GitHub.
 2. Run `start.bat` (Windows) or `./start.sh` (macOS / Linux), then open http://localhost:8025 in Chrome, Edge or Firefox.
 3. Click **Start** and allow MIDI devices. The APC Key 25 is optional: everything also works with the mouse and the computer keyboard.
 
@@ -82,7 +84,7 @@ The complete guide is in [docs/manual](docs/manual/README.md); every window in t
 
 ## Roadmap
 
-Goal: make GabberKey a professional tool, in the studio and on stage, step by step.
+Goal: make Ravebench a professional tool, in the studio and on stage, step by step.
 
 1. **Foundations**: automated tests, code split into modules, sounds loaded on demand, complete manual. *(done)*
 2. **Pro mixing**: insert effects on every track, buses, a master chain (compressor, limiter, LUFS meter), solo. *(done)*
@@ -94,19 +96,19 @@ Goal: make GabberKey a professional tool, in the studio and on stage, step by st
 
 Ideas kept for later: a **vocal sampler and vocoder**, **several instances** of the TB-303 and TR-909, an **online version** playable without installing anything, and an **AI loop generator** (an open-source music model running on your own computer).
 
-Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/gabber-apckey25/issues).
+Ideas and suggestions are welcome in the [issues](https://github.com/guillaumemonet/ravebench/issues).
 
 ## Hardware compatibility
 
-GabberKey is developed and tested with an **Akai APC Key 25 mk1**. The **mk2** is supported from Akai Professional's MIDI documentation, but has not been tested on a real unit yet. Everything also works with the mouse and the computer keyboard, and **any other MIDI keyboard** can play the synth and drive the settings through MIDI learn.
+Ravebench is developed and tested with an **Akai APC Key 25 mk1**. The **mk2** is supported from Akai Professional's MIDI documentation, but has not been tested on a real unit yet. Everything also works with the mouse and the computer keyboard, and **any other MIDI keyboard** can play the synth and drive the settings through MIDI learn.
 
 > **A word to hardware makers** 🙏
 >
-> Today GabberKey is played with the only controller I own, an APC Key 25. If you make MIDI controllers, keyboards, pad controllers or grooveboxes and would like to check whether your product works with GabberKey, I would be truly delighted to make it as compatible as possible, and to share the result freely with everyone who plays your instruments. If you would be kind enough to lend or send a unit, please get in touch by [opening an issue](https://github.com/guillaumemonet/gabber-apckey25/issues) on this repository. Thank you very much for your time and for your kindness!
+> Today Ravebench is played with the only controller I own, an APC Key 25. If you make MIDI controllers, keyboards, pad controllers or grooveboxes and would like to check whether your product works with Ravebench, I would be truly delighted to make it as compatible as possible, and to share the result freely with everyone who plays your instruments. If you would be kind enough to lend or send a unit, please get in touch by [opening an issue](https://github.com/guillaumemonet/ravebench/issues) on this repository. Thank you very much for your time and for your kindness!
 
 ## For developers
 
-GabberKey is a web page with no build step and no dependencies: audio engines (`js/*.js`) and the app, one module per area (`js/app/`). Code layout, conventions and project structure: [docs/dev](docs/dev/README.md) (in French).
+Ravebench is a web page with no build step and no dependencies: audio engines (`js/*.js`) and the app, one module per area (`js/app/`). Code layout, conventions and project structure: [docs/dev](docs/dev/README.md) (in French).
 
 `npm test` checks the code (syntax, translations, help pages, sound files) and then runs about 50 tests in Firefox (headless), each checking one area of the app: pads, instruments, timeline, effects, files, decks, visualizer, library. They also run on GitHub on every push. Requirements: Node.js 18+ and Firefox, nothing to install. Details and how to write a test: [docs/dev/tests.md](docs/dev/tests.md) (in French).
 
@@ -114,11 +116,11 @@ GabberKey is a web page with no build step and no dependencies: audio engines (`
 
 - Design and development: **Guillaume Monet**
 - Banks 2-6: [Sonic Pi](https://github.com/sonic-pi-net/sonic-pi) samples, public domain (CC0). See `sounds/CREDITS.md`.
-- Gabber banks and starter kit: synthesised by GabberKey's own code.
+- Gabber banks and starter kit: synthesised by Ravebench's own code.
 - APC Key 25 mk2 MIDI protocol: Akai Professional documentation.
 
 ## License
 
 Code released under the [MIT License](LICENSE) © 2026 Guillaume Monet. The Sonic Pi samples in banks 2-6 remain public domain (CC0).
 
-Akai Professional and APC are trademarks of inMusic Brands, Inc. Roland, TR-909 and TB-303 are trademarks of Roland Corporation. GabberKey is an independent project, not affiliated with or endorsed by these companies.
+Akai Professional and APC are trademarks of inMusic Brands, Inc. Roland, TR-909 and TB-303 are trademarks of Roland Corporation. Ravebench is an independent project, not affiliated with or endorsed by these companies.

@@ -39,7 +39,7 @@ Double-click a control to reset it. On the APC, **Shift + track button 1 / 2 / 3
 At the top of the mixer window. When it is **On**, every kick ducks the **synth** and the **oscillator synth** (keyboard, note and chord blocks), the **TB-303** and the **melodic sounds** (pads and timeline blocks in the Bass, Leads, Stabs / keys, Pads / strings and Voices categories), which then come back up smoothly: the track breathes with the kick. Kicks and drums are never ducked.
 
 - **Triggered by**:
-  - **Kicks**: the TR-909 bass drum, the kick pads and blocks, and the kicks of the GabberKey loops (their exact positions are stored in the library: a gallop, a roll or a build-up ducks on each of its kicks). A recording of the 909 in the timeline keeps the position of its kicks too.
+  - **Kicks**: the TR-909 bass drum, the kick pads and blocks, and the kicks of the Ravebench loops (their exact positions are stored in the library: a gallop, a roll or a build-up ducks on each of its kicks). A recording of the 909 in the timeline keeps the position of its kicks too.
   - **Every beat**: on each beat of the grid, for loops whose kicks are unknown (Sonic Pi loops, your own loops).
 - **Depth** (how far the sound goes down) and **Release** (how long it takes to come back up); double-click to reset.
 - **Ducks**: choose the synth, the melodic sounds, or both. The meter shows the ducking in real time.
@@ -64,7 +64,7 @@ Below the mixer channels, the **master chain** processes everything that goes ou
 - **Stereo**: puts the **bass in mono** and sets the **width** of the rest. In a club, the sound system is often mono in the low end: a slightly stereo kick or bass loses power there, and the compressors react better to the same low end on both channels. **Off by default.**
   - **Mono below** (20 to 300 Hz, 120 Hz by default): below this frequency the sound becomes mono (24 dB per octave slope). Above it, the stereo image does not move.
   - **Width** (0 to 200 %, 100 % by default): 0 % = all mono, 100 % = original width, 200 % = wider. Beyond about 130 %, keep an eye on the **phase**.
-- **Master compressor**: threshold, ratio, knee, attack, release, makeup. Its starting settings are those of GabberKey's old limiter: an existing song sounds exactly the same. Lower the ratio (2 to 4) and raise the threshold for a gentler "glue" compressor.
+- **Master compressor**: threshold, ratio, knee, attack, release, makeup. Its starting settings are those of Ravebench's old limiter: an existing song sounds exactly the same. Lower the ratio (2 to 4) and raise the threshold for a gentler "glue" compressor.
 - **Multiband (OTT-style)**: OTT-style multiband compression, the "everything loud and detailed" sound of hardcore and hardstyle. The sound is split into three bands (below 88 Hz, 88 Hz to 2.5 kHz, above 2.5 kHz); in each band, the parts above a threshold are pushed down and the quiet parts below another threshold are brought up (tails, reverbs, details), then the processed bands are blended with the untouched ones. **Off by default.**
   - **Depth** (0 to 100 %, 30 % when you turn it on): how much of the processed sound is blended in. At 0 % the sound passes untouched.
   - **Time** (×0.10 to ×5): scales the attack and release of the three bands together (shorter = more aggressive, longer = smoother).

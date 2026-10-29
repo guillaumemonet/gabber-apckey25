@@ -43,7 +43,7 @@ export function applyVizKnobs() {
 }
 export const VIZ_FX_ICONS = { crt: 'v-crt', kaleido: 'v-kaleido', glitch: 'v-glitch', strobe: 'v-strobe' };
 // Fonctions (et non constantes) : l'état de départ les appelle avant que ce code ne soit lu.
-export function vizWordsDefault() { return 'HARDCORE, GABBER, TERROR, GABBERKEY'; }
+export function vizWordsDefault() { return 'RAVEBENCH, HARDCORE, RAVE, TECHNO'; }
 export function defaultViz() { return { mode: 'spectrum', auto: false, k: vizKnobDefaults(), words: vizWordsDefault() }; }
 export function mergeViz(saved) {
   const k = vizKnobDefaults();
@@ -197,11 +197,11 @@ export function vizFullscreen() {
 // Fenêtre projecteur : l'image seule, à glisser sur le deuxième écran (vidéoprojecteur) puis en plein écran.
 export function openProjector() {
   if (projector && !projector.win.closed) { projector.win.focus(); return; }
-  const win = window.open('', 'gabberkey-projector', 'popup,width=1280,height=720');
+  const win = window.open('', 'ravebench-projector', 'popup,width=1280,height=720');
   if (!win) { toast(t('viz.popupBlocked'), 5000); return; }
   const d = win.document;
   d.open();
-  d.write(`<!doctype html><html><head><meta charset="utf-8"><title>GabberKey · ${t('viz.projector')}</title><style>
+  d.write(`<!doctype html><html><head><meta charset="utf-8"><title>Ravebench · ${t('viz.projector')}</title><style>
     html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
     canvas { display: block; width: 100%; height: 100%; }
     body.idle { cursor: none; }

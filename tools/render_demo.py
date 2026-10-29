@@ -1,7 +1,7 @@
 """Rend la démo (demo/demo.json) en fichier audio, avec les sons de la bibliothèque (sounds/).
 
 Usage : tools/.venv/Scripts/python tools/render_demo.py
-Sortie : demo/gabberkey-demo.ogg (+ niveaux par section affichés dans la console).
+Sortie : demo/ravebench-demo.ogg (+ niveaux par section affichés dans la console).
 """
 import json
 from pathlib import Path
@@ -54,7 +54,7 @@ def main():
     drive = 1.4
     out = np.tanh(drive * mix / max(1.0, np.percentile(np.abs(mix), 99.9))) / np.tanh(drive)
     out *= 10 ** (-2 / 20) / np.max(np.abs(out))
-    target = ROOT / 'demo' / 'gabberkey-demo.ogg'
+    target = ROOT / 'demo' / 'ravebench-demo.ogg'
     # Écriture par blocs : l'encodeur Vorbis de libsndfile plante sur les gros blocs.
     with sf.SoundFile(target, 'w', SR, 2, format='OGG', subtype='VORBIS') as f:
         for i in range(0, len(out), 4096):

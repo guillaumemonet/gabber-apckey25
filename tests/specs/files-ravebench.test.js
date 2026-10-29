@@ -1,4 +1,4 @@
-// Fichiers .gabber : morceau (sons « rec: » embarqués), réglages de chaque outil, projet entier.
+// Fichiers .ravebench : morceau (sons « rec: » embarqués), réglages de chaque outil, projet entier.
 // Ouvrir un projet redémarre l'application : le test se fait en deux temps (sessionStorage garde le 1er).
 const KEY = 'gk-test-files';
 
@@ -48,7 +48,7 @@ export default async function (t, A) {
   await A.saveFile('song');
   const songFile = await lastFile();
   const json = JSON.parse(await songFile.text());
-  ok(songFile.name.endsWith('.gabber'), 'le morceau est un fichier .gabber', songFile.name);
+  ok(songFile.name.endsWith('.ravebench'), 'le morceau est un fichier .ravebench', songFile.name);
   eq(json.kind, 'song', 'fichier de type morceau');
   eq(Object.keys(json.samples), ['rec:filetest'], 'seul l\'enregistrement est embarqué (les sons de la bibliothèque sont désignés par leur nom)');
   for (const tr of S.tl.tracks) { tr.clips = []; tr.fx = []; }

@@ -143,7 +143,7 @@ export async function exportSong(stems) {
   renderExport();
   const t0 = performance.now();
   try {
-    const name = `gabberkey-${stamp()}`;
+    const name = `ravebench-${stamp()}`;
     if (!stems) {
       toast(t('export.rendering'), 60000);
       const chans = await renderSong();
@@ -198,7 +198,7 @@ export async function toggleRecording() {
     btn.classList.remove('active');
     btn.textContent = '● REC';
     const blob = await recorder.stop();
-    download(blob, `gabberkey-${stamp()}.wav`);
+    download(blob, `ravebench-${stamp()}.wav`);
     toast(t('rec.done'));
   }
   renderLeds();

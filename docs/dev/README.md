@@ -1,6 +1,6 @@
 # Documentation technique
 
-Pour qui veut comprendre ou modifier le code de GabberKey.
+Pour qui veut comprendre ou modifier le code de Ravebench.
 
 - [Architecture du code](architecture.md) : les deux couches (moteurs et application), le rôle de chaque module de `js/app/`, les règles d'import et de partage des variables.
 - [Tests](tests.md) : lancer les tests, en écrire un.
@@ -38,7 +38,7 @@ js/pianoroll.js       piano roll
 js/osc.js             synthé à oscillateurs
 js/visualizer.js      visualiseur (modes 2D)
 js/viz3d.js           modes 3D du visualiseur (shaders WebGL)
-js/project.js         fichiers .gabber (projet, morceau, réglages des outils)
+js/project.js         fichiers .ravebench (projet, morceau, réglages des outils)
 js/notes.js           blocs de notes (motifs, regroupement, quantification)
 js/chords.js          suites d'accords (générateur)
 js/melody.js          générateur de mélodie (lead)

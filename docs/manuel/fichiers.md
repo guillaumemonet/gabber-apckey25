@@ -6,11 +6,11 @@ Enregistrer et ouvrir projets, morceaux et réglages ; export WAV et stems ; kit
 
 ## Enregistrer et ouvrir
 
-GabberKey enregistre tout automatiquement dans le navigateur, et vous pouvez aussi garder votre travail dans des **fichiers `.gabber`** (pour le sauvegarder, le passer sur un autre ordinateur ou le partager) :
+Ravebench enregistre tout automatiquement dans le navigateur, et vous pouvez aussi garder votre travail dans des **fichiers `.ravebench`** (les fichiers enregistrés avant le changement de nom, `.gabber`, s'ouvrent toujours ; pour le sauvegarder, le passer sur un autre ordinateur ou le partager) :
 - **Enregistrer le projet** (en-tête) : tout le projet dans un fichier : timeline, tempo, pads et banques, chaque outil, mixeur, câblage, scènes, fenêtres, avec vos sons et vos enregistrements dedans. **Ouvrir…** le recharge (tout est remplacé, puis l'application redémarre dessus).
 - **Morceau** (boutons 📁 / 💾 de la barre de la timeline) : la timeline seule (pistes, blocs, effets de piste, longueur, tempo) avec les enregistrements qu'elle utilise. Ouvrir un morceau remplace la timeline (Ctrl+Z ramène la précédente).
 - **Réglages d'un outil** : les boutons 📁 / 💾 dans la barre de titre des fenêtres TR-909 (patterns et potentiomètres), TB-303, Synthé, Synthé à oscillateurs (avec vos presets), Designer de kick, Mixeur (avec le sidechain et la section master), Câblage, Scènes, Générateur, Breizh generator, Designer de montée, Générateur de voix, Correction de justesse, Designer d'effet (vos courbes), Platines (avec leurs sons), Lanceur, Bus, Visualiseur et MIDI (commandes apprises, appareils, horloge). Dans les fenêtres **Pads** et **Banques**, 📁 / 💾 ouvrent et enregistrent la banque (fichier `.apckit`, voir plus bas).
-- Chaque bouton **Ouvrir** accepte n'importe quel fichier GabberKey : il reconnaît ce qu'il contient et le charge au bon endroit. Les sons de la bibliothèque sont désignés par leur nom ; les sons importés et les enregistrements sont embarqués.
+- Chaque bouton **Ouvrir** accepte n'importe quel fichier Ravebench : il reconnaît ce qu'il contient et le charge au bon endroit. Les sons de la bibliothèque sont désignés par leur nom ; les sons importés et les enregistrements sont embarqués.
 
 ## Enregistrement et kits
 

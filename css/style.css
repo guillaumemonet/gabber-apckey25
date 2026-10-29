@@ -70,8 +70,9 @@ header {
   border-bottom: 1px solid var(--line);
   background: var(--panel);
 }
-.brand { font-weight: 800; font-size: 18px; letter-spacing: .02em; }
-.brand span { color: var(--accent); }
+.brand { display: flex; align-items: center; gap: 7px; font-weight: 800; font-size: 18px; letter-spacing: .02em; }
+.brand img { display: block; }
+.brand em { color: var(--accent); font-style: normal; }
 .spacer { flex: 1; }
 .status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
 .status .dot { width: 9px; height: 9px; border-radius: 50%; background: #555; }
@@ -258,6 +259,7 @@ main {
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 .overlay-box h1 span { color: var(--accent); }
+.overlay-box h1 img { display: block; width: 300px; max-width: 70vw; height: auto; margin: 0 auto 4px; }
 .overlay-box .credit { margin-top: 28px; }
 footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 20px 24px; }
 

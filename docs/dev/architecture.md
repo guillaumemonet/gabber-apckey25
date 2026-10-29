@@ -1,6 +1,6 @@
 # Architecture du code
 
-GabberKey est une page web sans étape de compilation : des modules JavaScript (ES modules) chargés tels quels par le navigateur. Il n'y a aucune dépendance à installer.
+Ravebench est une page web sans étape de compilation : des modules JavaScript (ES modules) chargés tels quels par le navigateur. Il n'y a aucune dépendance à installer.
 
 ## Deux couches
 

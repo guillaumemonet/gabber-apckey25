@@ -14,8 +14,8 @@ Ce qu'il faut, l'installation, le lancement, un premier morceau en quelques seco
 ## Installation
 
 ```bash
-git clone https://github.com/guillaumemonet/gabber-apckey25.git
-cd gabber-apckey25
+git clone https://github.com/guillaumemonet/ravebench.git
+cd ravebench
 ```
 
 Ou téléchargez le ZIP depuis GitHub et décompressez-le.
@@ -72,7 +72,7 @@ L'interface suit la langue du navigateur : français si le navigateur est en fra
 
 ## Compatibilité matérielle
 
-GabberKey est développé et testé avec un **Akai APC Key 25 mk1**. Le **mk2** est pris en charge d'après la documentation MIDI d'Akai Professional, mais n'a pas encore été essayé sur un vrai appareil. Tout fonctionne aussi à la souris et au clavier de l'ordinateur.
+Ravebench est développé et testé avec un **Akai APC Key 25 mk1**. Le **mk2** est pris en charge d'après la documentation MIDI d'Akai Professional, mais n'a pas encore été essayé sur un vrai appareil. Tout fonctionne aussi à la souris et au clavier de l'ordinateur.
 
 ---
 

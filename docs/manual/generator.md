@@ -111,7 +111,7 @@ How it works: the text is turned into phonemes (espeak-ng) and split into syllab
 
 **Download**: nothing is loaded until the generator is used. On the first render, the browser downloads the engine (a few MB), the phoneme converter (18 MB) and the chosen voice (63 to 78 MB), then keeps them: the next times, the voice is ready in a few seconds. An Internet connection is needed the first time.
 
-**Licences**: only voices whose licence allows any use, commercial included, are offered (CC0, CC BY, CC BY-SA, public domain). The licence and source of the chosen voice are shown at the bottom of the window; for CC BY and CC BY-SA, credit them in your track. The Piper engine and espeak-ng (GPL licence) are not part of GabberKey: they are downloaded from their public repositories.
+**Licences**: only voices whose licence allows any use, commercial included, are offered (CC0, CC BY, CC BY-SA, public domain). The licence and source of the chosen voice are shown at the bottom of the window; for CC BY and CC BY-SA, credit them in your track. The Piper engine and espeak-ng (GPL licence) are not part of Ravebench: they are downloaded from their public repositories.
 
 The block is a recording like an audio take: saved with the project, named "Voice ·" with the start of the text, and filed in the Voice category of the library.
 

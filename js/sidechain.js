@@ -1,7 +1,7 @@
 // Sidechain : chaque kick fait « respirer » les sons tenus (synthé, nappes, basses, leads).
 // Chaque kick lance une petite enveloppe (tampon audio) ; les enveloppes s'additionnent, passent dans un
 // façonneur qui les limite à « profondeur », et baissent le gain des bus visés, précisément à l'instant du kick.
-// Sources : les kicks (909, pads et blocs classés « kick », kicks connus des boucles de GabberKey)
+// Sources : les kicks (909, pads et blocs classés « kick », kicks connus des boucles de Ravebench)
 // ou chaque temps de la grille (pour les autres boucles de batterie).
 
 export const SC_SOURCES = ['kicks', 'beat'];

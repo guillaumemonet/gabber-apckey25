@@ -1,6 +1,6 @@
 # Tests
 
-GabberKey a deux sortes de tests, lancés par une seule commande :
+Ravebench a deux sortes de tests, lancés par une seule commande :
 
 ```
 npm test

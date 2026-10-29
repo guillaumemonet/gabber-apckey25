@@ -110,7 +110,7 @@ Comment ça marche : le texte est converti en phonèmes (espeak-ng) et découpé
 
 **Téléchargement** : rien n'est chargé tant que le générateur ne sert pas. Au premier rendu, le navigateur télécharge le moteur (quelques Mo), le convertisseur de phonèmes (18 Mo) et la voix choisie (63 à 78 Mo), puis les garde : les fois suivantes, la voix est prête en quelques secondes. Il faut une connexion Internet la première fois.
 
-**Licences** : seules des voix dont la licence permet tout usage, y compris commercial, sont proposées (CC0, CC BY, CC BY-SA, domaine public). La licence et la source de la voix choisie sont rappelées en bas de la fenêtre ; pour CC BY et CC BY-SA, citez-les dans les crédits de votre morceau. Le moteur Piper et espeak-ng (licence GPL) ne font pas partie de GabberKey : ils sont téléchargés depuis leurs dépôts publics.
+**Licences** : seules des voix dont la licence permet tout usage, y compris commercial, sont proposées (CC0, CC BY, CC BY-SA, domaine public). La licence et la source de la voix choisie sont rappelées en bas de la fenêtre ; pour CC BY et CC BY-SA, citez-les dans les crédits de votre morceau. Le moteur Piper et espeak-ng (licence GPL) ne font pas partie de Ravebench : ils sont téléchargés depuis leurs dépôts publics.
 
 Le bloc posé est un enregistrement comme une prise audio : enregistré avec le projet, avec le nom « Voix · » et le début du texte, et rangé dans la catégorie Voix de la bibliothèque.
 

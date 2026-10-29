@@ -319,7 +319,7 @@ export class Visualizer {
       g.fillRect(0, y - bh / 2, w, bh);
     }
     // Défileur : les mots du mode Texte qui cogne, sur une vague.
-    const text = `${(this.words.length ? this.words : ['GABBERKEY']).join('  ***  ')}  ***  ${Math.round(this.opts.bpm())} BPM  ***  `;
+    const text = `${(this.words.length ? this.words : ['RAVEBENCH']).join('  ***  ')}  ***  ${Math.round(this.opts.bpm())} BPM  ***  `;
     const size = Math.round(h * 0.11);
     g.font = `900 ${size}px Impact, "Arial Black", system-ui, sans-serif`;
     g.textBaseline = 'middle';

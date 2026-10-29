@@ -1,4 +1,4 @@
-# Manuel de GabberKey
+# Manuel de Ravebench
 
 Le mode d'emploi complet, chapitre par chapitre. Chaque fenêtre de l'application a aussi son aide : le bouton **?** de sa barre de titre.
 

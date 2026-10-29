@@ -1,4 +1,4 @@
-"""Construit les banques de sons de GabberKey à partir d'échantillons libres (CC0).
+"""Construit les banques de sons de Ravebench à partir d'échantillons libres (CC0).
 
 Source : les échantillons de Sonic Pi (https://github.com/sonic-pi-net/sonic-pi,
 dossier etc/samples), tous placés dans le domaine public (CC0).

@@ -56,7 +56,7 @@ for (const b of man.banks) for (const p of b.pads) {
   sounds++;
   if (!fs.existsSync(path.join(ROOT, 'sounds', p.file))) fail(`son manquant : ${p.file} (${b.name})`);
 }
-for (const f of ['demo/demo.json', ...[2, 3, 4, 5].map(n => `demo/gabberkey-demo-${n}.gabber`)]) if (!fs.existsSync(path.join(ROOT, f))) fail(`démo manquante : ${f}`);
+for (const f of ['demo/demo.json', ...[2, 3, 4, 5].map(n => `demo/ravebench-demo-${n}.ravebench`)]) if (!fs.existsSync(path.join(ROOT, f))) fail(`démo manquante : ${f}`);
 
 // 5. Documentation : chaque lien relatif des README et de docs/ mène à un fichier qui existe.
 const mdFiles = ['README.md', 'README.fr.md'];

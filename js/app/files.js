@@ -106,7 +106,7 @@ export async function kitExportAll() {
   toast(t('kit.exportingAll'));
   await loadPads(state.banks.flat());
   const blob = await packBanks(state.banks, padBytes, { kind: 'session', bpm: state.bpm, globals: state.globals, preset: state.preset, tr: state.tr, tr8: state.tr8, mix: state.mix, scenes: state.scenes });
-  download(blob, `gabberkey-session-${stamp()}.apckit`);
+  download(blob, `ravebench-session-${stamp()}.apckit`);
   toast(t('kit.exportedAll'));
 }
 export function kitImport(b = state.bank) {
@@ -291,7 +291,7 @@ export async function saveFile(kind) {
   } else { data = TOOL_IO[kind].get(); ids = TOOL_IO[kind].samples?.() ?? []; }
   toast(t('file.saving'));
   const blob = await packFile(kind, JSON.parse(JSON.stringify(data)), ids, id => store.loadSample(id));
-  download(blob, `gabberkey-${t(`file.slug.${kind}`)}-${stamp()}${FILE_EXT}`);
+  download(blob, `ravebench-${t(`file.slug.${kind}`)}-${stamp()}${FILE_EXT}`);
   toast(t('file.saved', { what: t(`file.kind.${kind}`) }), 3000);
 }
 

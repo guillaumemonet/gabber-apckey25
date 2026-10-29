@@ -35,7 +35,7 @@ export default async function (t, A) {
   const wav = await (await fetch(downloads[0].href)).arrayBuffer();
   const head = new TextDecoder().decode(new Uint8Array(wav, 0, 4)) + new TextDecoder().decode(new Uint8Array(wav, 8, 4));
   t.eq(head, 'RIFFWAVE', 'fichier WAV valide');
-  t.ok(/^gabberkey-\d{8}-\d{6}\.wav$/.test(downloads[0].name), 'nom daté', downloads[0].name);
+  t.ok(/^ravebench-\d{8}-\d{6}\.wav$/.test(downloads[0].name), 'nom daté', downloads[0].name);
   t.ok(wav.byteLength > 1e6, 'le fichier contient le morceau', wav.byteLength);
   // Bouton stems : désactivé pendant le rendu, puis un ZIP d'un WAV par piste non vide.
   t.$('#tl-stems').click();

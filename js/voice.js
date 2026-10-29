@@ -14,7 +14,7 @@ const ORT_URL = 'https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/'
 const PHONEMIZER_JS = 'https://cdn.jsdelivr.net/npm/@diffusionstudio/vits-web@1.0.3/dist/piper-DeOu3H9E.js';
 const PHONEMIZER = 'https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/build/piper_phonemize';
 const VOICES_URL = 'https://huggingface.co/rhasspy/piper-voices/resolve/main/';
-const CACHE = 'gabberkey-voices';
+const CACHE = 'gabberkey-voices';   // nom gardé depuis GabberKey (l'ancien nom) : les voix déjà téléchargées restent
 
 // Voix proposées : seulement celles dont la licence permet tout usage (y compris commercial).
 // speakers : interprètes du modèle (plusieurs voix dans un seul fichier) ; names : ceux qui ont un nom.

@@ -37,12 +37,12 @@ export function openDemoMenu(anchor) {
   setTimeout(() => window.addEventListener('pointerdown', fxOutside, true), 0);
 }
 
-// Démo 2 : un fichier morceau (.gabber) avec ses prises 909 / 303 et le kick du designer embarqués.
-// Démos 2 à 5 : des fichiers morceau (.gabber) ; la 2 embarque ses prises 909 / 303, les autres n'utilisent que la bibliothèque Anthem.
+// Démo 2 : un fichier morceau (.ravebench) avec ses prises 909 / 303 et le kick du designer embarqués.
+// Démos 2 à 5 : des fichiers morceau (.ravebench) ; la 2 embarque ses prises 909 / 303, les autres n'utilisent que la bibliothèque Anthem.
 export const loadDemo2 = () => loadDemoFile(2);
 export async function loadDemoFile(n) {
   if (state.tl.tracks.some(tr => tr.clips.length || tr.fx.length) && !confirm(t('tl.demoConfirm'))) return;
-  const name = `gabberkey-demo-${n}.gabber`;
+  const name = `ravebench-demo-${n}.ravebench`;
   const blob = await fetch(`demo/${name}`, { cache: 'no-cache' }).then(r => (r.ok ? r.blob() : null)).catch(() => null);
   if (!blob) { toast(t('lib.loadFail'), 3000); return; }
   await loadFile(new File([blob], name), true);

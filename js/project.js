@@ -1,11 +1,13 @@
-// Fichiers GabberKey (.gabber, JSON) : le projet entier, le morceau de la timeline, ou les réglages d'un outil.
+// Fichiers Ravebench (.ravebench, JSON) : le projet entier, le morceau de la timeline, ou les réglages d'un outil.
+// Les fichiers d'avant le changement de nom (.gabber, format gabberkey-file) s'ouvrent toujours.
 // { format, version, kind, app, saved, data, samples: { id: { name, audio (data-URL) } } }
 // Les sons de la bibliothèque et du kit de départ sont désignés par leur nom (ils sont dans l'application) ;
 // les sons importés et les enregistrements (« user: », « rec: ») sont embarqués : le fichier se suffit à lui-même.
 import { t } from './i18n.js';
 
-export const FILE_FORMAT = 'gabberkey-file';
-export const FILE_EXT = '.gabber';
+export const FILE_FORMAT = 'ravebench-file';
+export const FILE_EXT = '.ravebench';
+const OLD_FORMATS = ['gabberkey-file'];   // GabberKey, l'ancien nom
 // Contenus possibles : projet, morceau, et un par outil.
 export const FILE_KINDS = ['project', 'song', 'tr', 'tr8', 'seq', 'slicer', 'acid', 'osc', 'piano', 'kick', 'mix', 'patch', 'scenes',
   'gen', 'breizh', 'buildup', 'voice', 'tune', 'curve', 'decks', 'launcher', 'buses', 'viz', 'monitor'];
@@ -28,14 +30,14 @@ export async function packFile(kind, data, sampleIds, loadSample) {
     const s = await loadSample(id).catch(() => null);
     if (s?.data) samples[id] = { name: s.name ?? '', audio: await toDataUrl(s.data) };
   }
-  const file = { format: FILE_FORMAT, version: 1, app: 'GabberKey', kind, saved: new Date().toISOString(), data, samples };
+  const file = { format: FILE_FORMAT, version: 1, app: 'Ravebench', kind, saved: new Date().toISOString(), data, samples };
   return new Blob([JSON.stringify(file)], { type: 'application/json' });
 }
 
 export async function readFile(file) {
   let json;
   try { json = JSON.parse(await file.text()); } catch { throw new Error(t('file.bad')); }
-  if (json?.format !== FILE_FORMAT || !FILE_KINDS.includes(json.kind) || typeof json.data !== 'object') throw new Error(t('file.bad'));
+  if (![FILE_FORMAT, ...OLD_FORMATS].includes(json?.format) || !FILE_KINDS.includes(json.kind) || typeof json.data !== 'object') throw new Error(t('file.bad'));
   const samples = {};
   for (const [id, s] of Object.entries(json.samples ?? {})) {
     if (!embeddable(id) || typeof s?.audio !== 'string') continue;

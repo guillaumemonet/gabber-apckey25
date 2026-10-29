@@ -1,7 +1,7 @@
 {
-  "name": "gabberkey",
+  "name": "ravebench",
   "private": true,
-  "description": "GabberKey: a complete music studio in the browser",
+  "description": "Ravebench: the sound workbench, a complete music studio in the browser",
   "type": "module",
   "scripts": {
     "check": "node tests/check.js",

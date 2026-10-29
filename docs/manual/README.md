@@ -1,4 +1,4 @@
-# GabberKey manual
+# Ravebench manual
 
 The complete guide, chapter by chapter. Every window in the app also has its own help: the **?** button in its title bar.
 

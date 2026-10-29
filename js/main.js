@@ -1,4 +1,4 @@
-// GabberKey : point d'entrée. Crée les moteurs audio au clic sur « Démarrer » et construit l'interface ;
+// Ravebench : point d'entrée. Crée les moteurs audio au clic sur « Démarrer » et construit l'interface ;
 // le reste de l'application est dans js/app/ (un module par domaine).
 import { Acid303 } from './acid.js';
 import { APC } from './apc.js';
@@ -215,7 +215,7 @@ async function start() {
   drawMeter();
   renderAll();
   // Fenêtres des outils : boutons enregistrer / ouvrir leurs réglages dans la barre de titre.
-  // Barre de titre : 📂 / 💾 ouvrent et enregistrent les réglages de l'outil (fichier .gabber) ; pour Pads et Banques, la banque (.apckit).
+  // Barre de titre : 📂 / 💾 ouvrent et enregistrent les réglages de l'outil (fichier .ravebench) ; pour Pads et Banques, la banque (.apckit).
   const kitWin = id => id === 'pads' || id === 'banks';
   const kitBank = id => (id === 'banks' ? mgrBank() : state.bank);
   provide({ wm: new WindowManager(() => state.windows, save, onWindowToggle, {
