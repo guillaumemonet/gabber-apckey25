@@ -1,7 +1,7 @@
 // Construction d'un morceau à partir d'un plan nettoyé (js/songplan.js) : la timeline est remplacée par un bloc par
 // partie sur des pistes nommées (kick, batterie, basse, accords, lead), les montées du designer de montée avant
 // chaque drop et un repère par partie ; le générateur, le designer de kick et le synthé du clavier prennent les
-// réglages du plan. Utilisé par Nouveau morceau et par le compositeur IA ; une seule étape d'annulation.
+// réglages du plan. Une seule étape d'annulation.
 import { BU_BARS } from '../buildup.js';
 import { parseProgression } from '../chords.js';
 import { t } from '../i18n.js';
@@ -52,21 +52,19 @@ async function libraryPad(bankName, name) {
 
 /**
  * Remplace la timeline par le morceau du plan (nettoyé par cleanPlan) en une seule étape d'annulation, après
- * confirmation si elle n'est pas vide. notes : notes écrites ailleurs (le compositeur musical), par suite d'accords :
- * { [prog]: { lead, bass } } (nettoyées par cleanNotes) ; sinon les générateurs les écrivent.
- * -> résumé { bars, blocks, markers }, ou null.
+ * confirmation si elle n'est pas vide. -> résumé { bars, blocks, markers }, ou null.
  */
-export async function composeSong(plan, notes = {}) {
+export async function composeSong(plan) {
   if (state.tl.tracks.some(tr => tr.clips.length) && !confirm(t('start.confirm'))) return null;
   tlHistory.commit();
   tlHistory.paused = true;
-  try { return await buildSong(plan, notes); } finally {
+  try { return await buildSong(plan); } finally {
     tlHistory.paused = false;
     save();
   }
 }
 
-async function buildSong(plan, given) {
+async function buildSong(plan) {
   const { chords } = parseProgression(plan.prog);
   const breizh = !!plan.lead.breizh;
   if (timeline.playing) timeline.stop();
@@ -83,10 +81,7 @@ async function buildSong(plan, given) {
   Object.assign(g.bassline, { style: plan.bass.style, preset: plan.bass.sound, octave: plan.bass.octave });
   if (plan.bass.seed) g.bassline.seed = plan.bass.seed;
   for (const tab of ['chords', 'lead', 'bass']) refreshDraft(tab, true);
-  // Les notes écrites ailleurs restent dans le générateur, retouchables.
-  const mainLead = given[plan.prog]?.lead ?? plan.lead.notes, mainBass = given[plan.prog]?.bass;
-  if (mainLead) g.draft.lead = { seq: mainLead.map(n => ({ ...n })), edited: true, pat: 0, len: 0 };
-  if (mainBass) g.draft.bass = { seq: mainBass.map(n => ({ ...n })), edited: true, pat: 0, len: 0 };
+  if (plan.lead.notes) g.draft.lead = { seq: plan.lead.notes.map(n => ({ ...n })), edited: true, pat: 0, len: 0 };
   state.kick.params = { ...kickDefaults(), ...KICK_PRESETS[plan.kick.preset], ...plan.kick.params };
   state.kick.preset = plan.kick.preset;
   if (breizh) {
@@ -114,15 +109,13 @@ async function buildSong(plan, given) {
     if (music.has(prog)) return music.get(prog);
     const ch = parseProgression(prog).chords;
     const phrase = ch.length * CHORD_BARS * BEATS_PER_BAR;
-    const fit = seq => ({ seq, pat: Math.max(phrase, Math.ceil(Math.max(...seq.map(n => n.t + n.len)) / BEATS_PER_BAR) * BEATS_PER_BAR) });
     const leadFull = () => {
-      if (given[prog]?.lead?.length) return fit(given[prog].lead);
-      if (prog === plan.prog && plan.lead.notes) return fit(plan.lead.notes);
+      if (prog === plan.prog && plan.lead.notes) return { seq: plan.lead.notes, pat: Math.max(phrase, Math.ceil(Math.max(...plan.lead.notes.map(n => n.t + n.len)) / BEATS_PER_BAR) * BEATS_PER_BAR) };
       return { seq: leadSeq(ch), pat: phrase };
     };
     const lead = breizh ? null : leadFull();
     const m = {
-      phrase, kick: kickLine(ch, CHORD_BARS * BEATS_PER_BAR, kickTail), chords: chordsSeq(ch), bass: given[prog]?.bass?.length ? given[prog].bass : bassSeq(ch),
+      phrase, kick: kickLine(ch, CHORD_BARS * BEATS_PER_BAR, kickTail), chords: chordsSeq(ch), bass: bassSeq(ch),
       lead: lead && { full: lead, calm: { seq: calmNotes(lead.seq), pat: lead.pat } },
     };
     music.set(prog, m);

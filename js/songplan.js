@@ -1,7 +1,7 @@
 // Plan de morceau : la description complète d'un morceau à construire (tempo, suite d'accords, kick, batterie, basse,
-// accords, mélodie, parties et ce qui joue dans chacune). Nouveau morceau en fabrique un à partir du style choisi ;
-// un compositeur extérieur (l'IA locale) en envoie un. cleanPlan() vérifie tout ce qui arrive (valeurs connues,
-// bornes, longueurs) : seul un plan nettoyé est construit (js/app/compose.js). Ce module ne touche pas à l'état.
+// accords, mélodie, parties et ce qui joue dans chacune). Nouveau morceau en fabrique un à partir du style choisi.
+// cleanPlan() vérifie tout ce qui arrive (valeurs connues, bornes, longueurs) : seul un plan nettoyé est construit
+// (js/app/compose.js). Ce module ne touche pas à l'état.
 import { BASS_OCTAVES, BASS_STYLES } from './bassline.js';
 import { parseProgression } from './chords.js';
 import { KICK_PARAMS, KICK_PRESETS } from './kickdesign.js';
@@ -167,35 +167,3 @@ export const calmNotes = seq => {
   const on = seq.filter(n => Math.abs(n.t - Math.round(n.t)) < 1e-6);
   return (on.length >= 2 ? on : seq).map(n => ({ ...n, vel: Math.max(0.1, n.vel * 0.85) }));
 };
-
-/**
- * Schéma JSON d'un plan (pour la sortie structurée d'un modèle de langage) : les valeurs possibles viennent des
- * listes de l'application. extraSounds : sons acceptés en plus (presets personnels) ; notes : false = sans les notes
- * du lead ; required : champs obligatoires.
- */
-export function planSchema(extraSounds = [], { notes = true, required = ['style', 'bpm', 'prog', 'sections'] } = {}) {
-  const sounds = [...SYNTH_IDS, ...extraSounds];
-  const e = list => ({ type: 'string', enum: [...list] });
-  const note = { type: 'object', properties: { t: { type: 'number' }, len: { type: 'number' }, note: { type: 'integer' }, vel: { type: 'number' } }, required: ['t', 'len', 'note'] };
-  return {
-    type: 'object',
-    properties: {
-      title: { type: 'string' },
-      style: e(Object.keys(STYLES)),
-      bpm: { type: 'integer', minimum: PLAN_LIMITS.bpm[0], maximum: PLAN_LIMITS.bpm[1] },
-      prog: { type: 'string' },
-      kick: { type: 'object', properties: { preset: e(Object.keys(KICK_PRESETS)), params: { type: 'object', properties: Object.fromEntries(KICK_PARAMS.map(id => [id, { type: 'number', minimum: 0, maximum: 1 }])) } } },
-      drums: { type: 'object', properties: { kit: e(Object.keys(DRUM_KITS)), hat: e(DRUM_HATS), clap: e(DRUM_CLAPS), ride: { type: 'boolean' } } },
-      bass: { type: 'object', properties: { style: e(BASS_STYLES), sound: e([...sounds, ...BASS_OSC]), octave: e(Object.keys(BASS_OCTAVES)) } },
-      chords: { type: 'object', properties: { sound: e(sounds), rhythm: e(CHORD_RHYTHMS), register: e(CHORD_REGISTERS) } },
-      lead: { type: 'object', properties: { sound: e(sounds), style: e(LEAD_STYLES), density: e(LEAD_DENSITIES), register: e(Object.keys(LEAD_REGISTERS)), ...(notes ? { notes: { type: 'array', items: note } } : {}) } },
-      buildups: { type: 'boolean' },
-      sections: {
-        type: 'array', minItems: 1, maxItems: PLAN_LIMITS.sections,
-        items: { type: 'object', properties: { type: e(SECTION_TYPES), bars: { type: 'integer', minimum: PLAN_LIMITS.bars[0], maximum: PLAN_LIMITS.bars[1] },
-          play: { type: 'array', items: e(PLAN_PARTS) }, name: { type: 'string' }, prog: { type: 'string' }, lead: e(LEAD_MOODS) }, required: ['type', 'bars', 'play'] },
-      },
-    },
-    required,
-  };
-}

@@ -1,6 +1,6 @@
 // Plan de morceau : nettoyage (valeurs inconnues remplacées par celles du style avec un avertissement, bornes, notes),
-// schéma JSON pour un modèle de langage, construction d'un plan complet (mélodie fournie, suite d'accords propre à
-// une partie, éléments choisis partie par partie, réglages du kick, noms des repères), une seule étape d'annulation.
+// construction d'un plan complet (mélodie fournie, suite d'accords propre à une partie, éléments choisis partie par
+// partie, réglages du kick, noms des repères), une seule étape d'annulation.
 export default async function (t, A) {
   const S = A.state;
   window.confirm = () => true;
@@ -19,11 +19,6 @@ export default async function (t, A) {
   t.eq(p1.sections.map(s => [s.type, s.bars, s.play.join(), s.lead]), [['drop', 16, 'kick', 'full'], ['break', 64, 'bass,chords,lead', 'calm']], 'parties nettoyées (anthem : sub dans le break)');
   for (const k of ['style', 'bpm', 'prog', 'kick.preset', 'kick.params.foo', 'drums.hat', 'bass.sound', 'sections.0.play', 'sections.1.type'])
     t.ok(w1.some(w => w.startsWith(`${k}:`)), `avertissement ${k}`, w1);
-
-  // Schéma : les valeurs possibles viennent de l'application.
-  const sch = A.planSchema();
-  t.ok(sch.properties.style.enum.includes('frenchcore') && sch.properties.lead.properties.sound.enum.includes('screech')
-    && sch.properties.bass.properties.sound.enum.includes('osc:reese') && sch.properties.sections.items.properties.play.items.enum.includes('drums'), 'schéma JSON');
 
   // Construction.
   S.tl.tracks.forEach(tr => { tr.clips = []; });

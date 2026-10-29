@@ -41,7 +41,6 @@ import { cleanMidiMap } from './midi-ui.js';
 import { mergeViz } from './viz-ui.js';
 import { cleanSmp } from '../sampler.js';
 import { mergeStart } from '../songstart.js';
-import { mergeAi } from '../aicompose.js';
 
 // ---------- Sauvegarde ----------
 
@@ -53,7 +52,6 @@ export async function restore() {
   state.bankNames = cleanBankNames(saved?.bankNames);
   state.buildup = mergeBuildup(saved?.buildup);
   state.start = mergeStart(saved?.start);
-  state.ai = mergeAi(saved?.ai);
   state.toolPresets = cleanToolPresets(saved?.toolPresets);
   state.voice = mergeVoiceState(saved?.voice);
   state.tune = mergeTuneState(saved?.tune);
@@ -222,7 +220,6 @@ export function stateSnapshot() {
     bankNames: state.bankNames,
     buildup: state.buildup,
     start: state.start,
-    ai: state.ai,
     toolPresets: state.toolPresets,
     launcher: state.launcher,
     input: state.input,

@@ -4,7 +4,7 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 
 ## Deux couches
 
-- **Les moteurs** (`js/*.js`) : le son et les données, sans interface. Chacun est autonome et ne connaît pas les autres : `audio.js` (synthé, sampler, effets du master), `timeline.js` (lecture des pistes), `drummachine.js` (socle des boîtes à rythmes et du séquenceur : horloge des pas, distorsion, kits), `tr909.js`, `tr808.js`, `stepseq.js`, `slicer.js`, `songstart.js` (styles et plans de « Nouveau morceau »), `songplan.js` (plan de morceau : format, nettoyage de ce qui arrive, schéma JSON pour un compositeur extérieur), `aicompose.js` (compositeur IA : consigne du modèle de langage, requête Ollama, corrections de sa réponse, demandes au compositeur musical `ai/music`), `bassline.js` (lignes de basse du générateur), `tracker.js` (lecture et rejeu des modules .mod / .xm), `sampler.js` (instrument échantillon : un pad joué en notes), `acid.js`, `decks.js`, `mixer.js`, `trackfx.js`, `osc.js`, etc.
+- **Les moteurs** (`js/*.js`) : le son et les données, sans interface. Chacun est autonome et ne connaît pas les autres : `audio.js` (synthé, sampler, effets du master), `timeline.js` (lecture des pistes), `drummachine.js` (socle des boîtes à rythmes et du séquenceur : horloge des pas, distorsion, kits), `tr909.js`, `tr808.js`, `stepseq.js`, `slicer.js`, `songstart.js` (styles et plans de « Nouveau morceau »), `songplan.js` (plan de morceau : format et nettoyage de ce qui arrive), `bassline.js` (lignes de basse du générateur), `tracker.js` (lecture et rejeu des modules .mod / .xm), `sampler.js` (instrument échantillon : un pad joué en notes), `acid.js`, `decks.js`, `mixer.js`, `trackfx.js`, `osc.js`, etc.
 - **L'application** (`js/main.js` et `js/app/*.js`) : l'interface, le contrôleur APC et les liaisons entre les moteurs. Un module par domaine.
 
 `js/main.js` est le point d'entrée : au clic sur « Démarrer », il crée les moteurs, les relie (table de mixage, sidechain, câblage), puis construit chaque fenêtre.
@@ -53,7 +53,6 @@ GabberKey est une page web sans étape de compilation : des modules JavaScript (
 | `files.js` | Fichiers : kits, projet, morceau, réglages de chaque outil |
 | `tracker-files.js` | Import des modules de tracker : samples sur les pads d'une banque vide, une piste par voie et un bloc de notes par passage de pattern |
 | `start-ui.js` | Fenêtre Nouveau morceau : style, plan, parties ; en fait un plan de morceau |
-| `ai-ui.js` | Fenêtre Compositeur IA : serveur, demande, plan proposé, modification, autre version |
 | `compose.js` | Construction d'un morceau à partir d'un plan nettoyé (blocs, repères, montées) en une étape d'annulation |
 | `export.js` | Enregistrement du master et export rapide (WAV, stems) hors temps réel |
 | `tune-ui.js` | Fenêtre Correction de justesse : voix d'un bloc audio recalée sur une gamme ou une mélodie |

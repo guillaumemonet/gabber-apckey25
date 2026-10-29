@@ -234,14 +234,6 @@ export const HELP = {
         <li><b>Play</b> makes it the played bank; <b>Duplicate</b> copies it into the first empty bank; <b>Clear</b>, <b>Export</b>, <b>Import</b> (bank files .apckit).</li>
         <li>Everything is undone with Ctrl+Z. To put a timeline block on a pad: right-click the block › <b>Send to…</b>.</li>
       </ul>`,
-    ai: `
-      <p>Describe the song in a few words: a language model running on this computer writes a <b>song plan</b> with the tools of the studio (style, tempo, chords, kick and its settings, drums, bass, sounds, parts and what plays in each). Nothing leaves the computer.</p>
-      <ul>
-        <li><b>Optional</b>: the AI server is a Docker container to start once: <code>docker compose -f ai/docker-compose.yml up -d</code> (model of about 4.7 GB; NVIDIA graphics card recommended, see the manual). <b>Test</b> checks it.</li>
-        <li><b>Your request</b>, an optional <b>Style</b>, then <b>Compose</b>. <b>Melody and bass written by the music AI</b> (optional, see the manual): a model trained on MIDI music writes the lead and the bass line on the chords when the song is created; otherwise the generators of the studio write them.</li>
-        <li>The plan is checked (values the studio does not know are replaced by those of the style) and summed up: parts, sounds, chords. <b>Change</b> asks for a change in your words, <b>Another version</b> asks again.</li>
-        <li><b>Create the song</b> builds it like New song: it replaces the timeline (Ctrl+Z brings it back), and every block can then be edited.</li>
-      </ul>`,
     start: `
       <p>Start a song in a few seconds: pick a style, adjust the plan, then <b>Create the song</b>. Also opened by <b>New song…</b> in the header.</p>
       <ul>
@@ -563,14 +555,6 @@ export const HELP = {
         <li><b>Clic</b> sur un pad pour l'écouter ; <b>clic droit</b> : écouter, nom, couleur, ouvrir dans l'éditeur de pad, vider.</li>
         <li><b>Jouer</b> en fait la banque jouée ; <b>Dupliquer</b> la copie dans la première banque vide ; <b>Vider</b>, <b>Exporter</b>, <b>Importer</b> (fichiers de banque .apckit).</li>
         <li>Tout s'annule avec Ctrl+Z. Pour mettre un bloc de la timeline sur un pad : clic droit sur le bloc › <b>Envoyer vers…</b>.</li>
-      </ul>`,
-    ai: `
-      <p>Décrivez le morceau en quelques mots : un modèle de langage qui tourne sur cet ordinateur écrit un <b>plan de morceau</b> avec les outils du studio (style, tempo, accords, kick et ses réglages, batterie, basse, sons, parties et ce qui joue dans chacune). Rien ne sort de l’ordinateur.</p>
-      <ul>
-        <li><b>Optionnel</b> : le serveur IA est un conteneur Docker à lancer une fois : <code>docker compose -f ai/docker-compose.yml up -d</code> (modèle d’environ 4,7 Go ; carte graphique NVIDIA conseillée, voir le manuel). <b>Tester</b> le vérifie.</li>
-        <li><b>Votre demande</b>, un <b>Style</b> si vous voulez, puis <b>Composer</b>. <b>Mélodie et basse écrites par l’IA musicale</b> (optionnelle, voir le manuel) : un modèle entraîné sur de la musique en MIDI écrit le lead et la ligne de basse sur les accords quand le morceau est créé ; sinon les générateurs du studio les écrivent.</li>
-        <li>Le plan est vérifié (les valeurs que le studio ne connaît pas sont remplacées par celles du style) et résumé : parties, sons, accords. <b>Modifier</b> demande un changement avec vos mots, <b>Autre version</b> redemande.</li>
-        <li><b>Créer le morceau</b> le construit comme Nouveau morceau : la timeline est remplacée (Ctrl+Z la ramène), et chaque bloc se retouche ensuite.</li>
       </ul>`,
     start: `
       <p>Démarrer un morceau en quelques secondes : choisissez un style, ajustez le plan, puis <b>Créer le morceau</b>. Aussi ouvert par <b>Nouveau morceau…</b> dans l'en-tête.</p>

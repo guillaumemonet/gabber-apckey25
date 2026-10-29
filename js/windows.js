@@ -6,11 +6,11 @@
 import { t } from './i18n.js';
 import { helpHtml } from './help.js';
 
-export const WINDOWS = ['pads', 'editor', 'tr', 'acid', 'kick', 'decks', 'patch', 'piano', 'perf', 'mix', 'scenes', 'monitor', 'roll', 'osc', 'viz', 'curve', 'gen', 'breizh', 'buildup', 'voice', 'banks', 'tune', 'buses', 'launcher', 'input', 'tr8', 'seq', 'slicer', 'start', 'ai'];
+export const WINDOWS = ['pads', 'editor', 'tr', 'acid', 'kick', 'decks', 'patch', 'piano', 'perf', 'mix', 'scenes', 'monitor', 'roll', 'osc', 'viz', 'curve', 'gen', 'breizh', 'buildup', 'voice', 'banks', 'tune', 'buses', 'launcher', 'input', 'tr8', 'seq', 'slicer', 'start'];
 const SNAP = 14;   // distance d'aimantation (px)
 const DEFAULT_SIZE = {
   pads: [780, null], editor: [360, null], tr: [900, null], acid: [920, null], kick: [820, null], decks: [980, null], patch: [1040, 600], piano: [760, null], knobs: [760, null],
-  perf: [760, null], mix: [1060, null], scenes: [760, null], monitor: [720, 640], roll: [980, 540], osc: [1120, null], viz: [1080, 700], curve: [820, null], gen: [860, null], breizh: [860, null], buildup: [820, null], banks: [900, null], voice: [860, null], tune: [860, null], buses: [760, null], launcher: [900, null], input: [520, null], tr8: [900, null], seq: [960, null], slicer: [860, null], start: [760, null], ai: [820, null],
+  perf: [760, null], mix: [1060, null], scenes: [760, null], monitor: [720, 640], roll: [980, 540], osc: [1120, null], viz: [1080, 700], curve: [820, null], gen: [860, null], breizh: [860, null], buildup: [820, null], banks: [900, null], voice: [860, null], tune: [860, null], buses: [760, null], launcher: [900, null], input: [520, null], tr8: [900, null], seq: [960, null], slicer: [860, null], start: [760, null],
 };
 
 export function mergeWindows(saved) {

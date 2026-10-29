@@ -36,7 +36,6 @@ GabberKey s'organise autour d'une **timeline** : on glisse des sons d'une biblio
   - **Visualiseur** dans l'esprit Winamp : 21 modes (spectre à LED, oscilloscope, tourbillons Milk, vumètres hi-fi, texte qui cogne, particules, barres Amiga, spectrogramme, et modes 3D / GPU : tunnel, paysage synthwave, blob, hyperespace, fractale, lasers, ville de spectre, mur de LED, metaballs, plasma, rotozoomer, fluide, réaction-diffusion), filtres empilables (CRT, kaléidoscope, glitch, stroboscope), et une fenêtre projecteur pour un deuxième écran ;
   - **Effets de performance** (rolls, balayages de filtre, tape-stop, pump), **égaliseur général**, **scènes** rappelées à la mesure suivante, **lanceur de clips** (aussi sur les 40 pads de l'APC), **horloge MIDI**, **MIDI learn** pour tout autre clavier ou contrôleur MIDI, avec un moniteur MIDI.
 - **Nouveau morceau** : choisissez un style (early hardcore, gabber, anthem, frenchcore, uptempo, industrial, terror, happy hardcore, rave, hardstyle, breizhcore, hardcore sombre) et un plan de morceau, et le morceau est posé en quelques secondes : tempo, kick, batterie, basse, accords, lead, montées avant les drops et repères.
-- **Compositeur IA** (optionnel) : décrivez le morceau en quelques mots, et un modèle de langage qui tourne sur votre ordinateur (Docker) écrit un plan de morceau avec les outils du studio, et une IA musicale optionnelle, entraînée sur de la musique en MIDI, écrit le lead et la ligne de basse ; vérifiez-le, modifiez-le avec vos mots, puis créez-le. Rien ne sort de l’ordinateur.
 - **Enregistrer et ouvrir** tout le projet, le morceau ou les réglages de chaque outil (fichiers `.gabber`), **export WAV rapide et stems**, **enregistrement WAV** de votre session et **export / import de kits** ; import des **fichiers MIDI** et des **modules de tracker** (.mod, .xm : samples sur les pads, une piste par voie et un bloc par pattern).
 - Interface en **français ou en anglais**, selon la langue du navigateur.
 
@@ -70,7 +69,7 @@ Il faut seulement Python 3, pour le petit serveur local. Détails : [Premiers pa
 
 Le mode d'emploi complet est dans [docs/manuel](docs/manuel/README.md) ; chaque fenêtre de l'application a aussi son aide (bouton **?**).
 
-1. **[Premiers pas](docs/manuel/demarrage.md)** : Prérequis, Installation, Lancement, Nouveau morceau, Compositeur IA, Langue, Compatibilité matérielle
+1. **[Premiers pas](docs/manuel/demarrage.md)** : Prérequis, Installation, Lancement, Nouveau morceau, Langue, Compatibilité matérielle
 2. **[Le contrôleur APC Key 25](docs/manuel/apc.md)** : Commandes sur l'APC, Potentiomètres, Effets de performance, Autres claviers MIDI et MIDI learn
 3. **[Pads et banques](docs/manuel/pads.md)** : Banques, Tempo et boucles, Découpeur de breaks
 4. **[Timeline, bibliothèque et piano roll](docs/manuel/timeline.md)** : Timeline et bibliothèque de sons, Automation, Marqueurs, Effets de piste, Geler une piste, Piano roll, Démo

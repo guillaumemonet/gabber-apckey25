@@ -1074,19 +1074,6 @@ header button, header .status { white-space: nowrap; }
 .gen-row [hidden], .gen-row[hidden] { display: none; }
 /* Nouveau morceau : parties du plan (couleur par type), cases des éléments à remplir */
 .start-style-info, .start-total { font-size: 12px; }
-#ai-composer textarea, #ai-refine { width: 100%; box-sizing: border-box; resize: vertical; font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
-#ai-composer > label { display: flex; flex-direction: column; gap: 4px; }
-#ai-url { width: 210px; }
-#ai-model { width: 140px; }
-#ai-music-url { width: 170px; }
-.ai-music-status.ok { color: #4ade80; }
-.ai-music-status.warn { color: #ffb13d; }
-#ai-refine { flex: 1; width: auto; min-width: 200px; }
-.ai-status.ok { color: #4ade80; }
-.ai-status.warn, .ai-result .warn { color: #ffb13d; }
-.ai-result h3 { margin: 6px 0 2px; }
-.ai-result { display: flex; flex-direction: column; gap: 6px; }
-.start-sec.ai-sec { grid-template-columns: 22px minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 2fr); }
 #start-bpm { width: 70px; }
 .start-sections { display: flex; flex-direction: column; gap: 4px; }
 .start-sec { display: grid; grid-template-columns: 22px minmax(0, 1fr) minmax(0, 1fr) repeat(3, 32px); gap: 6px; align-items: center; padding: 3px 6px; border-left: 4px solid var(--muted); border-radius: 6px; background: var(--panel-2); }

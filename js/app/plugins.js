@@ -19,19 +19,18 @@ import { pianoRoll, rollStop } from './roll-ui.js';
 import { renderSeq } from './seq-ui.js';
 import { drawSlicer, stopSlicerPreview } from './slicer-ui.js';
 import { renderStart } from './start-ui.js';
-import { aiWinOpened } from './ai-ui.js';
 
 // ---------- Fenêtres des plugins ----------
 
 // Barre des plugins rangée en groupes : instruments, outils, studio, système.
 export const PLUGIN_GROUPS = [
   ['instruments', ['pads', 'tr', 'tr8', 'seq', 'acid', 'piano', 'osc', 'decks']],
-  ['tools', ['start', 'ai', 'roll', 'editor', 'slicer', 'kick', 'curve', 'gen', 'breizh', 'buildup', 'voice', 'tune']],
+  ['tools', ['start', 'roll', 'editor', 'slicer', 'kick', 'curve', 'gen', 'breizh', 'buildup', 'voice', 'tune']],
   ['studio', ['mix', 'buses', 'banks', 'patch', 'launcher', 'scenes', 'perf', 'viz']],
   ['system', ['monitor', 'input']],
 ];
 
-export const PLUGIN_ICONS = { start: 'plus', ai: 'wand', pads: 'pads', tr: 'tr', tr8: 'tr8', seq: 'seq', slicer: 'slice', acid: 'acid', piano: 'keys', osc: 'osc', decks: 'decks', roll: 'roll', editor: 'editor', kick: 'kick', curve: 'curve', gen: 'wand', breizh: 'triskell', buildup: 'rise', banks: 'pads', voice: 'voice', tune: 'tune', buses: 'mix', launcher: 'grid', input: 'rec', mix: 'mix', patch: 'patch', scenes: 'scenes', perf: 'perf', monitor: 'monitor', viz: 'viz' };
+export const PLUGIN_ICONS = { start: 'plus', pads: 'pads', tr: 'tr', tr8: 'tr8', seq: 'seq', slicer: 'slice', acid: 'acid', piano: 'keys', osc: 'osc', decks: 'decks', roll: 'roll', editor: 'editor', kick: 'kick', curve: 'curve', gen: 'wand', breizh: 'triskell', buildup: 'rise', banks: 'pads', voice: 'voice', tune: 'tune', buses: 'mix', launcher: 'grid', input: 'rec', mix: 'mix', patch: 'patch', scenes: 'scenes', perf: 'perf', monitor: 'monitor', viz: 'viz' };
 
 export function buildPluginBar() {
   const nav = $('#plugins');
@@ -76,7 +75,6 @@ export function onWindowToggle(id, open) {
   if (open && id === 'banks') renderBankMgr();
   if (open && id === 'buildup') renderBuildup();
   if (open && id === 'start') renderStart();
-  if (open && id === 'ai') aiWinOpened();
   if (!open && id === 'buildup') stopBuildupPreview();
   if (open && id === 'input') inputWinOpened();
   if (open && id === 'seq') renderSeq();
