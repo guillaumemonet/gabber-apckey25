@@ -9,7 +9,7 @@ export const HELP = {
         <li><b>Click</b> a pad (or hit it on the APC) to play it; <b>Shift + click</b> selects it without playing.</li>
         <li><b>Knobs</b> under the grid: volume, pitch, pan, filter, start point, delay and reverb sends, and mode of the selected pad (also on the APC knobs K1-K8 when this window is active).</li>
         <li><b>✎</b> (shown when the mouse is over a pad) opens the <b>pad editor</b>: name, colour, playback mode, knobs, loop tempo.</li>
-        <li><b>Drag a sound from the library</b> onto a pad to replace its sound, or <b>drop an audio file</b> (WAV, MP3, FLAC, OGG…) on it. <b>Clear bank</b> empties the displayed bank.</li>
+        <li><b>Drag a sound from the library</b> onto a pad to replace its sound, or <b>drop an audio file</b> (WAV, MP3, FLAC, OGG…) on it. Or <b>right-click a library sound › A pad…</b> to put it on a pad of any bank. <b>Clear bank</b> empties the displayed bank.</li>
         <li><b>Start</b>: Free, or pads locked to the grid (1, 2, 3 beats, 1, 2, 4 bars): a pad starts on the next division, a loop pressed again stops at the end of it; it blinks fast while it waits.</li>
         <li>Playback modes: <b>one-shot</b> (plays to the end), <b>hold</b> (as long as the pad is pressed), <b>loop</b> (starts on the next bar, press again to stop).</li>
         <li><b>Banks 1-25</b> (columns on the right). APC: SCENE LAUNCH 1-5 = banks 1-5, Shift + SCENE LAUNCH = 6-10, then 11-15, 16-20 and 21-25 on each new press.</li>
@@ -141,7 +141,7 @@ export const HELP = {
         <li><b>Distortion</b>: <b>Drive</b> and <b>Shape</b> (the 909's 5 shapes), then <b>Formant</b> and <b>Bite</b>, which make the tail "talk".</li>
         <li><b>Attack</b>: <b>Click</b> (noise) and <b>Attack</b> (short punchy layer).</li>
         <li><b>Auto-listen</b> plays the kick each time you release a knob. The waveform and the length are shown below the knobs.</li>
-        <li><b>Send to…</b> puts it on the pad of your choice (any bank), <b>→ Library</b> adds it to the library (My Sounds › Kicks) (drag it onto the timeline; right-click it there to remove it), <b>⤓ WAV</b> downloads it.</li>
+        <li><b>Send to…</b> puts it on the pad of your choice (any bank), <b>→ Library</b> adds it to the library (My Sounds › Kicks) (drag it onto the timeline; right-click it there to load it elsewhere or remove it), <b>⤓ WAV</b> downloads it.</li>
         <li><b>Expert</b>: the kick in three layers set apart, each in its color on the waveform, <b>Solo</b> to hear one alone. <b>Click</b> (noise and attack blip), <b>Body</b> (a clean sine diving an octave under the tail: the punch; off in the factory kicks), <b>Tail</b> (tuned and distorted) with <b>Deboom</b> (cuts the low end of the tail) and <b>Tail start</b> (the tail fades in). The expert settings are neutral by default: switching modes doesn't change the sound.</li>
         <li>The tail note is shown above the knobs. <b>Tune to the key</b> tunes it to the first chord of the Generator.</li>
         <li><b>Kick melody</b> lays a note block played by this kick (one per beat, on the Generator chords if any) and opens it in the piano roll: each note retunes the tail, each kick cuts the previous one. In the piano roll, the sound <b>Kick of the designer</b> gives a block the current kick.</li>
@@ -331,7 +331,7 @@ export const HELP = {
         <li><b>Clic</b> sur un pad (ou frappe sur l'APC) pour le jouer ; <b>Maj + clic</b> le sélectionne sans le jouer.</li>
         <li><b>Potentiomètres</b> sous la grille : volume, hauteur, panoramique, filtre, point de départ, envois delay et reverb, et mode du pad sélectionné (aussi sur les potentiomètres K1-K8 de l'APC quand cette fenêtre est active).</li>
         <li><b>✎</b> (visible au survol d'un pad) ouvre l'<b>éditeur de pad</b> : nom, couleur, mode de lecture, potentiomètres, tempo de boucle.</li>
-        <li><b>Glissez un son de la bibliothèque</b> sur un pad pour remplacer son son, ou <b>un fichier audio</b> (WAV, MP3, FLAC, OGG…). <b>Vider la banque</b> vide la banque affichée.</li>
+        <li><b>Glissez un son de la bibliothèque</b> sur un pad pour remplacer son son, ou <b>un fichier audio</b> (WAV, MP3, FLAC, OGG…). Ou <b>clic droit sur un son de la bibliothèque › Un pad…</b> pour le mettre sur un pad de n'importe quelle banque. <b>Vider la banque</b> vide la banque affichée.</li>
         <li><b>Départ</b> : Libre, ou pads calés sur la grille (1, 2, 3 temps, 1, 2, 4 mesures) : un pad part à la division suivante, une boucle rappuyée s'arrête à la fin de celle-ci ; il clignote vite pendant l'attente.</li>
         <li>Modes : <b>one-shot</b> (joue jusqu'au bout), <b>maintenu</b> (tant que le pad est appuyé), <b>boucle</b> (démarre à la mesure suivante, un nouvel appui l'arrête).</li>
         <li><b>Banques 1 à 25</b> (colonnes de droite). APC : SCENE LAUNCH 1-5 = banques 1-5, Maj + SCENE LAUNCH = 6-10, puis 11-15, 16-20 et 21-25 à chaque nouvel appui.</li>
@@ -463,7 +463,7 @@ export const HELP = {
         <li><b>Distorsion</b> : <b>Drive</b> et <b>Forme</b> (les 5 formes de la 909), puis <b>Formant</b> et <b>Mordant</b>, qui font « parler » la queue.</li>
         <li><b>Attaque</b> : <b>Clic</b> (bruit) et <b>Attaque</b> (couche courte et percutante).</li>
         <li><b>Écoute auto</b> joue le kick à chaque potentiomètre relâché. La forme d'onde et la longueur s'affichent sous les potentiomètres.</li>
-        <li><b>Envoyer vers…</b> le met sur le pad de votre choix (n'importe quelle banque), <b>→ Bibliothèque</b> l'ajoute à la bibliothèque (My Sounds › Kicks) (à glisser sur la timeline ; clic droit dessus pour le retirer), <b>⤓ WAV</b> le télécharge.</li>
+        <li><b>Envoyer vers…</b> le met sur le pad de votre choix (n'importe quelle banque), <b>→ Bibliothèque</b> l'ajoute à la bibliothèque (My Sounds › Kicks) (à glisser sur la timeline ; clic droit dessus pour le charger ailleurs ou le retirer), <b>⤓ WAV</b> le télécharge.</li>
         <li><b>Expert</b> : le kick en trois couches réglées à part, chacune dans sa couleur sur la forme d'onde, <b>Solo</b> pour en écouter une seule. <b>Clic</b> (bruit et blip d'attaque), <b>Corps</b> (un sinus propre qui plonge une octave sous la queue : le punch ; coupé dans les kicks d'usine), <b>Queue</b> (accordée et saturée) avec <b>Deboom</b> (retire le grave de la queue) et <b>Départ queue</b> (la queue entre en fondu). Les réglages experts sont neutres par défaut : changer de mode ne change pas le son.</li>
         <li>La note de la queue s'affiche au-dessus des potentiomètres. <b>Accorder sur la tonalité</b> l'accorde sur le premier accord du Générateur.</li>
         <li><b>Mélodie de kick</b> pose un bloc de notes joué par ce kick (un par temps, sur les accords du Générateur s'il y en a) et l'ouvre dans le piano roll : chaque note accorde la queue, chaque kick coupe le précédent. Dans le piano roll, le son <b>Kick du designer</b> donne à un bloc le kick actuel.</li>

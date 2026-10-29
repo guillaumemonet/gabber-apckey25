@@ -8,12 +8,12 @@ import { loadItemIntoPad } from './actions.js';
 import { $, engine, kit, state, uiColor } from './core.js';
 import { deleteCurve, openCurve } from './curve-ui.js';
 import { loadDeck } from './decks-ui.js';
-import { removeUserSound } from './kick-ui.js';
 import { padEls } from './pads.js';
 import { slotFromLibrary } from './launcher.js';
 import { beatPx, ensureBuffer, tlPlaceItem, tlTarget } from './tl.js';
 import { FX_FAMILIES, fxColor, fxItems, tlPlaceFx } from './trackfx-ui.js';
 import { openSlicer } from './slicer-ui.js';
+import { openLibMenu } from './lib-menu.js';
 
 // ---------- Bibliothèque de sons ----------
 
@@ -131,7 +131,8 @@ export function renderLibrary() {
       if (item.ownCurve) row.addEventListener('contextmenu', e => { e.preventDefault(); deleteCurve(item.curveId); });
     }
     row.addEventListener('pointerdown', e => startLibDrag(e, item));
-    if (item.own) { row.title = t('lib.ownTitle'); row.addEventListener('contextmenu', e => { e.preventDefault(); removeUserSound(item); }); }
+    if (item.kind !== 'fx') row.addEventListener('contextmenu', e => { e.preventDefault(); openLibMenu(item, e.clientX, e.clientY); });
+    if (item.own) row.title = t('lib.ownTitle');
     list.appendChild(row);
   }
   if (!shown.length) list.innerHTML = `<p class="hint">${t('lib.empty')}</p>`;

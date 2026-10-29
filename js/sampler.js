@@ -12,6 +12,30 @@ export function sampleVoice(pad) {
   return { buffer: pad.buffer, root: pad.smp?.root ?? 60, loop: pad.smp?.loop ?? null };
 }
 
+/** Note MIDI jouée par un son à vitesse normale, pour l'instrument échantillon. pc : classe de hauteur connue (0 = do)
+ * ou null. L'octave est cherchée par autocorrélation sur le corps du son (la plus aiguë des octaves qui collent, pour ne
+ * pas descendre d'une octave par erreur) ; sans classe connue, la hauteur trouvée est arrondie au demi-ton. Défaut : 60. */
+export function guessRoot(buffer, pc) {
+  const fallback = pc == null ? 60 : 60 + pc;
+  const sr = buffer.sampleRate, x = buffer.getChannelData(0);
+  const n = Math.min(4096, Math.floor(sr * 0.09));
+  const at = Math.min(Math.floor(sr * 0.05), Math.max(0, x.length - 2 * n));
+  if (x.length < at + 2 * n) return fallback;
+  const corr = lag => {
+    let s = 0, a = 0, b = 0;
+    for (let k = at; k < at + n; k++) { s += x[k] * x[k + lag]; a += x[k] * x[k]; b += x[k + lag] * x[k + lag]; }
+    return s / (Math.sqrt(a * b) + 1e-12);
+  };
+  const lagOf = m => Math.round(sr / (440 * 2 ** ((m - 69) / 12)));
+  const cands = [];
+  if (pc != null) for (let m = 24 + pc; m <= 96; m += 12) cands.push(m);
+  else for (let m = 28; m <= 96; m++) cands.push(m);
+  const scored = cands.filter(m => lagOf(m) < n).map(m => ({ m, c: corr(lagOf(m)) }));
+  const best = Math.max(0, ...scored.map(o => o.c));
+  if (best < 0.5) return fallback;
+  return Math.max(...scored.filter(o => o.c >= best * 0.92).map(o => o.m));
+}
+
 /** pad.smp lu d'un fichier : { root, loop } valides, sinon null. */
 export function cleanSmp(s) {
   if (!s || typeof s !== 'object') return null;

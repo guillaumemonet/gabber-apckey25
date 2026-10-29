@@ -96,4 +96,11 @@ export function libraryItems({ manifest, kit, banks, tl, userSounds = [] }) {
 }
 
 /** Catalogue lu (sounds/library.json) -> { tree, byFile: Map(fichier -> entrée) }. */
+// Classe de hauteur (0 = do) d'une note du catalogue (« F », « G# », « Db », « Fm », « Gdim »…), ou null.
+const PC = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+export function noteClass(note) {
+  const m = /^([A-G])([#b]?)/.exec(note ?? '');
+  return m ? (PC[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0) + 12) % 12 : null;
+}
+
 export const readCatalog = json => ({ tree: json?.tree ?? {}, byFile: new Map((json?.sounds ?? []).map(s => [s.file, s])) });

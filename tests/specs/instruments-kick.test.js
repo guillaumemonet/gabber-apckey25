@@ -83,8 +83,10 @@ export default async function (t, A) {
   const own = t.$$('#lib-list .lib-item').find(r => r.textContent.includes(S.userSounds[0].name));
   t.ok(own, 'il est listé dans la bibliothèque');
   own?.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+  await t.wait(50);
+  t.$('.lib-menu .cm-item[data-icon="trash"]')?.click();
   await t.wait(200);
-  t.eq(S.userSounds.length, 0, 'clic droit : retiré de la bibliothèque');
+  t.eq(S.userSounds.length, 0, 'clic droit › Retirer de la bibliothèque');
   t.$('[data-win="kick"] .win-help').click();
   t.ok(t.$$('.win-help-pop li').length >= 4, 'aide de la fenêtre');
 }

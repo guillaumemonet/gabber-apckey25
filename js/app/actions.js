@@ -16,6 +16,7 @@ import {
 import { renderDecks } from './decks-ui.js';
 import { kickKnobEls, renderKick } from './kick-ui.js';
 import { flashKnob, renderKnobs, renderPages } from './knobs.js';
+import { renderBankMgr } from './banks-ui.js';
 import { renderLibrary } from './library-ui.js';
 import { renderAll, toast } from './misc.js';
 import { masterDef, mixField, renderMixer, renderStrip } from './mixer-ui.js';
@@ -230,24 +231,26 @@ export async function loadFileIntoPad(file, i) {
   save();
 }
 
-// Un son de la bibliothèque lâché sur un pad : il remplace son son (les réglages du pad restent, le mode suit le son :
-// boucle calée sur le tempo pour une boucle, un coup sinon).
-export async function loadItemIntoPad(item, i) {
+// Un son de la bibliothèque lâché sur un pad (de la banque affichée, ou de la banque b) : il remplace son son (les
+// réglages du pad restent, le mode suit le son : boucle calée sur le tempo pour une boucle, un coup sinon).
+export async function loadItemIntoPad(item, i, b = state.bank, tell = true) {
   const buffer = await ensureBuffer(item.sampleId);
   if (!buffer) { toast(t('lib.loadFail'), 3000); return; }
-  const b = state.bank;
   const old = state.banks[b][i];
   engine.stopPad(padKey(b, i));
   const pad = newPad(item.name.slice(0, 24), catColor(item.cat), item.sampleId, buffer, item.bpm || 0);
   if (old) pad.p = { ...old.p };
   pad.p.mode = (item.loop ? 2 : 0) / (PAGES.pad.params[7].steps - 1);
   state.banks[b][i] = pad;
-  selectPad(i);
-  renderPad(i);
-  renderEditor();
-  renderLeds();
+  if (b === state.bank) {
+    selectPad(i);
+    renderPad(i);
+    renderEditor();
+    renderLeds();
+  }
+  renderBankMgr();
   save();
-  toast(t('pad.dropped', { n: i + 1, name: pad.name }), 2000);
+  if (tell) toast(b === state.bank ? t('pad.dropped', { n: i + 1, name: pad.name }) : t('pad.droppedBank', { n: i + 1, bank: b + 1, name: pad.name }), 2500);
 }
 
 // Un son importé sert-il encore quelque part (pads, timeline, bibliothèque, platines) ?

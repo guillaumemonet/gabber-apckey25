@@ -929,6 +929,12 @@ header button, header .status { white-space: nowrap; }
 .cm-check input { justify-self: start; width: 16px; height: 16px; accent-color: var(--accent-2); }
 .cm-transpose { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
 .cm-transpose button { min-width: 0; padding: 3px 0; font-size: 11px; }
+.lib-menu .lm-sep { padding: 6px 8px 2px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.lib-menu .lm-box { padding: 2px 0 6px; }
+.lib-menu .lm-pads { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; padding: 4px 8px 0; }
+.lib-menu .lm-pads button { aspect-ratio: 1; min-width: 0; padding: 0; font-size: 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--muted); }
+.lib-menu .lm-pads button.used { background: color-mix(in srgb, var(--c) 45%, var(--bg)); color: var(--text); }
+.lib-menu .lm-pads button:hover, .lib-menu .lm-pads button:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
 .clip-menu hr { border: none; border-top: 1px solid var(--line); margin: 4px 0; }
 .bar-counts { display: flex; gap: 3px; }
 .bank-mgr { display: grid; grid-template-columns: 220px 1fr; gap: 12px; min-height: 360px; }
