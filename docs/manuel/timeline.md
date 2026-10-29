@@ -124,7 +124,7 @@ Corrige la justesse d'une voix enregistrée : un **bloc audio** de la timeline (
 - **Vélocité** : glisser dans la bande du bas.
 - **Grille** de 1/4 à 1/32, avec les triolets ; **Quantifier** cale le début et la fin des notes. Les lignes de la gamme de fa mineur (la tonalité des banques) sont teintées.
 - **Longueur** −/+ règle la longueur du **motif** : dans la timeline, le bloc le répète sur toute sa longueur (tirer son bord droit), comme une boucle. Des notes posées après la fin allongent le motif.
-- **Son** : chaque bloc peut avoir son propre preset du synthé, ou jouer le son en cours au clavier. **Regrouper** rassemble en un seul les blocs de notes voisins de la piste (même son).
+- **Son** : chaque bloc peut avoir son propre preset du synthé, ou jouer le son en cours au clavier. Un bloc qui a son preset garde la saturation et le chorus de ce preset ; ceux du synthé du clavier ne s'appliquent qu'aux blocs qui jouent le son en cours. **Regrouper** rassemble en un seul les blocs de notes voisins de la piste (même son).
 - **Pas à pas** : les notes jouées au clavier de l'APC (ou de l'ordinateur) sont posées au curseur, accords compris, et le curseur avance d'une case.
 - **▶ Écouter** joue le motif seul en boucle ; pendant la lecture de la timeline, la tête de lecture s'affiche aussi dans le piano roll.
 

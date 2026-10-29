@@ -271,7 +271,8 @@ export class Timeline {
           const smp = !kick && !osc && clip.smps ? this.sampleSynth() : null;
           const syn = kick?.synth ?? osc?.synth ?? smp ?? this.engine;
           const patch = kick ? kick.values : osc ? osc.values : clip.preset && !smp ? this.getPatch(clip.preset) : undefined;
-          const dest = kick ? kick.synth.out : osc ? osc.synth.out : smp ? this.engine.padBus : this.engine.synthIn;
+          // Preset du bloc : après la saturation et le chorus du clavier (le preset a les siens, Engine.colorBus).
+          const dest = kick ? kick.synth.out : osc ? osc.synth.out : smp ? this.engine.padBus : patch ? this.engine.synthPost : this.engine.synthIn;
           const events = osc && osc.synth.isMono(osc.values) ? monoLine(clipEvents(clip)) : clipEvents(clip);
           for (const n of events) {
             const at0 = clip.start + n.t;

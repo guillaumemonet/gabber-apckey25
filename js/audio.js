@@ -71,6 +71,27 @@ function driveCurve(amount) {
   return curve;
 }
 
+// Ensemble stéréo façon Solina : trois lignes à retard modulées lentement, à gauche, au centre, à droite, vers `out`.
+// -> les lignes (à brancher sur la source)
+function chorusLines(ctx, out) {
+  return [[0.43, 5.9, -0.9], [0.61, 6.7, 0], [0.79, 6.2, 0.9]].map(([rate, fast, side]) => {
+    const d = ctx.createDelay(0.05);
+    d.delayTime.value = 0.012;
+    for (const [f, depth] of [[rate, 0.004], [fast, 0.0003]]) {
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = f;
+      const g = ctx.createGain();
+      g.gain.value = depth;
+      lfo.connect(g).connect(d.delayTime);
+      lfo.start();
+    }
+    const pan = ctx.createStereoPanner();
+    pan.pan.value = side;
+    d.connect(pan).connect(out);
+    return d;
+  });
+}
+
 // Chaîne master : stéréo (graves en mono, largeur), compresseur, compression multibande façon OTT, écrêteur, limiteur
 // (dans cet ordre, voir le constructeur). Valeurs par défaut du compresseur = l'ancien limiteur du moteur ; stéréo,
 // multibande et écrêteur coupés par défaut
@@ -214,27 +235,15 @@ export class Engine {
     this.synthDSend = gain(0);
     this.synthRSend = gain(0);
     this.synthIn.connect(this.shaper);
-    // Ensemble stéréo façon Solina : trois lignes à retard modulées lentement, à gauche, au centre, à droite.
     this.chorusDry = gain(1);
     this.chorusWet = gain(0);
-    this.chorusLines = [];   // lignes du chorus : branchées seulement quand il sert (voir 'chorus')
+    this.chorusLines = chorusLines(ctx, this.chorusWet);   // branchées seulement quand le chorus sert (voir 'chorus')
     this.chorusOn = false;
     this.shaper.connect(this.chorusDry).connect(this.synthBus);
-    for (const [rate, fast, side] of [[0.43, 5.9, -0.9], [0.61, 6.7, 0], [0.79, 6.2, 0.9]]) {
-      const d = ctx.createDelay(0.05);
-      d.delayTime.value = 0.012;
-      for (const [f, depth] of [[rate, 0.004], [fast, 0.0003]]) {
-        const lfo = ctx.createOscillator();
-        lfo.frequency.value = f;
-        lfo.connect(gain(depth)).connect(d.delayTime);
-        lfo.start();
-      }
-      const pan = ctx.createStereoPanner();
-      pan.pan.value = side;
-      d.connect(pan).connect(this.chorusWet);
-      this.chorusLines.push(d);
-    }
     this.chorusWet.connect(this.synthBus);
+    // Entrée après la saturation et le chorus du clavier : les notes d'un preset de bloc (qui a les siens, colorBus).
+    this.synthPost = gain();
+    this.synthPost.connect(this.synthBus);
     this.synthBus.connect(this.pumpGain).connect(this.master);
     // Onde en impulsion (25 %) pour les hoovers.
     const harmonics = 64;
@@ -464,6 +473,38 @@ export class Engine {
     return byKind.get(kind);
   }
 
+  // Saturation et chorus d'un preset de bloc (ses réglages à lui, pas ceux du clavier), partagés par toutes ses notes qui
+  // vont vers `dest`. -> nœud d'entrée (`dest` lui-même si le preset n'a ni l'un ni l'autre)
+  colorBus(dest, drive, chorus) {
+    if (drive <= 0.001 && chorus <= 0.001) return dest;
+    this.colorBuses ??= new WeakMap();
+    let byKey = this.colorBuses.get(dest);
+    if (!byKey) this.colorBuses.set(dest, byKey = new Map());
+    const key = `${drive}|${chorus}`;
+    if (!byKey.has(key)) {
+      const { ctx } = this;
+      const input = ctx.createGain();
+      let node = input;
+      if (drive > 0.001) {   // même courbe et même compensation que la saturation du clavier
+        input.gain.value = 1 / (1 + drive * 2);
+        const shaper = ctx.createWaveShaper();
+        shaper.curve = driveCurve(drive);
+        shaper.oversample = '2x';
+        node = input.connect(shaper);
+      }
+      if (chorus > 0.001) {
+        const dry = ctx.createGain(), wet = ctx.createGain();
+        dry.gain.value = 1 - chorus * 0.35;
+        wet.gain.value = chorus * 0.9;
+        for (const d of chorusLines(ctx, wet)) node.connect(d);
+        node.connect(dry).connect(dest);
+        wet.connect(dest);
+      } else node.connect(dest);
+      byKey.set(key, input);
+    }
+    return byKey.get(key);
+  }
+
   // Bruit lissé qui module un paramètre (detune) : `rate` = vitesse de lecture, `depth` = amplitude.
   wobble(param, rate, depth, t, srcs) {
     const src = this.ctx.createBufferSource();
@@ -489,7 +530,9 @@ export class Engine {
     velocity = 1 - (c.velSens ?? 1) * (1 - velocity);
     const srcs = [];   // sources de bruit, arrêtées avec la voix
 
-    const dest = out ?? this.synthIn;   // out : chaîne d'effets d'une piste de la timeline
+    // out : chaîne d'effets d'une piste de la timeline. Un preset de bloc a sa saturation et son chorus à lui ; ceux du
+    // clavier (synthIn) ne s'appliquent qu'aux notes du synthé en cours.
+    const dest = patch ? this.colorBus(out ?? this.synthPost, patch.values?.drive ?? 0, patch.values?.chorus ?? 0) : out ?? this.synthIn;
     const peak = Math.min(18000, p.cutoff * (1 + fenv * 10 * (0.4 + velocity * 0.6)));
     const level = 0.34 * (0.25 + velocity * 0.75);
     // Chemins de la voix : un filtre et une enveloppe par sortie. Le corps d'un instrument (formant : filtres fixes) est

@@ -26,6 +26,7 @@ import { TL_HEAD, ensureBuffer, loadTlBuffers, renderTl } from './tl.js';
 
 const BUILDUP_TRACKS = 6;   // pistes laissées libres pour les éléments des montées
 const BASS_GAIN = 0.7;      // la basse reste sous le kick, qui tient le grave
+const DRUMS_VOL = 0.6;      // piste batterie : charleston, clap et crash (sons à pleine échelle) sous le kick
 const CHORD_BARS = 2;       // mesures par accord
 
 // Pad qui joue un son de la bibliothèque (banque `bankName`, son `name`) : celui des banques s'il y est, sinon posé sur
@@ -92,7 +93,10 @@ async function buildSong(plan) {
   // Timeline neuve : une piste par élément qui joue quelque part, puis des pistes libres pour les montées.
   const parts = PLAN_PARTS.filter(p => plan.sections.some(s => s.play.includes(p)));
   state.tl.tracks = Array.from({ length: Math.max(1, parts.length) + BUILDUP_TRACKS }, () => newTrack());
-  parts.forEach((p, i) => { state.tl.tracks[i].name = t(`start.track.${p}`); });
+  parts.forEach((p, i) => {
+    state.tl.tracks[i].name = t(`start.track.${p}`);
+    if (p === 'drums') state.tl.tracks[i].vol = DRUMS_VOL;
+  });
   state.tl.tracks[0].arm = true;
   const secs = layoutSections(plan.sections, BEATS_PER_BAR).map((s, i) => ({ ...s, ...plan.sections[i] }));
   const total = secs.reduce((s, x) => s + x.len, 0);

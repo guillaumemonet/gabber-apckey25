@@ -124,7 +124,7 @@ Edits the notes of a **note block** of the timeline (synth recordings, generated
 - **Velocity**: drag in the bottom lane.
 - **Grid** from 1/4 to 1/32, with triplets; **Quantize** snaps the start and end of the notes. The rows of the F minor scale (the key of the banks) are tinted.
 - **Length** −/+ sets the length of the **pattern**: on the timeline the block repeats it over its whole length (drag its right edge), like a loop. Notes drawn after the end lengthen the pattern.
-- **Sound**: each block can have its own synth preset, or play the sound currently on the keyboard. **Merge** gathers the neighbouring note blocks of the track (same sound) into one.
+- **Sound**: each block can have its own synth preset, or play the sound currently on the keyboard. A block with its own preset keeps that preset's drive and chorus; those of the keyboard synth only apply to the blocks that play the current sound. **Merge** gathers the neighbouring note blocks of the track (same sound) into one.
 - **Step input**: the notes played on the APC keyboard (or the computer keyboard) go in at the cursor, chords included, and the cursor moves on by one grid step.
 - **▶ Listen** loops the pattern alone; while the timeline plays, the playhead is shown in the piano roll too.
 
