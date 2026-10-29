@@ -1,7 +1,7 @@
 // Fenêtre de la bibliothèque de sons.
 import { PALETTE } from '../apc.js';
 import { t } from '../i18n.js';
-import { LIB_CATS, catColor, libraryItems } from '../library.js';
+import { MY_SOUNDS, catColor, familyColor, libraryItems, libraryTree } from '../library.js';
 import { BEATS_PER_BAR } from '../timeline.js';
 import { FX_FAMILY_COLORS } from '../trackfx.js';
 import { loadItemIntoPad } from './actions.js';
@@ -11,7 +11,6 @@ import { loadDeck } from './decks-ui.js';
 import { removeUserSound } from './kick-ui.js';
 import { padEls } from './pads.js';
 import { slotFromLibrary } from './launcher.js';
-import { save } from './save.js';
 import { beatPx, ensureBuffer, tlPlaceItem, tlTarget } from './tl.js';
 import { FX_FAMILIES, fxColor, fxItems, tlPlaceFx } from './trackfx-ui.js';
 import { openSlicer } from './slicer-ui.js';
@@ -19,9 +18,11 @@ import { openSlicer } from './slicer-ui.js';
 // ---------- Bibliothèque de sons ----------
 
 export let libManifest = null;
-export let libCat = 'kick';
+export let libCat = 'Drums';          // famille choisie (sons) ou famille d'effets (effets de piste)
 export let libTab = 'sounds';          // onglet de la bibliothèque : sons ou effets de piste
-export const libCats = { sounds: 'kick', fx: 'volume' };
+export const libCats = { sounds: 'Drums', fx: 'volume' };
+export let libType = '';               // type choisi dans la famille ('' : tous)
+export let libKind = 'all';            // all, hit (coups) ou loop (boucles)
 export let libQuery = '';
 export let libSelected = null;     // dernier son choisi : un clic dans une case vide le pose
 export let libPreview = null;      // { src, sampleId }
@@ -46,52 +47,85 @@ export function previewSample(item) {
 export function buildLibrary() {
   for (const b of $('#lib-tabs').children) b.addEventListener('click', () => setLibTab(b.dataset.tab));
   $('#lib-search').addEventListener('input', e => { libQuery = e.target.value.trim().toLowerCase(); renderLibrary(); });
-  $('#lib-archives').addEventListener('change', e => { state.libArchives = e.target.checked; renderLibrary(); save(); });
+  for (const b of $('#lib-kind').children) b.addEventListener('click', () => { libKind = b.dataset.kind; renderLibrary(); });
   renderLibrary();
 }
 
 export function setLibTab(tab) {
   libTab = tab;
   libCat = libCats[tab];
+  libType = '';
   renderLibrary();
 }
-// Montre un onglet et une catégorie (après un ajout fait ailleurs : courbe, kick).
+// Montre un onglet et une famille (après un ajout fait ailleurs : courbe, kick).
 export function showLibrary(tab, cat, query = libQuery) {
   libTab = tab;
   libCat = libCats[tab] = cat;
+  libType = '';
   libQuery = query;
   renderLibrary();
 }
+
+// Bouton d'une famille, d'un type ou d'un filtre : pastille de couleur, nom, nombre de sons.
+function chip(cls, label, color, count, active, onClick) {
+  const btn = document.createElement('button');
+  btn.className = cls + (active ? ' active' : '');
+  btn.style.setProperty('--c', color);
+  btn.innerHTML = `<i></i>${label}<small>${count}</small>`;
+  btn.addEventListener('click', onClick);
+  return btn;
+}
+// Un son correspond à la recherche par son nom, son type, sa famille, sa note ou ses étiquettes.
+const matches = (item, q) => [item.name, item.type, item.family, item.note, ...(item.tags ?? [])].some(v => v?.toLowerCase().includes(q));
 
 export function renderLibrary() {
   const list = $('#lib-list');
   if (!list || !kit) return;
   // Deux onglets : les sons (par catégorie) et les effets de piste (par famille).
-  const items = libTab === 'fx' ? fxItems() : libraryItems({ manifest: libManifest, kit, banks: state.banks, tl: state.tl, userSounds: state.userSounds, archives: state.libArchives });
-  $('#lib-archives').checked = state.libArchives;
+  const items = libTab === 'fx' ? fxItems() : libraryItems({ manifest: libManifest, kit, banks: state.banks, tl: state.tl, userSounds: state.userSounds });
   for (const b of $('#lib-tabs').children) b.classList.toggle('active', b.dataset.tab === libTab);
-  const cats = libTab === 'fx' ? FX_FAMILIES.map(id => ({ id, color: FX_FAMILY_COLORS[id], label: t(`tfx.family.${id}`) })) : LIB_CATS.map(c => ({ ...c, label: t(`lib.cat.${c.id}`) }));
-  const counts = Object.fromEntries(cats.map(c => [c.id, items.filter(i => i.cat === c.id).length]));
+  const sounds = libTab === 'sounds';
+  const tree = sounds ? libraryTree(libManifest, items) : null;
+  const cats = sounds ? tree.map(n => ({ id: n.family, color: familyColor(n.family), label: n.family }))
+    : FX_FAMILIES.map(id => ({ id, color: FX_FAMILY_COLORS[id], label: t(`tfx.family.${id}`) }));
+  const kindOk = i => !sounds || libKind === 'all' || (libKind === 'loop') === !!i.loop;
+  const inCat = i => (sounds ? i.family : i.cat) === libCat;
+  const pick = () => { libQuery = ''; $('#lib-search').value = ''; renderLibrary(); };
+  // Familles (sons) ou familles d'effets.
   $('#lib-cats').innerHTML = '';
   for (const c of cats) {
-    if (!counts[c.id] && (c.id === 'mine' || c.id === 'rec')) continue;
-    const btn = document.createElement('button');
-    btn.className = 'lib-cat' + (c.id === libCat && !libQuery ? ' active' : '');
-    btn.style.setProperty('--c', PALETTE[uiColor(c.color)]);
-    btn.innerHTML = `<i></i>${c.label}<small>${counts[c.id]}</small>`;
-    btn.addEventListener('click', () => { libCat = libCats[libTab] = c.id; libQuery = ''; $('#lib-search').value = ''; renderLibrary(); });
-    $('#lib-cats').appendChild(btn);
+    const n = items.filter(i => (sounds ? i.family : i.cat) === c.id && kindOk(i)).length;
+    if (!n && (c.id === MY_SOUNDS || c.id === 'Recordings')) continue;
+    $('#lib-cats').appendChild(chip('lib-cat', c.label, PALETTE[uiColor(c.color)], n, c.id === libCat && !libQuery, () => { libCat = libCats[libTab] = c.id; libType = ''; pick(); }));
   }
-  const shown = libQuery ? items.filter(i => i.name.toLowerCase().includes(libQuery)) : items.filter(i => i.cat === libCat);
+  // Types de la famille choisie, et le filtre coups / boucles.
+  const types = $('#lib-types');
+  types.innerHTML = '';
+  types.hidden = !sounds || !!libQuery;
+  $('#lib-kind').hidden = !sounds;
+  for (const b of $('#lib-kind').children) b.classList.toggle('active', b.dataset.kind === libKind);
+  if (sounds && !libQuery) {
+    const node = tree.find(n => n.family === libCat);
+    const color = PALETTE[uiColor(familyColor(libCat))];
+    const inFamily = items.filter(i => inCat(i) && kindOk(i));
+    if (libType && !inFamily.some(i => i.type === libType)) libType = '';
+    types.appendChild(chip('lib-type', t('lib.all'), color, inFamily.length, !libType, () => { libType = ''; renderLibrary(); }));
+    for (const type of node?.types ?? []) {
+      const n = inFamily.filter(i => i.type === type).length;
+      if (n) types.appendChild(chip('lib-type', type, color, n, type === libType, () => { libType = type; renderLibrary(); }));
+    }
+  }
+  const shown = (libQuery ? items.filter(i => matches(i, libQuery)) : items.filter(i => inCat(i) && (!sounds || !libType || i.type === libType))).filter(kindOk);
   list.innerHTML = '';
   for (const item of shown) {
     const row = document.createElement('div');
     row.className = 'lib-item' + (libSelected?.sampleId === item.sampleId ? ' selected' : '');
     row.dataset.id = item.sampleId;
     row.style.setProperty('--c', item.kind === 'fx' ? fxColor(item) : PALETTE[uiColor(catColor(item.cat))]);
-    const small = item.kind === 'fx' ? t(`tfx.family.${item.family}`) : item.loop ? t('lib.bars', { n: item.bars || '↻' }) : t('lib.oneshot');
+    const small = item.kind === 'fx' ? t(`tfx.family.${item.family}`) : [item.note, item.loop ? t('lib.bars', { n: item.bars || '↻' }) : t('lib.oneshot')].filter(Boolean).join(' · ');
     row.innerHTML = `<i></i><span>${item.name}</span><small>${small}</small>`;
     if (item.kind === 'fx') row.title = t(item.curveId ? 'curve.libTitle' : 'tfx.libTitle');
+    else row.title = [`${item.family} › ${item.type}`, item.bpm ? `${item.bpm} BPM` : '', (item.tags ?? []).join(', ')].filter(Boolean).join(' · ');
     if (item.curveId) {
       row.addEventListener('dblclick', () => openCurve(item.curveId));
       if (item.ownCurve) row.addEventListener('contextmenu', e => { e.preventDefault(); deleteCurve(item.curveId); });

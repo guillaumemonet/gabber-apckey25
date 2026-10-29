@@ -52,6 +52,6 @@ export default async function (t, A) {
   const search = t.$('#lib-search');
   search.value = 'kick'; search.dispatchEvent(new Event('input'));
   await t.wait(100);
-  const found = t.$$('#lib-list .lib-item span').map(s => s.textContent);
-  t.ok(found.length > 5 && found.every(n => /kick/i.test(n)), 'la recherche filtre par nom', found.slice(0, 5));
+  const found = t.$$('#lib-list .lib-item').map(r => `${r.querySelector('span').textContent} | ${r.title}`);
+  t.ok(found.length > 5 && found.every(n => /kick/i.test(n)), 'la recherche filtre par nom ou par type (Drums › Kicks)', found.slice(0, 5));
 }

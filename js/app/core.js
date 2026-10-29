@@ -90,7 +90,6 @@ export const state = {
   decks: defaultDecksState(),         // platines : sons chargés et réglages des deux decks
   patch: defaultPatch(),              // câblage : boîtes à effets et câbles (tout sur le master par défaut)
   userSounds: [],                     // sons créés dans l'application (kicks du designer) : { sampleId, name, cat }
-  libArchives: false,                 // bibliothèque : montrer aussi les anciens sons (archives)
   padQuant: 0,                        // départ des pads joués à la main : 0 = libre, sinon grille en temps (1, 2, 3, 4, 8, 16)
   curves: [],                         // tes courbes du designer d'effet (js/curves.js) : { id: 'u:…', name, target, beats, points… }
   roll: defaultRoll(),                // piano roll : bloc édité, grille, saisie pas à pas

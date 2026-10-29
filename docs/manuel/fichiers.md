@@ -30,7 +30,7 @@ Vos banques, vos sons et vos réglages sont sauvegardés automatiquement dans le
 ## Modules de tracker (.mod, .xm)
 
 **Ouvrir…** importe aussi les modules des trackers d'Amiga et de PC : `.mod` (ProTracker et compatibles, de 4 à 32 voies) et `.xm` (FastTracker 2).
-- Les **samples** du module vont sur les pads de la **première banque vide** (à partir de la banque affichée), avec leur nom ; ils rejoignent aussi « Mes sons » dans la bibliothèque. Un module de plus de 40 samples prend plusieurs banques à la suite.
+- Les **samples** du module vont sur les pads de la **première banque vide** (à partir de la banque affichée), avec leur nom ; ils rejoignent aussi la bibliothèque (My Sounds › Imports). Un module de plus de 40 samples prend plusieurs banques à la suite.
 - Chaque **voie** du module devient une **piste** (libre, à partir de la piste armée), avec un **bloc de notes par passage de pattern**, dans l'ordre du morceau, à partir de la mesure de la tête de lecture. Un pattern joué plusieurs fois donne des blocs **de même nom et de même couleur** (« Pattern 3 · voie 2 ») : les répétitions se voient d'un coup d'œil. Une note tenue d'un pattern au suivant continue dans le bloc suivant là où le son en était, sans nouvelle attaque.
 - Les blocs sont joués par l'**instrument échantillon** : il joue le son d'un pad à la hauteur de chaque note, avec sa boucle (les boucles aller-retour comprises).
 - Le **tempo** du module est repris si la timeline est vide (4 lignes par temps à la vitesse de départ) ; sinon le morceau garde le sien et les notes sont recalées pour garder la même durée.

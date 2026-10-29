@@ -30,6 +30,7 @@ import { cleanToolPresets } from './tool-presets.js';
 import { mergeVoiceState } from './voice-ui.js';
 import { mergeTuneState } from './tune-ui.js';
 import { defaultGen, mergeGen } from './gen.js';
+import { readCatalog } from '../library.js';
 import { libManifest, setLibManifest } from './library-ui.js';
 import { mergeRoll } from './roll-ui.js';
 import { mergeScenes } from './scenes.js';
@@ -99,7 +100,6 @@ export async function restore() {
     state.input = cleanInputState(saved.input);
     state.midiClock = { out: typeof saved.midiClock?.out === 'string' ? saved.midiClock.out : '', in: typeof saved.midiClock?.in === 'string' ? saved.midiClock.in : '' };
     state.padQuant = PAD_QUANTS.includes(saved.padQuant) ? saved.padQuant : 0;
-    state.libArchives = !!saved.libArchives;
     state.curves = (Array.isArray(saved.curves) ? saved.curves : []).map(cleanCurve).filter(c => c?.id?.startsWith('u:'));
     state.userSounds = Array.isArray(saved.userSounds) ? saved.userSounds.filter(s => typeof s?.sampleId === 'string' && s.sampleId.startsWith('user:')) : [];
     for (let b = 0; b < BANKS; b++) {
@@ -146,6 +146,8 @@ export function refreshLibNames() {
 export async function importLibrary() {
   const lib = await fetch('sounds/banks.json', { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null);
   if (!lib) return [];
+  // Catalogue : la place de chaque son dans l'arbre de la bibliothèque (famille › type), sa note, ses étiquettes.
+  lib.catalog = readCatalog(await fetch('sounds/library.json', { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null)).catch(() => null));
   setLibManifest(lib);   // sert aussi à la bibliothèque de sons
   const modeDef = PAGES.pad.params[7];
   const added = [];
@@ -205,7 +207,6 @@ export function stateSnapshot() {
     userSounds: state.userSounds,
     curves: state.curves,
     padQuant: state.padQuant,
-    libArchives: state.libArchives,
     roll: state.roll,
     osc: state.osc,
     synthUser: state.synthUser,

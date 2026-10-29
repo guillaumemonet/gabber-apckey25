@@ -37,6 +37,6 @@ export default async function (t, A) {
   press('shift', false);
   t.eq(seq, [1, 6, 11, 16, 21, 6], 'Maj + SCENE LAUNCH 1 : 6 → 11 → 16 → 21 → 6');
   t.eq(t.$$('#banks button').length, A.BANKS, 'un bouton par banque');
-  const guitars = t.$$('#lib-cats .lib-cat').find(b => /Guitares/.test(b.textContent));
-  t.ok(guitars, 'catégorie Guitares dans la bibliothèque');
+  const guitars = t.$$('#lib-cats .lib-cat').find(b => /Guitars/.test(b.textContent));
+  t.ok(guitars, 'famille Guitars dans la bibliothèque');
 }

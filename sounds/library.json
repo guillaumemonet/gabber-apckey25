@@ -1,0 +1,6912 @@
+{
+ "version": 1,
+ "sounds": [
+  {
+   "file": "anthem-drums/01.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/02.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/03.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "anthem",
+    "hardcore",
+    "raw"
+   ]
+  },
+  {
+   "file": "anthem-drums/04.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/05.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "anthem",
+    "hardcore",
+    "uptempo"
+   ]
+  },
+  {
+   "file": "anthem-drums/06.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "anthem",
+    "hardcore",
+    "terror"
+   ]
+  },
+  {
+   "file": "anthem-drums/07.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "909",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/08.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/09.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/10.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "G",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/11.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "G#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/12.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "A#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/13.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "C",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/14.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "C#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/15.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "D#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/16.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/37.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/38.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/39.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/40.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "anthem",
+    "hardcore",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank1/bd_808.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "808"
+   ]
+  },
+  {
+   "file": "bank1/bd_boom.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank1/bd_fat.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank1/bd_haus.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank1/bd_klub.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank1/bd_tek.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank1/bd_zum.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank1/drum_heavy_kick.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank10/01.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "F",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/02.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/03.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "dark",
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/04.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/05.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/06.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "mainstream",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank10/07.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "C#",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/08.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "G#",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank11/01.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "F",
+   "tags": [
+    "hardcore",
+    "uptempo"
+   ]
+  },
+  {
+   "file": "bank11/02.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank11/03.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank11/04.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/05.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/06.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank11/07.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/09.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "F",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/10.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "G",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/11.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "G#",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/12.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "A#",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/13.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "C",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/14.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "C#",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/15.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "D#",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/16.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "F",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/31.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank12/01.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/02.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank12/03.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/04.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/05.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank12/06.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/07.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "C#",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/08.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "G#",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank2/bd_ada.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank2/bd_chip.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank2/bd_gas.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank2/bd_jazz.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank2/bd_mehackit.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank2/bd_pure.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank2/bd_sone.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank2/bd_zome.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank2/elec_hollow_kick.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank2/elec_soft_kick.flac",
+   "family": "Drums",
+   "type": "Kicks"
+  },
+  {
+   "file": "bank6/01.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/02.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/03.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/04.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "gabber",
+    "terror"
+   ]
+  },
+  {
+   "file": "bank6/05.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "gabber",
+    "industrial"
+   ]
+  },
+  {
+   "file": "bank6/06.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "frenchcore",
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/07.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/08.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/01.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "C",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/02.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "C#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/03.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "D",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/04.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "D#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/05.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "E",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/06.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "F",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/07.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "F#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/08.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "note": "G",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank8/01.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "terror"
+   ]
+  },
+  {
+   "file": "bank8/02.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "uptempo"
+   ]
+  },
+  {
+   "file": "bank8/03.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "terror"
+   ]
+  },
+  {
+   "file": "bank8/04.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore",
+    "industrial"
+   ]
+  },
+  {
+   "file": "bank8/05.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/06.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/07.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/08.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank9/01.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "909",
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/02.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/03.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "808",
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/04.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/05.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/06.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "breakbeat",
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/07.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/08.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "early-hardcore/01.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/02.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/03.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "909",
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/04.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "early",
+    "gabber",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/05.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/06.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "909",
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/07.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/08.flac",
+   "family": "Drums",
+   "type": "Kicks",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/18.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank1/drum_snare_hard.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank1/drum_snare_soft.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank1/elec_hi_snare.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank1/perc_snap.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank1/sn_dolf.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank1/sn_dub.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank1/sn_generic.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank1/sn_zome.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank10/10.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank12/14.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank2/elec_filt_snare.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank2/elec_lo_snare.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank2/elec_mid_snare.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank2/elec_snare.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank5/perc_snap2.flac",
+   "family": "Drums",
+   "type": "Snares"
+  },
+  {
+   "file": "bank6/09.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/16.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank9/09.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "breakbeat",
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/10.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "early-hardcore/12.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/13.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/14.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/16.flac",
+   "family": "Drums",
+   "type": "Snares",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/17.flac",
+   "family": "Drums",
+   "type": "Claps",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/09.flac",
+   "family": "Drums",
+   "type": "Claps",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank12/13.flac",
+   "family": "Drums",
+   "type": "Claps",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank6/10.flac",
+   "family": "Drums",
+   "type": "Claps",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/11.flac",
+   "family": "Drums",
+   "type": "Claps",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank9/14.flac",
+   "family": "Drums",
+   "type": "Claps",
+   "tags": [
+    "909",
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "early-hardcore/09.flac",
+   "family": "Drums",
+   "type": "Claps",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/10.flac",
+   "family": "Drums",
+   "type": "Claps",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/11.flac",
+   "family": "Drums",
+   "type": "Claps",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/15.flac",
+   "family": "Drums",
+   "type": "Claps",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/19.flac",
+   "family": "Drums",
+   "type": "Closed Hats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank1/drum_cymbal_closed.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank1/drum_cymbal_pedal.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank1/hat_cab.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank1/hat_gnu.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank1/hat_metal.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank1/hat_psych.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank1/hat_raw.flac",
+   "family": "Drums",
+   "type": "Closed Hats",
+   "tags": [
+    "raw"
+   ]
+  },
+  {
+   "file": "bank1/hat_snap.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank1/hat_zild.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank10/12.flac",
+   "family": "Drums",
+   "type": "Closed Hats",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank2/hat_bdu.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank2/hat_cats.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank2/hat_gem.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank2/hat_gump.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank2/hat_hier.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank2/hat_len.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank2/hat_mess.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank2/hat_noiz.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank3/hat_sci.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank3/hat_star.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank3/hat_tap.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank3/hat_yosh.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank3/hat_zan.flac",
+   "family": "Drums",
+   "type": "Closed Hats"
+  },
+  {
+   "file": "bank6/13.flac",
+   "family": "Drums",
+   "type": "Closed Hats",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "early-hardcore/17.flac",
+   "family": "Drums",
+   "type": "Closed Hats",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/19.flac",
+   "family": "Drums",
+   "type": "Closed Hats",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/20.flac",
+   "family": "Drums",
+   "type": "Open Hats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank1/drum_cymbal_open.flac",
+   "family": "Drums",
+   "type": "Open Hats"
+  },
+  {
+   "file": "bank10/11.flac",
+   "family": "Drums",
+   "type": "Open Hats",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank12/15.flac",
+   "family": "Drums",
+   "type": "Open Hats",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank6/12.flac",
+   "family": "Drums",
+   "type": "Open Hats",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank9/13.flac",
+   "family": "Drums",
+   "type": "Open Hats",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "early-hardcore/18.flac",
+   "family": "Drums",
+   "type": "Open Hats",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/21.flac",
+   "family": "Drums",
+   "type": "Cymbals",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/22.flac",
+   "family": "Drums",
+   "type": "Cymbals",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank1/drum_cymbal_hard.flac",
+   "family": "Drums",
+   "type": "Cymbals"
+  },
+  {
+   "file": "bank1/drum_cymbal_soft.flac",
+   "family": "Drums",
+   "type": "Cymbals"
+  },
+  {
+   "file": "bank1/drum_splash_hard.flac",
+   "family": "Drums",
+   "type": "Cymbals"
+  },
+  {
+   "file": "bank1/drum_splash_soft.flac",
+   "family": "Drums",
+   "type": "Cymbals"
+  },
+  {
+   "file": "bank1/ride_tri.flac",
+   "family": "Drums",
+   "type": "Cymbals"
+  },
+  {
+   "file": "bank1/ride_via.flac",
+   "family": "Drums",
+   "type": "Cymbals"
+  },
+  {
+   "file": "bank10/14.flac",
+   "family": "Drums",
+   "type": "Cymbals",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank12/16.flac",
+   "family": "Drums",
+   "type": "Cymbals",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank2/elec_cymbal.flac",
+   "family": "Drums",
+   "type": "Cymbals"
+  },
+  {
+   "file": "bank6/14.flac",
+   "family": "Drums",
+   "type": "Cymbals",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/15.flac",
+   "family": "Drums",
+   "type": "Cymbals",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank9/16.flac",
+   "family": "Drums",
+   "type": "Cymbals",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "early-hardcore/20.flac",
+   "family": "Drums",
+   "type": "Cymbals",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/21.flac",
+   "family": "Drums",
+   "type": "Cymbals",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank1/drum_tom_hi_hard.flac",
+   "family": "Drums",
+   "type": "Toms"
+  },
+  {
+   "file": "bank1/drum_tom_hi_soft.flac",
+   "family": "Drums",
+   "type": "Toms"
+  },
+  {
+   "file": "bank1/drum_tom_lo_hard.flac",
+   "family": "Drums",
+   "type": "Toms"
+  },
+  {
+   "file": "bank1/drum_tom_lo_soft.flac",
+   "family": "Drums",
+   "type": "Toms"
+  },
+  {
+   "file": "bank1/drum_tom_mid_hard.flac",
+   "family": "Drums",
+   "type": "Toms"
+  },
+  {
+   "file": "bank1/drum_tom_mid_soft.flac",
+   "family": "Drums",
+   "type": "Toms"
+  },
+  {
+   "file": "bank10/13.flac",
+   "family": "Drums",
+   "type": "Toms",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank2/elec_fuzz_tom.flac",
+   "family": "Drums",
+   "type": "Toms"
+  },
+  {
+   "file": "bank1/drum_cowbell.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank3/tbd_perc_blip.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank3/tbd_perc_tap_1.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/perc_bell.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/perc_bell2.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_dhec.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ghe1.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ghe2.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ghe3.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ghe4.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ghe5.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ghe6.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ghe7.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ghe8.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ke1.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ke2.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_ke3.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_na.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_na_o.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_na_s.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_re.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_tas1.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_tas2.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_tas3.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_te1.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_te2.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_te_m.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_te_ne.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_tun1.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_tun2.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank5/tabla_tun3.flac",
+   "family": "Drums",
+   "type": "Percussion"
+  },
+  {
+   "file": "bank9/11.flac",
+   "family": "Drums",
+   "type": "Percussion",
+   "tags": [
+    "808",
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/12.flac",
+   "family": "Drums",
+   "type": "Percussion",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/15.flac",
+   "family": "Drums",
+   "type": "Percussion",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "anthem-drops/29.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/30.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/31.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/32.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/37.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore",
+    "raw"
+   ]
+  },
+  {
+   "file": "anthem-drops/38.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore",
+    "raw"
+   ]
+  },
+  {
+   "file": "anthem-drops/39.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore",
+    "raw"
+   ]
+  },
+  {
+   "file": "anthem-drops/40.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore",
+    "raw"
+   ]
+  },
+  {
+   "file": "anthem-drums/25.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/26.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore",
+    "raw"
+   ]
+  },
+  {
+   "file": "anthem-drums/27.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/28.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore",
+    "uptempo"
+   ]
+  },
+  {
+   "file": "anthem-drums/29.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore",
+    "terror"
+   ]
+  },
+  {
+   "file": "anthem-drums/30.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/33.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/34.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/40.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank11/33.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore",
+    "uptempo"
+   ]
+  },
+  {
+   "file": "bank11/35.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/36.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/40.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank12/33.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/36.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank12/39.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/40.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank15/25.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/26.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/27.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/29.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/30.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/31.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/32.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank3/loop_3d_printer.flac",
+   "family": "Drums",
+   "type": "Beats"
+  },
+  {
+   "file": "bank3/loop_electric.flac",
+   "family": "Drums",
+   "type": "Beats"
+  },
+  {
+   "file": "bank3/loop_industrial.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "industrial"
+   ]
+  },
+  {
+   "file": "bank3/loop_mehackit1.flac",
+   "family": "Drums",
+   "type": "Beats"
+  },
+  {
+   "file": "bank3/loop_mehackit2.flac",
+   "family": "Drums",
+   "type": "Beats"
+  },
+  {
+   "file": "bank3/loop_perc1.flac",
+   "family": "Drums",
+   "type": "Beats"
+  },
+  {
+   "file": "bank3/loop_perc2.flac",
+   "family": "Drums",
+   "type": "Beats"
+  },
+  {
+   "file": "bank3/loop_tabla.flac",
+   "family": "Drums",
+   "type": "Beats"
+  },
+  {
+   "file": "bank3/loop_weirdo.flac",
+   "family": "Drums",
+   "type": "Beats"
+  },
+  {
+   "file": "bank3/tbd_fxbed_loop.flac",
+   "family": "Drums",
+   "type": "Beats"
+  },
+  {
+   "file": "bank6/33.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/34.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/35.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/17.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "frenchcore",
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/18.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/19.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/20.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/21.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/22.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/23.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "doomcore",
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank8/32.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/33.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore",
+    "terror"
+   ]
+  },
+  {
+   "file": "bank8/34.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/35.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore",
+    "industrial"
+   ]
+  },
+  {
+   "file": "bank8/37.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/38.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "hardcore",
+    "terror"
+   ]
+  },
+  {
+   "file": "bank9/40.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "early-hardcore/35.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/36.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/37.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "early",
+    "gabber",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/38.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/39.flac",
+   "family": "Drums",
+   "type": "Beats",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/31.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/32.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank1/drum_roll.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls"
+  },
+  {
+   "file": "bank10/39.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank11/39.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank12/37.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank15/28.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank6/36.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/37.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/24.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/32.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank8/36.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/39.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/40.flac",
+   "family": "Drums",
+   "type": "Fills & Rolls",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank3/arovane_beat_a.flac",
+   "family": "Drums",
+   "type": "Breaks"
+  },
+  {
+   "file": "bank3/arovane_beat_b.flac",
+   "family": "Drums",
+   "type": "Breaks"
+  },
+  {
+   "file": "bank3/arovane_beat_c.flac",
+   "family": "Drums",
+   "type": "Breaks"
+  },
+  {
+   "file": "bank3/arovane_beat_d.flac",
+   "family": "Drums",
+   "type": "Breaks"
+  },
+  {
+   "file": "bank3/arovane_beat_e.flac",
+   "family": "Drums",
+   "type": "Breaks"
+  },
+  {
+   "file": "bank3/loop_amen.flac",
+   "family": "Drums",
+   "type": "Breaks",
+   "tags": [
+    "breakbeat"
+   ]
+  },
+  {
+   "file": "bank3/loop_amen_full.flac",
+   "family": "Drums",
+   "type": "Breaks",
+   "tags": [
+    "breakbeat"
+   ]
+  },
+  {
+   "file": "bank3/loop_breakbeat.flac",
+   "family": "Drums",
+   "type": "Breaks",
+   "tags": [
+    "breakbeat"
+   ]
+  },
+  {
+   "file": "bank3/loop_compus.flac",
+   "family": "Drums",
+   "type": "Breaks"
+  },
+  {
+   "file": "bank3/loop_garzul.flac",
+   "family": "Drums",
+   "type": "Breaks"
+  },
+  {
+   "file": "bank3/loop_mika.flac",
+   "family": "Drums",
+   "type": "Breaks"
+  },
+  {
+   "file": "bank3/loop_safari.flac",
+   "family": "Drums",
+   "type": "Breaks"
+  },
+  {
+   "file": "bank9/33.flac",
+   "family": "Drums",
+   "type": "Breaks",
+   "tags": [
+    "breakbeat",
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/34.flac",
+   "family": "Drums",
+   "type": "Breaks",
+   "tags": [
+    "breakbeat",
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/35.flac",
+   "family": "Drums",
+   "type": "Breaks",
+   "tags": [
+    "breakbeat",
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "anthem-drops/09.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/10.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/11.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/12.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/13.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/14.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/15.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/16.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/31.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/23.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank3/glitch_bass_g.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "G"
+  },
+  {
+   "file": "bank4/bass_dnb_f.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "F",
+   "tags": [
+    "drum and bass"
+   ]
+  },
+  {
+   "file": "bank4/bass_drop_c.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "C"
+  },
+  {
+   "file": "bank4/bass_hard_c.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "C"
+  },
+  {
+   "file": "bank4/bass_hit_c.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "C"
+  },
+  {
+   "file": "bank4/bass_thick_c.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "C"
+  },
+  {
+   "file": "bank4/bass_trance_c.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "C",
+   "tags": [
+    "trance"
+   ]
+  },
+  {
+   "file": "bank4/bass_woodsy_c.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "C"
+  },
+  {
+   "file": "bank8/09.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "F",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/10.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "G",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/11.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "G#",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/12.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "A#",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/13.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "C",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/14.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "C#",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/15.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "D#",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/16.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "F",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/27.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/28.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/32.flac",
+   "family": "Bass",
+   "type": "Reese",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/29.flac",
+   "family": "Bass",
+   "type": "Reese",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank12/09.flac",
+   "family": "Bass",
+   "type": "Reverse Bass",
+   "note": "F",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/10.flac",
+   "family": "Bass",
+   "type": "Reverse Bass",
+   "note": "C#",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/11.flac",
+   "family": "Bass",
+   "type": "Reverse Bass",
+   "note": "D#",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/12.flac",
+   "family": "Bass",
+   "type": "Reverse Bass",
+   "note": "G#",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/34.flac",
+   "family": "Bass",
+   "type": "Reverse Bass",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/35.flac",
+   "family": "Bass",
+   "type": "Reverse Bass",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/31.flac",
+   "family": "Bass",
+   "type": "Reverse Bass",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/32.flac",
+   "family": "Bass",
+   "type": "Reverse Bass",
+   "tags": [
+    "epic",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank11/08.flac",
+   "family": "Bass",
+   "type": "Kick Bass",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/34.flac",
+   "family": "Bass",
+   "type": "Kick Bass",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/30.flac",
+   "family": "Bass",
+   "type": "Kick Bass",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/24.flac",
+   "family": "Bass",
+   "type": "Sub Bass",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/21.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "dark",
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank12/24.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank13/01.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/02.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/17.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank14/15.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank14/40.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank15/06.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank6/17.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "note": "F",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/18.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "note": "G",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/19.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "note": "G#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/20.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "note": "A#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/21.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "note": "C",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/22.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "note": "C#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/23.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "note": "D#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/24.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "note": "F",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/38.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/27.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/30.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank9/29.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "early-hardcore/25.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/26.flac",
+   "family": "Leads",
+   "type": "Hoovers",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/17.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/18.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/19.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/20.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/21.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/22.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/23.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/24.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/33.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/34.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "G",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/35.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "G#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/36.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "A#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/37.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "C",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/38.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "C#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/39.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "D#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/40.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/18.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/19.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/20.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/36.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank12/17.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank12/18.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank12/38.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank13/03.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/04.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/18.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank14/09.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank14/10.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank14/11.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank14/12.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank15/07.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/36.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank6/29.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/30.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/25.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "early-hardcore/29.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/09.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/25.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/26.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "G",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/27.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "G#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/28.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "A#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/29.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "C",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/30.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "C#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/31.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "D#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/32.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/17.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/18.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/19.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Db",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/20.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Ab",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/21.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Eb",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/37.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/16.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/17.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "tags": [
+    "dark",
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank11/23.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank12/19.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/20.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/22.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank4/tbd_highkey_c4.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "C"
+  },
+  {
+   "file": "early-hardcore/28.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/32.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank12/32.flac",
+   "family": "Leads",
+   "type": "Horns",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank13/05.flac",
+   "family": "Leads",
+   "type": "Horns",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/23.flac",
+   "family": "Leads",
+   "type": "Horns",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/38.flac",
+   "family": "Leads",
+   "type": "Horns",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/08.flac",
+   "family": "Leads",
+   "type": "Horns",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank6/31.flac",
+   "family": "Leads",
+   "type": "Horns",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/16.flac",
+   "family": "Leads",
+   "type": "Horns",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank13/08.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "tags": [
+    "acid",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/40.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "tags": [
+    "acid",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank6/40.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "tags": [
+    "acid",
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/26.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "tags": [
+    "acid",
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/29.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "tags": [
+    "acid",
+    "gabber"
+   ]
+  },
+  {
+   "file": "anthem-leads/01.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/02.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/03.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/04.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/05.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/06.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/07.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/08.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/10.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore",
+    "trance"
+   ]
+  },
+  {
+   "file": "anthem-leads/11.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/12.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/13.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/14.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/15.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-leads/16.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/35.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank13/06.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/22.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/29.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/30.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/33.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/34.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/35.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "andalusian",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/36.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank14/01.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/02.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/03.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/04.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/05.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/06.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/07.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/08.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/13.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank14/14.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank14/33.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/34.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/35.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/36.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank14/37.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank15/01.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/02.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/03.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/04.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/05.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/21.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/33.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/35.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/37.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "breakbeat",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/38.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/40.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank9/37.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "anthem-chords/25.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/26.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/27.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/28.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/29.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "Fm",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/30.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "Db",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/31.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "Eb",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/32.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "Cm",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank12/23.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank13/07.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/19.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/27.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank14/16.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank14/27.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank15/20.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank6/25.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "Fm",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/26.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "G#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/27.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "A#m",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/28.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "Cm",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank6/39.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/28.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/31.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/33.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "F",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/34.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "G",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/35.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "G#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/36.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "A#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/37.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "C",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/38.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "C#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/39.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "D#",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/40.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "note": "F",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank9/23.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/24.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/38.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "early-hardcore/27.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/30.flac",
+   "family": "Keys",
+   "type": "Stabs",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/24.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "tags": [
+    "dark",
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank13/09.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/10.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/20.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/37.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank14/20.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/21.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/28.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/39.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank4/ambi_piano.flac",
+   "family": "Keys",
+   "type": "Pianos"
+  },
+  {
+   "file": "bank4/guit_e_fifths.flac",
+   "family": "Keys",
+   "type": "Pianos"
+  },
+  {
+   "file": "bank4/guit_em9.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "note": "Em"
+  },
+  {
+   "file": "bank4/guit_harmonics.flac",
+   "family": "Keys",
+   "type": "Pianos"
+  },
+  {
+   "file": "bank9/17.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "note": "Fm",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/18.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "note": "Db",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/19.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "note": "Eb",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/20.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "note": "Cm",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/21.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "note": "Bbm",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/22.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "note": "Ab",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/36.flac",
+   "family": "Keys",
+   "type": "Pianos",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank10/22.flac",
+   "family": "Keys",
+   "type": "Bells",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/23.flac",
+   "family": "Keys",
+   "type": "Bells",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/37.flac",
+   "family": "Keys",
+   "type": "Bells",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank13/13.flac",
+   "family": "Keys",
+   "type": "Bells",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/24.flac",
+   "family": "Keys",
+   "type": "Bells",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/39.flac",
+   "family": "Keys",
+   "type": "Bells",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank14/22.flac",
+   "family": "Keys",
+   "type": "Bells",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank15/22.flac",
+   "family": "Keys",
+   "type": "Bells",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/01.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/02.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/03.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/04.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/05.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/06.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/07.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/08.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/17.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/18.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "note": "G",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/19.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "note": "G#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/20.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "note": "A#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/21.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "note": "C",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/22.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "note": "C#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/23.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "note": "D#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/24.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/22.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/38.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank12/21.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank13/15.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/21.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank14/17.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/18.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/19.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/38.flac",
+   "family": "Keys",
+   "type": "Plucks",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank4/guit_e_slide.flac",
+   "family": "Keys",
+   "type": "Plucks"
+  },
+  {
+   "file": "anthem-chords/17.flac",
+   "family": "Keys",
+   "type": "Brass",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/18.flac",
+   "family": "Keys",
+   "type": "Brass",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/19.flac",
+   "family": "Keys",
+   "type": "Brass",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/20.flac",
+   "family": "Keys",
+   "type": "Brass",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/21.flac",
+   "family": "Keys",
+   "type": "Brass",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/22.flac",
+   "family": "Keys",
+   "type": "Brass",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/23.flac",
+   "family": "Keys",
+   "type": "Brass",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/24.flac",
+   "family": "Keys",
+   "type": "Brass",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/09.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/10.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/11.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/12.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/13.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/14.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/15.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/16.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/25.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "anthem",
+    "breakbeat",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/26.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "anthem",
+    "breakbeat",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/27.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "anthem",
+    "breakbeat",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/28.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "breakbeat",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/30.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/38.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "breakbeat",
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank11/24.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/25.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank14/25.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "euphoric",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/26.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "epic",
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank15/17.flac",
+   "family": "Pads & Strings",
+   "type": "Pads",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank4/tbd_pad_1.flac",
+   "family": "Pads & Strings",
+   "type": "Pads"
+  },
+  {
+   "file": "bank4/tbd_pad_2.flac",
+   "family": "Pads & Strings",
+   "type": "Pads"
+  },
+  {
+   "file": "bank4/tbd_pad_3.flac",
+   "family": "Pads & Strings",
+   "type": "Pads"
+  },
+  {
+   "file": "bank4/tbd_pad_4.flac",
+   "family": "Pads & Strings",
+   "type": "Pads"
+  },
+  {
+   "file": "anthem-chords/01.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/02.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/03.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/04.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/05.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/06.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/07.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/08.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/33.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Fm",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/34.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Db",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/35.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Eb",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/36.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Cm",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/37.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Ab",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/38.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Bbm",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/39.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "C",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-chords/40.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Gdim",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/29.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "dark",
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank13/11.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/12.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/26.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank14/24.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/30.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank15/18.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/17.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Fm",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/18.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Db",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/19.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Eb",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/20.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Cm",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/21.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Bbm",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/22.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Ab",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/23.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "note": "Fm",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/25.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/26.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/31.flac",
+   "family": "Pads & Strings",
+   "type": "Strings",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank8/24.flac",
+   "family": "Pads & Strings",
+   "type": "Orchestral Hits",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/31.flac",
+   "family": "Pads & Strings",
+   "type": "Orchestral Hits",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank4/ambi_dark_woosh.flac",
+   "family": "Pads & Strings",
+   "type": "Textures",
+   "tags": [
+    "dark"
+   ]
+  },
+  {
+   "file": "bank4/ambi_drone.flac",
+   "family": "Pads & Strings",
+   "type": "Textures"
+  },
+  {
+   "file": "bank4/ambi_glass_hum.flac",
+   "family": "Pads & Strings",
+   "type": "Textures"
+  },
+  {
+   "file": "bank4/ambi_glass_rub.flac",
+   "family": "Pads & Strings",
+   "type": "Textures"
+  },
+  {
+   "file": "bank4/ambi_haunted_hum.flac",
+   "family": "Pads & Strings",
+   "type": "Textures"
+  },
+  {
+   "file": "bank4/ambi_lunar_land.flac",
+   "family": "Pads & Strings",
+   "type": "Textures"
+  },
+  {
+   "file": "bank4/ambi_sauna.flac",
+   "family": "Pads & Strings",
+   "type": "Textures"
+  },
+  {
+   "file": "bank4/ambi_soft_buzz.flac",
+   "family": "Pads & Strings",
+   "type": "Textures"
+  },
+  {
+   "file": "bank4/ambi_swoosh.flac",
+   "family": "Pads & Strings",
+   "type": "Textures"
+  },
+  {
+   "file": "bank4/loop_drone_g_97.flac",
+   "family": "Pads & Strings",
+   "type": "Textures"
+  },
+  {
+   "file": "bank4/misc_cineboom.flac",
+   "family": "Pads & Strings",
+   "type": "Textures"
+  },
+  {
+   "file": "bank10/25.flac",
+   "family": "Vocals",
+   "type": "Shouts",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/26.flac",
+   "family": "Vocals",
+   "type": "Shouts",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/27.flac",
+   "family": "Vocals",
+   "type": "Shouts",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank11/25.flac",
+   "family": "Vocals",
+   "type": "Shouts",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/26.flac",
+   "family": "Vocals",
+   "type": "Shouts",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank12/25.flac",
+   "family": "Vocals",
+   "type": "Shouts",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/26.flac",
+   "family": "Vocals",
+   "type": "Shouts",
+   "tags": [
+    "hardstyle",
+    "raw"
+   ]
+  },
+  {
+   "file": "bank12/27.flac",
+   "family": "Vocals",
+   "type": "Shouts",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "early-hardcore/22.flac",
+   "family": "Vocals",
+   "type": "Shouts",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/23.flac",
+   "family": "Vocals",
+   "type": "Shouts",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/25.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/26.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/27.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/28.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/29.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/30.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/31.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/32.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/33.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/34.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/35.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "note": "Fm",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/36.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "note": "Db",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/37.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "note": "Eb",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/38.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "note": "Cm",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/39.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "note": "Ab",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/40.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "note": "Bbm",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/28.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "dark",
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank13/14.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank13/28.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank14/23.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank14/29.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank15/19.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank4/ambi_choir.flac",
+   "family": "Vocals",
+   "type": "Choirs"
+  },
+  {
+   "file": "bank9/25.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/39.flac",
+   "family": "Vocals",
+   "type": "Choirs",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank4/bass_voxy_c.flac",
+   "family": "Vocals",
+   "type": "Vocal FX",
+   "note": "C"
+  },
+  {
+   "file": "bank4/bass_voxy_hit_c.flac",
+   "family": "Vocals",
+   "type": "Vocal FX",
+   "note": "C"
+  },
+  {
+   "file": "bank4/tbd_voctone.flac",
+   "family": "Vocals",
+   "type": "Vocal FX"
+  },
+  {
+   "file": "bank9/26.flac",
+   "family": "Vocals",
+   "type": "Vocal FX",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "anthem-drops/33.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/34.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/35.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drops/36.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/33.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/34.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/31.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank11/27.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/29.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank11/32.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank12/28.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank12/29.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank7/09.flac",
+   "family": "FX",
+   "type": "Risers",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "anthem-drums/23.flac",
+   "family": "FX",
+   "type": "Downlifters",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/35.flac",
+   "family": "FX",
+   "type": "Downlifters",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank7/10.flac",
+   "family": "FX",
+   "type": "Downlifters",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/14.flac",
+   "family": "FX",
+   "type": "Downlifters",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "anthem-drums/24.flac",
+   "family": "FX",
+   "type": "Impacts",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/16.flac",
+   "family": "FX",
+   "type": "Impacts",
+   "tags": [
+    "hardcore",
+    "industrial",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank10/32.flac",
+   "family": "FX",
+   "type": "Impacts",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank12/31.flac",
+   "family": "FX",
+   "type": "Impacts",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank4/perc_impact1.flac",
+   "family": "FX",
+   "type": "Impacts"
+  },
+  {
+   "file": "bank4/perc_impact2.flac",
+   "family": "FX",
+   "type": "Impacts"
+  },
+  {
+   "file": "bank7/12.flac",
+   "family": "FX",
+   "type": "Impacts",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/13.flac",
+   "family": "FX",
+   "type": "Impacts",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank8/40.flac",
+   "family": "FX",
+   "type": "Impacts",
+   "tags": [
+    "breakbeat",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/24.flac",
+   "family": "FX",
+   "type": "Impacts",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-drums/36.flac",
+   "family": "FX",
+   "type": "Sub Drops",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank10/15.flac",
+   "family": "FX",
+   "type": "Sub Drops",
+   "tags": [
+    "hardcore",
+    "mainstream"
+   ]
+  },
+  {
+   "file": "bank12/30.flac",
+   "family": "FX",
+   "type": "Sub Drops",
+   "tags": [
+    "hardstyle"
+   ]
+  },
+  {
+   "file": "bank9/30.flac",
+   "family": "FX",
+   "type": "Sub Drops",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank6/32.flac",
+   "family": "FX",
+   "type": "Sirens",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank7/15.flac",
+   "family": "FX",
+   "type": "Sirens",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank9/27.flac",
+   "family": "FX",
+   "type": "Sirens",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank9/28.flac",
+   "family": "FX",
+   "type": "Sirens",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "early-hardcore/33.flac",
+   "family": "FX",
+   "type": "Sirens",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "early-hardcore/34.flac",
+   "family": "FX",
+   "type": "Sirens",
+   "tags": [
+    "early",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank3/hat_zap.flac",
+   "family": "FX",
+   "type": "Lasers & Zaps"
+  },
+  {
+   "file": "bank7/11.flac",
+   "family": "FX",
+   "type": "Lasers & Zaps",
+   "tags": [
+    "gabber"
+   ]
+  },
+  {
+   "file": "bank9/31.flac",
+   "family": "FX",
+   "type": "Lasers & Zaps",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank4/perc_swash.flac",
+   "family": "FX",
+   "type": "Noise"
+  },
+  {
+   "file": "bank4/perc_swoosh.flac",
+   "family": "FX",
+   "type": "Noise"
+  },
+  {
+   "file": "bank4/vinyl_hiss.flac",
+   "family": "FX",
+   "type": "Noise"
+  },
+  {
+   "file": "bank11/28.flac",
+   "family": "FX",
+   "type": "Scratches",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank4/vinyl_backspin.flac",
+   "family": "FX",
+   "type": "Scratches"
+  },
+  {
+   "file": "bank4/vinyl_rewind.flac",
+   "family": "FX",
+   "type": "Scratches"
+  },
+  {
+   "file": "bank4/vinyl_scratch.flac",
+   "family": "FX",
+   "type": "Scratches"
+  },
+  {
+   "file": "bank9/32.flac",
+   "family": "FX",
+   "type": "Scratches",
+   "tags": [
+    "oldschool",
+    "rave"
+   ]
+  },
+  {
+   "file": "bank11/30.flac",
+   "family": "FX",
+   "type": "Glitches",
+   "tags": [
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank3/glitch_perc1.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank3/glitch_perc2.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank3/glitch_perc3.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank3/glitch_perc4.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank3/glitch_perc5.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank3/glitch_robot1.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank3/glitch_robot2.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank5/mehackit_robot1.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank5/mehackit_robot2.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank5/mehackit_robot3.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank5/misc_burp.flac",
+   "family": "FX",
+   "type": "Glitches"
+  },
+  {
+   "file": "bank2/elec_beep.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_bell.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_blip.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_blip2.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_blup.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_bong.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_chime.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_ping.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_plip.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_triangle.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_twip.flac",
+   "family": "FX",
+   "type": "Bleeps"
+  },
+  {
+   "file": "bank2/elec_flip.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank2/elec_pop.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank2/elec_tick.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank2/elec_twang.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank2/elec_wood.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank5/mehackit_phone1.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank5/mehackit_phone2.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank5/mehackit_phone3.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank5/mehackit_phone4.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank5/misc_crow.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank5/perc_door.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "bank5/perc_till.flac",
+   "family": "FX",
+   "type": "Foley"
+  },
+  {
+   "file": "anthem-guitars/17.flac",
+   "family": "Guitars",
+   "type": "Power Chords",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/18.flac",
+   "family": "Guitars",
+   "type": "Power Chords",
+   "note": "G",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/19.flac",
+   "family": "Guitars",
+   "type": "Power Chords",
+   "note": "G#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/20.flac",
+   "family": "Guitars",
+   "type": "Power Chords",
+   "note": "A#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/21.flac",
+   "family": "Guitars",
+   "type": "Power Chords",
+   "note": "C",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/22.flac",
+   "family": "Guitars",
+   "type": "Power Chords",
+   "note": "C#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/23.flac",
+   "family": "Guitars",
+   "type": "Power Chords",
+   "note": "D#",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/24.flac",
+   "family": "Guitars",
+   "type": "Power Chords",
+   "note": "F",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/01.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/02.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/03.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/04.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/05.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/06.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/07.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "breakbeat",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/08.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/09.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/10.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/11.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/12.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/13.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/14.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "andalusian",
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/15.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "anthem-guitars/16.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "dark",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/09.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/10.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/11.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/12.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/13.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/14.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "breakbeat",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/15.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/16.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/34.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "hardcore"
+   ]
+  },
+  {
+   "file": "bank15/39.flac",
+   "family": "Guitars",
+   "type": "Riffs",
+   "tags": [
+    "anthem",
+    "breakbeat",
+    "hardcore"
+   ]
+  }
+ ],
+ "tree": {
+  "Drums": [
+   "Kicks",
+   "Snares",
+   "Claps",
+   "Closed Hats",
+   "Open Hats",
+   "Cymbals",
+   "Toms",
+   "Percussion",
+   "Beats",
+   "Fills & Rolls",
+   "Breaks"
+  ],
+  "Bass": [
+   "Synth Bass",
+   "Reese",
+   "Reverse Bass",
+   "Kick Bass",
+   "Sub Bass"
+  ],
+  "Leads": [
+   "Hoovers",
+   "Screeches",
+   "Supersaws",
+   "Synth Leads",
+   "Horns",
+   "Acid",
+   "Melodies"
+  ],
+  "Keys": [
+   "Stabs",
+   "Pianos",
+   "Bells",
+   "Plucks",
+   "Brass"
+  ],
+  "Pads & Strings": [
+   "Pads",
+   "Strings",
+   "Orchestral Hits",
+   "Textures"
+  ],
+  "Vocals": [
+   "Shouts",
+   "Choirs",
+   "Vocal FX"
+  ],
+  "FX": [
+   "Risers",
+   "Downlifters",
+   "Impacts",
+   "Sub Drops",
+   "Sirens",
+   "Lasers & Zaps",
+   "Noise",
+   "Scratches",
+   "Glitches",
+   "Bleeps",
+   "Foley"
+  ],
+  "Guitars": [
+   "Power Chords",
+   "Riffs"
+  ]
+ }
+}

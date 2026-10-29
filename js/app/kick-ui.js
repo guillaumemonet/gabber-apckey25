@@ -5,7 +5,7 @@ import { parseProgression } from '../chords.js';
 import { t } from '../i18n.js';
 import { KICK_BASE_NOTE, KICK_LAYERS, KICK_PARAMS, KICK_PRESETS, KICK_SIMPLE, kickDefaults, kickFmt, kickNoteName, kickSteps, kickTailNote, renderKick as synthKick } from '../kickdesign.js';
 import { prepareKickClips } from '../kicksynth.js';
-import { catColor } from '../library.js';
+import { MY_SOUNDS, catColor } from '../library.js';
 import { download, encodeWav } from '../recorder.js';
 import * as store from '../storage.js';
 import { BEATS_PER_BAR } from '../timeline.js';
@@ -284,7 +284,7 @@ export async function kickToLibrary() {
   await store.saveSample(sampleId, { name, data: wav });
   bufferCache.set(sampleId, buf);
   state.userSounds.push({ sampleId, name, cat: 'kick' });
-  showLibrary('sounds', 'kick', '');
+  showLibrary('sounds', MY_SOUNDS, '');
   save();
   toast(t('kick.toLibDone', { name }), 3000);
 }

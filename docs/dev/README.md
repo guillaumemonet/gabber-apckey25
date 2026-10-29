@@ -54,9 +54,10 @@ js/recorder*.js       enregistrement WAV
 js/storage.js         sauvegarde locale (IndexedDB)
 tools/serve.py        serveur web local (sans cache)
 tools/build_banks.py  construction des banques de sons
+tools/catalog.py      catalogue de la bibliothèque (famille › type, note, étiquettes) synchronisé avec les banques
 tools/gabber.py       synthèse des sons gabber
 tools/icons.py        icônes des boutons (génère le CSS)
-sounds/               banques générées + banks.json
+sounds/               banques générées + banks.json (banques) + library.json (catalogue de la bibliothèque)
 tests/                tests (run.js, harness.js, check.js, specs/)
 docs/dev/             documentation technique
 ```

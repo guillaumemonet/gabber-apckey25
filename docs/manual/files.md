@@ -30,7 +30,7 @@ Your banks, sounds and settings are saved automatically in the browser.
 ## Tracker modules (.mod, .xm)
 
 **Open…** also imports modules from Amiga and PC trackers: `.mod` (ProTracker and compatibles, 4 to 32 channels) and `.xm` (FastTracker 2).
-- The **samples** of the module go on the pads of the **first empty bank** (from the shown bank), with their names; they also join "My sounds" in the library. A module with more than 40 samples takes several banks in a row.
+- The **samples** of the module go on the pads of the **first empty bank** (from the shown bank), with their names; they also join the library (My Sounds › Imports). A module with more than 40 samples takes several banks in a row.
 - Each **channel** of the module becomes a **track** (a free one, from the armed track), with **one note block per pattern played**, in song order, from the playhead bar. A pattern played several times gives blocks with **the same name and colour** ("Pattern 3 · channel 2"): repeats show at a glance. A note held from one pattern to the next goes on in the next block where the sound was, without a new attack.
 - The blocks are played by the **sample instrument**: it plays the sound of a pad at the pitch of each note, with its loop (ping-pong loops included).
 - The module **tempo** is used if the timeline is empty (4 rows per beat at the starting speed); otherwise the song keeps its own and the notes are moved to keep the same length.

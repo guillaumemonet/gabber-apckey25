@@ -2,7 +2,7 @@
 // - syntaxe de tous les modules JavaScript ;
 // - traductions : mêmes clés en anglais et en français, aucune clé utilisée (HTML ou code) qui n'existe pas ;
 // - aide : une page par fenêtre dans les deux langues ;
-// - bibliothèque : chaque son de sounds/banks.json existe sur le disque ; démos présentes.
+// - bibliothèque : chaque son de sounds/banks.json existe sur le disque et a sa place au catalogue (sounds/library.json) ; démos présentes.
 // - documentation : chaque lien relatif des README et de docs/ mène à un fichier qui existe.
 // - sonie : la mesure en LUFS donne la valeur de la norme sur un son de référence.
 import fs from 'node:fs';
@@ -55,6 +55,14 @@ for (const b of man.banks) for (const p of b.pads) {
   if (!p) continue;
   sounds++;
   if (!fs.existsSync(path.join(ROOT, 'sounds', p.file))) fail(`son manquant : ${p.file} (${b.name})`);
+}
+// Catalogue (sounds/library.json, tools/catalog.py) : chaque son des banques y a sa place dans l'arbre, et rien d'autre.
+const cat = JSON.parse(fs.readFileSync(path.join(ROOT, 'sounds', 'library.json'), 'utf8'));
+const listed = new Set(cat.sounds.map(s => s.file));
+for (const b of man.banks) for (const p of b.pads) if (p && !listed.has(p.file)) fail(`son de banque absent du catalogue (python tools/catalog.py) : ${p.file}`);
+for (const s of cat.sounds) {
+  if (!cat.tree[s.family]?.includes(s.type)) fail(`catalogue : famille / type inconnus : ${s.file} (${s.family} › ${s.type})`);
+  if (!fs.existsSync(path.join(ROOT, 'sounds', s.file))) fail(`catalogue : son manquant : ${s.file}`);
 }
 for (const f of ['demo/demo.json', ...[2, 3, 4, 5].map(n => `demo/ravebench-demo-${n}.ravebench`)]) if (!fs.existsSync(path.join(ROOT, f))) fail(`démo manquante : ${f}`);
 
