@@ -3365,6 +3365,50 @@
    ]
   },
   {
+   "file": "lead-riffs/11.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "Dm",
+   "tags": [
+    "hardstyle",
+    "raw",
+    "aggressive"
+   ]
+  },
+  {
+   "file": "lead-riffs/12.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "Am",
+   "tags": [
+    "hardstyle",
+    "euphoric",
+    "driving"
+   ]
+  },
+  {
+   "file": "lead-riffs/14.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "gabber",
+    "aggressive"
+   ]
+  },
+  {
+   "file": "lead-riffs/16.flac",
+   "family": "Leads",
+   "type": "Screeches",
+   "note": "Fm",
+   "tags": [
+    "uptempo",
+    "hardcore",
+    "frantic"
+   ]
+  },
+  {
    "file": "anthem-leads/09.flac",
    "family": "Leads",
    "type": "Supersaws",
@@ -3514,6 +3558,50 @@
    ]
   },
   {
+   "file": "lead-riffs/01.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Am",
+   "tags": [
+    "trance",
+    "uplifting",
+    "euphoric"
+   ]
+  },
+  {
+   "file": "lead-riffs/02.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Em",
+   "tags": [
+    "trance",
+    "driving",
+    "uplifting"
+   ]
+  },
+  {
+   "file": "lead-riffs/13.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Em",
+   "tags": [
+    "hardstyle",
+    "euphoric",
+    "anthem"
+   ]
+  },
+  {
+   "file": "lead-riffs/15.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "anthem",
+    "epic"
+   ]
+  },
+  {
    "file": "bank10/17.flac",
    "family": "Leads",
    "type": "Synth Leads",
@@ -3579,6 +3667,116 @@
    "tags": [
     "early",
     "hardcore"
+   ]
+  },
+  {
+   "file": "lead-riffs/03.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "F#m",
+   "tags": [
+    "trance",
+    "uplifting",
+    "euphoric"
+   ]
+  },
+  {
+   "file": "lead-riffs/04.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "Gm",
+   "tags": [
+    "trance",
+    "dark",
+    "driving"
+   ]
+  },
+  {
+   "file": "lead-riffs/17.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "Am",
+   "tags": [
+    "rave",
+    "oldskool",
+    "energetic"
+   ]
+  },
+  {
+   "file": "lead-riffs/18.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "Gm",
+   "tags": [
+    "rave",
+    "techno",
+    "dark"
+   ]
+  },
+  {
+   "file": "lead-riffs/19.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "Em",
+   "tags": [
+    "rave",
+    "breakbeat",
+    "energetic"
+   ]
+  },
+  {
+   "file": "lead-riffs/20.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "Am",
+   "tags": [
+    "synthwave",
+    "retro",
+    "nostalgic"
+   ]
+  },
+  {
+   "file": "lead-riffs/21.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "Dm",
+   "tags": [
+    "electro",
+    "funky",
+    "driving"
+   ]
+  },
+  {
+   "file": "lead-riffs/22.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "Cm",
+   "tags": [
+    "synthwave",
+    "outrun",
+    "night"
+   ]
+  },
+  {
+   "file": "lead-riffs/23.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "Fm",
+   "tags": [
+    "drum and bass",
+    "liquid",
+    "driving"
+   ]
+  },
+  {
+   "file": "lead-riffs/24.flac",
+   "family": "Leads",
+   "type": "Synth Leads",
+   "note": "Gm",
+   "tags": [
+    "dubstep",
+    "riddim",
+    "heavy"
    ]
   },
   {
@@ -3681,6 +3879,378 @@
    "tags": [
     "acid",
     "gabber"
+   ]
+  },
+  {
+   "file": "lead-riffs/05.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "note": "Am",
+   "tags": [
+    "techno",
+    "acid",
+    "hypnotic"
+   ]
+  },
+  {
+   "file": "lead-riffs/06.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "note": "Em",
+   "tags": [
+    "techno",
+    "acid",
+    "driving"
+   ]
+  },
+  {
+   "file": "lead-riffs/07.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "note": "Gm",
+   "tags": [
+    "acid house",
+    "acid",
+    "groovy"
+   ]
+  },
+  {
+   "file": "lead-riffs/08.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "note": "Dm",
+   "tags": [
+    "techno",
+    "acid",
+    "relentless"
+   ]
+  },
+  {
+   "file": "lead-riffs/09.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "note": "Cm",
+   "tags": [
+    "acid house",
+    "acid",
+    "funky"
+   ]
+  },
+  {
+   "file": "lead-riffs/10.flac",
+   "family": "Leads",
+   "type": "Acid",
+   "note": "Fm",
+   "tags": [
+    "techno",
+    "acid",
+    "dark"
+   ]
+  },
+  {
+   "file": "anthem-hooks/01.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "anthem",
+    "euphoric"
+   ]
+  },
+  {
+   "file": "anthem-hooks/02.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "anthem",
+    "epic",
+    "hymn"
+   ]
+  },
+  {
+   "file": "anthem-hooks/03.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "anthem",
+    "dark",
+    "offbeat"
+   ]
+  },
+  {
+   "file": "anthem-hooks/04.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "gabber",
+    "dark",
+    "screech"
+   ]
+  },
+  {
+   "file": "anthem-hooks/05.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "anthem",
+    "melancholic"
+   ]
+  },
+  {
+   "file": "anthem-hooks/06.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "anthem",
+    "euphoric",
+    "gallop"
+   ]
+  },
+  {
+   "file": "anthem-hooks/07.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "anthem",
+    "andalusian",
+    "dark"
+   ]
+  },
+  {
+   "file": "anthem-hooks/08.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "uptempo",
+    "anthem",
+    "epic"
+   ]
+  },
+  {
+   "file": "anthem-hooks/09.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "G",
+   "tags": [
+    "happy hardcore",
+    "anthem",
+    "happy",
+    "euphoric"
+   ]
+  },
+  {
+   "file": "anthem-hooks/10.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "D",
+   "tags": [
+    "happy hardcore",
+    "anthem",
+    "happy",
+    "offbeat"
+   ]
+  },
+  {
+   "file": "anthem-hooks/11.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Bb",
+   "tags": [
+    "uk hardcore",
+    "anthem",
+    "euphoric",
+    "epic"
+   ]
+  },
+  {
+   "file": "anthem-hooks/12.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Am",
+   "tags": [
+    "hardstyle",
+    "anthem",
+    "euphoric"
+   ]
+  },
+  {
+   "file": "anthem-hooks/13.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Gm",
+   "tags": [
+    "hardstyle",
+    "dark",
+    "screech"
+   ]
+  },
+  {
+   "file": "anthem-hooks/14.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Em",
+   "tags": [
+    "hardstyle",
+    "anthem",
+    "epic",
+    "hymn"
+   ]
+  },
+  {
+   "file": "anthem-hooks/15.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Dm",
+   "tags": [
+    "hardstyle",
+    "anthem",
+    "dark",
+    "syncopated"
+   ]
+  },
+  {
+   "file": "anthem-hooks/16.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "F#m",
+   "tags": [
+    "trance",
+    "anthem",
+    "uplifting",
+    "euphoric"
+   ]
+  },
+  {
+   "file": "anthem-hooks/17.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Cm",
+   "tags": [
+    "trance",
+    "anthem",
+    "euphoric",
+    "syncopated"
+   ]
+  },
+  {
+   "file": "anthem-hooks/18.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Dm",
+   "tags": [
+    "trance",
+    "anthem",
+    "melancholic"
+   ]
+  },
+  {
+   "file": "anthem-hooks/19.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Bm",
+   "tags": [
+    "trance",
+    "anthem",
+    "dark",
+    "driving"
+   ]
+  },
+  {
+   "file": "anthem-hooks/20.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Am",
+   "tags": [
+    "rave",
+    "techno",
+    "anthem",
+    "dark"
+   ]
+  },
+  {
+   "file": "anthem-hooks/21.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Em",
+   "tags": [
+    "rave",
+    "techno",
+    "dark",
+    "phrygian"
+   ]
+  },
+  {
+   "file": "anthem-hooks/22.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Gm",
+   "tags": [
+    "techno",
+    "rave",
+    "anthem",
+    "dark",
+    "hymn"
+   ]
+  },
+  {
+   "file": "anthem-hooks/23.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Ab",
+   "tags": [
+    "house",
+    "anthem",
+    "euphoric",
+    "offbeat"
+   ]
+  },
+  {
+   "file": "anthem-hooks/24.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Am",
+   "tags": [
+    "house",
+    "anthem",
+    "melancholic"
+   ]
+  },
+  {
+   "file": "anthem-hooks/25.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Cm",
+   "tags": [
+    "drum and bass",
+    "anthem",
+    "melancholic",
+    "epic"
+   ]
+  },
+  {
+   "file": "anthem-hooks/26.flac",
+   "family": "Leads",
+   "type": "Melodies",
+   "note": "Dm",
+   "tags": [
+    "drum and bass",
+    "dark",
+    "screech"
    ]
   },
   {

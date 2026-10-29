@@ -7958,6 +7958,498 @@
      ]
     }
    ]
+  },
+  {
+   "name": "Anthem hooks",
+   "external": true,
+   "pads": [
+    {
+     "file": "anthem-hooks/01.flac",
+     "name": "Euphoric anthem hook F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/02.flac",
+     "name": "Epic hymn F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/03.flac",
+     "name": "Dark offbeat hook F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "anthem-hooks/04.flac",
+     "name": "Screech riff F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 2
+    },
+    {
+     "file": "anthem-hooks/05.flac",
+     "name": "Melancholic call and answer F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/06.flac",
+     "name": "Gallop anthem hook F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/07.flac",
+     "name": "Andalusian anthem F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/08.flac",
+     "name": "Uptempo rising hook F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/09.flac",
+     "name": "Happy hardcore hook G major",
+     "color": 13,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 170,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/10.flac",
+     "name": "Bouncy offbeat hook D major",
+     "color": 13,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 170,
+     "bars": 2
+    },
+    {
+     "file": "anthem-hooks/11.flac",
+     "name": "UK hardcore anthem Bb major",
+     "color": 13,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 170,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/12.flac",
+     "name": "Euphoric hardstyle lead A minor",
+     "color": 9,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/13.flac",
+     "name": "Dark hardstyle screech G minor",
+     "color": 9,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 2
+    },
+    {
+     "file": "anthem-hooks/14.flac",
+     "name": "Hardstyle hymn E minor",
+     "color": 9,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/15.flac",
+     "name": "Hardstyle bounce hook D minor",
+     "color": 9,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 2
+    },
+    {
+     "file": "anthem-hooks/16.flac",
+     "name": "Uplifting trance hook F# minor",
+     "color": 41,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 138,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/17.flac",
+     "name": "Trance pluck hook C minor",
+     "color": 41,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 138,
+     "bars": 2
+    },
+    {
+     "file": "anthem-hooks/18.flac",
+     "name": "Melancholic trance theme D minor",
+     "color": 41,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 138,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/19.flac",
+     "name": "Trance chant B minor",
+     "color": 41,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 138,
+     "bars": 2
+    },
+    {
+     "file": "anthem-hooks/20.flac",
+     "name": "Rave stab hook A minor",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 132,
+     "bars": 2
+    },
+    {
+     "file": "anthem-hooks/21.flac",
+     "name": "Phrygian rave chant E phrygian",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 130,
+     "bars": 2
+    },
+    {
+     "file": "anthem-hooks/22.flac",
+     "name": "Dark techno hymn G minor",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 135,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/23.flac",
+     "name": "Euphoric house hook Ab major",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 125,
+     "bars": 2
+    },
+    {
+     "file": "anthem-hooks/24.flac",
+     "name": "Melodic house theme A minor",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 124,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/25.flac",
+     "name": "Liquid anthem hook C minor",
+     "color": 37,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 174,
+     "bars": 4
+    },
+    {
+     "file": "anthem-hooks/26.flac",
+     "name": "Dark dnb lead D minor",
+     "color": 37,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 174,
+     "bars": 2
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "name": "Lead riffs",
+   "external": true,
+   "pads": [
+    {
+     "file": "lead-riffs/01.flac",
+     "name": "Gated supersaw A minor",
+     "color": 41,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 138,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/02.flac",
+     "name": "Rolling supersaw riff E minor",
+     "color": 41,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 138,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/03.flac",
+     "name": "Uplifting pedal riff F# minor",
+     "color": 41,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 138,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/04.flac",
+     "name": "Syncopated trance riff G minor",
+     "color": 41,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 138,
+     "bars": 2
+    },
+    {
+     "file": "lead-riffs/05.flac",
+     "name": "Acid line A minor",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 130,
+     "bars": 2
+    },
+    {
+     "file": "lead-riffs/06.flac",
+     "name": "Acid sweep E minor",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 133,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/07.flac",
+     "name": "Acid house line G minor",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 125,
+     "bars": 2
+    },
+    {
+     "file": "lead-riffs/08.flac",
+     "name": "Acid techno roller D minor",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 135,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/09.flac",
+     "name": "Squelchy acid C minor",
+     "color": 21,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 128,
+     "bars": 2
+    },
+    {
+     "file": "lead-riffs/10.flac",
+     "name": "Acid lead F minor",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 135,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/11.flac",
+     "name": "Hardstyle screech riff D minor",
+     "color": 9,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 2
+    },
+    {
+     "file": "lead-riffs/12.flac",
+     "name": "Hardstyle rolling lead A minor",
+     "color": 9,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/13.flac",
+     "name": "Euphoric hardstyle supersaw E minor",
+     "color": 9,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 150,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/14.flac",
+     "name": "Gabber screech riff F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/15.flac",
+     "name": "Hardcore supersaw riff F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/16.flac",
+     "name": "Uptempo screech run F minor",
+     "color": 5,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 190,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/17.flac",
+     "name": "Rave minor stab riff A minor",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 138,
+     "bars": 2
+    },
+    {
+     "file": "lead-riffs/18.flac",
+     "name": "Tek stab riff G minor",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 135,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/19.flac",
+     "name": "Rave lead riff E minor",
+     "color": 49,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 140,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/20.flac",
+     "name": "Synthwave lead A minor",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 110,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/21.flac",
+     "name": "Electro saw riff D minor",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 128,
+     "bars": 2
+    },
+    {
+     "file": "lead-riffs/22.flac",
+     "name": "Synthwave arp lead C minor",
+     "color": 57,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 118,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/23.flac",
+     "name": "DnB lead riff F minor",
+     "color": 37,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 174,
+     "bars": 4
+    },
+    {
+     "file": "lead-riffs/24.flac",
+     "name": "Riddim mid lead G minor",
+     "color": 53,
+     "mode": 2,
+     "cat": "lead",
+     "bpm": 140,
+     "bars": 2
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
   }
  ]
 }

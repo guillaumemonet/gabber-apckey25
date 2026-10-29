@@ -9,3 +9,5 @@ The Gabber, Hardcore, Oldschool, Mainstream, New wave, Hardstyle and melody bank
 The Anthem banks (sounds/anthem-*) were made with the free and open-source synthesizer Surge XT (https://surge-synthesizer.github.io), using its factory presets and community presets by Luna, Argitoth and others, and processed (mixing, mastering) outside this repository.
 
 The Early hardcore bank (sounds/early-hardcore) is fully synthesised (no external samples) and was processed (distortion, reverb, levels) outside this repository.
+
+The Anthem hooks and Lead riffs banks (sounds/anthem-hooks, sounds/lead-riffs) were also made with Surge XT, using its factory presets and community presets by Luna, Argitoth, Kinsey Dulcet, Rozzer, TNMG, Giana Brotherz and Bluelight, and processed (layering, echo, reverb, mastering) outside this repository.
