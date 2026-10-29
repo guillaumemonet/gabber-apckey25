@@ -55,6 +55,12 @@ function kRate(osc) {
   try { osc.frequency.automationRate = 'k-rate'; osc.detune.automationRate = 'k-rate'; } catch { /* non pris en charge */ }
 }
 
+// Vibrato fait par une ligne à retard modulée (même balancement de hauteur pour toutes les harmoniques, comme un
+// effet Doppler), une seule par note, au lieu de moduler la hauteur de chacun de ses oscillateurs (jusqu'à 10) :
+// un oscillateur dont la hauteur est modulée se calcule échantillon par échantillon dans Firefox. -> amplitude du
+// retard (s) qui donne `cents` d'écart à la vitesse `rate` (Hz).
+const vibAmp = (cents, rate) => (Math.pow(2, cents / 1200) - 1) / (2 * Math.PI * Math.max(0.1, rate));
+
 function driveCurve(amount) {
   const k = amount * 60;
   const curve = new Float32Array(1024);
@@ -352,10 +358,10 @@ export class Engine {
         this._irTimer = setTimeout(() => { this.reverb.buffer = makeImpulse(this.ctx, v); }, prev === undefined ? 0 : 150);
         break;
       case 'cutoff':
-        for (const voice of this.liveVoices()) voice.filter.frequency.setTargetAtTime(v, t, 0.02);
+        for (const voice of this.liveVoices()) for (const path of voice.paths) path.filter.frequency.setTargetAtTime(v, t, 0.02);
         break;
       case 'reso':
-        for (const voice of this.liveVoices()) voice.filter.Q.setTargetAtTime(v, t, 0.02);
+        for (const voice of this.liveVoices()) for (const path of voice.paths) path.filter.Q.setTargetAtTime(v, t, 0.02);
         break;
       case 'detune':
         for (const voice of this.liveVoices()) {
@@ -366,7 +372,7 @@ export class Engine {
         for (const voice of this.liveVoices()) for (const o of voice.oscs) o.pan?.pan.setTargetAtTime(o.spread * v, t, 0.02);
         break;
       case 'vibrato':
-        for (const voice of this.liveVoices()) voice.vibGain?.gain.setTargetAtTime(v * (this.voiceCfg.vibRange ?? 0.5) * 100, t, 0.05);
+        for (const voice of this.liveVoices()) voice.vibGain?.gain.setTargetAtTime(vibAmp(v * (this.voiceCfg.vibRange ?? 0.5) * 100, voice.vibRate), t, 0.05);
         break;
       case 'chorus':
         smooth(this.chorusWet.gain, v * 0.9);
@@ -444,6 +450,20 @@ export class Engine {
     return sum;
   }
 
+  // Corps d'instrument (formant) partagé par toutes les notes qui vont vers `dest` (une piste, le synthé) : créé une
+  // fois, gardé tant que la sortie existe. -> nœud d'entrée
+  formantBus(dest, kind) {
+    this.formantBuses ??= new WeakMap();
+    let byKind = this.formantBuses.get(dest);
+    if (!byKind) this.formantBuses.set(dest, byKind = new Map());
+    if (!byKind.has(kind)) {
+      const input = this.ctx.createGain();
+      this.formant(input, kind).connect(dest);
+      byKind.set(kind, input);
+    }
+    return byKind.get(kind);
+  }
+
   // Bruit lissé qui module un paramètre (detune) : `rate` = vitesse de lecture, `depth` = amplitude.
   wobble(param, rate, depth, t, srcs) {
     const src = this.ctx.createBufferSource();
@@ -469,18 +489,29 @@ export class Engine {
     velocity = 1 - (c.velSens ?? 1) * (1 - velocity);
     const srcs = [];   // sources de bruit, arrêtées avec la voix
 
-    const filter = ctx.createBiquadFilter();
-    filter.type = c.filterType;
-    filter.Q.value = p.reso;
+    const dest = out ?? this.synthIn;   // out : chaîne d'effets d'une piste de la timeline
     const peak = Math.min(18000, p.cutoff * (1 + fenv * 10 * (0.4 + velocity * 0.6)));
-    filter.frequency.setValueAtTime(peak, t);
-    filter.frequency.setTargetAtTime(p.cutoff, t + attack, 0.12 + fenv * 0.3);
-
-    const amp = ctx.createGain();
     const level = 0.34 * (0.25 + velocity * 0.75);
-    amp.gain.setValueAtTime(0, t);
-    amp.gain.linearRampToValueAtTime(level, t + attack);
-    amp.gain.setTargetAtTime(level * c.sustain, t + attack, c.decay / 3);
+    // Chemins de la voix : un filtre et une enveloppe par sortie. Le corps d'un instrument (formant : filtres fixes) est
+    // partagé par toutes les notes d'une même sortie (formantBus) au lieu d'être recopié dans chaque note ; il ne reste
+    // propre à la note que s'il bouge (shimmer). Les couches sans corps ont leur chemin à elles.
+    const paths = new Map();
+    const pathTo = key => {
+      if (paths.has(key)) return paths.get(key);
+      const filter = ctx.createBiquadFilter();
+      filter.type = c.filterType;
+      filter.Q.value = p.reso;
+      filter.frequency.setValueAtTime(peak, t);
+      filter.frequency.setTargetAtTime(p.cutoff, t + attack, 0.12 + fenv * 0.3);
+      const amp = ctx.createGain();
+      amp.gain.setValueAtTime(0, t);
+      amp.gain.linearRampToValueAtTime(level, t + attack);
+      amp.gain.setTargetAtTime(level * c.sustain, t + attack, c.decay / 3);
+      const path = { filter, amp, to: key ? this.formantBus(dest, key) : dest };
+      paths.set(key, path);
+      return path;
+    };
+    const { filter, amp } = pathTo('');   // chemin principal (bruit de souffle, LFO de filtre)
 
     // Couches d'oscillateurs : unisson désaccordé (« Désaccord ») et étalé dans la stéréo (« Largeur »).
     const layers = c.layers ?? [{ osc: WAVES[p.wave] || 'sawtooth', voices: c.unison, spread: 12 }];
@@ -492,7 +523,9 @@ export class Engine {
       const n = Math.max(1, layer.voices ?? 1);
       const lg = ctx.createGain();
       lg.gain.value = (layer.level ?? 1) / Math.sqrt(n) / Math.max(1, total * 0.8);
-      (layer.formant ? this.formant(lg, layer.formant, c.shimmer ? { depth: c.shimmer * 0.15, t, srcs } : null) : lg).connect(filter);
+      if (!layer.formant) lg.connect(filter);
+      else if (c.shimmer) this.formant(lg, layer.formant, { depth: c.shimmer * 0.15, t, srcs }).connect(filter);
+      else lg.connect(pathTo(layer.formant).filter);
       // Panoramiques : un par oscillateur jusqu'à 3, au-delà regroupés en trois positions (gauche, centre, droite).
       // Un unisson de 9 oscillateurs coûtait 9 panoramiques par note ; l'image stéréo reste large.
       const groups = new Map();
@@ -544,18 +577,20 @@ export class Engine {
       if (start !== f) o.osc.frequency.exponentialRampToValueAtTime(f * o.ratio, t + time);
     }
 
-    // Vibrato (potentiomètre « Vibrato »), qui arrive après un instant comme sur un instrument joué.
-    // Une note de la timeline sans vibrato n'en a pas besoin (au clavier, le potentiomètre peut le monter pendant la note).
+    // Vibrato (potentiomètre « Vibrato »), qui arrive après un instant comme sur un instrument joué : une ligne à
+    // retard modulée après le filtre (voir vibAmp). Une note de la timeline sans vibrato n'en a pas besoin (au clavier,
+    // le potentiomètre peut le monter pendant la note).
     const lfos = [];
-    let vibGain = null;
+    let vibGain = null, vibLine = null;
     if (!patch || (p.vibrato ?? 0) > 0) {
       const vib = ctx.createOscillator();
       vib.frequency.value = c.vibRate;
+      const most = vibAmp((c.vibRange ?? 0.5) * 100, c.vibRate);   // le plus grand écart possible (potentiomètre au bout)
+      vibLine = { maxTime: most * 2 + 0.01, base: most + 0.0005 };
       vibGain = ctx.createGain();
       vibGain.gain.setValueAtTime(0, t);
-      vibGain.gain.linearRampToValueAtTime((p.vibrato ?? 0) * (c.vibRange ?? 0.5) * 100, t + c.vibDelay + 0.3);
+      vibGain.gain.linearRampToValueAtTime(vibAmp((p.vibrato ?? 0) * (c.vibRange ?? 0.5) * 100, c.vibRate), t + c.vibDelay + 0.3);
       vib.connect(vibGain);
-      for (const o of oscs) vibGain.connect(o.osc.detune);
       lfos.push(vib);
     }
     if (c.lfoRate) {
@@ -563,7 +598,8 @@ export class Engine {
       lfo.frequency.value = c.lfoRate;
       const depth = ctx.createGain();
       depth.gain.value = p.cutoff * c.lfoDepth;
-      lfo.connect(depth).connect(filter.frequency);
+      for (const path of paths.values()) depth.connect(path.filter.frequency);
+      lfo.connect(depth);
       lfos.push(lfo);
     }
 
@@ -589,17 +625,25 @@ export class Engine {
       srcs.push(noise);
     }
 
-    let tail = filter;
-    if (c.shimmer) {   // niveau qui bouge un peu, lentement (la pression du sac, le souffle)
-      tail = ctx.createGain();
-      filter.connect(tail);
-      this.wobble(tail.gain, 0.15 + Math.random() * 0.1, c.shimmer * 0.1, t, srcs);
+    for (const path of paths.values()) {
+      let tail = path.filter;
+      if (c.shimmer) {   // niveau qui bouge un peu, lentement (la pression du sac, le souffle)
+        tail = ctx.createGain();
+        path.filter.connect(tail);
+        this.wobble(tail.gain, 0.15 + Math.random() * 0.1, c.shimmer * 0.1, t, srcs);
+      }
+      if (vibGain) {   // une ligne à retard par chemin, toutes menées par le même vibrato
+        const line = ctx.createDelay(vibLine.maxTime);
+        line.delayTime.value = vibLine.base;
+        vibGain.connect(line.delayTime);
+        tail = tail.connect(line);
+      }
+      tail.connect(path.amp).connect(path.to);
     }
-    tail.connect(amp).connect(out ?? this.synthIn);   // out : chaîne d'effets d'une piste de la timeline
     for (const o of oscs) o.osc.start(t);
     for (const l of lfos) l.start(t);
     lfos.push(...srcs);   // déjà lancées ; s'arrêtent avec les LFO
-    return { oscs, lfos, filter, amp, vibGain, freq: f, patched: !!patch, release: p.release, start: t, tongue: c.tongue };
+    return { oscs, lfos, filter, amp, paths: [...paths.values()], vibGain, vibRate: c.vibRate, freq: f, patched: !!patch, release: p.release, start: t, tongue: c.tongue };
   }
 
   glideVoice(voice, f, when) {
@@ -617,13 +661,15 @@ export class Engine {
     let t = Math.max(this.ctx.currentTime, when ?? 0);
     // Coup de langue : une fin programmée arrive un peu plus tôt (sans couper l'attaque d'une note très courte).
     if (voice.tongue && when !== undefined) t = Math.max(this.ctx.currentTime, Math.min(t, Math.max(voice.start + 0.02, t - voice.tongue)));
-    voice.amp.gain.cancelScheduledValues(t);
-    voice.amp.gain.setTargetAtTime(0, t, rel / 4);
+    for (const { amp } of voice.paths) {
+      amp.gain.cancelScheduledValues(t);
+      amp.gain.setTargetAtTime(0, t, rel / 4);
+    }
     const end = t + rel * 1.5 + 0.05;
     for (const o of voice.oscs) o.osc.stop(end);
     for (const l of voice.lfos) l.stop(end);
     // Voix éteinte : on la débranche (le moteur n'a plus à la parcourir).
-    if (voice.oscs[0]) voice.oscs[0].osc.onended = () => { try { voice.amp.disconnect(); voice.filter.disconnect(); } catch { /* déjà fait */ } };
+    if (voice.oscs[0]) voice.oscs[0].osc.onended = () => { for (const { amp, filter } of voice.paths) { try { amp.disconnect(); filter.disconnect(); } catch { /* déjà fait */ } } };
   }
 
   // Chorus : ses trois lignes à retard modulées ne sont branchées (et calculées) que quand il est monté.
