@@ -63,6 +63,8 @@ export function libraryTree(manifest, items) {
 }
 
 // Construit la liste des sons : { sampleId, name, cat, family, type, note, tags, bpm, bars, loop }.
+// Les sons du catalogue qui ne sont dans aucune banque (ils portent leur nom, leur tempo et leurs mesures) passent en tête :
+// ce sont les plus récents ; on les charge par glisser-déposer ou « Charger dans… ».
 // userSounds : sons créés dans l'application (designer de kick, imports) : { sampleId, name, cat }.
 // Les anciens sons (banques archivées, kit de départ) ne sont montrés que s'ils sont dans une banque de pads : la
 // bibliothèque contient tout ce que jouent les banques. Les nouvelles banques passent en tête de chaque type.
@@ -73,6 +75,13 @@ export function libraryItems({ manifest, kit, banks, tl, userSounds = [] }) {
   const place = (cat, fallback) => fallback ?? { family: CAT_PLACE[cat]?.[0] ?? 'FX', type: CAT_PLACE[cat]?.[1] ?? 'Bleeps' };
   const rank = b => (b.external ? 0 : b.archive ? 2 : 1);
   const catalog = manifest?.catalog?.byFile;
+  const inManifest = new Set((manifest?.banks ?? []).flatMap(b => b.pads.filter(Boolean).map(p => p.file)));
+  for (const s of catalog?.values() ?? []) {
+    if (!s.name || inManifest.has(s.file)) continue;
+    const cat = s.cat ?? (s.type === 'Kicks' ? 'kick' : FAMILY_CAT[s.family] ?? 'fx');
+    add({ sampleId: `lib:${s.file}`, name: soundName(s.name), cat, family: s.family, type: s.type, note: s.note ?? '', tags: s.tags ?? [],
+      bpm: s.bpm || 0, bars: s.bars || 0, loop: !!s.loop });
+  }
   for (const bank of [...(manifest?.banks ?? [])].sort((a, b) => rank(a) - rank(b))) {
     for (const p of bank.pads) {
       if (!p) continue;
@@ -95,7 +104,6 @@ export function libraryItems({ manifest, kit, banks, tl, userSounds = [] }) {
   return [...items.values()];
 }
 
-/** Catalogue lu (sounds/library.json) -> { tree, byFile: Map(fichier -> entrée) }. */
 // Classe de hauteur (0 = do) d'une note du catalogue (« F », « G# », « Db », « Fm », « Gdim »…), ou null.
 const PC = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
 export function noteClass(note) {
@@ -103,4 +111,5 @@ export function noteClass(note) {
   return m ? (PC[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0) + 12) % 12 : null;
 }
 
+/** Catalogue lu (sounds/library.json) -> { tree, byFile: Map(fichier -> entrée) }. */
 export const readCatalog = json => ({ tree: json?.tree ?? {}, byFile: new Map((json?.sounds ?? []).map(s => [s.file, s])) });

@@ -53,6 +53,13 @@ export default async function (t, A) {
   t.eq(((pad?.smp?.root ?? -1) % 12 + 12) % 12, noteClass(tonal.note), `pad accordé sur sa note (${tonal.note})`, pad?.smp);
   t.eq(S.roll.clip, block?.id, 'ouvert dans le piano roll');
 
+  // Un son du catalogue qui n'est dans aucune banque est dans la bibliothèque, en tête de son type.
+  const extra = { file: 'lead-riffs/15.flac', family: 'Leads', type: 'Acid', name: 'Catalogue only', loop: true, bpm: 190, bars: 4, note: 'Fm' };
+  const cat = { ...A.libManifest.catalog, byFile: new Map([...A.libManifest.catalog.byFile, ['x/only.flac', { ...extra, file: 'x/only.flac' }]]) };
+  const only = A.libraryItems({ manifest: { ...A.libManifest, catalog: cat }, kit: A.kit, banks: S.banks, tl: S.tl, userSounds: [] });
+  const it = only.find(i => i.sampleId === 'lib:x/only.flac');
+  t.ok(it && it.loop && it.bars === 4 && it.cat === 'lead' && only.filter(i => i.type === 'Acid')[0] === it, 'son hors banque listé, en tête de son type', it);
+
   // Hauteur d'un son synthétique (la2, 110 Hz, avec harmoniques) : bonne octave, avec ou sans note connue.
   const { guessRoot } = await import('/js/sampler.js');
   const ctx = new OfflineAudioContext(1, 44100, 44100);

@@ -2729,6 +2729,296 @@
    ]
   },
   {
+   "file": "basslines/01.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "gabber",
+    "offbeat",
+    "driving"
+   ],
+   "name": "Offbeat hardcore bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "basslines/02.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "gabber",
+    "rolling",
+    "dark"
+   ],
+   "name": "Rolling hardcore bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "basslines/03.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Fm",
+   "tags": [
+    "uptempo",
+    "hardcore",
+    "rolling",
+    "aggressive"
+   ],
+   "name": "Uptempo octave bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "basslines/07.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Dm",
+   "tags": [
+    "techno",
+    "rolling",
+    "hypnotic",
+    "driving"
+   ],
+   "name": "Rolling techno bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 130,
+   "bars": 2
+  },
+  {
+   "file": "basslines/08.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Am",
+   "tags": [
+    "house",
+    "groovy",
+    "syncopated",
+    "warm"
+   ],
+   "name": "House octave bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 125,
+   "bars": 4
+  },
+  {
+   "file": "basslines/09.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Fm",
+   "tags": [
+    "house",
+    "funky",
+    "groovy",
+    "bouncy"
+   ],
+   "name": "Funky house bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 125,
+   "bars": 2
+  },
+  {
+   "file": "basslines/10.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Em",
+   "tags": [
+    "acid",
+    "techno",
+    "squelchy",
+    "hypnotic"
+   ],
+   "name": "Acid 303 line",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 130,
+   "bars": 2
+  },
+  {
+   "file": "basslines/11.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Am",
+   "tags": [
+    "acid",
+    "acid house",
+    "squelchy",
+    "rave"
+   ],
+   "name": "Acid house line",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 130,
+   "bars": 4
+  },
+  {
+   "file": "basslines/15.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Gm",
+   "tags": [
+    "drum and bass",
+    "neurofunk",
+    "rolling",
+    "aggressive"
+   ],
+   "name": "Neuro roller",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 174,
+   "bars": 2
+  },
+  {
+   "file": "basslines/16.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Fm",
+   "tags": [
+    "dubstep",
+    "wobble",
+    "heavy",
+    "dark"
+   ],
+   "name": "Dubstep wobble",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 140,
+   "bars": 4
+  },
+  {
+   "file": "basslines/17.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Gm",
+   "tags": [
+    "riddim",
+    "dubstep",
+    "wobble",
+    "aggressive"
+   ],
+   "name": "Riddim wobble",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 140,
+   "bars": 2
+  },
+  {
+   "file": "basslines/20.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Am",
+   "tags": [
+    "electro",
+    "16ths",
+    "driving",
+    "robotic"
+   ],
+   "name": "Electro 16th bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 115,
+   "bars": 4
+  },
+  {
+   "file": "basslines/21.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Em",
+   "tags": [
+    "synthwave",
+    "retro",
+    "80s",
+    "driving",
+    "nostalgic"
+   ],
+   "name": "Synthwave driving bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 110,
+   "bars": 4
+  },
+  {
+   "file": "basslines/22.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Am",
+   "tags": [
+    "trance",
+    "rolling",
+    "uplifting",
+    "driving"
+   ],
+   "name": "Trance rolling bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 138,
+   "bars": 4
+  },
+  {
+   "file": "basslines/23.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "F#m",
+   "tags": [
+    "trance",
+    "offbeat",
+    "dark",
+    "driving"
+   ],
+   "name": "Trance offbeat bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 138,
+   "bars": 4
+  },
+  {
+   "file": "basslines/24.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Em",
+   "tags": [
+    "breakbeat",
+    "nu skool",
+    "funky",
+    "syncopated"
+   ],
+   "name": "Breakbeat bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 135,
+   "bars": 2
+  },
+  {
+   "file": "basslines/25.flac",
+   "family": "Bass",
+   "type": "Synth Bass",
+   "note": "Gm",
+   "tags": [
+    "electro funk",
+    "nu disco",
+    "bouncy",
+    "groovy"
+   ],
+   "name": "Rubber funk bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 120,
+   "bars": 2
+  },
+  {
    "file": "bank13/32.flac",
    "family": "Bass",
    "type": "Reese",
@@ -2743,6 +3033,41 @@
    "tags": [
     "hardcore"
    ]
+  },
+  {
+   "file": "basslines/12.flac",
+   "family": "Bass",
+   "type": "Reese",
+   "note": "Dm",
+   "tags": [
+    "drum and bass",
+    "reese",
+    "dark",
+    "rolling"
+   ],
+   "name": "Rolling reese",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 174,
+   "bars": 4
+  },
+  {
+   "file": "basslines/13.flac",
+   "family": "Bass",
+   "type": "Reese",
+   "note": "Fm",
+   "tags": [
+    "drum and bass",
+    "neurofunk",
+    "reese",
+    "dark",
+    "tense"
+   ],
+   "name": "Swelling reese",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 174,
+   "bars": 4
   },
   {
    "file": "bank12/09.flac",
@@ -2814,6 +3139,41 @@
    ]
   },
   {
+   "file": "basslines/04.flac",
+   "family": "Bass",
+   "type": "Reverse Bass",
+   "note": "Gm",
+   "tags": [
+    "hardstyle",
+    "reverse bass",
+    "euphoric",
+    "driving"
+   ],
+   "name": "Reverse bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 150,
+   "bars": 4
+  },
+  {
+   "file": "basslines/05.flac",
+   "family": "Bass",
+   "type": "Reverse Bass",
+   "note": "Fm",
+   "tags": [
+    "rawstyle",
+    "hardstyle",
+    "reverse bass",
+    "dark",
+    "aggressive"
+   ],
+   "name": "Rawstyle rolling reverse bass",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 150,
+   "bars": 4
+  },
+  {
    "file": "bank11/08.flac",
    "family": "Bass",
    "type": "Kick Bass",
@@ -2845,6 +3205,92 @@
     "anthem",
     "hardcore"
    ]
+  },
+  {
+   "file": "basslines/06.flac",
+   "family": "Bass",
+   "type": "Sub Bass",
+   "note": "Am",
+   "tags": [
+    "techno",
+    "rumble",
+    "dark",
+    "hypnotic"
+   ],
+   "name": "Techno rumble",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 130,
+   "bars": 4
+  },
+  {
+   "file": "basslines/14.flac",
+   "family": "Bass",
+   "type": "Sub Bass",
+   "note": "Em",
+   "tags": [
+    "drum and bass",
+    "liquid",
+    "sub",
+    "rolling",
+    "deep"
+   ],
+   "name": "Rolling sub",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 174,
+   "bars": 4
+  },
+  {
+   "file": "basslines/18.flac",
+   "family": "Bass",
+   "type": "Sub Bass",
+   "note": "Cm",
+   "tags": [
+    "trap",
+    "808",
+    "half-time",
+    "dark"
+   ],
+   "name": "Trap 808 glide",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 140,
+   "bars": 4
+  },
+  {
+   "file": "basslines/19.flac",
+   "family": "Bass",
+   "type": "Sub Bass",
+   "note": "Am",
+   "tags": [
+    "hip-hop",
+    "808",
+    "boom bap",
+    "laid-back"
+   ],
+   "name": "Hip-hop 808 slides",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 90,
+   "bars": 2
+  },
+  {
+   "file": "basslines/26.flac",
+   "family": "Bass",
+   "type": "Sub Bass",
+   "note": "Fm",
+   "tags": [
+    "hardcore",
+    "gabber",
+    "sub",
+    "offbeat"
+   ],
+   "name": "Hardcore offbeat sub",
+   "cat": "bass",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
   },
   {
    "file": "bank10/21.flac",
@@ -3556,6 +4002,410 @@
    "tags": [
     "hardcore"
    ]
+  },
+  {
+   "file": "hardcore-supersaw/01.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw riff octave up",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/02.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "breakdown",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw riff half-time",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 8
+  },
+  {
+   "file": "hardcore-supersaw/03.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "euphoric",
+    "hardcore",
+    "trance"
+   ],
+   "name": "Hardcore supersaw riff gated",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/04.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "build-up",
+    "hardcore",
+    "intro"
+   ],
+   "name": "Hardcore supersaw riff filtered intro",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/05.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardstyle"
+   ],
+   "name": "Hardstyle supersaw riff",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 150,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/06.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "frantic",
+    "hardcore",
+    "uptempo"
+   ],
+   "name": "Uptempo supersaw riff",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 200,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/07.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "driving",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw sixteenths",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/08.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "dark",
+    "driving",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw gallop",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/09.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "anthem",
+    "euphoric",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw syncopated",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/10.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "bouncy",
+    "energetic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw offbeat",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 2
+  },
+  {
+   "file": "hardcore-supersaw/11.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "andalusian",
+    "driving",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw octave jumps",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/12.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw call and response",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/13.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "build-up",
+    "hardcore",
+    "tense"
+   ],
+   "name": "Hardcore supersaw build-up",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/14.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "breakdown",
+    "euphoric",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw breakdown",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/15.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw dotted hook",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 2
+  },
+  {
+   "file": "hardcore-supersaw/16.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "anthem",
+    "dramatic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw anthem andalusian",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/17.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Gm",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw hook",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/18.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Am",
+   "tags": [
+    "driving",
+    "energetic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw gallop",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 2
+  },
+  {
+   "file": "hardcore-supersaw/19.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Cm",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw syncopated",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 4
+  },
+  {
+   "file": "hardcore-supersaw/20.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Dm",
+   "tags": [
+    "dark",
+    "driving",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw sixteenths",
+   "cat": "lead",
+   "loop": true,
+   "bpm": 190,
+   "bars": 2
+  },
+  {
+   "file": "hardcore-supersaw/21.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "F2",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw note",
+   "cat": "lead",
+   "loop": false
+  },
+  {
+   "file": "hardcore-supersaw/22.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "C3",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw note",
+   "cat": "lead",
+   "loop": false
+  },
+  {
+   "file": "hardcore-supersaw/23.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "F3",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw note",
+   "cat": "lead",
+   "loop": false
+  },
+  {
+   "file": "hardcore-supersaw/24.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "C4",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw note",
+   "cat": "lead",
+   "loop": false
+  },
+  {
+   "file": "hardcore-supersaw/25.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "F4",
+   "tags": [
+    "anthem",
+    "epic",
+    "hardcore"
+   ],
+   "name": "Hardcore supersaw note",
+   "cat": "lead",
+   "loop": false
+  },
+  {
+   "file": "hardcore-supersaw/26.flac",
+   "family": "Leads",
+   "type": "Supersaws",
+   "note": "Fm",
+   "tags": [
+    "anthem",
+    "hardcore",
+    "stab"
+   ],
+   "name": "Hardcore supersaw chord stab",
+   "cat": "lead",
+   "loop": false
   },
   {
    "file": "lead-riffs/01.flac",

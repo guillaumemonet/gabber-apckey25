@@ -10,4 +10,4 @@ The Anthem banks (sounds/anthem-*) were made with the free and open-source synth
 
 The Early hardcore bank (sounds/early-hardcore) is fully synthesised (no external samples) and was processed (distortion, reverb, levels) outside this repository.
 
-The Anthem hooks and Lead riffs banks (sounds/anthem-hooks, sounds/lead-riffs) were also made with Surge XT, using its factory presets and community presets by Luna, Argitoth, Kinsey Dulcet, Rozzer, TNMG, Giana Brotherz and Bluelight, and processed (layering, echo, reverb, mastering) outside this repository.
+The Anthem hooks and Lead riffs banks and the Basslines and Hardcore supersaw sounds (sounds/anthem-hooks, sounds/lead-riffs, sounds/basslines, sounds/hardcore-supersaw) were also made with Surge XT (the clean subs and 808s are synthesised directly), using its factory presets and community presets by Luna, Argitoth, Kinsey Dulcet, Rozzer, TNMG, Giana Brotherz and Bluelight, and processed (layering, echo, reverb, mastering) outside this repository.

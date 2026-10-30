@@ -11,6 +11,9 @@ export default async function (t, A) {
   t.eq(S.banks.findIndex(b => b.some(p => p?.sampleId?.startsWith('lib:early-hardcore/'))) + 1, 22, 'banque Early hardcore sur les pads 22');
   t.eq(S.banks[21].filter(Boolean).length, 40, 'banque 22 complète');
   t.eq(['anthem-hooks', 'lead-riffs'].map(f => S.banks.findIndex(b => b.some(p => p?.sampleId?.startsWith(`lib:${f}/`))) + 1), [23, 24], 'Anthem hooks et Lead riffs sur les pads 23 et 24');
+  const bass = A.libraryItems({ manifest: A.libManifest, kit: A.kit, banks: S.banks, tl: S.tl, userSounds: [] }).filter(i => i.sampleId.startsWith('lib:basslines/'));
+  t.ok(bass.length === 26 && bass.every(i => i.loop && i.bpm && i.bars && i.family === 'Bass'), 'Basslines : dans la bibliothèque seulement (26 boucles)', bass.length);
+  t.ok(S.banks.some((b, i) => i > 0 && !b.some(Boolean)), 'il reste une banque vide');
   t.ok(early.pads.slice(0, 8).every(p => p.cat === 'kick') && early.pads.filter(p => p.mode === 2).every(p => p.bpm >= 160 && p.bpm <= 200 && p.kicks?.length),
     'kicks sur la première rangée, boucles de 160 à 200 BPM avec la position de leurs kicks (sidechain)');
   const onPads = S.banks.flat().filter(p => p?.sampleId?.startsWith('lib:')).length;

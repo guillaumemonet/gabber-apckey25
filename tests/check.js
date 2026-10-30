@@ -56,13 +56,17 @@ for (const b of man.banks) for (const p of b.pads) {
   sounds++;
   if (!fs.existsSync(path.join(ROOT, 'sounds', p.file))) fail(`son manquant : ${p.file} (${b.name})`);
 }
-// Catalogue (sounds/library.json, tools/catalog.py) : chaque son des banques y a sa place dans l'arbre, et rien d'autre.
+// Catalogue (sounds/library.json, tools/catalog.py) : chaque son des banques y a sa place dans l'arbre ; un son
+// hors banque (chargé depuis la bibliothèque seulement) porte en plus son nom, son tempo et ses mesures.
 const cat = JSON.parse(fs.readFileSync(path.join(ROOT, 'sounds', 'library.json'), 'utf8'));
 const listed = new Set(cat.sounds.map(s => s.file));
+const banked = new Set(man.banks.flatMap(b => b.pads.filter(Boolean).map(p => p.file)));
 for (const b of man.banks) for (const p of b.pads) if (p && !listed.has(p.file)) fail(`son de banque absent du catalogue (python tools/catalog.py) : ${p.file}`);
 for (const s of cat.sounds) {
   if (!cat.tree[s.family]?.includes(s.type)) fail(`catalogue : famille / type inconnus : ${s.file} (${s.family} › ${s.type})`);
   if (!fs.existsSync(path.join(ROOT, 'sounds', s.file))) fail(`catalogue : son manquant : ${s.file}`);
+  // Son hors banque : il porte son nom, et pour une boucle son tempo et ses mesures.
+  if (!banked.has(s.file) && (!s.name || (s.loop && !(s.bpm > 0 && s.bars > 0)))) fail(`catalogue : son hors banque sans nom, tempo ou mesures : ${s.file}`);
 }
 for (const f of ['demo/demo.json', ...[2, 3, 4, 5].map(n => `demo/ravebench-demo-${n}.ravebench`)]) if (!fs.existsSync(path.join(ROOT, f))) fail(`démo manquante : ${f}`);
 

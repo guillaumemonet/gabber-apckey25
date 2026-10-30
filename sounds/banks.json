@@ -7965,7 +7965,7 @@
    "pads": [
     {
      "file": "anthem-hooks/01.flac",
-     "name": "Euphoric anthem hook F minor",
+     "name": "Euphoric anthem hook",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -7974,7 +7974,7 @@
     },
     {
      "file": "anthem-hooks/02.flac",
-     "name": "Epic hymn F minor",
+     "name": "Epic hymn",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -7983,7 +7983,7 @@
     },
     {
      "file": "anthem-hooks/03.flac",
-     "name": "Dark offbeat hook F minor",
+     "name": "Dark offbeat hook",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -7992,7 +7992,7 @@
     },
     {
      "file": "anthem-hooks/04.flac",
-     "name": "Screech riff F minor",
+     "name": "Screech riff",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -8001,7 +8001,7 @@
     },
     {
      "file": "anthem-hooks/05.flac",
-     "name": "Melancholic call and answer F minor",
+     "name": "Melancholic call and answer",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -8010,7 +8010,7 @@
     },
     {
      "file": "anthem-hooks/06.flac",
-     "name": "Gallop anthem hook F minor",
+     "name": "Gallop anthem hook",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -8019,7 +8019,7 @@
     },
     {
      "file": "anthem-hooks/07.flac",
-     "name": "Andalusian anthem F minor",
+     "name": "Andalusian anthem",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -8028,7 +8028,7 @@
     },
     {
      "file": "anthem-hooks/08.flac",
-     "name": "Uptempo rising hook F minor",
+     "name": "Uptempo rising hook",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -8037,7 +8037,7 @@
     },
     {
      "file": "anthem-hooks/09.flac",
-     "name": "Happy hardcore hook G major",
+     "name": "Happy hardcore hook",
      "color": 13,
      "mode": 2,
      "cat": "lead",
@@ -8046,7 +8046,7 @@
     },
     {
      "file": "anthem-hooks/10.flac",
-     "name": "Bouncy offbeat hook D major",
+     "name": "Bouncy offbeat hook",
      "color": 13,
      "mode": 2,
      "cat": "lead",
@@ -8055,7 +8055,7 @@
     },
     {
      "file": "anthem-hooks/11.flac",
-     "name": "UK hardcore anthem Bb major",
+     "name": "UK hardcore anthem",
      "color": 13,
      "mode": 2,
      "cat": "lead",
@@ -8064,7 +8064,7 @@
     },
     {
      "file": "anthem-hooks/12.flac",
-     "name": "Euphoric hardstyle lead A minor",
+     "name": "Euphoric hardstyle lead",
      "color": 9,
      "mode": 2,
      "cat": "lead",
@@ -8073,7 +8073,7 @@
     },
     {
      "file": "anthem-hooks/13.flac",
-     "name": "Dark hardstyle screech G minor",
+     "name": "Dark hardstyle screech",
      "color": 9,
      "mode": 2,
      "cat": "lead",
@@ -8082,7 +8082,7 @@
     },
     {
      "file": "anthem-hooks/14.flac",
-     "name": "Hardstyle hymn E minor",
+     "name": "Hardstyle hymn",
      "color": 9,
      "mode": 2,
      "cat": "lead",
@@ -8091,7 +8091,7 @@
     },
     {
      "file": "anthem-hooks/15.flac",
-     "name": "Hardstyle bounce hook D minor",
+     "name": "Hardstyle bounce hook",
      "color": 9,
      "mode": 2,
      "cat": "lead",
@@ -8100,7 +8100,7 @@
     },
     {
      "file": "anthem-hooks/16.flac",
-     "name": "Uplifting trance hook F# minor",
+     "name": "Uplifting trance hook",
      "color": 41,
      "mode": 2,
      "cat": "lead",
@@ -8109,7 +8109,7 @@
     },
     {
      "file": "anthem-hooks/17.flac",
-     "name": "Trance pluck hook C minor",
+     "name": "Trance pluck hook",
      "color": 41,
      "mode": 2,
      "cat": "lead",
@@ -8118,7 +8118,7 @@
     },
     {
      "file": "anthem-hooks/18.flac",
-     "name": "Melancholic trance theme D minor",
+     "name": "Melancholic trance theme",
      "color": 41,
      "mode": 2,
      "cat": "lead",
@@ -8127,7 +8127,7 @@
     },
     {
      "file": "anthem-hooks/19.flac",
-     "name": "Trance chant B minor",
+     "name": "Trance chant",
      "color": 41,
      "mode": 2,
      "cat": "lead",
@@ -8136,7 +8136,7 @@
     },
     {
      "file": "anthem-hooks/20.flac",
-     "name": "Rave stab hook A minor",
+     "name": "Rave stab hook",
      "color": 49,
      "mode": 2,
      "cat": "lead",
@@ -8145,7 +8145,7 @@
     },
     {
      "file": "anthem-hooks/21.flac",
-     "name": "Phrygian rave chant E phrygian",
+     "name": "Phrygian rave chant",
      "color": 49,
      "mode": 2,
      "cat": "lead",
@@ -8154,7 +8154,7 @@
     },
     {
      "file": "anthem-hooks/22.flac",
-     "name": "Dark techno hymn G minor",
+     "name": "Dark techno hymn",
      "color": 49,
      "mode": 2,
      "cat": "lead",
@@ -8163,7 +8163,7 @@
     },
     {
      "file": "anthem-hooks/23.flac",
-     "name": "Euphoric house hook Ab major",
+     "name": "Euphoric house hook",
      "color": 21,
      "mode": 2,
      "cat": "lead",
@@ -8172,7 +8172,7 @@
     },
     {
      "file": "anthem-hooks/24.flac",
-     "name": "Melodic house theme A minor",
+     "name": "Melodic house theme",
      "color": 21,
      "mode": 2,
      "cat": "lead",
@@ -8181,7 +8181,7 @@
     },
     {
      "file": "anthem-hooks/25.flac",
-     "name": "Liquid anthem hook C minor",
+     "name": "Liquid anthem hook",
      "color": 37,
      "mode": 2,
      "cat": "lead",
@@ -8190,7 +8190,7 @@
     },
     {
      "file": "anthem-hooks/26.flac",
-     "name": "Dark dnb lead D minor",
+     "name": "Dark dnb lead",
      "color": 37,
      "mode": 2,
      "cat": "lead",
@@ -8219,7 +8219,7 @@
    "pads": [
     {
      "file": "lead-riffs/01.flac",
-     "name": "Gated supersaw A minor",
+     "name": "Gated supersaw",
      "color": 41,
      "mode": 2,
      "cat": "lead",
@@ -8228,7 +8228,7 @@
     },
     {
      "file": "lead-riffs/02.flac",
-     "name": "Rolling supersaw riff E minor",
+     "name": "Rolling supersaw riff",
      "color": 41,
      "mode": 2,
      "cat": "lead",
@@ -8237,7 +8237,7 @@
     },
     {
      "file": "lead-riffs/03.flac",
-     "name": "Uplifting pedal riff F# minor",
+     "name": "Uplifting pedal riff",
      "color": 41,
      "mode": 2,
      "cat": "lead",
@@ -8246,7 +8246,7 @@
     },
     {
      "file": "lead-riffs/04.flac",
-     "name": "Syncopated trance riff G minor",
+     "name": "Syncopated trance riff",
      "color": 41,
      "mode": 2,
      "cat": "lead",
@@ -8255,7 +8255,7 @@
     },
     {
      "file": "lead-riffs/05.flac",
-     "name": "Acid line A minor",
+     "name": "Acid line",
      "color": 49,
      "mode": 2,
      "cat": "lead",
@@ -8264,7 +8264,7 @@
     },
     {
      "file": "lead-riffs/06.flac",
-     "name": "Acid sweep E minor",
+     "name": "Acid sweep",
      "color": 49,
      "mode": 2,
      "cat": "lead",
@@ -8273,7 +8273,7 @@
     },
     {
      "file": "lead-riffs/07.flac",
-     "name": "Acid house line G minor",
+     "name": "Acid house line",
      "color": 21,
      "mode": 2,
      "cat": "lead",
@@ -8282,7 +8282,7 @@
     },
     {
      "file": "lead-riffs/08.flac",
-     "name": "Acid techno roller D minor",
+     "name": "Acid techno roller",
      "color": 49,
      "mode": 2,
      "cat": "lead",
@@ -8291,7 +8291,7 @@
     },
     {
      "file": "lead-riffs/09.flac",
-     "name": "Squelchy acid C minor",
+     "name": "Squelchy acid",
      "color": 21,
      "mode": 2,
      "cat": "lead",
@@ -8300,7 +8300,7 @@
     },
     {
      "file": "lead-riffs/10.flac",
-     "name": "Acid lead F minor",
+     "name": "Acid lead",
      "color": 49,
      "mode": 2,
      "cat": "lead",
@@ -8309,7 +8309,7 @@
     },
     {
      "file": "lead-riffs/11.flac",
-     "name": "Hardstyle screech riff D minor",
+     "name": "Hardstyle screech riff",
      "color": 9,
      "mode": 2,
      "cat": "lead",
@@ -8318,7 +8318,7 @@
     },
     {
      "file": "lead-riffs/12.flac",
-     "name": "Hardstyle rolling lead A minor",
+     "name": "Hardstyle rolling lead",
      "color": 9,
      "mode": 2,
      "cat": "lead",
@@ -8327,7 +8327,7 @@
     },
     {
      "file": "lead-riffs/13.flac",
-     "name": "Euphoric hardstyle supersaw E minor",
+     "name": "Euphoric hardstyle supersaw",
      "color": 9,
      "mode": 2,
      "cat": "lead",
@@ -8336,7 +8336,7 @@
     },
     {
      "file": "lead-riffs/14.flac",
-     "name": "Gabber screech riff F minor",
+     "name": "Gabber screech riff",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -8345,7 +8345,7 @@
     },
     {
      "file": "lead-riffs/15.flac",
-     "name": "Hardcore supersaw riff F minor",
+     "name": "Hardcore supersaw riff",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -8354,7 +8354,7 @@
     },
     {
      "file": "lead-riffs/16.flac",
-     "name": "Uptempo screech run F minor",
+     "name": "Uptempo screech run",
      "color": 5,
      "mode": 2,
      "cat": "lead",
@@ -8363,7 +8363,7 @@
     },
     {
      "file": "lead-riffs/17.flac",
-     "name": "Rave minor stab riff A minor",
+     "name": "Rave minor stab riff",
      "color": 49,
      "mode": 2,
      "cat": "lead",
@@ -8372,7 +8372,7 @@
     },
     {
      "file": "lead-riffs/18.flac",
-     "name": "Tek stab riff G minor",
+     "name": "Tek stab riff",
      "color": 49,
      "mode": 2,
      "cat": "lead",
@@ -8381,7 +8381,7 @@
     },
     {
      "file": "lead-riffs/19.flac",
-     "name": "Rave lead riff E minor",
+     "name": "Rave lead riff",
      "color": 49,
      "mode": 2,
      "cat": "lead",
@@ -8390,7 +8390,7 @@
     },
     {
      "file": "lead-riffs/20.flac",
-     "name": "Synthwave lead A minor",
+     "name": "Synthwave lead",
      "color": 57,
      "mode": 2,
      "cat": "lead",
@@ -8399,7 +8399,7 @@
     },
     {
      "file": "lead-riffs/21.flac",
-     "name": "Electro saw riff D minor",
+     "name": "Electro saw riff",
      "color": 57,
      "mode": 2,
      "cat": "lead",
@@ -8408,7 +8408,7 @@
     },
     {
      "file": "lead-riffs/22.flac",
-     "name": "Synthwave arp lead C minor",
+     "name": "Synthwave arp lead",
      "color": 57,
      "mode": 2,
      "cat": "lead",
@@ -8417,7 +8417,7 @@
     },
     {
      "file": "lead-riffs/23.flac",
-     "name": "DnB lead riff F minor",
+     "name": "DnB lead riff",
      "color": 37,
      "mode": 2,
      "cat": "lead",
@@ -8426,7 +8426,7 @@
     },
     {
      "file": "lead-riffs/24.flac",
-     "name": "Riddim mid lead G minor",
+     "name": "Riddim mid lead",
      "color": 53,
      "mode": 2,
      "cat": "lead",
